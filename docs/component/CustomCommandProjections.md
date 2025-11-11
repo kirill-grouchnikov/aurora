@@ -67,7 +67,7 @@ data class CustomCommandButtonPresentationModel(
     override val backgroundAppearanceStrategy: BackgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center,
     override val iconDimension: DpSize? = null,
-    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+    override val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
     override val iconEnabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     override val iconActiveFilterStrategy: IconFilterStrategy = IconFilterStrategy.Original,
     override val textStyle: TextStyle? = null,
@@ -303,7 +303,7 @@ override fun getPopupContentLayoutInfo(
         presentationState = menuPresentationModel.menuPresentationState,
         iconActiveFilterStrategy = IconFilterStrategy.Original,
         iconEnabledFilterStrategy = IconFilterStrategy.Original,
-        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorScheme,
+        iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
         forceAllocateSpaceForIcon = atLeastOneButtonHasIcon,
         popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
         popupFireTrigger = menuPresentationModel.itemPopupFireTrigger,
@@ -361,11 +361,9 @@ override fun generatePopupContent(
 ) {
     val itemButtonPresentationModel = popupContentLayoutInfo.menuButtonPresentationModel
 
-    val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-        decorationAreaType = AuroraSkin.decorationAreaType
-    )
+    val neutralColorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
     Column(
-        modifier = Modifier.fillMaxSize().background(color = backgroundColorScheme.backgroundFillColor)
+        modifier = Modifier.fillMaxSize().background(color = neutralColorTokens.containerSurface)
             .padding(all = 1.0.dp)
     ) {
         for (entry in menuContentModel.entries) {

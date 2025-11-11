@@ -71,7 +71,7 @@ fun populateColorTokens(
             // Skip a zero-amount contribution
             continue
         }
-        // Get the color scheme that matches the contribution state
+        // Get the color tokens that match the contribution state
         val contributionTokens = colorTokensDelegate.getContainerTokensForActiveState(contribution.key)
 
         // And interpolate the colors and alphas
@@ -201,7 +201,7 @@ internal fun populateColorTokens(
             // Skip a zero-amount contribution
             continue
         }
-        // Get the color scheme that matches the contribution state
+        // Get the color tokens that match the contribution state
         val contributionTokens =
             if (treatEnabledAsActive && (contribution.key == ComponentState.Enabled)) {
                 colors.getActiveContainerTokens(decorationAreaType = decorationAreaType)
@@ -346,7 +346,7 @@ internal fun populateColorTokens(
             // Skip a zero-amount contribution
             continue
         }
-        // Get the color scheme that matches the contribution state
+        // Get the color tokens that match the contribution state
         val contributionTokens =
             if (treatEnabledAsActive && (contribution.key == ComponentState.Enabled)) {
                 colors.getActiveContainerTokens(decorationAreaType = decorationAreaType)
@@ -612,7 +612,7 @@ internal fun getStateAwareColor(
             // Skip a zero-amount contribution
             continue
         }
-        // Get the color scheme that matches the contribution state
+        // Get the color tokens that match the contribution state
         val contributionColorTokens = getContainerTokens(
             colors = colors,
             tokensOverlayProvider = tokensOverlayProvider,

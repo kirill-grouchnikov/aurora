@@ -28,20 +28,19 @@ the [Ephemeral](https://github.com/kirill-grouchnikov/ephemeral) design system. 
 
 * [Component states](docs/theming/skins/componentstates.md)
 * Colors
-  * [Color schemes](docs/theming/skins/colorschemes.md)
-  * [Color scheme association kinds](docs/theming/skins/colorschemeassociationkinds.md)
-  * [Color scheme file format](docs/theming/skins/colorschemes-fileformat.md)
-  * [Color scheme bundles](docs/theming/skins/colorschemebundles.md)
+  * [Color tokens](docs/theming/skins/colortokens.md)
+  * [Color tokens association kinds](docs/theming/skins/colortokensassociationkinds.md)
+  * [Color tokens bundles](docs/theming/skins/colortokensbundles.md)
 * Skins
   * [Skin overview](docs/theming/skins/overview.md)
   * [Light skins](docs/theming/skins/toneddown.md)
   * [Dark skins](docs/theming/skins/dark.md)
 * Painters
   * [Painter overview](docs/theming/painters/overview.md)
-  * [Fill painters](docs/theming/painters/fill.md)
-  * [Border painters](docs/theming/painters/border.md)
-  * [Decoration painters](docs/theming/painters/decoration.md)
+  * [Surface painters](docs/theming/painters/surface.md)
+  * [Outline painters](docs/theming/painters/outline.md)
   * [Highlight painters](docs/theming/painters/highlight.md)
+  * [Decoration painters](docs/theming/painters/decoration.md)
   * [Overlay painters](docs/theming/painters/overlay.md)
 * [Themed states](docs/theming/themed-states.md)
 

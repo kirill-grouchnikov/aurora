@@ -259,7 +259,7 @@ fun AuroraApplicationScope.DemoColorsArea(
                         presentationState = CommandButtonPresentationState.MediumFitToIcon,
                         iconDimension = DpSize(20.dp, 20.dp),
                         // This is a full-color icon. Use original colors for enabled and active
-                        // states, and color scheme based filtering for disabled states
+                        // states, and color tokens based filtering for disabled states
                         iconDisabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
                         iconEnabledFilterStrategy = IconFilterStrategy.Original,
                         iconActiveFilterStrategy = IconFilterStrategy.Original,

@@ -69,18 +69,12 @@ Here is the constructor signature of the `ContainerColorTokensAssociationKind`:
 
 ```kotlin
 /**
- * Allows associating different color schemes to different visual parts of UI components. For
- * example, the checkbox has three different visual areas:
- *
- *  * Border - associated with [.Border]
- *  * Fill - associated with [.MarkBox]
- *  * Check mark - associated with [.Mark]
+ * Allows associating different color tokens to different visual parts of UI components. For
+ * example, the checkbox's checkmark can be configured with [.Mark].
  *
  * Applications can create custom instances of this class to further refine the control over the
  * painting. In this case, the custom UI delegates must be created to use these new association
  * kinds.
- *
- * @author Kirill Grouchnikov
  */
 class ContainerColorTokensAssociationKind(
     /**
@@ -88,12 +82,11 @@ class ContainerColorTokensAssociationKind(
      */
     private val name: String,
     /**
-     * Fallback for this association kind. This is used when no color scheme is associated with
-     * this kind. For example, [.TabBorder] specifies that its fallback is
-     * [.Border]. When the tabs are painted, it will
-     * try to use the color scheme associated with [.TabBorder]. If none was registered,
-     * it will fall back to use the color scheme associated with [.Border], and if that is
-     * not registered as well, will use the color scheme associated with [.Fill].
+     * Fallback for this association kind. This is used when no color tokens are associated with
+     * this kind. For example, [.HighlightText] specifies that its fallback is [.Highlight].
+     * When the highlighted text is painted, it will try to use the color tokens associated with
+     * [.HighlightText]. If none was registered, it will fall back to use the color tokens associated with
+     * [.Highlight], and if that is not registered as well, will use the color tokens associated with [.Default].
      */
     val fallback: ContainerColorTokensAssociationKind?
 )

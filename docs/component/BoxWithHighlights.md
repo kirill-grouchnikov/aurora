@@ -25,44 +25,47 @@ And now the scrollable content itself that uses `AuroraBoxWithHighlights` to wra
 
 ```kotlin
 Box(modifier = Modifier.fillMaxSize().padding(6.dp)) {
-  val itemsList = (0 until itemCount).toList()
-  val backgroundColorScheme = AuroraSkin.colors.getBackgroundColorScheme(
-      decorationAreaType = AuroraSkin.decorationAreaType
-  )
-  val backgroundEvenRows = backgroundColorScheme.backgroundFillColor
-  val backgroundOddRows = backgroundColorScheme.accentedBackgroundFillColor
-  LazyColumn(
-    modifier = Modifier.fillMaxSize()
-        .padding(end = ScrollBarSizingConstants.DefaultScrollBarThickness),
-    state = lazyListState
-  ) {
-    itemsIndexed(itemsList) { index, item ->
-      AuroraBoxWithHighlights(
-        modifier = Modifier.fillMaxWidth().height(32.dp)
-            .background(if (index % 2 == 0) backgroundEvenRows else backgroundOddRows),
-        selected = (stateSelection.value == item),
-        onClick = { stateSelection.value = item },
-        sides = Sides.ClosedRectangle,
-        content = {
-          LabelProjection(
-            contentModel = LabelContentModel(
-              text = commandMf.format(arrayOf<Any>(index)),
-              icon = icons[item % icons.size]
-            ),
-            presentationModel = LabelPresentationModel(
-              inheritStateFromParent = true,
-              iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
-              horizontalGapScaleFactor = 2.0f
-            )
-          ).project()
-        }
-      )
+    val itemsList = (0 until itemCount).toList()
+    val backgroundColorTokens = AuroraSkin.colors.getNeutralContainerTokens(
+        decorationAreaType = AuroraSkin.decorationAreaType)
+    val backgroundEvenRows = backgroundColorTokens.containerSurface
+    val backgroundOddRows = if (backgroundColorTokens.isDark) {
+        backgroundColorTokens.containerSurfaceHigh
+    } else {
+        backgroundColorTokens.containerSurfaceLow
     }
-  }
-  AuroraVerticalScrollbar(
-    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-    adapter = rememberScrollbarAdapter(scrollState = lazyListState)
-  )
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+            .padding(end = ScrollBarSizingConstants.DefaultScrollBarThickness),
+        state = lazyListState
+    ) {
+        itemsIndexed(itemsList) { index, item ->
+            AuroraBoxWithHighlights(
+                modifier = Modifier.fillMaxWidth().height(32.dp)
+                    .background(if (index % 2 == 0) backgroundEvenRows else backgroundOddRows),
+                selected = (stateSelection.value == item),
+                onClick = { stateSelection.value = item },
+                sides = Sides.ClosedRectangle,
+                content = {
+                    LabelProjection(
+                        contentModel = LabelContentModel(
+                            text = commandMf.format(arrayOf<Any>(index)),
+                            icon = icons[item % icons.size]
+                        ),
+                        presentationModel = LabelPresentationModel(
+                            inheritStateFromParent = true,
+                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowText,
+                            horizontalGapScaleFactor = 2.0f
+                        )
+                    ).project()
+                }
+            )
+        }
+    }
+    AuroraVerticalScrollbar(
+        modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+        adapter = rememberScrollbarAdapter(scrollState = lazyListState)
+    )
 }
 ```
 

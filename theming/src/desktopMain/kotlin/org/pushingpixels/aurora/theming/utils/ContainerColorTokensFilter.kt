@@ -36,7 +36,7 @@ private fun getInterpolatedColors(colorTokens: ContainerColorTokens): Array<Colo
 
     val result = arrayOfNulls<Color>(MapSteps)
 
-    // collect the brightness factors of the color scheme
+    // collect the brightness factors of the color tokens
     val tokenColorMapping = hashMapOf<Int, Color>()
     val containerLowest = colorTokens.containerSurfaceLowest
     val containerLow = colorTokens.containerSurfaceLow
@@ -46,7 +46,7 @@ private fun getInterpolatedColors(colorTokens: ContainerColorTokens): Array<Colo
     val containerOutlineVariant = colorTokens.containerOutlineVariant
     val containerOutline = colorTokens.containerOutline
 
-    // Step 1 - map the color scheme colors based on their brightness
+    // Step 1 - map the color tokens colors based on their brightness
     tokenColorMapping[(containerLowest.colorBrightness * 255.0f).toInt()] = containerLowest
     tokenColorMapping[(containerLow.colorBrightness * 255.0f).toInt()] = containerLow
     tokenColorMapping[(container.colorBrightness * 255.0f).toInt()] = container

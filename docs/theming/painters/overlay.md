@@ -28,7 +28,7 @@ painters.addOverlayPainter(
 ```
 
 * The `TopShadowOverlayPainter` is associated with the `Toolbar` decoration area - adding the drop shadow along the top edge of all application toolbars (see the bottom half of the zoomed area in the screenshot above).
-* The `BottomLineOverlayPainter` is associated with `TitlePane` and `Header` decoration areas - adding a thin separator line along the bottom edge of the title pane and the menubar (see the top half of the zoomed area in the screenshot above). Note that the application needs to specify what color is used to paint the separator line - using the `(AuroraColorScheme) -> Color` lambda and an optional list of color transformations (in this case, applying alpha of 62.5%).
+* The `BottomLineOverlayPainter` is associated with `TitlePane` and `Header` decoration areas - adding a thin separator line along the bottom edge of the title pane and the menubar (see the top half of the zoomed area in the screenshot above). Note that the application needs to specify what color is used to paint the separator line - using the `(ContainerColorTokens) -> Color` lambda and an optional list of color transformations (in this case, applying alpha of 62.5%).
 
 Here is the same skeleton window under the [Gemini](../skins/toneddown.md#gemini) skin:
 
@@ -41,8 +41,8 @@ This skin defines custom visual appearance for the title pane, the menu bar, the
 // edge of footer
 painters.addOverlayPainter(
     TopBezelOverlayPainter(
-        colorSchemeQueryTop = { it.darkColor },
-        colorSchemeQueryBottom = { it.ultraLightColor }
+        colorTokensQueryTop = ContainerColorTokens::containerOutlineVariant,
+        colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) },
     ),
     DecorationAreaType.Footer
 )
@@ -50,15 +50,11 @@ painters.addOverlayPainter(
 // add two overlay painters to create a bezel line between
 // menu bar and toolbars
 painters.addOverlayPainter(
-    BottomLineOverlayPainter(
-        composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f))
-    ),
+    BottomLineOverlayPainter(ContainerColorTokens::containerOutline),
     DecorationAreaType.Header
 )
 painters.addOverlayPainter(
-    TopLineOverlayPainter(
-        composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
-    ),
+    TopLineOverlayPainter( { it.complementaryContainerOutline.withAlpha(0.1875f) }),
     DecorationAreaType.Toolbar
 )
 
@@ -72,7 +68,7 @@ painters.addOverlayPainter(
 // add overlay painter to paint a dark line along the bottom
 // edge of toolbars
 painters.addOverlayPainter(
-    BottomLineOverlayPainter(colorSchemeQuery = { it.ultraDarkColor }),
+    BottomLineOverlayPainter(colorTokensQuery = ContainerColorTokens::containerOutline),
     DecorationAreaType.Toolbar
 )
 ```
@@ -99,25 +95,23 @@ painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), Decorati
 // add an overlay painter to paint a dark line along the bottom
 // edge of toolbars
 painters.addOverlayPainter(
-    BottomLineOverlayPainter(
-        composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f))
-    ), DecorationAreaType.Toolbar
+    BottomLineOverlayPainter( { it.containerOutlineVariant } ),
+    DecorationAreaType.Toolbar
 )
 
-// add an overlay painter to paint a dark line along the bottom
+// add an overlay painter to paint a light line along the top
 // edge of toolbars
 painters.addOverlayPainter(
-    TopLineOverlayPainter(
-        composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
-    ), DecorationAreaType.Toolbar
+    TopLineOverlayPainter( { it.inverseContainerOutline.withAlpha(0.125f) } ),
+    DecorationAreaType.Toolbar
 )
 
 // add an overlay painter to paint a bezel line along the top
 // edge of footer
 painters.addOverlayPainter(
     TopBezelOverlayPainter(
-        colorSchemeQueryTop = composite({ it.ultraDarkColor }, ColorTransforms.brightness(-0.5f)),
-        colorSchemeQueryBottom = composite({ it.foregroundColor }, ColorTransforms.alpha(0.125f))
+        colorTokensQueryTop = { it.containerOutlineVariant },
+        colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) }
     ), DecorationAreaType.Footer
 )
 ```

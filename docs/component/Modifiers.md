@@ -68,7 +68,7 @@ Here is the layout skeleton:
 Row(
   modifier = Modifier.fillMaxWidth(1.0f)
     .height(height = panelHeightDp + 2.dp)
-    .background(color = backgroundColorScheme.backgroundFillColor)
+    .background(color = neutralColorTokens.containerSurface)
     .auroraBorder()
     .padding(all = 1.dp)
 ) {
@@ -133,8 +133,14 @@ CommandButtonProjection(
 ).project(
     modifier = Modifier.fillMaxWidth()
         .auroraPopupMenuRowBackground(
-            backgroundFillColorQuery = { _, scheme -> scheme.backgroundFillColor },
-            iconGutterFillColorQuery = { it.accentedBackgroundFillColor },
+            backgroundFillColorQuery = { _, colorTokens -> colorTokens.containerSurface },
+            iconGutterFillColorQuery = {
+                if (it.isDark) {
+                    it.containerSurfaceHighest
+                } else {
+                    it.containerSurfaceLowest
+                }
+            },
             gutterWidth = popupContentLayoutInfo.gutterWidth),
     actionInteractionSource = remember { MutableInteractionSource() },
     popupInteractionSource = remember { MutableInteractionSource() }

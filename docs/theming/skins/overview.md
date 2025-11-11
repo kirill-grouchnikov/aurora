@@ -35,11 +35,11 @@ The skin definition consists of the following:
   * Button shaper.
   * Optional [overlay painters](../painters/overlay.md) for some decoration areas.
 
-In order to define a valid skin, you need to specify all its mandatory parameters. A valid skin must have a color scheme bundle for `DecorationAreaType.None`, a button shaper, a fill painter, a decoration painter, a highlight painter and a border painter. All other parts are optional.
+In order to define a valid skin, you need to specify all its mandatory parameters. A valid skin must have a color tokens bundle for `DecorationAreaType.None`, a button shaper, a surface painter, a decoration painter, a highlight painter and an outline painter. All other parts are optional.
 
 ### Decoration areas
 
-The documentation on [decoration painters](../painters/decoration.md) explains the notion of a decoration area type. While a valid skin must define a color scheme bundle for `DecorationAreaType.None`, all other decoration area types are optional. Different skins have different sets of decoration areas that are painted. For example, the [Moderate skin](toneddown.md#moderate) decorates `DecorationAreaType.TitlePane` and `DecorationAreaType.Header`, while the [Nebula Amethyst skin](toneddown.md#nebula-amethyst) also decorates `DecorationAreaType.Toolbar`:
+The documentation on [decoration painters](../painters/decoration.md) explains the notion of a decoration area type. While a valid skin must define a color tokens bundle for `DecorationAreaType.None`, all other decoration area types are optional. Different skins have different sets of decoration areas that are painted. For example, the [Moderate skin](toneddown.md#moderate) decorates `DecorationAreaType.TitlePane` and `DecorationAreaType.Header`, while the [Nebula Amethyst skin](toneddown.md#nebula-amethyst) also decorates `DecorationAreaType.Toolbar`:
 
 <p>
 <img alt="Moderate" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/moderate.png" width="350" height="280">
@@ -80,7 +80,7 @@ fun registerAsDecorationArea(
 )
 ```
 
-Here is an example of specifying the default color scheme bundle for the [Mariner skin](toneddown.md#mariner):
+Here is an example of specifying the default color tokens bundle for the [Mariner skin](toneddown.md#mariner):
 
 ```kotlin
 val result = AuroraSkinColors()
@@ -101,7 +101,7 @@ val marinerDefaultBundle = ContainerColorTokensBundle(
 
 result.registerDecorationAreaTokensBundle(marinerDefaultBundle, DecorationAreaType.None)
 ```
-and a custom color scheme bundle for the `header`-type decoration areas:
+and a custom color tokens bundle for the `header`-type decoration areas:
 
 ```java
 val marinerHeaderBundle = ContainerColorTokensBundle(

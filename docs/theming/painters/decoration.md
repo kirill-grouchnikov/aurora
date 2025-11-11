@@ -34,7 +34,7 @@ Let's go back to the original screenshot:
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/painters/decoration/full.png" width="766"/>
 
-It illustrates that the specific skin assigns different color schemes to different decoration areas. The controls in those areas get the background and foreground colors based on their assigned color scheme (without any custom application code), thus creating visual distinction between different application areas.
+It illustrates that the specific skin assigns different color tokens to different decoration areas. The controls in those areas get the background and foreground colors based on their assigned color tokens (without any custom application code), thus creating visual distinction between different application areas.
 
 ### Application-facing APIs
 
@@ -55,8 +55,8 @@ fun paintDecorationArea(
     outline: Outline,
     rootSize: Size,
     offsetFromRoot: Offset,
-    colorScheme: AuroraColorScheme
+    colorTokens: ContainerColorTokens
 )
 ```
 
-The `outline` parameter specifies the outline to paint, the `colorScheme` specifies the Aurora color scheme to be used to compute the colors, while `decorationAreaType` indicates the decoration area type.
+The `outline` parameter specifies the outline to paint, the `colorTokens` specifies the color tokens to be used to compute the colors, while `decorationAreaType` indicates the decoration area type.
