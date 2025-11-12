@@ -20,7 +20,7 @@ AURORA_VERSION=2.0-SNAPSHOT
 KOTLIN_VERSION=2.2.20
 KOTLIN_COROUTINES_VERSION=1.10.2
 COMPOSE_VERSION=1.9.2
-CLASSPATH=../../drop/$AURORA_VERSION/aurora-screenshot-desktop-$AURORA_VERSION.jar:../../demo/build/libs/aurora-demo-desktop.jar:../build/libs/:../../build/libs/*
+CLASSPATH=../../drop/$AURORA_VERSION/aurora-screenshot-desktop-$AURORA_VERSION.jar:../../demo/build/libs/aurora-demo-desktop.jar:../../build/libs/*
 
 java -cp $CLASSPATH org.pushingpixels.aurora.tools.screenshot.theming.paletteseeds.AuroraPaletteSeedsDriverKt \
     ../../docs/images/theming/paletteseeds
