@@ -132,7 +132,9 @@ private fun visorSkinColors(): AuroraSkinColors {
 
 fun visorSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        decorationPainter = BrushedMetalDecorationPainter(),
+        decorationPainter = BrushedMetalDecorationPainter(
+            colorQuery1 = { it.containerSurfaceBright },
+            colorQuery2 = { it.containerSurfaceDim }),
         surfacePainter = MatteSurfacePainter(),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = FractionBasedSurfacePainter(

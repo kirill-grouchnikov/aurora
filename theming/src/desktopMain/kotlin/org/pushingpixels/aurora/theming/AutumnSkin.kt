@@ -194,7 +194,10 @@ fun autumnSkin(): AuroraSkinDefinition {
         )
     )
     val painters = AuroraPainters(
-        decorationPainter = MarbleNoiseDecorationPainter(textureAlpha = 1.0f),
+        decorationPainter = MarbleNoiseDecorationPainter(
+            colorQuery1 = { it.containerSurface },
+            colorQuery2 = { it.containerSurfaceHighest },
+            textureAlpha = 0.2f),
         surfacePainter = SpecularRectangularSurfacePainter(
             base = MatteSurfacePainter(),
             topQuery = { it.containerSurfaceLow },

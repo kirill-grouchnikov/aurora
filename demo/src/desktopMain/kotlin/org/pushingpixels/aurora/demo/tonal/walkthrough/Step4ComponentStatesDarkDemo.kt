@@ -77,7 +77,10 @@ private fun sampleDarkSkinColors(): AuroraSkinColors {
 
 fun sampleDarkSkin(): AuroraSkinDefinition {
     val painters = AuroraPainters(
-        decorationPainter = MarbleNoiseDecorationPainter(textureAlpha = 0.3f,
+        decorationPainter = MarbleNoiseDecorationPainter(
+            colorQuery1 = { it.containerSurfaceHighest },
+            colorQuery2 = { it.containerSurface },
+            textureAlpha = 0.3f,
             baseDecorationPainter = ArcDecorationPainter()),
         surfacePainter = SpecularRectangularSurfacePainter(GlassSurfacePainter(), 1.0f),
         outlinePainter = FlatOutlinePainter(),

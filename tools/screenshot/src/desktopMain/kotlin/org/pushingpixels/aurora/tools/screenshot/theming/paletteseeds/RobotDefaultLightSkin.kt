@@ -36,6 +36,8 @@ fun robotDefaultLightSkin(accentColor: Color, name: String) : AuroraSkinDefiniti
     val buttonShaper = ClassicButtonShaper()
     val painters = AuroraPainters(
         decorationPainter = MarbleNoiseDecorationPainter(
+            colorQuery1 = { it.containerSurface },
+            colorQuery2 = { it.containerSurfaceHighest },
             textureAlpha = 0.6f,
             baseDecorationPainter = ArcDecorationPainter()
         ),

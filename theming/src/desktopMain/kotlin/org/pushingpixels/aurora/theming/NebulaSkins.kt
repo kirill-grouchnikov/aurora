@@ -105,6 +105,8 @@ private fun nebulaBaseSkinColors(accentContainerColorTokens: AccentContainerColo
 private fun nebulaBasePainters(): AuroraPainters {
     val painters = AuroraPainters(
         decorationPainter = MarbleNoiseDecorationPainter(
+            colorQuery1 = { it.containerSurface },
+            colorQuery2 = { it.containerSurfaceHighest },
             textureAlpha = 0.2f,
             baseDecorationPainter = ArcDecorationPainter()
         ),

@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.theming.painter.decoration
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Density
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.Shader
@@ -32,6 +33,8 @@ import java.nio.ByteOrder
  * @author Kirill Grouchnikov
  */
 class MarbleNoiseDecorationPainter(
+    val colorQuery1: (ContainerColorTokens) -> Color,
+    val colorQuery2: (ContainerColorTokens) -> Color,
     val textureAlpha: Float,
     baseDecorationPainter: AuroraDecorationPainter? = null
 ) : ShaderWrapperDecorationPainter(
@@ -53,17 +56,20 @@ class MarbleNoiseDecorationPainter(
         offsetFromRoot: Offset,
         colorTokens: ContainerColorTokens
     ): Data {
+        val color1 = colorQuery1.invoke(colorTokens)
+        val color2 = colorQuery2.invoke(colorTokens)
+
         val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
         // RGBA colorBright
-        dataBuffer.putFloat(0, colorTokens.containerSurface.red)
-        dataBuffer.putFloat(4, colorTokens.containerSurface.green)
-        dataBuffer.putFloat(8, colorTokens.containerSurface.blue)
-        dataBuffer.putFloat(12, colorTokens.containerSurface.alpha)
+        dataBuffer.putFloat(0, color1.red)
+        dataBuffer.putFloat(4, color1.green)
+        dataBuffer.putFloat(8, color1.blue)
+        dataBuffer.putFloat(12, color1.alpha)
         // RGBA colorDim
-        dataBuffer.putFloat(16, colorTokens.containerSurfaceHighest.red)
-        dataBuffer.putFloat(20, colorTokens.containerSurfaceHighest.green)
-        dataBuffer.putFloat(24, colorTokens.containerSurfaceHighest.blue)
-        dataBuffer.putFloat(28, colorTokens.containerSurfaceHighest.alpha)
+        dataBuffer.putFloat(16, color2.red)
+        dataBuffer.putFloat(20, color2.green)
+        dataBuffer.putFloat(24, color2.blue)
+        dataBuffer.putFloat(28, color2.alpha)
         // Alpha
         dataBuffer.putFloat(32, textureAlpha)
 

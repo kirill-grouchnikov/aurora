@@ -67,7 +67,10 @@ private fun businessBaseSkinColors(
 
 private fun businessBasePainters(): AuroraPainters {
     val painters = AuroraPainters(
-        decorationPainter = BrushedMetalDecorationPainter(),
+        decorationPainter = BrushedMetalDecorationPainter(
+            colorQuery1 = { if (it.isDark) it.containerSurfaceDim else it.containerSurfaceBright },
+            colorQuery2 = { if (it.isDark) it.containerSurfaceBright else it.containerSurfaceDim },
+        ),
         surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.8f),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = ClassicSurfacePainter(),
