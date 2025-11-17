@@ -1,14 +1,14 @@
 [versions]
 kotlin = "2.2.20"
 coroutines = "1.10.2"
-compose = "1.9.2"
+compose = "1.9.3"
 dokka = "2.1.0"
 batik = "1.19"
 
 ephemeral_chroma = "1.5-SNAPSHOT"
 
 versionchecker = "0.53.0"
-mavenpublish = "0.34.0"
+mavenpublish = "0.35.0"
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose" }
