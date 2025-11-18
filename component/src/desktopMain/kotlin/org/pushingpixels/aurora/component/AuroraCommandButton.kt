@@ -905,7 +905,19 @@ internal fun <M : BaseCommandMenuContentModel,
     val bandRowHeight = LocalRibbonBandRowHeight.current
     val bandRow = LocalRibbonBandRow.current
 
-    // These two track the offset of action and popup area relative in
+    val currentlyShownKeyTipChain = KeyTipTracker.getCurrentlyShownKeyTipChain()
+    val isDisplayingActionKeyTip = (presentationModel.actionKeyTip != null) &&
+            (currentlyShownKeyTipChain?.links?.any { link ->
+                (link.projection == originalProjection)
+                        && (link.keyTip == presentationModel.actionKeyTip)
+            } == true)
+    val isDisplayingPopupKeyTip = (presentationModel.popupKeyTip != null) &&
+            (currentlyShownKeyTipChain?.links?.any { link ->
+                (link.projection == originalProjection)
+                        && (link.keyTip == presentationModel.popupKeyTip)
+            } == true)
+
+        // These two track the offset of action and popup area relative in
     // the overall bounding box of the command button. To paint continuous
     // visuals of the command button across two separate Box composables,
     // we paint each as full-size area, along with clipping to the specific
@@ -1368,7 +1380,7 @@ internal fun <M : BaseCommandMenuContentModel,
             }
 
             if (popupMenu != null) {
-                if (presentationModel.actionKeyTip != null) {
+                if (isDisplayingActionKeyTip) {
                     CommandButtonKeyTip(
                         originalProjection = originalProjection,
                         keyTip = presentationModel.actionKeyTip!!,
@@ -1376,7 +1388,7 @@ internal fun <M : BaseCommandMenuContentModel,
                         buttonSize = buttonSize.value,
                     )
                 }
-                if (presentationModel.popupKeyTip != null) {
+                if (isDisplayingPopupKeyTip) {
                     CommandButtonKeyTip(
                         originalProjection = originalProjection,
                         keyTip = presentationModel.popupKeyTip!!,
@@ -1489,7 +1501,7 @@ internal fun <M : BaseCommandMenuContentModel,
         }
 
         var actionKeyTipPlaceable: Placeable? = null
-        if ((popupMenu != null) && (presentationModel.actionKeyTip != null)) {
+        if ((popupMenu != null) && isDisplayingActionKeyTip) {
             val actionKeyTipSizingInfo = getKeyTipSize(
                 presentationModel.actionKeyTip!!, mergedTextStyle, density, fontFamilyResolver, layoutDirection
             )
@@ -1503,7 +1515,7 @@ internal fun <M : BaseCommandMenuContentModel,
         }
 
         var popupKeyTipPlaceable: Placeable? = null
-        if ((popupMenu != null) && (presentationModel.popupKeyTip != null)) {
+        if ((popupMenu != null) && isDisplayingPopupKeyTip) {
             val popupKeyTipSizingInfo = getKeyTipSize(
                 presentationModel.popupKeyTip!!, mergedTextStyle, density, fontFamilyResolver, layoutDirection
             )
@@ -1517,7 +1529,7 @@ internal fun <M : BaseCommandMenuContentModel,
         }
 
         if (popupMenu == null) {
-            if ((presentationModel.actionKeyTip != null) && !layoutInfo.actionClickArea.isEmpty) {
+            if (isDisplayingActionKeyTip && !layoutInfo.actionClickArea.isEmpty) {
                 KeyTipTracker.trackKeyTipOffset(
                     originalProjection,
                     presentationModel.actionKeyTip!!,
@@ -1536,7 +1548,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     null
                 )
             }
-            if ((presentationModel.popupKeyTip != null) && !layoutInfo.popupClickArea.isEmpty) {
+            if (isDisplayingPopupKeyTip && !layoutInfo.popupClickArea.isEmpty) {
                 KeyTipTracker.trackKeyTipOffset(
                     originalProjection,
                     presentationModel.popupKeyTip!!,
