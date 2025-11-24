@@ -1046,11 +1046,14 @@ internal class RibbonBuilder(
             secondaryRichTooltip = RichTooltip(
                 title = "Main title that can go over multiple lines of text even exceeding the bigger",
                 descriptionSections = listOf(
-                    "Simple description that can go over multiple lines of text even exceeding the bigger",
-                    "Second paragraph that can be multiline as well to test this feature"
+                    resourceBundle.getString("Tooltip.textParagraph1"),
+                    resourceBundle.getString("Tooltip.textParagraph2")
+                ),
+                footerIcon = help_browser(),
+                footerSections = listOf(
+                    resourceBundle.getString("Tooltip.textFooterParagraph1")
                 ),
                 mainIcon = address_book_new(),
-                footerIcon = help_browser()
             )
         )
 
