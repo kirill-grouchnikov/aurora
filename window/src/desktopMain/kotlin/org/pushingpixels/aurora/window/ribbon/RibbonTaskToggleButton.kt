@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.window.ribbon
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -38,6 +39,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
@@ -417,9 +419,6 @@ internal fun RibbonTaskToggleButton(
                     }
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = size.width
-                        val height = size.height
-
                         withTransform({
                             clipRect(
                                 left = 0.0f,
@@ -556,12 +555,14 @@ private fun TaskToggleButtonTextContent(
     ) {
         // Since we're passing the resolved style that has the default color,
         // also explicitly pass our text color to override the one set in the style
+        val textAlign = if (LocalLayoutDirection.current == LayoutDirection.Ltr) TextAlign.Left else TextAlign.Right
         AuroraText(
             text = text,
             color = textColor,
-            style = style,
+            style = style.copy(textAlign = textAlign),
             maxLines = 1,
-            overflow = presentationModel.textOverflow
+            overflow = presentationModel.textOverflow,
+            textAlign = textAlign
         )
     }
 }

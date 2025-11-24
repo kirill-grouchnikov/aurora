@@ -595,7 +595,7 @@ open class CommandButtonLayoutManagerMedium(
                 } else {
                     // We have no popup, but guaranteed to have text in here
                     textLayoutInfoList[0].textRect = Rect(
-                        left = textLayoutInfoList[0].textRect.left.coerceAtLeast(popupActionRect.left),
+                        left = textLayoutInfoList[0].textRect.left.coerceAtLeast(paddingEnd),
                         top = textLayoutInfoList[0].textRect.top,
                         right = textLayoutInfoList[0].textRect.right,
                         bottom = textLayoutInfoList[0].textRect.bottom
