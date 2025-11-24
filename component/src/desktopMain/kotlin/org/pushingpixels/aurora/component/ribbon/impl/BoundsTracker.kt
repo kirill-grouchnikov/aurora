@@ -32,6 +32,7 @@ import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.projection.Projection
+import org.pushingpixels.aurora.component.ribbon.AbstractRibbonBand
 import org.pushingpixels.aurora.component.ribbon.RibbonGalleryProjection
 
 @AuroraInternalApi
@@ -47,6 +48,21 @@ object BoundsTracker {
     }
 
     internal fun getBounds(): MutableMap<Projection<ContentModel, PresentationModel>, AuroraRect> = bounds
+}
+
+@AuroraInternalApi
+object BandBoundsTracker {
+    private val bounds: MutableMap<AbstractRibbonBand, AuroraRect> = hashMapOf()
+
+    fun trackBounds(band: AbstractRibbonBand, rect: AuroraRect) {
+        bounds[band] = rect
+    }
+
+    fun untrackBounds(band: AbstractRibbonBand) {
+        bounds.remove(band)
+    }
+
+    internal fun getBounds(): MutableMap<AbstractRibbonBand, AuroraRect> = bounds
 }
 
 @AuroraInternalApi

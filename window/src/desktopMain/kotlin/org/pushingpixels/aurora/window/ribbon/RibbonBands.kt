@@ -21,10 +21,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
@@ -34,6 +41,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraOffset
+import org.pushingpixels.aurora.common.AuroraRect
+import org.pushingpixels.aurora.common.asOffset
+import org.pushingpixels.aurora.common.asSize
 import org.pushingpixels.aurora.component.AuroraHorizontallyScrollableBox
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
@@ -316,24 +327,67 @@ internal fun RibbonBand(
             }
         }
     } else {
+        val bandTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
+        val bandSize = remember { mutableStateOf(IntSize(0, 0)) }
         when (band) {
             is RibbonBand -> {
-                Column(modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight()) {
-                    Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
-                        RibbonBandContent(band, bandResizePolicy as CoreRibbonResizePolicy, bandContentHeight)
-                    }
+                CompositionLocalProvider(
+                    LocalRibbonBandRectOnScreen provides Rect(
+                        offset = bandTopLeftOffset.asOffset(density),
+                        size = bandSize.value.asSize(density)),
+                ) {
+                    Column(
+                        modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight().bandLocator(
+                            band = band,
+                            topLeftOffset = bandTopLeftOffset,
+                            size = bandSize,
+                            trackBounds = true
+                        )
+                    ) {
+                        Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
+                            RibbonBandContent(band, bandResizePolicy as CoreRibbonResizePolicy, bandContentHeight)
+                        }
 
-                    RibbonBandTitle(band)
+                        RibbonBandTitle(band)
+                    }
+                }
+                DisposableEffect(band) {
+                    onDispose {
+                        BandBoundsTracker.untrackBounds(band)
+                    }
                 }
             }
 
             is FlowRibbonBand -> {
-                Column(modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight()) {
-                    Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
-                        FlowRibbonBandContent(band, bandResizePolicy as FlowRibbonBandResizePolicy, bandContentHeight)
-                    }
+                CompositionLocalProvider(
+                    LocalRibbonBandRectOnScreen provides Rect(
+                        offset = bandTopLeftOffset.asOffset(density),
+                        size = bandSize.value.asSize(density)),
+                ) {
 
-                    RibbonBandTitle(band)
+                    Column(
+                        modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight().bandLocator(
+                            band = band,
+                            topLeftOffset = bandTopLeftOffset,
+                            size = bandSize,
+                            trackBounds = true
+                        )
+                    ) {
+                        Box(modifier = Modifier.fillMaxWidth().weight(1.0f)) {
+                            FlowRibbonBandContent(
+                                band,
+                                bandResizePolicy as FlowRibbonBandResizePolicy,
+                                bandContentHeight
+                            )
+                        }
+
+                        RibbonBandTitle(band)
+                    }
+                }
+                DisposableEffect(band) {
+                    onDispose {
+                        BandBoundsTracker.untrackBounds(band)
+                    }
                 }
             }
         }
@@ -784,6 +838,46 @@ private fun RibbonBandTitle(band: AbstractRibbonBand) {
         }
     }
 }
+
+@OptIn(AuroraInternalApi::class)
+private class BandLocator(
+    val band: AbstractRibbonBand,
+    val topLeftOffset: AuroraOffset,
+    val size: MutableState<IntSize>,
+    val trackBounds: Boolean
+) :
+    OnGloballyPositionedModifier {
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        // Convert the top left corner of the component to the root coordinates
+        val converted = coordinates.localToRoot(Offset.Zero)
+        topLeftOffset.x = converted.x
+        topLeftOffset.y = converted.y
+
+        // And store the component size
+        size.value = coordinates.size
+
+        if (trackBounds) {
+            BandBoundsTracker.trackBounds(
+                band,
+                AuroraRect(
+                    x = converted.x,
+                    y = converted.y,
+                    width = coordinates.size.width.toFloat(),
+                    height = coordinates.size.height.toFloat()
+                )
+            )
+        }
+    }
+}
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+private fun Modifier.bandLocator(
+    band: AbstractRibbonBand,
+    topLeftOffset: AuroraOffset,
+    size: MutableState<IntSize>,
+    trackBounds: Boolean
+) = this.then(BandLocator(band, topLeftOffset, size, trackBounds))
 
 private val RibbonBandTitleAreaPadding = PaddingValues(horizontal = 4.dp, vertical = 2.dp)
 private val RibbonBandTitleLabelPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp)

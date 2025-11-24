@@ -86,6 +86,7 @@ internal fun displayRichTooltipWindow(
     decorationAreaType: DecorationAreaType,
     compositionLocalContext: CompositionLocalContext,
     anchorBoundsInWindow: Rect,
+    extraVerticalOffset: Float = 0f,
     richTooltip: RichTooltip,
     presentationModel: RichTooltipPresentationModel,
     popupPlacementStrategy: PopupPlacementStrategy,
@@ -293,7 +294,7 @@ internal fun displayRichTooltipWindow(
     )
     val popupRect = Rectangle(
         initialAnchor.x + popupShift.width,
-        initialAnchor.y + anchorBoundsInWindow.height.toInt() + popupShift.height,
+        initialAnchor.y + anchorBoundsInWindow.height.toInt() + popupShift.height + extraVerticalOffset.toInt(),
         fullPopupWidth,
         fullPopupHeight
     )

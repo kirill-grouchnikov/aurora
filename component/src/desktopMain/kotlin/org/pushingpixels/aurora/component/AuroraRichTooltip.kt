@@ -27,12 +27,14 @@ import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.model.RichTooltip
 import org.pushingpixels.aurora.component.model.RichTooltipPresentationModel
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonBandRectOnScreen
 import org.pushingpixels.aurora.component.utils.displayRichTooltipWindow
 import org.pushingpixels.aurora.theming.*
 
@@ -84,9 +86,9 @@ fun Modifier.auroraRichTooltip(
     val mergedTextStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val skinColors = AuroraSkin.colors
-    val painters = AuroraSkin.painters
     val decorationAreaType = AuroraSkin.decorationAreaType
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
+    val ribbonBandRectScreen = LocalRibbonBandRectOnScreen.current
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
@@ -109,6 +111,15 @@ fun Modifier.auroraRichTooltip(
                 ).asOffset(density)
             )
             if (!isShowingPopupFromHere) {
+                val anchorBoundsInWindow = Rect(
+                    offset = topLeftOffset.asOffset(density),
+                    size = size.value.asSize(density)
+                )
+                val extraVerticalOffset = if (ribbonBandRectScreen.isEmpty) {
+                    0f
+                } else {
+                    ribbonBandRectScreen.bottom - anchorBoundsInWindow.bottom + 4.0f
+                }
                 val tooltipWindow = displayRichTooltipWindow(
                     popupOriginator = popupOriginator,
                     layoutDirection = layoutDirection,
@@ -122,6 +133,7 @@ fun Modifier.auroraRichTooltip(
                         offset = topLeftOffset.asOffset(density),
                         size = size.value.asSize(density)
                     ),
+                    extraVerticalOffset = extraVerticalOffset,
                     richTooltip = richTooltip,
                     presentationModel = presentationModel,
                     popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart

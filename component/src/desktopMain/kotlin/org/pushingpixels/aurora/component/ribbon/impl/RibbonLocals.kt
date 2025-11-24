@@ -16,6 +16,9 @@
 package org.pushingpixels.aurora.component.ribbon.impl
 
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import org.pushingpixels.aurora.common.AuroraInternalApi
 
 @AuroraInternalApi
@@ -46,4 +49,9 @@ val LocalRibbonKeyTipChainRoot = staticCompositionLocalOf<Any?> {
 @AuroraInternalApi
 val LocalRibbonBandRow = staticCompositionLocalOf {
     RibbonBandRow.None
+}
+
+@AuroraInternalApi
+val LocalRibbonBandRectOnScreen = staticCompositionLocalOf {
+    Rect(Offset.Zero, Size.Zero)
 }
