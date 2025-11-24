@@ -97,6 +97,7 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
     contextualTaskGroupOffsetX: Int
 ) {
     val layoutDirection = LocalLayoutDirection.current
+    val ltr = (layoutDirection == LayoutDirection.Ltr)
 
     val skinColors = AuroraSkin.colors
     val showsIcon = (icon != null)
@@ -244,16 +245,55 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
             )
         )
         val displayedIconWidth = if (iconMeasurable != null) iconSizePx else 0
-        val maxTitleWidth = if (contextualTaskGroupSpans.isEmpty()) {
-            max(0, width - controlButtonsWidth - displayedIconWidth - taskbarPlaceable.measuredWidth)
+
+        val contextualTaskGroupIndicatorPlaceables =
+            contextualTaskGroupIndicatorMeasurables.mapIndexed { index, taskGroupMeasurable ->
+                val contextualTaskGroup = ribbon.contextualTaskGroups[index]
+                val span = contextualTaskGroupSpans.find { it.ribbonContextualTaskGroup == contextualTaskGroup }!!
+                taskGroupMeasurable.measure(Constraints.fixed(width = span.endX - span.startX, height = height))
+            }
+        val contextualTaskGroupMinX = if (contextualTaskGroupSpans.isEmpty()) {
+            0
         } else {
-            // If we have visible contextual task groups, limit the title to be positioned
-            // between the taskbar and the contextual task group indicators
-            val contextualTaskGroupsStartX = contextualTaskGroupSpans.minOf { it.startX }
-            max(
-                0,
-                contextualTaskGroupsStartX - contextualTaskGroupOffsetX - displayedIconWidth - taskbarPlaceable.measuredWidth
-            )
+            contextualTaskGroupSpans.minOf { it.startX }
+        }
+        val contextualTaskGroupMaxX = if (contextualTaskGroupSpans.isEmpty()) {
+            0
+        } else {
+            var localMax = 0
+            for ((index, contextualTaskGroupIndicatorPlaceable) in contextualTaskGroupIndicatorPlaceables.withIndex()) {
+                val contextualTaskGroup = ribbon.contextualTaskGroups[index]
+                val span = contextualTaskGroupSpans.find { it.ribbonContextualTaskGroup == contextualTaskGroup }!!
+                localMax = max(localMax, span.startX + contextualTaskGroupIndicatorPlaceable.measuredWidth)
+            }
+            localMax
+        }
+
+        val isTitleAfterTaskBar: Boolean
+        val maxTitleWidth: Int
+        if (contextualTaskGroupSpans.isEmpty()) {
+            isTitleAfterTaskBar = true
+            maxTitleWidth = max(0, width - controlButtonsWidth - displayedIconWidth - taskbarPlaceable.measuredWidth)
+        } else {
+            // We have visible contextual task groups. There are two places the title can go:
+            //  1. Between the taskbar and the contextual task group indicators
+            //  2. Between the contextual task group indicators and the window control buttons
+            // Choose the larger span
+            val spaceBeforeContextualTaskGroups = if (ltr) {
+                val endOfTaskbar = displayedIconWidth + taskbarPlaceable.measuredWidth
+                contextualTaskGroupMinX - contextualTaskGroupOffsetX - endOfTaskbar
+            } else {
+                val startOfTaskbar = width - displayedIconWidth - taskbarPlaceable.measuredWidth
+                startOfTaskbar - (width - contextualTaskGroupMinX) - contextualTaskGroupOffsetX
+            }
+            val spaceAfterContextualTaskGroups = if (ltr) {
+                width - controlButtonsWidth - contextualTaskGroupMaxX
+            } else {
+                (width - contextualTaskGroupMaxX) - controlButtonsWidth
+            }
+
+            isTitleAfterTaskBar = (spaceBeforeContextualTaskGroups >= spaceAfterContextualTaskGroups)
+            maxTitleWidth = max(spaceBeforeContextualTaskGroups, spaceAfterContextualTaskGroups)
         }
 
         val titlePlaceable = titleMeasurable.measure(
@@ -262,15 +302,7 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
             )
         )
 
-        val contextualTaskGroupIndicatorPlaceables =
-            contextualTaskGroupIndicatorMeasurables.mapIndexed { index, taskGroupMeasurable ->
-                val contextualTaskGroup = ribbon.contextualTaskGroups[index]
-                val span = contextualTaskGroupSpans.find { it.ribbonContextualTaskGroup == contextualTaskGroup }!!
-                taskGroupMeasurable.measure(Constraints.fixed(width = span.endX - span.startX, height = height))
-            }
-
         layout(width = width, height = height) {
-            val ltr = (layoutDirection == LayoutDirection.Ltr)
 
             if (iconPlaceable == null) {
                 val taskbarX = if (ltr) 0 else width - taskbarPlaceable.measuredWidth
@@ -294,13 +326,24 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
                 }
                 iconPlaceable.place(iconX, (height - iconPlaceable.measuredHeight) / 2)
                 taskbarPlaceable.place(taskbarX, (height - taskbarPlaceable.measuredHeight) / 2)
-                titlePlaceable.place(titleX, (height - titlePlaceable.measuredHeight) / 2)
+                if (isTitleAfterTaskBar) {
+                    titlePlaceable.place(titleX, (height - titlePlaceable.measuredHeight) / 2)
+                }
             }
 
             for ((index, contextualTaskGroupIndicatorPlaceable) in contextualTaskGroupIndicatorPlaceables.withIndex()) {
                 val contextualTaskGroup = ribbon.contextualTaskGroups[index]
                 val span = contextualTaskGroupSpans.find { it.ribbonContextualTaskGroup == contextualTaskGroup }!!
                 contextualTaskGroupIndicatorPlaceable.placeRelative(span.startX - contextualTaskGroupOffsetX, 0)
+            }
+            if (!isTitleAfterTaskBar) {
+                if (ltr) {
+                    titlePlaceable.place(contextualTaskGroupMaxX,
+                        (height - titlePlaceable.measuredHeight) / 2)
+                } else {
+                    titlePlaceable.place((width - contextualTaskGroupMaxX) - titlePlaceable.measuredWidth,
+                        (height - titlePlaceable.measuredHeight) / 2)
+                }
             }
         }
     }
