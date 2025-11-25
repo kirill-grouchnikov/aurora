@@ -67,6 +67,7 @@ import org.pushingpixels.aurora.window.ribbon.*
 import java.awt.*
 import java.awt.event.*
 import javax.swing.JFrame
+import javax.swing.JRootPane
 import javax.swing.SwingUtilities
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -921,6 +922,39 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
     }
 }
 
+private class AWTRibbonInputHandler(
+    density: Density,
+    window: Window,
+    rootPane: JRootPane,
+    lastCursor: MutableState<Cursor?>
+) : AWTInputHandler(density, window, rootPane, lastCursor) {
+
+    @OptIn(AuroraInternalApi::class)
+    override fun mouseReleased(pointInWindow: Point, w: Window) {
+        KeyTipTracker.hideAllKeyTips()
+        super.mouseReleased(pointInWindow, w)
+    }
+
+    @OptIn(AuroraInternalApi::class)
+    override fun mousePressed(pointInWindow: Point, w: Window) {
+        KeyTipTracker.hideAllKeyTips()
+        super.mousePressed(pointInWindow, w)
+    }
+
+    @OptIn(AuroraInternalApi::class)
+    override fun mouseDragged(pointInWindow: Point, w: Window, ev: MouseEvent) {
+        KeyTipTracker.hideAllKeyTips()
+        super.mouseDragged(pointInWindow, w, ev)
+    }
+
+    @OptIn(AuroraInternalApi::class)
+    override fun mouseClicked(pointInWindow: Point, w: Window) {
+        KeyTipTracker.hideAllKeyTips()
+        super.mouseClicked(pointInWindow, w)
+    }
+}
+
+
 @OptIn(AuroraInternalApi::class)
 @Composable
 fun AuroraApplicationScope.AuroraRibbonWindow(
@@ -990,13 +1024,12 @@ fun AuroraApplicationScope.AuroraRibbonWindow(
 
         LaunchedEffect(Unit) {
             val lastCursor = mutableStateOf(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
-            val awtInputHandler = AWTInputHandler(
+            val awtInputHandler = AWTRibbonInputHandler(
                 density = density.value,
                 window = window,
                 rootPane = window.rootPane,
                 lastCursor = lastCursor
             )
-
             Toolkit.getDefaultToolkit().addAWTEventListener(
                 awtInputHandler,
                 AWTEvent.MOUSE_EVENT_MASK or AWTEvent.MOUSE_MOTION_EVENT_MASK

@@ -43,10 +43,10 @@ private enum class CursorState {
 }
 
 /**
- * MouseInputHandler is responsible for handling resize/moving of the Window. It sets the cursor
+ * AWTInputHandler is responsible for handling resize/moving of the Window. It sets the cursor
  * directly on the Window when then mouse moves over a hot spot.
  */
-internal class AWTInputHandler(
+internal open class AWTInputHandler(
     val density: Density,
     val window: Window,
     val rootPane: JRootPane,
@@ -107,6 +107,7 @@ internal class AWTInputHandler(
                 MouseEvent.MOUSE_PRESSED -> mousePressed(pointInWindow, window)
                 MouseEvent.MOUSE_RELEASED -> mouseReleased(pointInWindow, window)
                 MouseEvent.MOUSE_DRAGGED -> mouseDragged(pointInWindow, window, event)
+                MouseEvent.MOUSE_CLICKED -> mouseClicked(pointInWindow, window)
                 MouseEvent.MOUSE_MOVED -> mouseMoved(pointInWindow, window)
             }
         }
@@ -120,7 +121,7 @@ internal class AWTInputHandler(
         }
     }
 
-    private fun mousePressed(pointInWindow: Point, w: Window) {
+    internal open fun mousePressed(pointInWindow: Point, w: Window) {
         //println("mousePressed!")
         isMousePressed = true
         val dragWindowOffset: Point = pointInWindow
@@ -146,7 +147,7 @@ internal class AWTInputHandler(
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun mouseReleased(pointInWindow: Point, w: Window) {
+    internal open fun mouseReleased(pointInWindow: Point, w: Window) {
         //println("mouseReleased!")
         @Suppress("SENSELESS_COMPARISON")
         if ((dragCursor != 0) && (w != null) && !w.isValid) {
@@ -228,7 +229,7 @@ internal class AWTInputHandler(
         }
     }
 
-    private fun mouseDragged(pointInWindow: Point, w: Window, ev: MouseEvent) {
+    internal open fun mouseDragged(pointInWindow: Point, w: Window, ev: MouseEvent) {
         //println("mouseDragged!")
         val pt: Point = pointInWindow
         if (isMovingWindow) {
@@ -288,6 +289,9 @@ internal class AWTInputHandler(
                 }
             }
         }
+    }
+
+    internal open fun mouseClicked(pointInWindow: Point, w: Window) {
     }
 
     private var cursorState: CursorState = CursorState.Nil
