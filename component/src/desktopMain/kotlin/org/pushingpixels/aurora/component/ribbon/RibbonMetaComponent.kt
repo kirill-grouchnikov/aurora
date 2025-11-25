@@ -342,15 +342,19 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                             fullWidth / 2.0f
                         }
                     }
+                    println(originalProjection.ribbonComponentPresentationModel.keyTip + ":" + bandRow)
+                    val adjustedAnchor = if (bandRow == RibbonBandRow.None) {
+                        // Not in a ribbon band, which means we're in the task bar
+                        Offset(if (layoutDirection == LayoutDirection.Ltr) fullWidth.toFloat() else 0.0f, height.toFloat())
+                    } else {
+                        // In a ribbon band
+                        Offset(componentMid, height / 2.0f)
+                    }
                     KeyTipTracker.trackKeyTipOffset(
                         originalProjection,
                         originalProjection.ribbonComponentPresentationModel.keyTip,
                         originalProjection.enabled.invoke(),
-                        getAdjustedAnchor(
-                            anchor = Offset(componentMid, height / 2.0f),
-                            row = bandRow,
-                            rowHeight = bandRowHeight
-                        ),
+                        adjustedAnchor,
                         null,
                         keyTipChainRoot,
                         null

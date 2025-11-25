@@ -37,6 +37,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLayoutInfo
 import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
+import org.pushingpixels.aurora.component.projection.ComboBoxProjection
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.*
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
@@ -484,7 +485,12 @@ private fun TaskbarContent(
             }
 
             is RibbonTaskbarComponent -> {
-                element.componentProjection.reproject(modifier = Modifier)
+                RibbonMetaComponentProjection(
+                    projection = element.componentProjection,
+                    enabled = { true },
+                    ribbonComponentPresentationModel = RibbonComponentPresentationModel(
+                        keyTip = taskbarKeyTipPolicy.getContentKeyTip(contentIndex++))
+                ).project(modifier = Modifier)
             }
         }
     }
