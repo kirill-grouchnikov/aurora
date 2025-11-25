@@ -546,7 +546,6 @@ internal fun RibbonPrimaryBar(
     }
 }
 
-
 private val RibbonTaskToggle: CommandButtonPresentationState =
     object : CommandButtonPresentationState("RibbonTaskToggle") {
         override fun createLayoutManager(
