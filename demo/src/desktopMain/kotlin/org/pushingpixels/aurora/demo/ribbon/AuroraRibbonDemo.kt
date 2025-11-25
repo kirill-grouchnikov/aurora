@@ -59,6 +59,7 @@ import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.auroraBackground
+import org.pushingpixels.aurora.theming.dustCoffeeSkin
 import org.pushingpixels.aurora.theming.geminiSkin
 import org.pushingpixels.aurora.window.AuroraRibbonWindow
 import org.pushingpixels.aurora.window.auroraApplication
@@ -76,7 +77,7 @@ fun main() = auroraApplication {
         position = WindowPosition.Aligned(Alignment.TopCenter),
         size = DpSize(windowBounds.width.dp, 600.dp)
     )
-    var skin by remember { mutableStateOf(geminiSkin()) }
+    var skin by remember { mutableStateOf(dustCoffeeSkin()) }
     val resourceBundle by remember(applicationLocale) {
         derivedStateOf {
             ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
@@ -377,6 +378,12 @@ fun main() = auroraApplication {
             RibbonTaskbarCommand(
                 CommandButtonProjection(
                     contentModel = builder.pasteCommand,
+                    presentationModel = CommandButtonPresentationModel()
+                )
+            ),
+            RibbonTaskbarCommand(
+                CommandButtonProjection(
+                    contentModel = builder.cutCommand,
                     presentationModel = CommandButtonPresentationModel()
                 )
             ),
