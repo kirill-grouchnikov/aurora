@@ -1529,7 +1529,7 @@ internal fun <M : BaseCommandMenuContentModel,
         }
 
         if (popupMenu == null) {
-            if (isDisplayingActionKeyTip && !layoutInfo.actionClickArea.isEmpty) {
+            if ((presentationModel.actionKeyTip != null) && !layoutInfo.actionClickArea.isEmpty) {
                 KeyTipTracker.trackKeyTipOffset(
                     originalProjection,
                     presentationModel.actionKeyTip!!,
@@ -1548,7 +1548,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     null
                 )
             }
-            if (isDisplayingPopupKeyTip && !layoutInfo.popupClickArea.isEmpty) {
+            if ((presentationModel.popupKeyTip != null) && !layoutInfo.popupClickArea.isEmpty) {
                 KeyTipTracker.trackKeyTipOffset(
                     originalProjection,
                     presentationModel.popupKeyTip!!,
