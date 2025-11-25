@@ -60,6 +60,7 @@ the [Ephemeral](https://github.com/kirill-grouchnikov/ephemeral) design system. 
   * [All component projections](docs/component/ComponentProjections.md)
 * Revisiting commands
   * [More on commands](docs/component/MoreCommands.md)
+  * [Color selector command](docs/component/ColorSelectorCommand.md)
   * [Custom command projections](docs/component/CustomCommandProjections.md)
 * More components
   * [Command strips](docs/component/CommandStrip.md)

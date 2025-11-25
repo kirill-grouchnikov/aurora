@@ -80,4 +80,4 @@ Let's expand on these concepts by showing all the moving pieces that participate
 
 ### Next
 
-Continue to the [custom command button projections](CustomCommandProjections.md).
+Continue to the [color selector command](ColorSelectorCommand.md).

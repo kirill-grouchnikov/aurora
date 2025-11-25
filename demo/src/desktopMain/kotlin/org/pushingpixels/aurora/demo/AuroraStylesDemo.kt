@@ -353,6 +353,21 @@ fun DemoStyleCanvas(
 }
 
 @Composable
+fun DemoStyleCanvas(
+    modifier: Modifier,
+    color: Color,
+) {
+    Canvas(modifier = modifier) {
+        drawRect(
+            color = color,
+            topLeft = Offset.Zero,
+            size = size,
+            style = Fill
+        )
+    }
+}
+
+@Composable
 fun AuroraApplicationScope.DemoStyleContent(
     onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle

@@ -232,8 +232,7 @@ fun AuroraApplicationScope.ColorSelectorDemoContent(
 
         DemoStyleCanvas(
             modifier = Modifier.height(200.dp).fillMaxWidth(),
-            topColor = color.value,
-            bottomColor = color.value
+            color = color.value,
         )
     }
 }
