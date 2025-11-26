@@ -83,7 +83,10 @@ private class TaskbarExpandCommandButtonPresentationModel(
     BaseCommandButtonPresentationModel {
     override val presentationState = CommandButtonPresentationState.Small
     override val backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat
-    override val contentPadding: PaddingValues = PaddingValues(horizontal = 2.dp, vertical = 4.dp)
+    override val contentPadding: PaddingValues =
+        PaddingValues(start = 2.dp, end = 2.dp,
+            top = CommandButtonSizingConstants.CompactButtonContentPadding.calculateTopPadding(),
+            bottom = CommandButtonSizingConstants.CompactButtonContentPadding.calculateBottomPadding())
     override val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null
     override val horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Center
     override val iconDimension: DpSize? = null

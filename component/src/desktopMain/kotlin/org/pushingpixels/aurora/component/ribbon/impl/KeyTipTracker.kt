@@ -25,20 +25,16 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.Paragraph
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.resolveDefaults
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.jetbrains.skia.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraRect
@@ -232,6 +228,7 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = resolveDefaults(LocalTextStyle.current, layoutDirection)
     val fontFamilyResolver = LocalFontFamilyResolver.current
+    val textMeasurer = rememberTextMeasurer(cacheSize = 50)
 
     val visibilityState by KeyTipTracker.uiVisibleFlow.collectAsState()
     val chainDepth by KeyTipTracker.uiChainDepth.collectAsState()
@@ -246,6 +243,7 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
                             tracked,
                             textStyle,
                             density,
+                            textMeasurer,
                             fontFamilyResolver,
                             layoutDirection,
                             insets,
@@ -327,6 +325,7 @@ internal fun DrawScope.drawKeyTip(
     keyTipInfo: KeyTipTracker.KeyTipLink,
     textStyle: TextStyle,
     density: Density,
+    textMeasurer: TextMeasurer,
     fontFamilyResolver: FontFamily.Resolver,
     layoutDirection: LayoutDirection,
     insets: Dp,
@@ -335,10 +334,6 @@ internal fun DrawScope.drawKeyTip(
     tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     painters: AuroraPainters
 ) {
-    val keyTipFont = Font(Typeface.makeEmpty()).also {
-        it.size *= density.density
-    }
-
     val leftPadding = KeyTipPaddingValues.calculateLeftPadding(layoutDirection)
     val topPadding = KeyTipPaddingValues.calculateTopPadding()
 
@@ -357,7 +352,6 @@ internal fun DrawScope.drawKeyTip(
     val tipSizingInfo = getKeyTipSize(keyTipInfo.keyTip, textStyle, density, fontFamilyResolver, layoutDirection)
     val tipWidth = tipSizingInfo.first.width
     val tipHeight = tipSizingInfo.first.height
-    val baseline = tipSizingInfo.second
 
     val fullOffsetX = keyTipInfo.screenRect.x + keyTipInfo.anchor.x - tipWidth / 2 - insets.toPx()
     val fullOffsetY = keyTipInfo.screenRect.y + keyTipInfo.anchor.y - tipHeight / 2 - insets.toPx()
@@ -394,25 +388,15 @@ internal fun DrawScope.drawKeyTip(
             outlineSupplier = KeyTipOutlineSuppler,
             colorTokens = colorTokens)
 
-        this.drawIntoCanvas { canvas ->
-            val nativeCanvas = canvas.nativeCanvas
-            nativeCanvas.drawTextLine(
-                line = TextLine.make(
-                    text = keyTipInfo.keyTip,
-                    font = keyTipFont
-                ),
-                x = leftPadding.toPx(),
-                y = topPadding.toPx() + baseline,
-                paint = Paint().also { skiaPaint ->
-                    skiaPaint.color4f = Color4f(
-                        r = colorTokens.onContainer.red,
-                        g = colorTokens.onContainer.green,
-                        b = colorTokens.onContainer.blue,
-                        a = colorTokens.onContainer.alpha
-                    )
-                }
-            )
-        }
+        drawText(
+            textMeasurer = textMeasurer,
+            text = keyTipInfo.keyTip,
+            topLeft = Offset(leftPadding.toPx(), topPadding.toPx()),
+            style = textStyle.copy(color = colorTokens.onContainer),
+            overflow = TextOverflow.Visible,
+            softWrap = false,
+            maxLines = 1,
+        )
     }
 }
 

@@ -47,6 +47,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.*
 import kotlinx.coroutines.*
@@ -1946,6 +1947,7 @@ private fun CommandButtonKeyTip(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = resolveDefaults(LocalTextStyle.current, layoutDirection)
     val fontFamilyResolver = LocalFontFamilyResolver.current
+    val textMeasurer = rememberTextMeasurer(cacheSize = 10)
 
     Box {
         Canvas(modifier = Modifier.matchParentSize()) {
@@ -1962,6 +1964,7 @@ private fun CommandButtonKeyTip(
                 ),
                 textStyle = textStyle,
                 density = density,
+                textMeasurer = textMeasurer,
                 fontFamilyResolver = fontFamilyResolver,
                 layoutDirection = layoutDirection,
                 insets = 0.dp,
