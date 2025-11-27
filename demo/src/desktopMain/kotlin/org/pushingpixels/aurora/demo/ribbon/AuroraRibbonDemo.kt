@@ -213,7 +213,7 @@ fun main() = auroraApplication {
     val pageLayoutTask = RibbonTask(
         title = resourceBundle.getString("PageLayout.textTaskTitle"),
         bands = listOf(clipboardBand, quickStylesBand, fontBand, documentBand, findBand),
-        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.CollapseFromLast,
+        resizeSequencingPolicy = CoreRibbonResizeSequencingPolicies.RoundRobin,
         keyTip = "P",
         isActive = (ribbonState.selectedTask == Task.PageLayout),
         onClick = { ribbonState = ribbonState.copy(selectedTask = Task.PageLayout) }
@@ -644,7 +644,7 @@ internal class RibbonBuilder(
     val popupCommand1 = Command(
         text = mf.format(arrayOf("1")),
         icon = ColorSolidIcon(Color(red = 0x80, green = 0xDE, blue = 0xEA)),
-        action = { println("Test menu item 1 activated") }
+        action = { println("Test menu item 1 activated") },
     )
     val popupCommand2 = Command(
         text = mf.format(arrayOf("2")),
@@ -1090,11 +1090,11 @@ internal class RibbonBuilder(
                                 textClick = TextClick.Action
                             ),
                             secondaryOverlays = mapOf(
-                                popupCommand1 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "1"),
-                                popupCommand2 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "2"),
-                                popupCommand3 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "3"),
-                                popupCommand4 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "4"),
-                                popupCommand5 to BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "5"),
+                                popupCommand1 to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "1"),
+                                popupCommand2 to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "2"),
+                                popupCommand3 to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "3"),
+                                popupCommand4 to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "4"),
+                                popupCommand5 to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "5"),
                             )
                         ) at PresentationPriority.Top,
                         CommandButtonProjection(
