@@ -200,12 +200,18 @@ fun main() = auroraApplication {
         richTooltip = RichTooltip(title = resourceBundle.getString("Fonts.tooltip.title")),
     )
 
+    val fontSizeComboBoxContentModel = ComboBoxContentModel(
+        items = FontSize.entries,
+        selectedItem = ribbonState.fontSize,
+        onTriggerItemSelectedChange = {
+            ribbonState = ribbonState.copy(fontSize = it)
+            println("New font size selection -> $it")
+        }
+    )
+
     val fontBand = builder.getFontBand(
         fontFamilyComboBoxContentModel = fontFamilyComboBoxContentModel,
-        selectedFontSize = ribbonState.fontSize,
-        onFontSizeSelected = {
-            ribbonState = ribbonState.copy(fontSize = it)
-        }
+        fontSizeComboBoxContentModel = fontSizeComboBoxContentModel,
     )
     val documentBand = builder.getDocumentBand(
         selectedSaveLocation = ribbonState.documentSaveLocation,
@@ -407,6 +413,12 @@ fun main() = auroraApplication {
                 ComboBoxProjection(
                     contentModel = fontFamilyComboBoxContentModel,
                     presentationModel = ComboBoxPresentationModel(displayConverter = { it.name }),
+                )
+            ),
+            RibbonTaskbarComponent(
+                ComboBoxProjection(
+                    contentModel = fontSizeComboBoxContentModel,
+                    presentationModel = ComboBoxPresentationModel(displayConverter = { it.fontSize.toString() }),
                 )
             ),
             // Add the same gallery we have in the first ribbon task to the taskbar, configuring
@@ -1274,18 +1286,8 @@ internal class RibbonBuilder(
 
     fun getFontBand(
         fontFamilyComboBoxContentModel: ComboBoxContentModel<FontFamily>,
-        selectedFontSize: FontSize,
-        onFontSizeSelected: (FontSize) -> Unit,
+        fontSizeComboBoxContentModel: ComboBoxContentModel<FontSize>,
     ): FlowRibbonBand {
-
-        val fontSizeComboBoxContentModel = ComboBoxContentModel(
-            items = FontSize.entries,
-            selectedItem = selectedFontSize,
-            onTriggerItemSelectedChange = {
-                onFontSizeSelected(it)
-                println("New font size selection -> $it")
-            }
-        )
 
         val indentLeft = Command(
             text = "",

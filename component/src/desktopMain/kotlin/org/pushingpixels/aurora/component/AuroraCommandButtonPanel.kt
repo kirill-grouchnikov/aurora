@@ -448,8 +448,7 @@ internal fun getPreferredCommandPopupMenuPanelSize(
             presentationModel.contentPadding.calculateBottomPadding()).value * density.density
 
     // Account for scroll bar. For now the assumption is that it's always showing
-    val extraSpaceForScrollBar = (ScrollBarSizingConstants.DefaultScrollBarThickness +
-            ScrollBarSizingConstants.DefaultScrollBarMargin).value * density.density
+    val extraSpaceForScrollBar = ScrollBarSizingConstants.DefaultScrollBarSize.value * density.density
     panelWidth += extraSpaceForScrollBar
 
     return Size(panelWidth, panelHeight)
