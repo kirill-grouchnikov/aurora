@@ -137,7 +137,12 @@ fun main() = auroraApplication {
     val styleGalleryInlineProjection = RibbonGalleryProjection(
         contentModel = styleGalleryContentModel,
         presentationModel = styleGalleryInlineMetaPresentationModel,
-        inlineState = ribbonState.documentStyleGalleryInlineState
+        inlineState = ribbonState.documentStyleGalleryInlineState,
+        secondaryOverlays = mapOf(
+            builder.menuSaveSelection to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SS"),
+            builder.menuClearSelection to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SC"),
+            builder.applyStyles to BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "SA"),
+        )
     )
 
     val styleGalleryTaskbarMetaPresentationModel = RibbonGalleryPresentationModel(
