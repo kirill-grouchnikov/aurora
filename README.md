@@ -70,6 +70,19 @@ the [Ephemeral](https://github.com/kirill-grouchnikov/ephemeral) design system. 
 * Miscellaneous
   * [Context menus](docs/component/ContextMenu.md)
   * [All custom modifiers](docs/component/Modifiers.md)
+* Ribbon
+  * [Overview](RibbonOverview.md)
+  * [API skeleton](RibbonApiSkeleton.md)
+  * [Working with command projections](RibbonBandCommandProjections.md)
+  * [Working with component projections](RibbonBandComponentProjections.md)
+  * [Working with galleries](RibbonBandGalleries.md)
+  * [What happens when you resize the ribbon](RibbonResizing.md)
+  * [Application menu](RibbonApplicationMenu.md)
+  * [Anchored commands](RibbonAnchoredCommands.md)
+  * [Contextual task groups](RibbonContextualTaskGroups.md)
+  * [Taskbar](RibbonTaskbar.md)
+  * [Global contextual listener](RibbonContextualListener.md)
+
 
 ### SVG transcoding
 
