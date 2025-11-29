@@ -87,7 +87,7 @@ private fun build(ribbon: Ribbon, vararg commands: Command): CommandMenuContentM
 
 The first is the command to minimize / restore the ribbon, using a `MutableState`-backed boolean that is passed as `isMinimized` property to the `Ribbon` data class. The second is a placeholder command to open a custom UI for deep configuration of the entire ribbon content - that is left to the particular application needs.
 
-Here is our global contextual menu shown when the user right-clicks on one of the command buttons in the taskbar:
+Here is our global contextual menu shown when the user right-clicks one of the comboboxes in the taskbar:
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/ribbon/taskbar/taskbar-contextualmenu-remove.png" width="1363" border=0/>
 
@@ -95,4 +95,4 @@ and the taskbar updated after "Remove from taskbar" menu command has been activa
 
 <img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/ribbon/taskbar/taskbar-contextualmenu-removed.png" width="1363" border=0/>
 
-Here you can see how the available taskbar space is now enough to host additional command buttons and the checkbox that were previously displayed in the overflow, even removing the need for overflow since the entire taskbar content fits into the available space.
+Here you can see how the available taskbar space is now enough to host additional content (a combobox and a command button) that were previously displayed in the overflow, even removing the need for overflow since the entire taskbar content fits into the available space.
