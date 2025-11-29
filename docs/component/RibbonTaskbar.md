@@ -119,21 +119,23 @@ When the [root keytip level](RibbonKeytips.md) is shown, the ribbon displays key
 The `RibbonTaskbarKeyTipPolicy` defines the keytip policy. It has the following methods:
 
 ```kotlin
-/**
- * Returns the keytip for the task bar content (command, component, gallery, menu link)
- * at the specified index.
- *
- * @param contentIndex Index of the task bar content. Content index starts at 1.
- * @return Keytip for the specified content.
- */
-String getContentKeyTip(int contentIndex);
+interface RibbonTaskbarKeyTipPolicy {
+    /**
+     * Returns the keytip for the task bar content (command, component, gallery, menu link)
+     * at the specified index.
+     *
+     * @param contentIndex Index of the task bar content. Content index starts at 1.
+     * @return Keytip for the specified content.
+     */
+    fun getContentKeyTip(contentIndex: Int): String
 
-/**
- * Returns the keytip for the overflow button of the task bar.
- *
- * @return Keytip for the overflow button of the task bar.
- */
-String getOverflowButtonKeyTip();
+    /**
+     * Returns the keytip for the overflow button of the task bar.
+     *
+     * @return Keytip for the overflow button of the task bar.
+     */
+    val overflowButtonKeyTip: String
+}
 ```
 
 The default `DefaultRibbonTaskbarKeyTipPolicy` implementation of this interface has the following logic:

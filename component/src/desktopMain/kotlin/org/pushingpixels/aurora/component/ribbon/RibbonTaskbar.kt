@@ -49,7 +49,7 @@ interface RibbonTaskbarKeyTipPolicy {
     val overflowButtonKeyTip: String
 }
 
-class DefaultRibbonTaskbarKeyTipPolicy : RibbonTaskbarKeyTipPolicy {
+object DefaultRibbonTaskbarKeyTipPolicy : RibbonTaskbarKeyTipPolicy {
     override val overflowButtonKeyTip = "00"
 
     override fun getContentKeyTip(contentIndex: Int): String {
@@ -64,7 +64,5 @@ class DefaultRibbonTaskbarKeyTipPolicy : RibbonTaskbarKeyTipPolicy {
                 LETTERS[contentIndex % LETTERS.length]
     }
 
-    companion object {
-        private const val LETTERS = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    }
+    private const val LETTERS = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 }
