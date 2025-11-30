@@ -836,6 +836,7 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
 
                 val keyChar: Char = event.keyChar
                 if (Character.isLetter(keyChar) || Character.isDigit(keyChar)) {
+                    println("Pressed $keyChar")
                     KeyTipTracker.handleKeyPress(keyChar)
                 }
 
@@ -845,6 +846,7 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
                     }
                     val hadPopups: Boolean = AuroraPopupManager.isShowingPopups()
                     AuroraPopupManager.hidePopups(null)
+                    println("Pressed ALT / F10")
                     if (hadPopups || KeyTipTracker.isShowingKeyTips()) {
                         KeyTipTracker.hideAllKeyTips()
                     } else {
@@ -852,6 +854,7 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
                     }
                 }
                 if (event.keyCode == KeyEvent.VK_ESCAPE) {
+                    println("Pressed ESCAPE")
                     // Hide last shown popup
                     AuroraPopupManager.hideLastPopup()
                     // Dismiss currently shown key tip chain
@@ -863,6 +866,7 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
                     // Traversal of ribbon tasks while keytips are showing
                     when (event.keyCode) {
                         KeyEvent.VK_LEFT -> {
+                            println("Pressed LEFT")
                             val selectedIndex = ribbon.tasks.indexOfFirst { it == ribbon.getSelectedTask() }
                             if (selectedIndex > 0) {
                                 ribbon.tasks[selectedIndex - 1].onClick.invoke()
@@ -870,6 +874,7 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
                         }
 
                         KeyEvent.VK_RIGHT -> {
+                            println("Pressed RIGHT")
                             val selectedIndex = ribbon.tasks.indexOfFirst { it == ribbon.getSelectedTask() }
                             if ((selectedIndex >= 0) && (selectedIndex < (ribbon.tasks.size - 1))) {
                                 ribbon.tasks[selectedIndex + 1].onClick.invoke()

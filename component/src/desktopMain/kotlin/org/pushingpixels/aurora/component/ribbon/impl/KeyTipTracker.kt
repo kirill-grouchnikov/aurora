@@ -63,7 +63,13 @@ object KeyTipTracker {
     data class KeyTipChain(
         val links: List<KeyTipLink>,
         val keyTipLookupIndex: Int = 0,
-    )
+    ) {
+        fun dump() {
+            println("Chain with ${this.links.size} links")
+            println("\t ${this.links.joinToString { it.keyTip }}")
+        }
+
+    }
 
     private val keyTips: MutableList<KeyTipLink> = arrayListOf()
 
@@ -142,10 +148,7 @@ object KeyTipTracker {
     internal fun getKeyTips(): List<KeyTipLink> = keyTips
 
     internal fun getCurrentlyShownKeyTipChain(): KeyTipChain? {
-        if (keyTipChains.isEmpty()) {
-            return null
-        }
-        return keyTipChains.last()
+        return currentlyShownKeyTipChain.value
     }
 
     fun isShowingKeyTips(): Boolean = keyTipChains.isNotEmpty()
@@ -155,33 +158,37 @@ object KeyTipTracker {
             return
         }
         keyTipChains.removeLast()
+        currentlyShownKeyTipChain.value = if (keyTipChains.isNotEmpty()) keyTipChains.last() else null
         chainRoots.removeLast()
         visibleFlow.value = keyTipChains.isNotEmpty()
-        chainDepth.value--
-        println("Going back one at new depth ${chainDepth.value}")
+        chainDepthFlow.value--
+        println("Going back one at new depth ${chainDepthFlow.value}")
     }
 
     fun hideAllKeyTips() {
         keyTipChains.clear()
+        currentlyShownKeyTipChain.value = null
         chainRoots.clear()
         visibleFlow.value = false
-        chainDepth.value = 0
-        println("Cleared all key tips, depth ${chainDepth.value}")
+        chainDepthFlow.value = 0
+        println("Cleared all key tips, depth ${chainDepthFlow.value}")
     }
 
     fun showRootKeyTipChain(ribbon: Ribbon) {
-        keyTipChains.add(KeyTipChain(links = keyTips.filter { it.chainRoot == ribbon }))
+        val rootKeyTipChain = KeyTipChain(links = keyTips.filter { it.chainRoot == ribbon })
+        keyTipChains.add(rootKeyTipChain)
+        currentlyShownKeyTipChain.value = rootKeyTipChain
         chainRoots.add(ribbon)
         visibleFlow.value = true
-        chainDepth.value = 1
+        chainDepthFlow.value = 1
     }
 
     fun handleKeyPress(char: Char) {
         if (!isShowingKeyTips()) {
             return
         }
-        println("Processing $char at depth ${chainDepth.value}")
-        val currChain = getCurrentlyShownKeyTipChain()!!
+        println("Processing $char at depth ${chainDepthFlow.value}")
+        val currChain = currentlyShownKeyTipChain.value!!
         val currChainRoot = chainRoots.last()
 
         // Go over the key tip links and see if there is an exact match
@@ -195,10 +202,12 @@ object KeyTipTracker {
                     // TODO - activate the element
                     if (link.traversal != null) {
                         val nextChainRoot = link.traversal
-                        keyTipChains.add(KeyTipChain(links = keyTips.filter { it.chainRoot == nextChainRoot }))
+                        val newKeyTipChain = KeyTipChain(links = keyTips.filter { it.chainRoot == nextChainRoot })
+                        keyTipChains.add(newKeyTipChain)
+                        currentlyShownKeyTipChain.value = newKeyTipChain
                         chainRoots.add(nextChainRoot)
-                        chainDepth.value++
-                        println("Going to next root ${nextChainRoot.javaClass.simpleName} at new depth ${chainDepth.value}")
+                        chainDepthFlow.value++
+                        println("Going to next root ${nextChainRoot.javaClass.simpleName} at new depth ${chainDepthFlow.value}")
                     } else {
                         // Match found and activated, and no further traversal available
                         // a) Dismiss all key tip chains
@@ -213,8 +222,10 @@ object KeyTipTracker {
 
     private val visibleFlow = MutableStateFlow(false)
     val uiVisibleFlow: StateFlow<Boolean> = visibleFlow
-    private val chainDepth = MutableStateFlow(0)
-    val uiChainDepth: StateFlow<Int> = chainDepth
+    private val chainDepthFlow = MutableStateFlow(0)
+    val uiChainDepthFlow: StateFlow<Int> = chainDepthFlow
+    private val currentlyShownKeyTipChain = MutableStateFlow<KeyTipTracker.KeyTipChain?>(null)
+    val uiCurrentlyShownKeyTipChain = currentlyShownKeyTipChain
 }
 
 @AuroraInternalApi
@@ -231,13 +242,14 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
     val textMeasurer = rememberTextMeasurer(cacheSize = 50)
 
     val visibilityState by KeyTipTracker.uiVisibleFlow.collectAsState()
-    val chainDepth by KeyTipTracker.uiChainDepth.collectAsState()
+    val chainDepth by KeyTipTracker.uiChainDepthFlow.collectAsState()
+    val currentlyShownKeyTipChain by KeyTipTracker.uiCurrentlyShownKeyTipChain.collectAsState()
 
     if (visibilityState && (chainDepth > 0)) {
         Canvas(modifier = modifier) {
-            val currentlyShownKeyTipChain = KeyTipTracker.getCurrentlyShownKeyTipChain()
             if (currentlyShownKeyTipChain != null) {
-                for (tracked in currentlyShownKeyTipChain.links) {
+                currentlyShownKeyTipChain!!.dump()
+                for (tracked in currentlyShownKeyTipChain!!.links) {
                     if (!tracked.screenRect.isEmpty) {
                         drawKeyTip(
                             tracked,
