@@ -2119,7 +2119,7 @@ internal class RibbonBuilder(
         secondaryStates[amEntrySend] = RibbonApplicationMenuButtonPresentationStates.RibbonAppMenuSecondaryLevel
         overlays[amEntrySend] = BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "D")
 
-        overlays[amEntryExit] = BaseCommandButtonPresentationModel.Overlay(popupKeyTip = "X")
+        overlays[amEntryExit] = BaseCommandButtonPresentationModel.Overlay(actionKeyTip = "X")
 
         val applicationMenu = RibbonApplicationMenuContentModel(
             groups = listOf(
