@@ -56,6 +56,7 @@ object KeyTipTracker {
         val projection: Projection<ContentModel, PresentationModel>,
         val keyTip: String,
         val isEnabled: Boolean,
+        val isInPopup: Boolean,
         var screenRect: AuroraRect,
         var anchor: Offset,
         var onActivated: (() -> Unit)?,
@@ -81,15 +82,48 @@ object KeyTipTracker {
 
     private val chainRoots: MutableList<Any> = arrayListOf()
 
+    fun trackKeyTipInPopup(
+        projection: Projection<ContentModel, PresentationModel>,
+        keyTip: String,
+        isEnabled: Boolean,
+        onActivated: (() -> Unit)?,
+        chainRoot: Any?,
+        chainRootKeyTip: String?,
+        traversal: Any?,
+    ) {
+        //println("Tracking $keyTip from $chainRootKeyTip")
+        val existing = keyTips.find {
+            (it.projection == projection) && (it.keyTip == keyTip)
+        }
+        if (existing == null) {
+            keyTips.add(
+                KeyTipLink(
+                    projection = projection,
+                    keyTip = keyTip,
+                    isEnabled = isEnabled,
+                    isInPopup = true,
+                    screenRect = AuroraRect(0.0f, 0.0f, 0.0f, 0.0f),
+                    anchor = Offset.Zero,
+                    onActivated = onActivated,
+                    chainRoot = chainRoot,
+                    chainRootKeyTip = chainRootKeyTip,
+                    traversal = traversal,
+                )
+            )
+        }
+    }
+
     fun trackKeyTipBase(
         projection: Projection<ContentModel, PresentationModel>,
         keyTip: String,
         isEnabled: Boolean,
+        isInPopup: Boolean,
         screenRect: AuroraRect,
         chainRoot: Any?,
         chainRootKeyTip: String?,
         traversal: Any?,
     ) {
+        //println("Tracking $keyTip from $chainRootKeyTip")
         val existing = keyTips.find {
             (it.projection == projection) && (it.keyTip == keyTip)
         }
@@ -101,6 +135,7 @@ object KeyTipTracker {
                     projection = projection,
                     keyTip = keyTip,
                     isEnabled = isEnabled,
+                    isInPopup = isInPopup,
                     screenRect = screenRect,
                     anchor = Offset.Zero,
                     onActivated = null,
@@ -116,6 +151,7 @@ object KeyTipTracker {
         projection: Projection<ContentModel, PresentationModel>,
         keyTip: String,
         isEnabled: Boolean,
+        isInPopup: Boolean,
         anchor: Offset,
         onActivated: (() -> Unit)?,
         chainRoot: Any?,
@@ -134,6 +170,7 @@ object KeyTipTracker {
                     projection = projection,
                     keyTip = keyTip,
                     isEnabled = isEnabled,
+                    isInPopup = isInPopup,
                     screenRect = AuroraRect(0.0f, 0.0f, 0.0f, 0.0f),
                     anchor = anchor.copy(),
                     onActivated = onActivated,
@@ -211,16 +248,16 @@ object KeyTipTracker {
                         coroutineScope.launch {
                             delay(100)
                             val nextChainRoot = link.traversal
-                            println("All tips = ${keyTips.size} elements")
-                            println("\t ${keyTips.joinToString { it.keyTip + "[" + it.chainRoot!!.javaClass.simpleName + "@" + it.chainRoot.hashCode() + "]" }}")
+//                            println("All tips = ${keyTips.size} elements")
+//                            println("\t ${keyTips.joinToString { it.keyTip + "[" + it.chainRoot!!.javaClass.simpleName + "@" + it.chainRoot.hashCode() + "]" }}")
 
                             val newKeyTipChain = KeyTipChain(links = keyTips.filter { it.chainRootKeyTip == link.keyTip })
                             keyTipChains.add(newKeyTipChain)
                             currentlyShownKeyTipChain.value = newKeyTipChain
                             chainRoots.add(nextChainRoot)
                             chainDepthFlow.value++
-                            println("Going to next root ${nextChainRoot.javaClass.simpleName}@${nextChainRoot.hashCode()} at new depth ${chainDepthFlow.value}")
-                            newKeyTipChain.dump()
+//                            println("Going to next root ${nextChainRoot.javaClass.simpleName}@${nextChainRoot.hashCode()} at new depth ${chainDepthFlow.value}")
+//                            newKeyTipChain.dump()
                         }
                     } else {
                         // Match found and activated, and no further traversal available
@@ -262,9 +299,9 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
     if (visibilityState && (chainDepth > 0)) {
         Canvas(modifier = modifier) {
             if (currentlyShownKeyTipChain != null) {
-                currentlyShownKeyTipChain!!.dump()
+//                currentlyShownKeyTipChain!!.dump()
                 for (tracked in currentlyShownKeyTipChain!!.links) {
-                    if (!tracked.screenRect.isEmpty) {
+                    if (!tracked.screenRect.isEmpty && !tracked.isInPopup) {
                         drawKeyTip(
                             tracked,
                             textStyle,

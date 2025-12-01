@@ -492,6 +492,7 @@ internal fun RibbonTaskToggleButton(
                 originalProjection,
                 presentationModel.actionKeyTip!!,
                 command.isActionEnabled,
+                false,
                 layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo),
                 {
                     coroutineScope.launch {
@@ -666,6 +667,7 @@ private class RibbonTaskToggleButtonLocator(
                     projection,
                     projection.presentationModel.actionKeyTip!!,
                     projection.contentModel.isActionEnabled,
+                    false,
                     bounds,
                     keyTipChainRoot,
                     keyTipChainRootKeyTip,
@@ -677,6 +679,7 @@ private class RibbonTaskToggleButtonLocator(
                     projection,
                     projection.presentationModel.popupKeyTip!!,
                     projection.contentModel.isSecondaryEnabled,
+                    false,
                     bounds,
                     keyTipChainRoot,
                     keyTipChainRootKeyTip,

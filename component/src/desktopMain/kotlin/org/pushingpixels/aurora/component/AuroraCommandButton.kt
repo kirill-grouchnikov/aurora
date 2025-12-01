@@ -899,26 +899,14 @@ internal fun <M : BaseCommandMenuContentModel,
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
     val coroutineScope = rememberCoroutineScope()
 
-    val trackBounds = LocalRibbonTrackBounds.current && (popupMenu == null)
-    val trackKeyTips = LocalRibbonTrackKeyTips.current && (popupMenu == null)
+    val trackBounds = LocalRibbonTrackBounds.current
+    val trackKeyTips = LocalRibbonTrackKeyTips.current
     val keyTipChainRoot = LocalRibbonKeyTipChainRoot.current
     val keyTipChainRootKeyTip = LocalRibbonKeyTipChainRootKeyTip.current
     val bandRowHeight = LocalRibbonBandRowHeight.current
     val bandRow = LocalRibbonBandRow.current
 
-    val currentlyShownKeyTipChain = KeyTipTracker.getCurrentlyShownKeyTipChain()
-    val isDisplayingActionKeyTip = (presentationModel.actionKeyTip != null) &&
-            (currentlyShownKeyTipChain?.links?.any { link ->
-                (link.projection == originalProjection)
-                        && (link.keyTip == presentationModel.actionKeyTip)
-            } == true)
-    val isDisplayingPopupKeyTip = (presentationModel.popupKeyTip != null) &&
-            (currentlyShownKeyTipChain?.links?.any { link ->
-                (link.projection == originalProjection)
-                        && (link.keyTip == presentationModel.popupKeyTip)
-            } == true)
-
-        // These two track the offset of action and popup area relative in
+    // These two track the offset of action and popup area relative in
     // the overall bounding box of the command button. To paint continuous
     // visuals of the command button across two separate Box composables,
     // we paint each as full-size area, along with clipping to the specific
@@ -978,6 +966,41 @@ internal fun <M : BaseCommandMenuContentModel,
         }
     }
 
+    if (popupMenu != null) {
+        if (presentationModel.actionKeyTip != null) {
+            KeyTipTracker.trackKeyTipInPopup(
+                originalProjection,
+                presentationModel.actionKeyTip!!,
+                command.isActionEnabled,
+                { command.action?.invoke() },
+                keyTipChainRoot,
+                keyTipChainRootKeyTip,
+                null,
+            )
+        }
+        if (presentationModel.popupKeyTip != null) {
+            KeyTipTracker.trackKeyTipInPopup(
+                originalProjection,
+                presentationModel.popupKeyTip!!,
+                command.isSecondaryEnabled,
+                { onActivatePopup.invoke() },
+                keyTipChainRoot,
+                keyTipChainRootKeyTip,
+                null,
+            )
+        }
+    }
+
+    val allKeyTips = KeyTipTracker.getKeyTips()
+    val isDisplayingActionKeyTip = (presentationModel.actionKeyTip != null) &&
+        allKeyTips.any {
+            link -> (link.chainRootKeyTip == keyTipChainRootKeyTip)
+        }
+    val isDisplayingPopupKeyTip = (presentationModel.popupKeyTip != null) &&
+        allKeyTips.any {
+            link -> (link.chainRootKeyTip == keyTipChainRootKeyTip)
+        }
+
     Layout(
         modifier = modifier.commandButtonLocator(
             originalProjection,
@@ -990,6 +1013,7 @@ internal fun <M : BaseCommandMenuContentModel,
             keyTipChainRoot,
             keyTipChainRootKeyTip,
             command.secondaryContentModel,
+            popupMenu != null,
         ),
         content = {
             val modifierAction: Modifier
@@ -1537,6 +1561,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     originalProjection,
                     presentationModel.actionKeyTip!!,
                     command.isActionEnabled,
+                    false,
                     getAdjustedAnchor(
                         anchor = layoutManager.getActionKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo),
                         row = bandRow,
@@ -1557,6 +1582,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     originalProjection,
                     presentationModel.popupKeyTip!!,
                     command.isSecondaryEnabled,
+                    false,
                     getAdjustedAnchor(
                         anchor = layoutManager.getPopupKeyTipAnchorCenterPoint(command, presentationModel, layoutInfo),
                         row = bandRow,
@@ -1960,6 +1986,7 @@ private fun CommandButtonKeyTip(
                     projection = originalProjection,
                     keyTip = keyTip,
                     isEnabled = isEnabled,
+                    isInPopup = false,
                     screenRect = AuroraRect(0.0f, 0.0f, buttonSize.width.toFloat(), buttonSize.height.toFloat()),
                     anchor = Offset(size.width / 2.0f, size.height / 2.0f),
                     onActivated = null,
@@ -1994,6 +2021,7 @@ private class CommandButtonLocator(
     val keyTipChainRoot: Any?,
     val keyTipChainRootKeyTip: String?,
     val popupKeyTipTraversal: Any?,
+    val isInPopup: Boolean
 ) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -2021,10 +2049,11 @@ private class CommandButtonLocator(
                     originalProjection,
                     presentationModel.actionKeyTip!!,
                     command.isActionEnabled,
+                    isInPopup,
                     bounds,
                     keyTipChainRoot,
                     keyTipChainRootKeyTip,
-                    null
+                    null,
                 )
             }
             if (presentationModel.popupKeyTip != null) {
@@ -2032,6 +2061,7 @@ private class CommandButtonLocator(
                     originalProjection,
                     presentationModel.popupKeyTip!!,
                     command.isSecondaryEnabled,
+                    isInPopup,
                     bounds,
                     keyTipChainRoot,
                     keyTipChainRootKeyTip,
@@ -2055,6 +2085,7 @@ private fun Modifier.commandButtonLocator(
     keyTipChainRoot: Any?,
     keyTipChainRootKeyTip: String?,
     popupKeyTipTraversal: Any?,
+    isInPopup: Boolean,
 ) = this.then(
     CommandButtonLocator(
         originalProjection,
@@ -2066,6 +2097,7 @@ private fun Modifier.commandButtonLocator(
         trackKeyTips,
         keyTipChainRoot,
         keyTipChainRootKeyTip,
-        popupKeyTipTraversal
+        popupKeyTipTraversal,
+        isInPopup,
     )
 )

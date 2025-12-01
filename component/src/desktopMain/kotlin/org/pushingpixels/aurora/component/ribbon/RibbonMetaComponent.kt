@@ -318,6 +318,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                         originalProjection,
                         originalProjection.ribbonComponentPresentationModel.keyTip,
                         originalProjection.enabled.invoke(),
+                        false,
                         getAdjustedAnchor(
                             anchor = Offset(captionMid.toFloat(), height / 2.0f),
                             row = bandRow,
@@ -326,7 +327,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                         null,
                         keyTipChainRoot,
                         keyTipChainRootKeyTip,
-                        null
+                        null,
                     )
                 } else {
                     val componentMid = if (layoutDirection == LayoutDirection.Ltr) {
@@ -355,6 +356,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                         originalProjection,
                         originalProjection.ribbonComponentPresentationModel.keyTip,
                         originalProjection.enabled.invoke(),
+                        false,
                         adjustedAnchor,
                         null,
                         keyTipChainRoot,
@@ -422,6 +424,7 @@ private class MetaComponentLocator(
                     projection,
                     projection.presentationModel.ribbonComponentPresentationModel.keyTip!!,
                     projection.enabled.invoke(),
+                    false,
                     bounds,
                     keyTipChainRoot,
                     keyTipChainRootKeyTip,
