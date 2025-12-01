@@ -992,14 +992,18 @@ internal fun <M : BaseCommandMenuContentModel,
     }
 
     val allKeyTips = KeyTipTracker.getKeyTips()
-    val isDisplayingActionKeyTip = (presentationModel.actionKeyTip != null) &&
-        allKeyTips.any {
-            link -> (link.chainRootKeyTip == keyTipChainRootKeyTip)
-        }
-    val isDisplayingPopupKeyTip = (presentationModel.popupKeyTip != null) &&
-        allKeyTips.any {
-            link -> (link.chainRootKeyTip == keyTipChainRootKeyTip)
-        }
+    val isDisplayingActionKeyTip =
+        (presentationModel.actionKeyTip != null) &&
+                KeyTipTracker.uiVisibleFlow.value &&
+                allKeyTips.any { link ->
+                    (link.chainRootKeyTip == keyTipChainRootKeyTip)
+                }
+    val isDisplayingPopupKeyTip =
+        (presentationModel.popupKeyTip != null) &&
+                KeyTipTracker.uiVisibleFlow.value &&
+                allKeyTips.any { link ->
+                    (link.chainRootKeyTip == keyTipChainRootKeyTip)
+                }
 
     Layout(
         modifier = modifier.commandButtonLocator(

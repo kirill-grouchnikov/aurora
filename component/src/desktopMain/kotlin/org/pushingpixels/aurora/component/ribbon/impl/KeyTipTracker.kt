@@ -38,11 +38,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.AuroraPopupManager
-import org.pushingpixels.aurora.common.AuroraRect
-import org.pushingpixels.aurora.common.isEmpty
-import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.Projection
@@ -70,11 +66,10 @@ object KeyTipTracker {
         val links: List<KeyTipLink>,
         val keyTipLookupIndex: Int = 0,
     ) {
-        fun dump() {
-            println("Chain with ${this.links.size} links")
-            println("\t ${this.links.joinToString { it.keyTip }}")
-        }
-
+//        fun dump() {
+//            println("Chain with ${this.links.size} links")
+//            println("\t ${this.links.joinToString { it.keyTip }}")
+//        }
     }
 
     private val keyTips: MutableList<KeyTipLink> = arrayListOf()
@@ -208,7 +203,7 @@ object KeyTipTracker {
         chainRoots.removeLast()
         visibleFlow.value = keyTipChains.isNotEmpty()
         chainDepthFlow.value--
-        println("Going back one at new depth ${chainDepthFlow.value}")
+        //println("Going back one at new depth ${chainDepthFlow.value}")
     }
 
     fun hideAllKeyTips() {
@@ -217,7 +212,7 @@ object KeyTipTracker {
         chainRoots.clear()
         visibleFlow.value = false
         chainDepthFlow.value = 0
-        println("Cleared all key tips, depth ${chainDepthFlow.value}")
+        //println("Cleared all key tips, depth ${chainDepthFlow.value}")
     }
 
     fun showRootKeyTipChain(ribbon: Ribbon) {
@@ -233,7 +228,7 @@ object KeyTipTracker {
         if (!isShowingKeyTips()) {
             return
         }
-        println("Processing $char at depth ${chainDepthFlow.value}")
+        //println("Processing $char at depth ${chainDepthFlow.value}")
         val currChain = currentlyShownKeyTipChain.value!!
         val currChainRoot = chainRoots.last()
 
