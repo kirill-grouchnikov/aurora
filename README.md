@@ -76,6 +76,7 @@ the [Ephemeral](https://github.com/kirill-grouchnikov/ephemeral) design system. 
   * [Working with command projections](RibbonBandCommandProjections.md)
   * [Working with component projections](RibbonBandComponentProjections.md)
   * [Working with galleries](RibbonBandGalleries.md)
+  * [Keytips](RibbonKeytips.md)
   * [What happens when you resize the ribbon](RibbonResizing.md)
   * [Application menu](RibbonApplicationMenu.md)
   * [Anchored commands](RibbonAnchoredCommands.md)
