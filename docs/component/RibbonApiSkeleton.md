@@ -37,7 +37,7 @@ val pageLayoutTask = RibbonTask(
 )
 ```
 
-The `AbstractRibbonBand` is the base seaked interface for ribbon bands. There are two types of bands - general and flow.
+The `AbstractRibbonBand` is the base sealed interface for ribbon bands. There are two types of bands - general and flow.
 
 A flow band can be seen in the screenshot above in the middle of the ribbon - the "Font" band with two comboboxes in the first row and three [command strips](CommandStrip.md) in the second row. When the ribbon is resized and horizontal space is reduced, a flow band can switch from two-row to three-row layout.
 
