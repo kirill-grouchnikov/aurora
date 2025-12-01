@@ -350,7 +350,11 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                         Offset(if (layoutDirection == LayoutDirection.Ltr) fullWidth.toFloat() else 0.0f, height.toFloat())
                     } else {
                         // In a ribbon band
-                        Offset(componentMid, height / 2.0f)
+                        getAdjustedAnchor(
+                            anchor = Offset(componentMid, height / 2.0f),
+                            row = bandRow,
+                            rowHeight = bandRowHeight
+                        )
                     }
                     KeyTipTracker.trackKeyTipOffset(
                         originalProjection,
