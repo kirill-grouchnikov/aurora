@@ -55,12 +55,10 @@ import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequenci
 import org.pushingpixels.aurora.demo.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
-import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.auroraBackground
 import org.pushingpixels.aurora.theming.dustCoffeeSkin
-import org.pushingpixels.aurora.theming.geminiSkin
 import org.pushingpixels.aurora.window.AuroraRibbonWindow
 import org.pushingpixels.aurora.window.auroraApplication
 import java.awt.GraphicsEnvironment
