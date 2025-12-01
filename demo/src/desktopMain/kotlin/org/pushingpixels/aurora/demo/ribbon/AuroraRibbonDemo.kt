@@ -739,28 +739,28 @@ internal class RibbonBuilder(
         text = "",
         icon = format_justify_left(),
         isActionToggle = true,
-        action = {}
+        action = { println("Align Left activated") }
     )
 
     val alignCenterCommand = Command(
         text = "",
         icon = format_justify_center(),
         isActionToggle = true,
-        action = {}
+        action = { println("Align Center activated") }
     )
 
     val alignRightCommand = Command(
         text = "",
         icon = format_justify_right(),
         isActionToggle = true,
-        action = {}
+        action = { println("Align Right activated") }
     )
 
     val alignFillCommand = Command(
         text = "",
         icon = format_justify_fill(),
         isActionToggle = true,
-        action = {}
+        action = { println("Align Fill activated") }
     )
 
     val styleBoldCommand = Command(

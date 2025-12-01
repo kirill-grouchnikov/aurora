@@ -235,9 +235,9 @@ object KeyTipTracker {
         // Go over the key tip links and see if there is an exact match
         for (link in currChain.links) {
             val keyTipString = link.keyTip
-            // TODO - handle two-character tips
-            if (char.lowercaseChar() == keyTipString[0].lowercaseChar()) {
-                // Match!
+            if ((char.lowercaseChar() == keyTipString[currChain.keyTipLookupIndex].lowercaseChar()) &&
+                (keyTipString.length == (currChain.keyTipLookupIndex + 1))) {
+                // exact match
                 if (link.isEnabled) {
                     link.onActivated?.invoke()
                     if (link.traversal != null) {
@@ -263,6 +263,26 @@ object KeyTipTracker {
                         AuroraPopupManager.hidePopups(null)
                     }
                 }
+                return
+            }
+        }
+
+        // go over the key tip links and look for key tips that have
+        // the specified character as the prefix
+        if (currChain.keyTipLookupIndex == 0) {
+            val secondaryKeyTipChain = KeyTipChain(
+                links = currChain.links.filter {
+                    it.keyTip[0].lowercaseChar() == char.lowercaseChar()
+                },
+                keyTipLookupIndex = 1
+            )
+            coroutineScope.launch {
+                delay(100)
+//                        val nextChainRoot = link.traversal
+                keyTipChains.add(secondaryKeyTipChain)
+                currentlyShownKeyTipChain.value = secondaryKeyTipChain
+//                        chainRoots.add(chainRoots.)
+//                        chainDepthFlow.value++
             }
         }
     }
