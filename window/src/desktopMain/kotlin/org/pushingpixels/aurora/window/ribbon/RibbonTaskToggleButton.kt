@@ -284,6 +284,7 @@ internal fun RibbonTaskToggleButton(
 
     val trackBounds = LocalRibbonTrackBounds.current
     val keyTipChainRoot = LocalRibbonKeyTipChainRoot.current
+    val keyTipChainRootKeyTip = LocalRibbonKeyTipChainRootKeyTip.current
     val trackKeyTips = LocalRibbonTrackKeyTips.current
 
     Layout(
@@ -294,6 +295,7 @@ internal fun RibbonTaskToggleButton(
             trackBounds,
             trackKeyTips,
             keyTipChainRoot,
+            keyTipChainRootKeyTip,
             command.tag
         ),
         content = {
@@ -497,6 +499,7 @@ internal fun RibbonTaskToggleButton(
                     }
                 },
                 keyTipChainRoot,
+                keyTipChainRootKeyTip,
                 command.tag
             )
         }
@@ -635,6 +638,7 @@ private class RibbonTaskToggleButtonLocator(
     val trackBounds: Boolean,
     val trackKeyTips: Boolean,
     val keyTipChainRoot: Any?,
+    val keyTipChainRootKeyTip: String?,
     val keyTipTraversal: Any?,
 ) : OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -664,6 +668,7 @@ private class RibbonTaskToggleButtonLocator(
                     projection.contentModel.isActionEnabled,
                     bounds,
                     keyTipChainRoot,
+                    keyTipChainRootKeyTip,
                     keyTipTraversal
                 )
             }
@@ -674,6 +679,7 @@ private class RibbonTaskToggleButtonLocator(
                     projection.contentModel.isSecondaryEnabled,
                     bounds,
                     keyTipChainRoot,
+                    keyTipChainRootKeyTip,
                     keyTipTraversal
                 )
             }
@@ -690,6 +696,7 @@ private fun Modifier.ribbonTaskToggleButtonLocator(
     trackBounds: Boolean,
     trackKeyTips: Boolean,
     keyTipChainRoot: Any?,
+    keyTipChainRootKeyTip: String?,
     keyTipTraversal: Any?
 ) = this.then(
     RibbonTaskToggleButtonLocator(
@@ -699,6 +706,7 @@ private fun Modifier.ribbonTaskToggleButtonLocator(
         trackBounds,
         trackKeyTips,
         keyTipChainRoot,
+        keyTipChainRootKeyTip,
         keyTipTraversal
     )
 )

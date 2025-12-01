@@ -97,6 +97,7 @@ fun Modifier.auroraContextMenu(
                     toDismissPopupsOnActivation = presentationModel.toDismissOnCommandActivation,
                     popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                     popupAnchorBoundsProvider = null,
+                    popupOriginatorKeyTip = null,
                     overlays = overlays,
                     popupKind = AuroraPopupManager.PopupKind.Popup
                 )

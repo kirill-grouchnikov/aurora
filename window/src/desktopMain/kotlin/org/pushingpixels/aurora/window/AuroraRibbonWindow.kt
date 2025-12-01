@@ -665,6 +665,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
             RibbonBox(Modifier.fillMaxWidth()) {
                 CompositionLocalProvider(
                     LocalRibbonKeyTipChainRoot provides ribbon,
+                    LocalRibbonKeyTipChainRootKeyTip provides null,
                 ) {
                     Column(Modifier.fillMaxWidth().ribbonContextMenu(ribbon)) {
                         RibbonWindowTitlePane(
@@ -778,6 +779,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                 toDismissPopupsOnActivation = true,
                 popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
                 popupAnchorBoundsProvider = null,
+                popupOriginatorKeyTip = contentModelState.value.ribbonTask.keyTip,
                 overlays = mapOf(),
                 popupKind = AuroraPopupManager.PopupKind.Popup
             )
@@ -806,6 +808,7 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
 
     val skinColors = AuroraSkin.colors
     val neutralColorTokens = skinColors.getNeutralContainerTokens(DecorationAreaType.TitlePane)
+    val coroutineScope = rememberCoroutineScope()
 
     Box(
         Modifier
@@ -837,7 +840,7 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
                 val keyChar: Char = event.keyChar
                 if (Character.isLetter(keyChar) || Character.isDigit(keyChar)) {
                     println("Pressed $keyChar")
-                    KeyTipTracker.handleKeyPress(keyChar)
+                    KeyTipTracker.handleKeyPress(coroutineScope, keyChar)
                 }
 
                 if ((event.keyCode == KeyEvent.VK_ALT) || (event.keyCode == KeyEvent.VK_F10)) {
@@ -1184,6 +1187,7 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
                     toDismissPopupsOnActivation = true,
                     popupPlacementStrategy = PopupPlacementStrategy.Downward.HAlignStart,
                     popupAnchorBoundsProvider = null,
+                    popupOriginatorKeyTip = null,
                     overlays = emptyMap(),
                     popupKind = AuroraPopupManager.PopupKind.Popup
                 )

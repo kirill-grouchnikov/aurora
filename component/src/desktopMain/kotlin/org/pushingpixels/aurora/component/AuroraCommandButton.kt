@@ -902,7 +902,7 @@ internal fun <M : BaseCommandMenuContentModel,
     val trackBounds = LocalRibbonTrackBounds.current && (popupMenu == null)
     val trackKeyTips = LocalRibbonTrackKeyTips.current && (popupMenu == null)
     val keyTipChainRoot = LocalRibbonKeyTipChainRoot.current
-    //println("${originalProjection.javaClass.simpleName} : ${command.text} -> ${keyTipChainRoot?.javaClass?.simpleName}")
+    val keyTipChainRootKeyTip = LocalRibbonKeyTipChainRootKeyTip.current
     val bandRowHeight = LocalRibbonBandRowHeight.current
     val bandRow = LocalRibbonBandRow.current
 
@@ -964,6 +964,7 @@ internal fun <M : BaseCommandMenuContentModel,
                 toDismissPopupsOnActivation = presentationModel.toDismissPopupsOnActivation,
                 popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                 popupAnchorBoundsProvider = presentationModel.popupAnchorBoundsProvider,
+                popupOriginatorKeyTip = presentationModel.popupKeyTip,
                 overlays = secondaryOverlays,
                 popupKind = AuroraPopupManager.PopupKind.Popup
             )
@@ -987,6 +988,7 @@ internal fun <M : BaseCommandMenuContentModel,
             trackBounds,
             trackKeyTips,
             keyTipChainRoot,
+            keyTipChainRootKeyTip,
             command.secondaryContentModel,
         ),
         content = {
@@ -1546,6 +1548,7 @@ internal fun <M : BaseCommandMenuContentModel,
                         }
                     },
                     keyTipChainRoot,
+                    keyTipChainRootKeyTip,
                     null
                 )
             }
@@ -1565,6 +1568,7 @@ internal fun <M : BaseCommandMenuContentModel,
                         }
                     },
                     keyTipChainRoot,
+                    keyTipChainRootKeyTip,
                     command.secondaryContentModel
                 )
             }
@@ -1960,6 +1964,7 @@ private fun CommandButtonKeyTip(
                     anchor = Offset(size.width / 2.0f, size.height / 2.0f),
                     onActivated = null,
                     chainRoot = null,
+                    chainRootKeyTip = null,
                     traversal = { null }
                 ),
                 textStyle = textStyle,
@@ -1987,6 +1992,7 @@ private class CommandButtonLocator(
     val trackBounds: Boolean,
     val trackKeyTips: Boolean,
     val keyTipChainRoot: Any?,
+    val keyTipChainRootKeyTip: String?,
     val popupKeyTipTraversal: Any?,
 ) :
     OnGloballyPositionedModifier {
@@ -2017,6 +2023,7 @@ private class CommandButtonLocator(
                     command.isActionEnabled,
                     bounds,
                     keyTipChainRoot,
+                    keyTipChainRootKeyTip,
                     null
                 )
             }
@@ -2027,6 +2034,7 @@ private class CommandButtonLocator(
                     command.isSecondaryEnabled,
                     bounds,
                     keyTipChainRoot,
+                    keyTipChainRootKeyTip,
                     popupKeyTipTraversal
                 )
             }
@@ -2045,6 +2053,7 @@ private fun Modifier.commandButtonLocator(
     trackBounds: Boolean,
     trackKeyTips: Boolean,
     keyTipChainRoot: Any?,
+    keyTipChainRootKeyTip: String?,
     popupKeyTipTraversal: Any?,
 ) = this.then(
     CommandButtonLocator(
@@ -2056,6 +2065,7 @@ private fun Modifier.commandButtonLocator(
         trackBounds,
         trackKeyTips,
         keyTipChainRoot,
+        keyTipChainRootKeyTip,
         popupKeyTipTraversal
     )
 )

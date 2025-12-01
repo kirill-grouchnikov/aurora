@@ -42,6 +42,7 @@ import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuCommandPopupMenuPresentationModel
 import org.pushingpixels.aurora.component.ribbon.RibbonApplicationMenuContentModel
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonKeyTipChainRoot
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonKeyTipChainRootKeyTip
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerAppMenuLevel2
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
@@ -299,6 +300,7 @@ internal class RibbonApplicationMenuPopupHandler(
                                 toDismissPopupsOnActivation: Boolean,
                                 popupPlacementStrategy: PopupPlacementStrategy,
                                 popupAnchorBoundsProvider: (() -> Rect)?,
+                                popupOriginatorKeyTip: String?,
                                 overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
                                 popupKind: AuroraPopupManager.PopupKind
                             ): Window? {
@@ -359,6 +361,7 @@ internal class RibbonApplicationMenuPopupHandler(
         )
         CompositionLocalProvider(
             LocalRibbonKeyTipChainRoot provides level1Command?.secondaryContentModel,
+            LocalRibbonKeyTipChainRootKeyTip provides overlays[level1Command]?.popupKeyTip,
         ) {
             Column(modifier = modifier.padding(all = 1.0.dp)) {
                 if (level1Command?.secondaryContentModel != null) {
@@ -521,6 +524,7 @@ internal class RibbonApplicationMenuPopupHandler(
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
         popupAnchorBoundsProvider: (() -> Rect)?,
+        popupOriginatorKeyTip: String?,
         overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         popupKind: AuroraPopupManager.PopupKind
     ): Window? {
@@ -646,6 +650,7 @@ internal class RibbonApplicationMenuPopupHandler(
                     LocalTopWindowSize provides LocalTopWindowSize.current,
                     LocalSkinColors provides LocalSkinColors.current,
                     LocalRibbonKeyTipChainRoot provides contentModel.value,
+                    LocalRibbonKeyTipChainRootKeyTip provides popupOriginatorKeyTip,
                 ) {
                     val level1PanelWidthDp = (level1ContentLayoutInfo.fullSize.width / density.density).dp
                     val level2PanelWidthDp = presentationModel.level2PanelWidth

@@ -220,6 +220,7 @@ internal fun RibbonBands(ribbonTask: RibbonTask) {
         LocalRibbonBandRowHeight provides rowHeight,
         LocalRibbonBandRow provides RibbonBandRow.None,
         LocalRibbonKeyTipChainRoot provides ribbonTask,
+        LocalRibbonKeyTipChainRootKeyTip provides ribbonTask.keyTip,
     ) {
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
             SubcomposeLayout(

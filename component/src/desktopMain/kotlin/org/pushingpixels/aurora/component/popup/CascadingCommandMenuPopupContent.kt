@@ -34,6 +34,7 @@ import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonKeyTipChainRoot
+import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonKeyTipChainRootKeyTip
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
 import java.awt.*
@@ -94,6 +95,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
         popupAnchorBoundsProvider: (() -> Rect)?,
+        popupOriginatorKeyTip: String?,
         overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         popupKind: AuroraPopupManager.PopupKind
     ): Window? {
@@ -202,6 +204,7 @@ interface CascadingCommandMenuHandler<in M : BaseCommandMenuContentModel,
                     LocalTopWindowSize provides LocalTopWindowSize.current,
                     LocalSkinColors provides LocalSkinColors.current,
                     LocalRibbonKeyTipChainRoot provides contentModel.value,
+                    LocalRibbonKeyTipChainRootKeyTip provides popupOriginatorKeyTip,
                 ) {
                     Box(modifier = Modifier.fillMaxSize().background(fillColor)) {
                         generatePopupContent(

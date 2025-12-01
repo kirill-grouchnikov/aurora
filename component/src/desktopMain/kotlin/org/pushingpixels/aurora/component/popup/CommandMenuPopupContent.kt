@@ -65,6 +65,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
         toDismissPopupsOnActivation: Boolean,
         popupPlacementStrategy: PopupPlacementStrategy,
         popupAnchorBoundsProvider: (() -> Rect)?,
+        popupOriginatorKeyTip: String?,
         overlays: Map<Command, BaseCommandButtonPresentationModel.Overlay>,
         popupKind: AuroraPopupManager.PopupKind
     ): Window?

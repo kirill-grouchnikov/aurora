@@ -180,12 +180,13 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
     val trackBounds = LocalRibbonTrackBounds.current
     val trackKeyTips = LocalRibbonTrackKeyTips.current
     val keyTipChainRoot = LocalRibbonKeyTipChainRoot.current
+    val keyTipChainRootKeyTip = LocalRibbonKeyTipChainRootKeyTip.current
     val bandRowHeight = LocalRibbonBandRowHeight.current
     val bandRow = LocalRibbonBandRow.current
 
     Layout(
         modifier = if (trackBounds) {
-            modifier.metaComponentLocator(originalProjection, trackBounds, trackKeyTips, keyTipChainRoot)
+            modifier.metaComponentLocator(originalProjection, trackBounds, trackKeyTips, keyTipChainRoot, keyTipChainRootKeyTip)
         } else {
             modifier
         },
@@ -324,6 +325,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                         ),
                         null,
                         keyTipChainRoot,
+                        keyTipChainRootKeyTip,
                         null
                     )
                 } else {
@@ -356,6 +358,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
                         adjustedAnchor,
                         null,
                         keyTipChainRoot,
+                        keyTipChainRootKeyTip,
                         null
                     )
                 }
@@ -397,6 +400,7 @@ private class MetaComponentLocator(
     val trackBounds: Boolean,
     val trackKeyTips: Boolean,
     val keyTipChainRoot: Any?,
+    val keyTipChainRootKeyTip: String?,
 ) :
     OnGloballyPositionedModifier {
     override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
@@ -420,6 +424,7 @@ private class MetaComponentLocator(
                     projection.enabled.invoke(),
                     bounds,
                     keyTipChainRoot,
+                    keyTipChainRootKeyTip,
                     { null }
                 )
             }
@@ -433,7 +438,8 @@ private fun Modifier.metaComponentLocator(
     trackBounds: Boolean,
     trackKeyTips: Boolean,
     keyTipChainRoot: Any?,
-) = this.then(MetaComponentLocator(projection, trackBounds, trackKeyTips, keyTipChainRoot))
+    keyTipChainRootKeyTip: String?,
+) = this.then(MetaComponentLocator(projection, trackBounds, trackKeyTips, keyTipChainRoot, keyTipChainRootKeyTip))
 
 private val DefaultMetaComponentIconTextLayoutGap = 4.dp
 private val DefaultMetaComponentLayoutGap = 6.dp

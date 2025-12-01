@@ -33,8 +33,11 @@ import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraRect
@@ -57,7 +60,8 @@ object KeyTipTracker {
         var anchor: Offset,
         var onActivated: (() -> Unit)?,
         val chainRoot: Any?,
-        val traversal: Any?
+        val chainRootKeyTip: String?,
+        val traversal: Any?,
     )
 
     data class KeyTipChain(
@@ -83,6 +87,7 @@ object KeyTipTracker {
         isEnabled: Boolean,
         screenRect: AuroraRect,
         chainRoot: Any?,
+        chainRootKeyTip: String?,
         traversal: Any?,
     ) {
         val existing = keyTips.find {
@@ -100,6 +105,7 @@ object KeyTipTracker {
                     anchor = Offset.Zero,
                     onActivated = null,
                     chainRoot = chainRoot,
+                    chainRootKeyTip = chainRootKeyTip,
                     traversal = traversal,
                 )
             )
@@ -113,6 +119,7 @@ object KeyTipTracker {
         anchor: Offset,
         onActivated: (() -> Unit)?,
         chainRoot: Any?,
+        chainRootKeyTip: String?,
         traversal: Any?,
     ) {
         val existing = keyTips.find {
@@ -131,6 +138,7 @@ object KeyTipTracker {
                     anchor = anchor.copy(),
                     onActivated = onActivated,
                     chainRoot = chainRoot,
+                    chainRootKeyTip = chainRootKeyTip,
                     traversal = traversal,
                 )
             )
@@ -183,7 +191,7 @@ object KeyTipTracker {
         chainDepthFlow.value = 1
     }
 
-    fun handleKeyPress(char: Char) {
+    fun handleKeyPress(coroutineScope: CoroutineScope, char: Char) {
         if (!isShowingKeyTips()) {
             return
         }
@@ -199,15 +207,21 @@ object KeyTipTracker {
                 // Match!
                 if (link.isEnabled) {
                     link.onActivated?.invoke()
-                    // TODO - activate the element
                     if (link.traversal != null) {
-                        val nextChainRoot = link.traversal
-                        val newKeyTipChain = KeyTipChain(links = keyTips.filter { it.chainRoot == nextChainRoot })
-                        keyTipChains.add(newKeyTipChain)
-                        currentlyShownKeyTipChain.value = newKeyTipChain
-                        chainRoots.add(nextChainRoot)
-                        chainDepthFlow.value++
-                        println("Going to next root ${nextChainRoot.javaClass.simpleName} at new depth ${chainDepthFlow.value}")
+                        coroutineScope.launch {
+                            delay(100)
+                            val nextChainRoot = link.traversal
+                            println("All tips = ${keyTips.size} elements")
+                            println("\t ${keyTips.joinToString { it.keyTip + "[" + it.chainRoot!!.javaClass.simpleName + "@" + it.chainRoot.hashCode() + "]" }}")
+
+                            val newKeyTipChain = KeyTipChain(links = keyTips.filter { it.chainRootKeyTip == link.keyTip })
+                            keyTipChains.add(newKeyTipChain)
+                            currentlyShownKeyTipChain.value = newKeyTipChain
+                            chainRoots.add(nextChainRoot)
+                            chainDepthFlow.value++
+                            println("Going to next root ${nextChainRoot.javaClass.simpleName}@${nextChainRoot.hashCode()} at new depth ${chainDepthFlow.value}")
+                            newKeyTipChain.dump()
+                        }
                     } else {
                         // Match found and activated, and no further traversal available
                         // a) Dismiss all key tip chains

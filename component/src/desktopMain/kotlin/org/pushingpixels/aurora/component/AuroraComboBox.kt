@@ -431,6 +431,7 @@ internal fun <E> AuroraComboBox(
                         toDismissPopupsOnActivation = true,
                         popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                         popupAnchorBoundsProvider = null,
+                        popupOriginatorKeyTip = null,
                         overlays = emptyMap(),
                         popupKind = AuroraPopupManager.PopupKind.Popup
                     )
