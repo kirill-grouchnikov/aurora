@@ -42,6 +42,7 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraRect
 import org.pushingpixels.aurora.common.isEmpty
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.ContentModel
 import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.Projection
@@ -451,11 +452,13 @@ internal fun DrawScope.drawKeyTip(
             outlineSupplier = KeyTipOutlineSuppler,
             colorTokens = colorTokens)
 
+        val keyTipTextColor = if (!state.isDisabled) colorTokens.onContainer
+            else colorTokens.onContainer.withAlpha(colorTokens.onContainerDisabledAlpha)
         drawText(
             textMeasurer = textMeasurer,
             text = keyTipInfo.keyTip,
             topLeft = Offset(leftPadding.toPx(), topPadding.toPx()),
-            style = textStyle.copy(color = colorTokens.onContainer),
+            style = textStyle.copy(color = keyTipTextColor),
             overflow = TextOverflow.Visible,
             softWrap = false,
             maxLines = 1,
