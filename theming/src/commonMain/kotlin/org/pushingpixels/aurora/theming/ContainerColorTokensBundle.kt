@@ -499,7 +499,7 @@ class AuroraSkinColors {
      * @param neutralContainerTokens The neutral tokens to use in specified decoration areas.
      * @param areaTypes             Enumerates the area types that are affected by the parameters.
      * Each decoration area type will be painted by
-     * [RadianceDecorationPainter.paintDecorationArea]
+     * [AuroraDecorationPainter.paintDecorationArea]
      */
     fun registerAsDecorationArea(
         neutralContainerTokens: ContainerColorTokens,

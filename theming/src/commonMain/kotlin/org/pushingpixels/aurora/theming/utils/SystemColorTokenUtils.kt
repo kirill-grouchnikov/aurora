@@ -29,9 +29,8 @@ internal fun getSystemTokens(seed: Hct, containerConfiguration: ContainerConfigu
 
     return object : ContainerColorTokens {
         fun getColor(baseTone: Double, toneDelta: Double): Color {
-            var tone: Double = baseTone + toneDelta * containerConfiguration.surfaceRangeAmplitudeFactor
-            tone = min(100.0, tone)
-            tone = max(0.0, tone)
+            val tone =
+                (baseTone + toneDelta * containerConfiguration.surfaceRangeAmplitudeFactor).coerceIn(0.0, 100.0)
             return Color(palette.getHct(tone).toInt())
         }
 

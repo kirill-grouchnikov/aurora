@@ -141,7 +141,7 @@ private fun ContainerColorTokens.overlay(overlay: Color, overlayAmount: Float): 
 
 /**
  * Enumeration of available container types. Each entry corresponds to the matching container
- * color tokens passed to [ContainerColorTokensBundle].
+ * color tokens passed to [org.pushingpixels.aurora.theming.ContainerColorTokensBundle].
  */
 @AuroraInternalApi
 enum class ContainerType {
@@ -221,9 +221,9 @@ fun getContainerTokens(
 }
 
 /**
- * Returns the color tokens of the component.
+ * Returns the color tokens that match the passed parameters.
  *
- * @param component       Component.
+ * @param colors       Skin colors.
  * @param associationKind Association kind.
  * @param componentState  Component state.
  * @return Component color tokens.
@@ -243,9 +243,9 @@ fun getContainerTokens(
 }
 
 /**
- * Returns the color tokens of the component.
+ * Returns the color tokens that match the passed parameters.
  *
- * @param component       Component.
+ * @param colors       Skin colors.
  * @param associationKind Association kind.
  * @param componentState  Component state.
  * @return Component color tokens.
