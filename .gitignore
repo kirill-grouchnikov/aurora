@@ -9,4 +9,5 @@
 build/
 out/
 bin/
-drop/
+drop/*-SNAPSHOT/**
+
