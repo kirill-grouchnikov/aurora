@@ -17,7 +17,7 @@ gradlePlugin {
     plugins {
         create("org.pushing-pixels.aurora.tools.svgtranscoder.gradle") {
             id = "org.pushing-pixels.aurora.tools.svgtranscoder.gradle"
-            implementationClass = "org.pushingpixels.aurora.tools.svgtranscoder.gradle.AuroraSvgTranscoderGradlePluginKt"
+            implementationClass = "org.pushingpixels.aurora.tools.svgtranscoder.gradle.AuroraSvgTranscoderGradlePlugin"
         }
     }
 }

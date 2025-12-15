@@ -26,7 +26,7 @@ import org.pushingpixels.ephemeral.chroma.hct.Hct
  * @author Kirill Grouchnikov
  * @see org.pushingpixels.aurora.theming.DecorationAreaType
  * @see ContainerColorTokensAssociationKind
- * @see org.pushingpixels.aurora.theming.colortokens.AuroraSkinColors
+ * @see org.pushingpixels.aurora.theming.AuroraSkinColors
  */
 class ContainerColorTokensBundle {
     private val activeContainerTokens: ContainerColorTokens

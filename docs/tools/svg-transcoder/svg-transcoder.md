@@ -94,7 +94,7 @@ The following table summarizes the level of support for different SVG elements.
 
 ### Dependency versions for the Aurora SVG transcoder
 
-* For **2.0-SNAPSHOT**, use
+* For **2.0.0**, use
   * `batik-all-1.19.jar`
   * `xml-apis-1.4.01.jar`
   * `xml-apis-ext-1.3.04.jar`
