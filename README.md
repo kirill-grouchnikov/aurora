@@ -102,17 +102,17 @@ Aurora artifacts are available in the central Maven repository under `groupId=or
 
 ### Core artifacts
 
-* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-theming/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-theming)
+* [![Sonatype Central](https://maven-badges.sml.io/sonatype-central/org.pushing-pixels/aurora-theming/badge.svg?style=plastic&version=2.0.0)](https://central.sonatype.com/artifact/org.pushing-pixels/aurora-theming/2.0.0)
   `aurora-theming`
-* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-component/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-component)
+* [![Sonatype Central](https://maven-badges.sml.io/sonatype-central/org.pushing-pixels/aurora-component/badge.svg?style=plastic&version=2.0.0)](https://central.sonatype.com/artifact/org.pushing-pixels/aurora-component/2.0.0)
   `aurora-component`
-* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-window/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-window)
+* [![Sonatype Central](https://maven-badges.sml.io/sonatype-central/org.pushing-pixels/aurora-window/badge.svg?style=plastic&version=2.0.0)](https://central.sonatype.com/artifact/org.pushing-pixels/aurora-window/2.0.0)
   `aurora-window`
 
 ### Tools artifacts
 
-* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-tools-svg-transcoder/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-tools-svg-transcoder) `aurora-tools-svg-transcoder`
-* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-tools-svg-transcoder-gradle-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.pushing-pixels/aurora-tools-svg-transcoder-gradle-plugin) `aurora-tools-svg-transcoder-gradle-plugin`
+* [![Sonatype Central](https://maven-badges.sml.io/sonatype-central/org.pushing-pixels/aurora-tools-svg-transcoder/badge.svg?style=plastic&version=2.0.0)](https://central.sonatype.com/artifact/org.pushing-pixels/aurora-tools-svg-transcoder/2.0.0) `aurora-tools-svg-transcoder`
+* [![Sonatype Central](https://maven-badges.sml.io/sonatype-central/org.pushing-pixels/aurora-tools-svg-transcoder-gradle-plugin/badge.svg?style=plastic&version=2.0.0)](https://central.sonatype.com/artifact/org.pushing-pixels/aurora-tools-svg-transcoder-gradle-plugin/2.0.0) `aurora-tools-svg-transcoder-gradle-plugin`
 
 ### Snapshots
 
