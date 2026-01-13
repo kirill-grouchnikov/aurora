@@ -98,7 +98,7 @@ the [Ephemeral](https://github.com/kirill-grouchnikov/ephemeral) design system. 
 
 ## Aurora artifacts
 
-Aurora artifacts are available in the central Maven repository under `groupId=org.pushing-pixels`
+Aurora artifacts are available in the Maven Central repository under `groupId=org.pushing-pixels`
 
 ### Core artifacts
 
