@@ -14,7 +14,7 @@ kotlin {
     sourceSets {
         named("desktopMain") {
             dependencies {
-                api(compose.desktop.common)
+                api(libs.compose.desktop)
                 implementation(libs.batik)
             }
         }

@@ -12,7 +12,7 @@ buildscript {
     }
 
     dependencies {
-        classpath(libs.compose.desktop)
+        classpath(libs.compose.gradlePlugin)
         classpath(libs.kotlin.gradlePlugin)
         classpath(libs.dokka.gradlePlugin)
         classpath(libs.versionchecker.gradlePlugin)

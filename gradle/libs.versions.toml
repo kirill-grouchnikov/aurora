@@ -15,12 +15,17 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [libraries]
-compose-desktop = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
+compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka"}
 batik = { module = "org.apache.xmlgraphics:batik-all", version.ref = "batik" }
 ephemeral-chroma = { module = "org.pushing-pixels:ephemeral-chroma-java", version.ref = "ephemeral_chroma" }
+
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
+compose-desktop = { module = "org.jetbrains.compose.desktop:desktop", version.ref = "compose" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
 
 versionchecker-gradlePlugin = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "versionchecker" }
 mavenpublish-gradlePlugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenpublish" }

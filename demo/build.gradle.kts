@@ -10,7 +10,7 @@ kotlin {
         named("desktopMain") {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation(compose.components.resources)
+                implementation(libs.compose.components.resources)
                 implementation(project(":common"))
                 implementation(project(":component"))
                 implementation(project(":theming"))

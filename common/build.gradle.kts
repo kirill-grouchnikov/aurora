@@ -1,5 +1,3 @@
-import org.jetbrains.compose.compose
-
 plugins {
     kotlin("multiplatform")
     alias(libs.plugins.jetbrainsCompose)
@@ -14,13 +12,13 @@ kotlin {
     sourceSets {
         named("commonMain") {
             dependencies {
-                api(compose.runtime)
-                api(compose.foundation)
+                api(libs.compose.runtime)
+                api(libs.compose.foundation)
             }
         }
         named("desktopMain") {
             dependencies {
-                api(compose.desktop.common)
+                api(libs.compose.desktop)
             }
         }
     }

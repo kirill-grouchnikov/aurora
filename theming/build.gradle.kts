@@ -12,15 +12,15 @@ kotlin {
     sourceSets {
         named("commonMain") {
             dependencies {
-                api(compose.runtime)
-                api(compose.foundation)
+                api(libs.compose.runtime)
+                api(libs.compose.foundation)
                 implementation(project(":common"))
                 implementation(libs.ephemeral.chroma)
             }
         }
         named("desktopMain") {
             dependencies {
-                api(compose.desktop.common)
+                api(libs.compose.desktop)
                 implementation(project(":common"))
                 implementation(libs.ephemeral.chroma)
             }
