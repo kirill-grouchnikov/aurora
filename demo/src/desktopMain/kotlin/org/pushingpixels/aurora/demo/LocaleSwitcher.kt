@@ -27,9 +27,7 @@ import java.awt.Window
 import java.util.*
 
 @Composable
-fun AuroraLocaleScope.AuroraLocaleSwitcher(
-    resourceBundle: ResourceBundle
-) {
+fun AuroraLocaleScope.AuroraLocaleSwitcher(resourceBundle: ResourceBundle) {
     val englishLocale = Command(
         text = resourceBundle.getString("Language.english"),
         icon = us(),
@@ -60,9 +58,7 @@ fun AuroraLocaleScope.AuroraLocaleSwitcher(
         text = resourceBundle.getString("Language.select"),
         icon = preferences_desktop_locale(),
         secondaryContentModel = CommandMenuContentModel(
-            group = CommandGroup(
-                commands = arrayListOf(englishLocale, hebrewLocale)
-            )
+            group = CommandGroup(commands = arrayListOf(englishLocale, hebrewLocale))
         )
     )
     CommandButtonProjection(
