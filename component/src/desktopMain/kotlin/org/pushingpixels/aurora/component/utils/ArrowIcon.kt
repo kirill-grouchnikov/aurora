@@ -133,8 +133,6 @@ internal fun drawArrow(
             gp.lineTo(width - 1 - cushion, 0.5f * height)
             gp.lineTo(cushion, height - cushion)
         }
-
-        else -> {}
     }
 
     with(drawScope) {
@@ -204,8 +202,6 @@ internal fun drawDoubleArrow(
             gp.lineTo(width - 1 - cushion, 0.5f * height)
             gp.lineTo(gap + cushion, height - cushion)
         }
-
-        else -> {}
     }
 
     with(drawScope) {

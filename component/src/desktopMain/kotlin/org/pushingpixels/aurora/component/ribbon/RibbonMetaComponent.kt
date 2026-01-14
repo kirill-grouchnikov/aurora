@@ -108,7 +108,7 @@ class RibbonMetaComponentProjection<out C : ContentModel, out P : PresentationMo
         }
         if (hasCaption) {
             result += getLabelPreferredSingleLineWidth(
-                contentModel = LabelContentModel(text = ribbonComponentPresentationModel.caption!!),
+                contentModel = LabelContentModel(text = ribbonComponentPresentationModel.caption),
                 presentationModel = LabelPresentationModel(
                     contentPadding = PaddingValues(0.dp),
                     textMaxLines = 1
@@ -194,7 +194,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
             if (hasIcon) {
                 IconProjection(
                     contentModel = IconContentModel(
-                        icon = ribbonComponentPresentationModel.icon!!,
+                        icon = ribbonComponentPresentationModel.icon,
                         enabled = enabled.invoke()
                     ),
                     presentationModel = IconPresentationModel(
@@ -208,7 +208,7 @@ internal fun <C : ContentModel, P : PresentationModel> RibbonMetaComponent(
             if (hasCaption) {
                 LabelProjection(
                     contentModel = LabelContentModel(
-                        text = ribbonComponentPresentationModel.caption!!,
+                        text = ribbonComponentPresentationModel.caption,
                         enabled = enabled.invoke()
                     ),
                     presentationModel = LabelPresentationModel(

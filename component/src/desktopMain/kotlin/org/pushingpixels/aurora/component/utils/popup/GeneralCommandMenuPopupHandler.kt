@@ -90,7 +90,7 @@ object GeneralCommandMenuPopupHandler : CascadingCommandMenuHandler<
         // Compute the size of the popup content, accounting for the panel
         val panelPreferredSize =
             if (hasButtonPanel) getPreferredCommandPopupMenuPanelSize(
-                contentModel = menuContentModel.panelContentModel!!,
+                contentModel = menuContentModel.panelContentModel,
                 presentationModel = menuPresentationModel.panelPresentationModel!!,
                 buttonLayoutManager = panelButtonLayoutManager!!,
                 buttonShaper = buttonShaper,

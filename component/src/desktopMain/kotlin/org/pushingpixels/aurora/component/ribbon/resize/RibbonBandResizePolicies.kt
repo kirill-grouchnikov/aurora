@@ -263,7 +263,7 @@ object CoreRibbonResizePolicies {
 
         val titleLabelWidth = if (hasTitle)
             getLabelPreferredSingleLineWidth(
-                contentModel = LabelContentModel(text = group.title!!),
+                contentModel = LabelContentModel(text = group.title),
                 presentationModel = LabelPresentationModel(
                     contentPadding = PaddingValues(0.dp),
                     textMaxLines = 1
