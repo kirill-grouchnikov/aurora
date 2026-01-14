@@ -34,7 +34,7 @@ fun AuroraLocaleScope.AuroraLocaleSwitcher(
         text = resourceBundle.getString("Language.english"),
         icon = us(),
         action = {
-            applicationLocale = Locale("en", "US")
+            applicationLocale = Locale.US
             // Only necessary for embedded Swing content
             for (window in Window.getWindows()) {
                 window.applyComponentOrientation(
@@ -47,7 +47,7 @@ fun AuroraLocaleScope.AuroraLocaleSwitcher(
         text = resourceBundle.getString("Language.hebrew"),
         icon = il(),
         action = {
-            applicationLocale = Locale("iw", "IL")
+            applicationLocale = Locale.forLanguageTag("iw-IL")
             // Only necessary for embedded Swing content
             for (window in Window.getWindows()) {
                 window.applyComponentOrientation(
