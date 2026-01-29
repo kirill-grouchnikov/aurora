@@ -99,7 +99,9 @@ fun AuroraWindowScope.ChatFrameContent(
                         contentModel = IconContentModel(icon = chat_black_24dp()),
                         presentationModel = IconPresentationModel(iconDimension = DpSize(16.dp, 16.dp))
                     ).project()
-                    AuroraWindowTitlePaneTitleText(title = "Chat")
+                    AuroraWindowTitlePaneTitleText(
+                        titleTextConfiguration = AuroraWindowTitlePaneConfigurations.DefaultTitlePaneTitleTextConfiguration(),
+                        title = "Chat")
 
                     Spacer(modifier = Modifier.weight(1.0f))
 

@@ -768,11 +768,11 @@ enum class OutlineKind {
     Surface,
     Outline
 }
+
 enum class InsetKind {
     Surface,
     Content
 }
-
 
 /**
  * Enumerates available background appearance strategies.

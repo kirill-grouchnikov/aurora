@@ -18,8 +18,11 @@ package org.pushingpixels.aurora.demo
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -31,7 +34,9 @@ import org.pushingpixels.aurora.component.model.CommandGroup
 import org.pushingpixels.aurora.component.model.CommandMenuContentModel
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.IconFilterStrategy
+import org.pushingpixels.aurora.theming.SystemContainerType
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
@@ -84,6 +89,10 @@ fun main() = auroraApplication {
                                 )
                             }
                         }
+
+                        override fun getContainerColorTokensOverlayProvider(): ContainerColorTokensOverlay.Provider {
+                            return ContainerColorTokensOverlay.defaultSystemOverlayProvider(SystemContainerType.Error)
+                        }
                     }
 
                 override val restoreButtonProvider: AuroraWindowTitlePaneConfigurations.TitlePaneButtonProvider
@@ -118,6 +127,10 @@ fun main() = auroraApplication {
                                 )
                             }
                         }
+
+                        override fun getContainerColorTokensOverlayProvider(): ContainerColorTokensOverlay.Provider {
+                            return ContainerColorTokensOverlay.defaultSystemOverlayProvider(SystemContainerType.Success)
+                        }
                     }
 
                 override val iconifyButtonProvider: AuroraWindowTitlePaneConfigurations.TitlePaneButtonProvider
@@ -144,6 +157,10 @@ fun main() = auroraApplication {
                                     cap = StrokeCap.Round
                                 )
                             }
+                        }
+
+                        override fun getContainerColorTokensOverlayProvider(): ContainerColorTokensOverlay.Provider {
+                            return ContainerColorTokensOverlay.defaultSystemOverlayProvider(SystemContainerType.Warning)
                         }
                     }
 
@@ -179,7 +196,20 @@ fun main() = auroraApplication {
                                 )
                             }
                         }
+
+                        override fun getContainerColorTokensOverlayProvider(): ContainerColorTokensOverlay.Provider {
+                            return ContainerColorTokensOverlay.defaultSystemOverlayProvider(SystemContainerType.Success)
+                        }
                     }
+            },
+            titlePaneTitleTextConfiguration = object: AuroraWindowTitlePaneConfigurations.TitlePaneTitleTextConfiguration {
+                override fun getTitleTextStyle(colorTokens: ContainerColorTokens): TextStyle {
+                    return TextStyle(
+                        color = colorTokens.accentOnContainer,
+                        fontWeight = FontWeight.Bold,
+                        shadow = Shadow(color = colorTokens.complementaryOnContainer, blurRadius = 5.0f)
+                    )
+                }
             }
         ))
     }

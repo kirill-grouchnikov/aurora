@@ -90,6 +90,7 @@ private fun spanInfoMatches(
 @OptIn(AuroraInternalApi::class)
 @Composable
 internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
+    titleTextConfiguration: AuroraWindowTitlePaneConfigurations.TitlePaneTitleTextConfiguration,
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
@@ -142,7 +143,7 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
                 )
             }
 
-            AuroraWindowTitlePaneTitleText(title = title)
+            AuroraWindowTitlePaneTitleText(titleTextConfiguration = titleTextConfiguration, title = title)
 
             if (spanInfoMatches) {
                 for (contextualTaskGroupSpan in contextualTaskGroupSpans) {
@@ -383,6 +384,7 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                     (WindowTitlePaneSizingConstants.TitlePaneContentPadding.calculateStartPadding(layoutDirection).value * density.density).toInt()
                 WindowDraggableArea(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {
                     RibbonWindowTitlePaneMainContent(
+                        titleTextConfiguration = windowConfiguration.titlePaneTitleTextConfiguration,
                         title = title,
                         icon = icon,
                         iconFilterStrategy = iconFilterStrategy,
@@ -405,7 +407,8 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                tokensOverlayProvider = null,
+                                tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                    .iconifyButtonProvider.getContainerColorTokensOverlayProvider(),
                                 inactiveContainerType = ContainerType.Neutral,
                                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -417,8 +420,9 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                                 density = density
                             )
                         }
-                    }
-                ))
+                    }),
+                    tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider
+                        .getContainerColorTokensOverlayProvider())
 
                 // Maximize / Unmaximize button
                 AuroraWindowTitlePaneButton(titlePaneCommand = Command(
@@ -452,7 +456,8 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    tokensOverlayProvider = null,
+                                    tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                        .restoreButtonProvider.getContainerColorTokensOverlayProvider(),
                                     inactiveContainerType = ContainerType.Neutral,
                                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -468,7 +473,8 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    tokensOverlayProvider = null,
+                                    tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                        .maximizeButtonProvider.getContainerColorTokensOverlayProvider(),
                                     inactiveContainerType = ContainerType.Neutral,
                                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -481,8 +487,12 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                                 )
                             }
                         }
-                    }
-                ))
+                    }),
+                    tokensOverlayProvider = if (isMaximized.value) {
+                        windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider
+                    } else {
+                        windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider
+                    }.getContainerColorTokensOverlayProvider())
 
                 // Close button
                 AuroraWindowTitlePaneButton(titlePaneCommand = Command(
@@ -502,7 +512,8 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                tokensOverlayProvider = null,
+                                tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                    .closeButtonProvider.getContainerColorTokensOverlayProvider(),
                                 inactiveContainerType = ContainerType.Neutral,
                                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -514,8 +525,9 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
                                 density = density,
                             )
                         }
-                    }
-                ))
+                    }),
+                    tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider.closeButtonProvider
+                        .getContainerColorTokensOverlayProvider())
             }) { measurables, constraints ->
             val width = constraints.maxWidth
             val height = constraints.maxHeight

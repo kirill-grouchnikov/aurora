@@ -106,23 +106,25 @@ private val TitlePaneButtonPresentationModel = CommandButtonPresentationModel(
 )
 
 @Composable
-fun AuroraWindowScope.AuroraWindowTitlePaneButton(titlePaneCommand: Command) {
+fun AuroraWindowScope.AuroraWindowTitlePaneButton(titlePaneCommand: Command,
+    tokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null) {
     CommandButtonProjection(
         contentModel = titlePaneCommand,
-        presentationModel = TitlePaneButtonPresentationModel
+        presentationModel = TitlePaneButtonPresentationModel.copy(
+            colorTokensOverlayProvider = tokensOverlayProvider)
     ).project()
 }
 
 @Composable
-fun AuroraWindowScope.AuroraWindowTitlePaneTitleText(title: String) {
+fun AuroraWindowScope.AuroraWindowTitlePaneTitleText(
+    titleTextConfiguration: AuroraWindowTitlePaneConfigurations.TitlePaneTitleTextConfiguration,
+    title: String
+) {
     val skinColors = AuroraSkin.colors
 
     val colorTokens =
         skinColors.getNeutralContainerTokens(DecorationAreaType.TitlePane)
-    val titleTextStyle = TextStyle(
-        color = colorTokens.onContainer,
-        fontWeight = FontWeight.Bold,
-    )
+    val titleTextStyle = titleTextConfiguration.getTitleTextStyle(colorTokens)
     LabelProjection(
         contentModel = LabelContentModel(text = title),
         presentationModel = LabelPresentationModel(
@@ -135,6 +137,7 @@ fun AuroraWindowScope.AuroraWindowTitlePaneTitleText(title: String) {
 
 @Composable
 internal fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
+    titleTextConfiguration: AuroraWindowTitlePaneConfigurations.TitlePaneTitleTextConfiguration,
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
@@ -165,7 +168,7 @@ internal fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
                 )
             }
 
-            AuroraWindowTitlePaneTitleText(title = title)
+            AuroraWindowTitlePaneTitleText(titleTextConfiguration = titleTextConfiguration, title = title)
         }) { measurables, constraints ->
         val width = constraints.maxWidth
         val height = constraints.maxHeight
@@ -339,6 +342,7 @@ internal fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
 
 @Composable
 private fun AuroraWindowScope.WindowPlainTitlePane(
+    titleTextConfiguration: AuroraWindowTitlePaneConfigurations.TitlePaneTitleTextConfiguration,
     title: String,
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
@@ -365,6 +369,7 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
             content = {
                 WindowDraggableArea(modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)) {
                     WindowTitlePaneTextAndIcon(
+                        titleTextConfiguration = titleTextConfiguration,
                         title = title,
                         icon = icon,
                         iconFilterStrategy = iconFilterStrategy,
@@ -385,7 +390,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                tokensOverlayProvider = null,
+                                tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                    .iconifyButtonProvider.getContainerColorTokensOverlayProvider(),
                                 inactiveContainerType = ContainerType.Neutral,
                                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -397,8 +403,9 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 density = density
                             )
                         }
-                    }
-                ))
+                    }),
+                    tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider
+                        .getContainerColorTokensOverlayProvider())
 
                 // Maximize / Unmaximize button
                 AuroraWindowTitlePaneButton(titlePaneCommand = Command(
@@ -432,7 +439,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    tokensOverlayProvider = null,
+                                    tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                        .restoreButtonProvider.getContainerColorTokensOverlayProvider(),
                                     inactiveContainerType = ContainerType.Neutral,
                                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -448,7 +456,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    tokensOverlayProvider = null,
+                                    tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                        .maximizeButtonProvider.getContainerColorTokensOverlayProvider(),
                                     inactiveContainerType = ContainerType.Neutral,
                                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -461,8 +470,12 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 )
                             }
                         }
-                    }
-                ))
+                    }),
+                    tokensOverlayProvider = if (isMaximized.value) {
+                        windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider
+                    } else {
+                        windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider
+                    }.getContainerColorTokensOverlayProvider())
 
                 // Close button
                 AuroraWindowTitlePaneButton(titlePaneCommand = Command(
@@ -482,7 +495,8 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                tokensOverlayProvider = null,
+                                tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                    .closeButtonProvider.getContainerColorTokensOverlayProvider(),
                                 inactiveContainerType = ContainerType.Neutral,
                                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -494,8 +508,9 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
                                 density = density,
                             )
                         }
-                    }
-                ))
+                    }),
+                    tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider.closeButtonProvider
+                        .getContainerColorTokensOverlayProvider())
             }) { measurables, constraints ->
             val width = constraints.maxWidth
             val height = constraints.maxHeight
@@ -604,7 +619,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                tokensOverlayProvider = null,
+                                tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                    .iconifyButtonProvider.getContainerColorTokensOverlayProvider(),
                                 inactiveContainerType = ContainerType.Neutral,
                                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -616,8 +632,9 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 density = density
                             )
                         }
-                    }
-                ))
+                    }),
+                tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider.iconifyButtonProvider
+                    .getContainerColorTokensOverlayProvider())
 
                 // Maximize / Unmaximize button
                 AuroraWindowTitlePaneButton(titlePaneCommand = Command(
@@ -669,7 +686,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    tokensOverlayProvider = null,
+                                    tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                        .restoreButtonProvider.getContainerColorTokensOverlayProvider(),
                                     inactiveContainerType = ContainerType.Neutral,
                                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -685,7 +703,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                     iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                     decorationAreaType = DecorationAreaType.TitlePane,
                                     skinColors = skinColors,
-                                    tokensOverlayProvider = null,
+                                    tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                        .maximizeButtonProvider.getContainerColorTokensOverlayProvider(),
                                     inactiveContainerType = ContainerType.Neutral,
                                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                     modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -698,8 +717,12 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 )
                             }
                         }
-                    }
-                ))
+                    }),
+                    tokensOverlayProvider = if (isMaximized.value) {
+                        windowConfiguration.titlePaneButtonsProvider.restoreButtonProvider
+                    } else {
+                        windowConfiguration.titlePaneButtonsProvider.maximizeButtonProvider
+                    }.getContainerColorTokensOverlayProvider())
 
                 // Close button
                 AuroraWindowTitlePaneButton(titlePaneCommand = Command(
@@ -719,7 +742,8 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 iconSize = WindowTitlePaneSizingConstants.TitlePaneButtonIconSize,
                                 decorationAreaType = DecorationAreaType.TitlePane,
                                 skinColors = skinColors,
-                                tokensOverlayProvider = null,
+                                tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider
+                                    .closeButtonProvider.getContainerColorTokensOverlayProvider(),
                                 inactiveContainerType = ContainerType.Neutral,
                                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
                                 modelStateInfoSnapshot = modelStateInfoSnapshot,
@@ -731,8 +755,9 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
                                 density = density,
                             )
                         }
-                    }
-                ))
+                    }),
+                    tokensOverlayProvider = windowConfiguration.titlePaneButtonsProvider.closeButtonProvider
+                        .getContainerColorTokensOverlayProvider())
             }) { measurables, constraints ->
             val width = constraints.maxWidth
             val height = constraints.maxHeight
@@ -827,7 +852,8 @@ private fun AuroraWindowScope.WindowInnerContent(
     } else {
         Column(Modifier.fillMaxSize().auroraBackground()) {
             if (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraPlain) {
-                WindowPlainTitlePane(title, icon, iconFilterStrategy, windowTitlePaneConfiguration)
+                WindowPlainTitlePane(windowTitlePaneConfiguration.titlePaneTitleTextConfiguration,
+                    title, icon, iconFilterStrategy, windowTitlePaneConfiguration)
             }
             if (menuCommands != null) {
                 AuroraWindowMenuBar(menuCommands)
@@ -1054,6 +1080,8 @@ object AuroraWindowTitlePaneConfigurations {
     interface TitlePaneButtonProvider {
         /** Draws the icon for this button. */
         fun drawIcon(drawScope: DrawScope, iconSize: Dp, colorTokens: ContainerColorTokens)
+
+        fun getContainerColorTokensOverlayProvider() : ContainerColorTokensOverlay.Provider? = null
     }
 
     interface TitlePaneButtonsProvider {
@@ -1093,6 +1121,19 @@ object AuroraWindowTitlePaneConfigurations {
             }
     }
 
+    interface TitlePaneTitleTextConfiguration {
+        fun getTitleTextStyle(colorTokens: ContainerColorTokens): TextStyle
+    }
+
+    class DefaultTitlePaneTitleTextConfiguration: TitlePaneTitleTextConfiguration {
+        override fun getTitleTextStyle(colorTokens: ContainerColorTokens): TextStyle {
+            return TextStyle(
+                color = colorTokens.onContainer,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+
     /**
      * Plain title pane provided by Aurora with application icon, application title and
      * three control buttons: minimize, maximize / restore and close. Use the gravity attributes
@@ -1102,7 +1143,8 @@ object AuroraWindowTitlePaneConfigurations {
         val titleTextHorizontalGravity: HorizontalGravity = HorizontalGravity.Leading,
         val titleControlButtonGroupHorizontalGravity: HorizontalGravity = HorizontalGravity.Trailing,
         val titleIconHorizontalGravity: TitleIconHorizontalGravity = TitleIconHorizontalGravity.OppositeControlButtons,
-        val titlePaneButtonsProvider: TitlePaneButtonsProvider = DefaultTitlePaneButtonsProvider()
+        val titlePaneButtonsProvider: TitlePaneButtonsProvider = DefaultTitlePaneButtonsProvider(),
+        val titlePaneTitleTextConfiguration: TitlePaneTitleTextConfiguration = DefaultTitlePaneTitleTextConfiguration()
     ) : AuroraWindowTitlePaneConfiguration() {
         @OptIn(AuroraInternalApi::class)
         internal fun areTitlePaneControlButtonsOnRight(layoutDirection: LayoutDirection): Boolean {
@@ -1175,7 +1217,8 @@ object AuroraWindowTitlePaneConfigurations {
         val titleControlButtonGroupHorizontalGravity: HorizontalGravity = HorizontalGravity.Trailing,
         val titleControlButtonGroupVerticalGravity: VerticalGravity = VerticalGravity.Centered,
         val titlePaneHeight: Dp = WindowTitlePaneSizingConstants.MinimumTitlePaneHeight,
-        val titlePaneButtonsProvider: TitlePaneButtonsProvider = DefaultTitlePaneButtonsProvider()
+        val titlePaneButtonsProvider: TitlePaneButtonsProvider = DefaultTitlePaneButtonsProvider(),
+        val titlePaneTitleTextConfiguration: TitlePaneTitleTextConfiguration = DefaultTitlePaneTitleTextConfiguration()
     ) : AuroraWindowTitlePaneConfiguration() {
         @OptIn(AuroraInternalApi::class)
         internal fun areTitlePaneControlButtonsOnRight(layoutDirection: LayoutDirection): Boolean {
