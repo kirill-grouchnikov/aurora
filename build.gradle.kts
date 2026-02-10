@@ -6,7 +6,7 @@ buildscript {
         google()
         mavenCentral()
         maven("https://plugins.gradle.org/m2/")
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://packages.jetbrains.team/maven/p/cmp/dev/")
         maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
         maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
     }
@@ -30,7 +30,7 @@ allprojects {
         google()
         mavenCentral()
         maven("https://central.sonatype.com/repository/maven-snapshots/")
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://packages.jetbrains.team/maven/p/cmp/dev/")
         maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
         maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
     }
