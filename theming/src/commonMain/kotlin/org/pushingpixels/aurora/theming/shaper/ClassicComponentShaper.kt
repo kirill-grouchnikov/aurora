@@ -26,11 +26,11 @@ import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
 
 /**
- * Button shaper that returns rectangular buttons with slightly rounded corners.
+ * Component shaper that returns rectangular buttons with slightly rounded corners.
  *
  * @author Kirill Grouchnikov
  */
-class ClassicButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
+class ClassicComponentShaper : AuroraComponentShaper {
     override val displayName: String
         get() = "Classic"
 
@@ -49,7 +49,7 @@ class ClassicButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
         return getBaseOutline(layoutDirection, width, height, radius, sides, insets, outlineKind)
     }
 
-    override fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float {
+    private fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float {
         return density.getClassicCornerRadius()
     }
 
@@ -61,6 +61,6 @@ class ClassicButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
         /**
          * Reusable instance of this shaper.
          */
-        val Instance = ClassicButtonShaper()
+        val Instance = ClassicComponentShaper()
     }
 }

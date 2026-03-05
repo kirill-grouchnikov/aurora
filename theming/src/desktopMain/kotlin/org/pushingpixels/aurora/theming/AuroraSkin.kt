@@ -20,7 +20,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolver
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 
 object AuroraSkin {
     @OptIn(AuroraInternalApi::class)
@@ -42,10 +42,10 @@ object AuroraSkin {
         get() = LocalSkinColors.current
 
     @OptIn(AuroraInternalApi::class)
-    val buttonShaper: AuroraButtonShaper
+    val componentShaper: AuroraComponentShaper
         @Composable
         @ReadOnlyComposable
-        get() = LocalButtonShaper.current
+        get() = LocalComponentShaper.current
 
     @OptIn(AuroraInternalApi::class)
     val painters: AuroraPainters
@@ -69,7 +69,7 @@ object AuroraSkin {
 data class AuroraSkinDefinition(
     override val displayName: String,
     val colors: AuroraSkinColors,
-    val buttonShaper: AuroraButtonShaper,
+    val componentShaper: AuroraComponentShaper,
     val painters: AuroraPainters
 ) : AuroraTrait
 

@@ -48,7 +48,7 @@ import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
 import org.pushingpixels.aurora.theming.palette.*
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
@@ -276,7 +276,7 @@ private fun officeSkin(): AuroraSkinDefinition {
             ),
             highlightOutlinePainter = FlatOutlinePainter(),
         ),
-        buttonShaper = ClassicButtonShaper(),
+        componentShaper = ClassicComponentShaper(),
     )
 }
 

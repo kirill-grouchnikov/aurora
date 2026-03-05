@@ -29,6 +29,7 @@ import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.FractionBasedPainter
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 
 /**
  * Outline painter with fraction-based stops and a color query associated with

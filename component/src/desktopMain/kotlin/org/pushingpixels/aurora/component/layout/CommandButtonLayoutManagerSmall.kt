@@ -22,7 +22,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 
 internal open class CommandButtonLayoutManagerSmall(
     override val layoutDirection: LayoutDirection,
@@ -44,7 +44,7 @@ internal open class CommandButtonLayoutManagerSmall(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): Size {
         val paddingValues = presentationModel.contentPadding
         val by = presentationModel.verticalGapScaleFactor * paddingValues.verticalPaddings.toPx()
@@ -113,9 +113,9 @@ internal open class CommandButtonLayoutManagerSmall(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, buttonShaper)
+        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, componentShaper)
         val paddingTop = presentationModel.verticalGapScaleFactor *
                 presentationModel.contentPadding.topPadding.toPx()
         val paddingBottom = presentationModel.verticalGapScaleFactor *

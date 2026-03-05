@@ -50,7 +50,7 @@ import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -113,7 +113,7 @@ internal fun AuroraTabButton(
     val layoutDirection = LocalLayoutDirection.current
     val mergedTextStyle = LocalTextStyle.current.merge(presentationModel.textStyle)
     val fontFamilyResolver = LocalFontFamilyResolver.current
-    val buttonShaper = LocalButtonShaper.current
+    val componentShaper = LocalComponentShaper.current
 
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
 
@@ -403,7 +403,7 @@ internal fun AuroraTabButton(
             command = command,
             presentationModel = presentationModel,
             preLayoutInfo = preLayoutInfo,
-            buttonShaper = buttonShaper
+            componentShaper = componentShaper
         )
 
         // Measure the action box

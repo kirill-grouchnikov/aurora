@@ -24,12 +24,19 @@ import org.pushingpixels.aurora.theming.AuroraTrait
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.Sides
 
+interface OutlineSupplier {
+    fun getOutline(
+        layoutDirection: LayoutDirection, density: Density,
+        size: Size, insets: Float, radiusAdjustment: Float, outlineKind: OutlineKind
+    ): Outline
+}
+
 /**
- * Button shaper interface.
+ * Component shaper interface.
  *
  * @author Kirill Grouchnikov
  */
-interface AuroraButtonShaper : AuroraTrait {
+interface AuroraComponentShaper : AuroraTrait {
     /** Returns the outline path. */
     fun getButtonOutline(
         width: Float, height: Float, insets: Float,

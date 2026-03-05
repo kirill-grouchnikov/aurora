@@ -48,8 +48,8 @@ import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
 import java.awt.*
@@ -358,7 +358,7 @@ private fun AuroraWindowScope.WindowPlainTitlePane(
 
     AuroraDecorationArea(
         decorationAreaType = DecorationAreaType.TitlePane,
-        buttonShaper = ClassicButtonShaper.Instance
+        componentShaper = ClassicComponentShaper.Instance
     ) {
         Layout(
             modifier = Modifier
@@ -596,7 +596,7 @@ private fun AuroraWindowScope.WindowIntegratedTitlePane(
 
     AuroraDecorationArea(
         decorationAreaType = DecorationAreaType.TitlePane,
-        buttonShaper = ClassicButtonShaper.Instance
+        componentShaper = ClassicComponentShaper.Instance
     ) {
         Layout(
             modifier = Modifier
@@ -1298,7 +1298,7 @@ fun AuroraApplicationScope.AuroraWindow(
                 displayName = skin.displayName,
                 decorationAreaType = DecorationAreaType.None,
                 colors = skin.colors,
-                buttonShaper = skin.buttonShaper,
+                componentShaper = skin.componentShaper,
                 painters = skin.painters,
                 animationConfig = AuroraSkin.animationConfig
             ) {
@@ -1341,7 +1341,7 @@ internal fun AuroraSkin(
     displayName: String = AuroraSkin.displayName,
     decorationAreaType: DecorationAreaType,
     colors: AuroraSkinColors = AuroraSkin.colors,
-    buttonShaper: AuroraButtonShaper = AuroraSkin.buttonShaper,
+    componentShaper: AuroraComponentShaper = AuroraSkin.componentShaper,
     painters: AuroraPainters = AuroraSkin.painters,
     animationConfig: AnimationConfig = AuroraSkin.animationConfig,
     content: @Composable () -> Unit
@@ -1350,7 +1350,7 @@ internal fun AuroraSkin(
         LocalDisplayName provides displayName,
         LocalDecorationAreaType provides decorationAreaType,
         LocalSkinColors provides colors,
-        LocalButtonShaper provides buttonShaper,
+        LocalComponentShaper provides componentShaper,
         LocalPainters provides painters,
         LocalAnimationConfig provides animationConfig
     ) {

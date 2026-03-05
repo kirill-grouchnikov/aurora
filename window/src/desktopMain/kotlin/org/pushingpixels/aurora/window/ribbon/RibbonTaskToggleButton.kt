@@ -57,8 +57,8 @@ import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.theming.utils.*
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -131,7 +131,7 @@ internal fun RibbonTaskToggleButton(
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
-    val buttonShaper = ClassicButtonShaper.Instance
+    val componentShaper = ClassicComponentShaper.Instance
 
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -460,7 +460,7 @@ internal fun RibbonTaskToggleButton(
             command = command,
             presentationModel = presentationModel,
             preLayoutInfo = preLayoutInfo,
-            buttonShaper = buttonShaper
+            componentShaper = componentShaper
         )
 
         // Measure the action box

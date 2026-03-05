@@ -25,7 +25,7 @@ import org.pushingpixels.aurora.theming.painter.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
@@ -161,7 +161,7 @@ fun dustSkin(): AuroraSkinDefinition {
         displayName = "Dust",
         colors = dustBaseSkinColors(accentContainerColorTokens),
         painters = dustBasePainters(),
-        buttonShaper = ClassicButtonShaper(),
+        componentShaper = ClassicComponentShaper(),
     )
 }
 
@@ -195,7 +195,7 @@ fun dustCoffeeSkin(): AuroraSkinDefinition {
         displayName = "Dust Coffee",
         colors = dustBaseSkinColors(accentContainerColorTokens),
         painters = dustBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 

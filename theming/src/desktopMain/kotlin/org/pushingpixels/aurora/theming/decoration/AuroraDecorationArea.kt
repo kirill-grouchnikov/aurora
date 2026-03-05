@@ -19,29 +19,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 
 @OptIn(AuroraInternalApi::class)
 @Composable
 fun AuroraDecorationArea(
     decorationAreaType: DecorationAreaType,
-    buttonShaper: AuroraButtonShaper? = null,
+    componentShaper: AuroraComponentShaper? = null,
     content: @Composable () -> Unit
 ) {
-    val buttonShaperToUse = buttonShaper ?: when (decorationAreaType) {
+    val componentShaperToUse = componentShaper ?: when (decorationAreaType) {
         DecorationAreaType.TitlePane,
         DecorationAreaType.Header,
         DecorationAreaType.Toolbar,
-        DecorationAreaType.Footer -> ClassicButtonShaper()
+        DecorationAreaType.Footer -> ClassicComponentShaper()
 
-        else -> AuroraSkin.buttonShaper
+        else -> AuroraSkin.componentShaper
     }
     CompositionLocalProvider(
         LocalDisplayName provides AuroraSkin.displayName,
         LocalDecorationAreaType provides decorationAreaType,
         LocalSkinColors provides AuroraSkin.colors,
-        LocalButtonShaper provides buttonShaperToUse,
+        LocalComponentShaper provides componentShaperToUse,
         LocalPainters provides AuroraSkin.painters,
         LocalAnimationConfig provides AuroraSkin.animationConfig
     ) {

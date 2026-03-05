@@ -22,7 +22,7 @@ import org.pushingpixels.aurora.theming.painter.outline.LuminousOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.LuminousSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
-import org.pushingpixels.aurora.theming.shaper.PillButtonShaper
+import org.pushingpixels.aurora.theming.shaper.PillComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
@@ -114,7 +114,7 @@ fun mistSilverSkin(): AuroraSkinDefinition {
         displayName = "Mist Silver",
         colors = mistBaseSkinColors(accentContainerColorTokens),
         painters = mistBasePainters(),
-        buttonShaper = PillButtonShaper()
+        componentShaper = PillComponentShaper()
     )
 }
 
@@ -144,7 +144,7 @@ fun mistAquaSkin(): AuroraSkinDefinition {
         displayName = "Mist Aqua",
         colors = mistBaseSkinColors(accentContainerColorTokens),
         painters = mistBasePainters(),
-        buttonShaper = PillButtonShaper()
+        componentShaper = PillComponentShaper()
     )
 }
 

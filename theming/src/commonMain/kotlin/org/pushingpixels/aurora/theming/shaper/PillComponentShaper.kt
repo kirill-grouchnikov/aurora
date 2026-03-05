@@ -26,11 +26,11 @@ import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 
 /**
- * Button shaper that returns buttons with completely rounded corners.
+ * Component shaper that returns buttons with completely rounded corners.
  *
  * @author Kirill Grouchnikov
  */
-class PillButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
+class PillComponentShaper : AuroraComponentShaper {
     override val displayName: String
         get() = "Pill"
 
@@ -60,7 +60,7 @@ class PillButtonShaper : AuroraButtonShaper, RectangularButtonShaper {
         return PaddingValues(horizontal = (horizontal / density.density).dp, vertical = 0.dp)
     }
 
-    override fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float {
+    private fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float {
         return if (width > height) {
             (height - 2 * insets) / 2.0f
         } else {

@@ -26,6 +26,7 @@ import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.painter.ColorStop
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import kotlin.math.max
 import kotlin.math.min
 

@@ -27,6 +27,7 @@ import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.InsetKind
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.painter.ColorStop
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 
 /**
  * Inlay outline painter that paints a double outline, with the inner one following the shape

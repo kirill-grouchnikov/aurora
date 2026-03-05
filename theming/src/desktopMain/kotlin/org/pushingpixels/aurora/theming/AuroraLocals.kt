@@ -25,7 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 
 data class ModelStateInfoSnapshot(
     val currModelState: ComponentState,
@@ -65,8 +65,8 @@ val LocalSkinColors = staticCompositionLocalOf<AuroraSkinColors> {
     error("LocalSkinColors not provided")
 }
 @AuroraInternalApi
-val LocalButtonShaper  = staticCompositionLocalOf<AuroraButtonShaper> {
-    error("LocalButtonShaper not provided")
+val LocalComponentShaper  = staticCompositionLocalOf<AuroraComponentShaper> {
+    error("LocalComponentShaper not provided")
 }
 @AuroraInternalApi
 val LocalPainters = staticCompositionLocalOf<AuroraPainters> {

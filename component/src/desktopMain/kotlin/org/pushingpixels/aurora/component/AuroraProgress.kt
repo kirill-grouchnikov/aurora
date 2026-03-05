@@ -40,7 +40,7 @@ import org.pushingpixels.aurora.component.model.DeterminateProgressContentModel
 import org.pushingpixels.aurora.component.model.IndeterminateProgressContentModel
 import org.pushingpixels.aurora.component.model.LinearProgressPresentationModel
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
 import kotlin.math.min
 

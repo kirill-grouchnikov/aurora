@@ -25,7 +25,7 @@ import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
@@ -148,7 +148,7 @@ fun nebulaSkin(): AuroraSkinDefinition {
         displayName = "Nebula",
         colors = nebulaBaseSkinColors(accentContainerColorTokens),
         painters = nebulaBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -195,7 +195,7 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
             )
 
         },
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -215,7 +215,7 @@ fun nebulaBrickWallSkin(): AuroraSkinDefinition {
         displayName = "Nebula Brick Wall",
         colors = nebulaBaseSkinColors(accentContainerColorTokens),
         painters = nebulaBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 

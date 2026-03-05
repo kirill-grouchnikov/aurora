@@ -37,7 +37,7 @@ import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.AbstractRibbonBand
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 
 internal data class RibbonBandCollapsedCommand(
     override val text: String,
@@ -137,7 +137,7 @@ internal object RibbonBandCollapsedCommandMenuPopupHandler : CascadingCommandMen
         density: Density,
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): RibbonBandCollapsedPopupContentLayoutInfo {
         return RibbonBandCollapsedPopupContentLayoutInfo(
             popupSize = Size(

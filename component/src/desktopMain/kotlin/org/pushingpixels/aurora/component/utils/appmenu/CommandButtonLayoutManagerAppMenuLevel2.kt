@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.layout.getCommandButtonKind
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import kotlin.math.max
 
 internal class CommandButtonLayoutManagerAppMenuLevel2(
@@ -72,7 +72,7 @@ internal class CommandButtonLayoutManagerAppMenuLevel2(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): Size {
         val paddingValues = presentationModel.contentPadding
         val by = presentationModel.verticalGapScaleFactor * paddingValues.verticalPaddings.toPx()
@@ -207,9 +207,9 @@ internal class CommandButtonLayoutManagerAppMenuLevel2(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, buttonShaper)
+        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, componentShaper)
 
         val buttonText = command.text
         val buttonExtraText = command.extraText

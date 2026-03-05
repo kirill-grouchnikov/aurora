@@ -42,7 +42,7 @@ import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.demo.svg.vaadin.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
@@ -515,7 +515,7 @@ fun AuroraApplicationScope.DemoArea(
     ) {
         AuroraDecorationArea(
             decorationAreaType = DecorationAreaType.ControlPane,
-            buttonShaper = ClassicButtonShaper.Instance
+            componentShaper = ClassicComponentShaper.Instance
         ) {
             Column(
                 modifier = Modifier.fillMaxHeight().auroraBackground()

@@ -45,7 +45,7 @@ import org.pushingpixels.aurora.component.utils.StateTransitionTracker
 import org.pushingpixels.aurora.component.utils.TransitionInfo
 import org.pushingpixels.aurora.component.utils.populateColorTokens
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
 import kotlin.math.roundToInt
 

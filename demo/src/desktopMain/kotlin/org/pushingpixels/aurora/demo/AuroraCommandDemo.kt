@@ -38,7 +38,7 @@ import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowScope
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
@@ -942,7 +942,7 @@ fun AuroraWindowScope.DemoCommandContent(
             Row(modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
                 AuroraDecorationArea(
                     decorationAreaType = DecorationAreaType.None,
-                    buttonShaper = ClassicButtonShaper.Instance
+                    componentShaper = ClassicComponentShaper.Instance
                 ) {
                     AuroraSkinSwitcher(onSkinChange = onSkinChange)
 

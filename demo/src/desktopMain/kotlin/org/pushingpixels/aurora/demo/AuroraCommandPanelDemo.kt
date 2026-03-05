@@ -33,7 +33,7 @@ import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.geminiSkin
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
@@ -118,7 +118,7 @@ fun main() = auroraApplication {
                 verticalAlignment = Alignment.CenterVertically) {
                 AuroraDecorationArea(
                     decorationAreaType = DecorationAreaType.None,
-                    buttonShaper = ClassicButtonShaper.Instance
+                    componentShaper = ClassicComponentShaper.Instance
                 ) {
                     AuroraSkinSwitcher({ skin = it })
 

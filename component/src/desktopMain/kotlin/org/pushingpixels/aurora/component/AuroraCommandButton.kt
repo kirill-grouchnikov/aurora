@@ -61,8 +61,8 @@ import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import org.pushingpixels.aurora.theming.utils.*
 import java.awt.event.KeyEvent
 import kotlin.math.max
@@ -554,7 +554,7 @@ private fun Modifier.commandButtonPopupModifier(
 )
 
 private class CommandButtonOutlineSuppler(
-    val buttonShaper: AuroraButtonShaper,
+    val componentShaper: AuroraComponentShaper,
     val presentationModel: BaseCommandButtonPresentationModel
 ): OutlineSupplier {
     override fun getOutline(
@@ -565,7 +565,7 @@ private class CommandButtonOutlineSuppler(
         radiusAdjustment: Float,
         outlineKind: OutlineKind
     ): Outline {
-        return buttonShaper.getButtonOutline(
+        return componentShaper.getButtonOutline(
             width = size.width,
             height = size.height,
             insets = insets,
@@ -650,7 +650,7 @@ internal fun <M : BaseCommandMenuContentModel,
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
-    val buttonShaper = AuroraSkin.buttonShaper
+    val componentShaper = AuroraSkin.componentShaper
     val painters = AuroraSkin.painters
 
     val buttonTopLeftOffset = remember { AuroraOffset(0.0f, 0.0f) }
@@ -932,7 +932,7 @@ internal fun <M : BaseCommandMenuContentModel,
                 fontFamilyResolver = fontFamilyResolver,
                 skinColors = skinColors,
                 skinPainters = painters,
-                buttonShaper = buttonShaper,
+                componentShaper = componentShaper,
                 decorationAreaType = decorationAreaType,
                 compositionLocalContext = compositionLocalContext,
                 anchorBoundsInWindow = Rect(
@@ -1106,7 +1106,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     )
                     actionAlpha = actionAlpha.coerceIn(0.0f, 1.0f)
 
-                    val outlineSupplier = CommandButtonOutlineSuppler(buttonShaper, presentationModel)
+                    val outlineSupplier = CommandButtonOutlineSuppler(componentShaper, presentationModel)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         withTransform({
@@ -1234,7 +1234,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     )
                     popupAlpha = popupAlpha.coerceIn(0.0f, 1.0f)
 
-                    val outlineSupplier = CommandButtonOutlineSuppler(buttonShaper, presentationModel)
+                    val outlineSupplier = CommandButtonOutlineSuppler(componentShaper, presentationModel)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         withTransform({
@@ -1455,7 +1455,7 @@ internal fun <M : BaseCommandMenuContentModel,
             command = command,
             presentationModel = presentationModel,
             preLayoutInfo = preLayoutInfo,
-            buttonShaper = buttonShaper
+            componentShaper = componentShaper
         )
 
         // Measure the action and popup boxes

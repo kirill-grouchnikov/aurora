@@ -30,7 +30,7 @@ import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.palette.overlayWith
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
@@ -136,7 +136,7 @@ fun graphiteSkin(): AuroraSkinDefinition {
         displayName = "Graphite",
         colors = colors,
         painters = graphiteBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -159,7 +159,7 @@ fun graphiteAquaSkin(): AuroraSkinDefinition {
         displayName = "Graphite Aqua",
         colors = colors,
         painters = graphiteBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -210,7 +210,7 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
         displayName = "Graphite Chalk",
         colors = colors,
         painters = graphiteBasePainters(outlinePainter = FlatOutlinePainter()),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -278,7 +278,7 @@ fun graphiteGlassSkin(): AuroraSkinDefinition {
                 tokens -> tokens.inverseContainerOutline.withAlpha(0.375f)
             }), DecorationAreaType.Toolbar)
         },
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -309,7 +309,7 @@ fun graphiteElectricSkin(): AuroraSkinDefinition {
         displayName = "Graphite Electric",
         colors = colors,
         painters = graphiteBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -340,7 +340,7 @@ fun graphiteGoldSkin(): AuroraSkinDefinition {
         displayName = "Graphite Gold",
         colors = colors,
         painters = graphiteBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -371,7 +371,7 @@ fun graphiteSiennaSkin(): AuroraSkinDefinition {
         displayName = "Graphite Sienna",
         colors = colors,
         painters = graphiteBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -402,7 +402,7 @@ fun graphiteSunsetSkin(): AuroraSkinDefinition {
         displayName = "Graphite Sunset",
         colors = colors,
         painters = graphiteBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 

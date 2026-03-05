@@ -22,7 +22,7 @@ import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
@@ -154,7 +154,7 @@ fun businessSkin(): AuroraSkinDefinition {
             it.registerDecorationAreaTokensBundle(businessFooterBundle, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -213,7 +213,7 @@ fun businessBlackSteelSkin(): AuroraSkinDefinition {
                 DecorationAreaType.ControlPane, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -271,7 +271,7 @@ fun businessBlueSteelSkin(): AuroraSkinDefinition {
                 DecorationAreaType.ControlPane, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 

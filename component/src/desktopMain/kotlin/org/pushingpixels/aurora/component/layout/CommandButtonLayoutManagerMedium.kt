@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import kotlin.math.max
 
 @AuroraInternalApi
@@ -55,7 +55,7 @@ open class CommandButtonLayoutManagerMedium(
     private fun getPreferredSizeIgnoringMinWidth(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
-        buttonShaper: AuroraButtonShaper,
+        componentShaper: AuroraComponentShaper,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo
     ): Size {
         val paddingValues = presentationModel.contentPadding
@@ -125,7 +125,7 @@ open class CommandButtonLayoutManagerMedium(
         width -= 2 * layoutHGap
         val preferred = Size(width, by + max(prefIconHeight, textHeight))
         return if (hasText) {
-            val extraContentPadding = buttonShaper.getExtraContentPadding(
+            val extraContentPadding = componentShaper.getExtraContentPadding(
                 uiPreferredSize = preferred,
                 layoutDirection = layoutDirection,
                 density = _density
@@ -146,10 +146,10 @@ open class CommandButtonLayoutManagerMedium(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): Size {
         val preferredSizeIgnoringMinWidth = getPreferredSizeIgnoringMinWidth(
-            command, presentationModel, buttonShaper, preLayoutInfo)
+            command, presentationModel, componentShaper, preLayoutInfo)
         return Size(
             width = max(
                 preferredSizeIgnoringMinWidth.width,
@@ -183,14 +183,14 @@ open class CommandButtonLayoutManagerMedium(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
         val preferredSizeIgnoringMinWidth = getPreferredSizeIgnoringMinWidth(
-            command, presentationModel, buttonShaper, preLayoutInfo
+            command, presentationModel, componentShaper, preLayoutInfo
         )
-        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, buttonShaper)
+        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, componentShaper)
         val originalPaddingValues = presentationModel.contentPadding
-        val extraPaddingValues = buttonShaper.getExtraContentPadding(
+        val extraPaddingValues = componentShaper.getExtraContentPadding(
             uiPreferredSize = preferredSizeIgnoringMinWidth,
             layoutDirection = layoutDirection,
             density = _density

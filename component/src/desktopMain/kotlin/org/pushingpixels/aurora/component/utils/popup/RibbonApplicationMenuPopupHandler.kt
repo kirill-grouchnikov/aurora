@@ -47,7 +47,7 @@ import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerAppMenuLevel2
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import java.awt.*
 import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu
@@ -132,7 +132,7 @@ internal class RibbonApplicationMenuPopupHandler(
         density: Density,
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): RibbonApplicationMenuLevel1ContentLayoutInfo {
 
         // If at least one secondary command in this popup menu has icon factory
@@ -186,7 +186,7 @@ internal class RibbonApplicationMenuPopupHandler(
                         command = secondaryCommand,
                         presentationModel = itemButtonPresentationModel
                     ),
-                    buttonShaper = buttonShaper
+                    componentShaper = componentShaper
                 )
                 maxWidth = max(maxWidth, preferredSize.width)
                 combinedHeight += preferredSize.height
@@ -209,7 +209,7 @@ internal class RibbonApplicationMenuPopupHandler(
         density: Density,
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): RibbonApplicationMenuFooterContentLayoutInfo {
         // Footer command presentation for menu content
         val footerButtonPresentationModel = CommandButtonPresentationModel(
@@ -246,7 +246,7 @@ internal class RibbonApplicationMenuPopupHandler(
                     command = footerCommand,
                     presentationModel = footerButtonPresentationModel
                 ),
-                buttonShaper = buttonShaper
+                componentShaper = componentShaper
             )
             maxHeight = max(maxHeight, preferredSize.height)
         }
@@ -289,7 +289,7 @@ internal class RibbonApplicationMenuPopupHandler(
                                 fontFamilyResolver: FontFamily.Resolver,
                                 skinColors: AuroraSkinColors,
                                 skinPainters: AuroraPainters,
-                                buttonShaper: AuroraButtonShaper,
+                                componentShaper: AuroraComponentShaper,
                                 decorationAreaType: DecorationAreaType,
                                 compositionLocalContext: CompositionLocalContext,
                                 anchorBoundsInWindow: Rect,
@@ -343,7 +343,7 @@ internal class RibbonApplicationMenuPopupHandler(
         density: Density,
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver,
-        buttonShaper: AuroraButtonShaper,
+        componentShaper: AuroraComponentShaper,
         level1Command: Command?,
         itemPresentationState: CommandButtonPresentationState,
         menuPresentationModel: RibbonApplicationMenuCommandPopupMenuPresentationModel,
@@ -382,7 +382,7 @@ internal class RibbonApplicationMenuPopupHandler(
                                     command = secondaryCommand,
                                     presentationModel = itemButtonPresentationModel
                                 ),
-                                buttonShaper = buttonShaper
+                                componentShaper = componentShaper
                             )
                             maxButtonHeight = max(maxButtonHeight, preferredSize.height)
                             if (regularButtonLayoutManager is CommandButtonLayoutManagerAppMenuLevel2) {
@@ -513,7 +513,7 @@ internal class RibbonApplicationMenuPopupHandler(
         fontFamilyResolver: FontFamily.Resolver,
         skinColors: AuroraSkinColors,
         skinPainters: AuroraPainters,
-        buttonShaper: AuroraButtonShaper,
+        componentShaper: AuroraComponentShaper,
         decorationAreaType: DecorationAreaType,
         compositionLocalContext: CompositionLocalContext,
         anchorBoundsInWindow: Rect,
@@ -536,7 +536,7 @@ internal class RibbonApplicationMenuPopupHandler(
             density = density,
             textStyle = textStyle,
             fontFamilyResolver = fontFamilyResolver,
-            buttonShaper = buttonShaper
+            componentShaper = componentShaper
         )
         val footerContentLayoutInfo = getFooterContentLayoutInfo(
             menuContentModel = contentModel.value!!,
@@ -545,7 +545,7 @@ internal class RibbonApplicationMenuPopupHandler(
             density = density,
             textStyle = textStyle,
             fontFamilyResolver = fontFamilyResolver,
-            buttonShaper = buttonShaper
+            componentShaper = componentShaper
         )
 
         // From this point, all coordinates are in Swing display units - which are density independent.
@@ -692,7 +692,7 @@ internal class RibbonApplicationMenuPopupHandler(
                                 density = density,
                                 textStyle = textStyle,
                                 fontFamilyResolver = fontFamilyResolver,
-                                buttonShaper = buttonShaper,
+                                componentShaper = componentShaper,
                                 level1Command = activeLevel1Command,
                                 itemPresentationState = level2PresentationState,
                                 menuPresentationModel = presentationModel,

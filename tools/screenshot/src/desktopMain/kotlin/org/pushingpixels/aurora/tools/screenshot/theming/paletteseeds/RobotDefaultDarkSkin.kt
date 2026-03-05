@@ -28,12 +28,12 @@ import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 fun robotDefaultDarkSkin(accentColor: Color, name: String) : AuroraSkinDefinition {
-    val buttonShaper = ClassicButtonShaper()
+    val componentShaper = ClassicComponentShaper()
     val painters = AuroraPainters(
         decorationPainter = MarbleNoiseDecorationPainter(
             colorQuery1 = { it.containerSurfaceHighest },
@@ -93,6 +93,6 @@ fun robotDefaultDarkSkin(accentColor: Color, name: String) : AuroraSkinDefinitio
         displayName = name,
         colors = skinColors,
         painters = painters,
-        buttonShaper = buttonShaper,
+        componentShaper = componentShaper,
     )
 }

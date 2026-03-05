@@ -85,7 +85,7 @@ internal fun RibbonPrimaryBar(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
-    val buttonShaper = AuroraSkin.buttonShaper
+    val componentShaper = AuroraSkin.componentShaper
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
@@ -123,7 +123,7 @@ internal fun RibbonPrimaryBar(
                 ribbon.applicationMenuCommandButtonProjection!!.contentModel,
                 ribbon.applicationMenuCommandButtonProjection!!.presentationModel
             ),
-            buttonShaper = buttonShaper
+            componentShaper = componentShaper
         )
     }
 
@@ -205,7 +205,7 @@ internal fun RibbonPrimaryBar(
                 ribbonTaskInfo.taskCommand,
                 taskButtonPresentationModel
             ),
-            buttonShaper = buttonShaper
+            componentShaper = componentShaper
         )
         combinedTaskButtonsWidth += currTaskButtonPreferredSize.width.toInt()
         maxTaskButtonHeight = max(maxTaskButtonHeight, currTaskButtonPreferredSize.height.toInt())
@@ -263,7 +263,7 @@ internal fun RibbonPrimaryBar(
                 anchoredCommandProjection.contentModel,
                 presentationModelWithOriginal
             ),
-            buttonShaper = buttonShaper
+            componentShaper = componentShaper
         )
         val currAnchoredCommandSmallPreferredSize = layoutManagerWithSmall.getPreferredSize(
             command = anchoredCommandProjection.contentModel,
@@ -272,7 +272,7 @@ internal fun RibbonPrimaryBar(
                 anchoredCommandProjection.contentModel,
                 presentationModelWithSmall
             ),
-            buttonShaper = buttonShaper
+            componentShaper = componentShaper
         )
 
         combinedAnchoredCommandsOriginalWidth += currAnchoredCommandOriginalPreferredSize.width.toInt()

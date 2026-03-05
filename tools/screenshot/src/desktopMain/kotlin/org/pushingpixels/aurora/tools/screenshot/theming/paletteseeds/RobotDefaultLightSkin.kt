@@ -25,7 +25,7 @@ import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
@@ -33,7 +33,7 @@ private val MutedLightSeed: Hct = Hct.fromInt(java.awt.Color(208, 212, 216).rgb)
 private val NeutralLightSeed: Hct = Hct.fromInt(java.awt.Color(252, 249, 248).rgb)
 
 fun robotDefaultLightSkin(accentColor: Color, name: String) : AuroraSkinDefinition {
-    val buttonShaper = ClassicButtonShaper()
+    val componentShaper = ClassicComponentShaper()
     val painters = AuroraPainters(
         decorationPainter = MarbleNoiseDecorationPainter(
             colorQuery1 = { it.containerSurface },
@@ -77,6 +77,6 @@ fun robotDefaultLightSkin(accentColor: Color, name: String) : AuroraSkinDefiniti
         displayName = name,
         colors = skinColors,
         painters = painters,
-        buttonShaper = buttonShaper,
+        componentShaper = componentShaper,
     )
 }

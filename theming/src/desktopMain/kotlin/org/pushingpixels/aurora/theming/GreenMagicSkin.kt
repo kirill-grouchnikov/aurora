@@ -25,7 +25,7 @@ import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePain
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.getBimodalContainerTokens
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.DynamicBimodalPalette
 import org.pushingpixels.ephemeral.chroma.hct.Hct
@@ -136,6 +136,6 @@ fun greenMagicSkin(): AuroraSkinDefinition {
         displayName = "Green Magic",
         colors = greenMagicSkinColors(),
         painters = painters,
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }

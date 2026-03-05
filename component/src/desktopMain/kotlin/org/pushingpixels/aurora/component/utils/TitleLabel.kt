@@ -33,8 +33,8 @@ import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import org.pushingpixels.aurora.theming.utils.paintOutline
 
@@ -71,7 +71,7 @@ internal fun TitleLabel(
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
-    val buttonShaper = remember { ClassicButtonShaper() }
+    val componentShaper = remember { ClassicComponentShaper() }
     val outlinePainter = AuroraSkin.painters.outlinePainter
 
     Box(modifier = modifier) {
@@ -100,7 +100,7 @@ internal fun TitleLabel(
                     style = Fill
                 )
 
-                val borderOutline = buttonShaper.getButtonOutline(
+                val borderOutline = componentShaper.getButtonOutline(
                     layoutDirection = layoutDirection,
                     width = width,
                     height = height,

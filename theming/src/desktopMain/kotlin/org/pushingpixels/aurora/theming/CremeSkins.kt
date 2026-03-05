@@ -27,7 +27,7 @@ import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.palette.overlayWith
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
@@ -140,7 +140,7 @@ fun cremeSkin(): AuroraSkinDefinition {
         displayName = "Creme",
         colors = cremeBaseSkinColors(accentContainerColorTokens),
         painters = cremeBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }
 
@@ -174,6 +174,6 @@ fun cremeCoffeeSkin(): AuroraSkinDefinition {
         displayName = "Creme Coffee",
         colors = cremeBaseSkinColors(accentContainerColorTokens),
         painters = cremeBasePainters(),
-        buttonShaper = ClassicButtonShaper()
+        componentShaper = ClassicComponentShaper()
     )
 }

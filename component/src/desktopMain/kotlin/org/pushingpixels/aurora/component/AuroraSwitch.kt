@@ -40,7 +40,7 @@ import org.pushingpixels.aurora.component.model.SwitchContentModel
 import org.pushingpixels.aurora.component.model.SwitchPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
 
 @Immutable

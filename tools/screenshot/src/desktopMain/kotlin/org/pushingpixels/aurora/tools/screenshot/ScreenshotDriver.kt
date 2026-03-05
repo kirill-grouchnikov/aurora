@@ -78,7 +78,7 @@ fun AuroraApplicationScope.screenshot(
                 LocalDecorationAreaType provides DecorationAreaType.None,
                 LocalDisplayName provides skin.displayName,
                 LocalSkinColors provides skin.colors,
-                LocalButtonShaper provides skin.buttonShaper,
+                LocalComponentShaper provides skin.componentShaper,
                 LocalPainters provides skin.painters,
                 LocalAnimationConfig provides AnimationConfig(),
             ) {

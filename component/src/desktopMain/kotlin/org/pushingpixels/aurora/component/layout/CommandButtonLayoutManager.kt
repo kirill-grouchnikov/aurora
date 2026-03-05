@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 
 /**
  * Definition of a layout manager for command buttons.
@@ -176,7 +176,7 @@ interface CommandButtonLayoutManager : MeasureScope {
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonPreLayoutInfo,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): Size
 
     /**
@@ -187,7 +187,7 @@ interface CommandButtonLayoutManager : MeasureScope {
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonPreLayoutInfo,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): CommandButtonLayoutInfo
 
     fun getActionKeyTipAnchorCenterPoint(

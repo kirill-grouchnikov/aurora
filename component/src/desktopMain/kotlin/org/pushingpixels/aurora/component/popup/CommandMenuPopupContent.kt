@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import java.awt.Component
 import java.awt.Rectangle
 import java.awt.Window
@@ -54,7 +54,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
         fontFamilyResolver: FontFamily.Resolver,
         skinColors: AuroraSkinColors,
         skinPainters: AuroraPainters,
-        buttonShaper: AuroraButtonShaper,
+        componentShaper: AuroraComponentShaper,
         decorationAreaType: DecorationAreaType,
         compositionLocalContext: CompositionLocalContext,
         anchorBoundsInWindow: Rect,

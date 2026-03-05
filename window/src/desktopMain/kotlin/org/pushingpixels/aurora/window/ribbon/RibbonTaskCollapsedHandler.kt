@@ -32,7 +32,7 @@ import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLay
 import org.pushingpixels.aurora.component.popup.CascadingCommandMenuHandler
 import org.pushingpixels.aurora.component.ribbon.RibbonTask
 import org.pushingpixels.aurora.theming.AuroraSkin
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 
 internal data class RibbonTaskCollapsedMenuContentModel(
     override val onActivatePopup: (() -> Unit)? = null,
@@ -60,7 +60,7 @@ internal object RibbonTaskCollapsedCommandMenuPopupHandler : CascadingCommandMen
         density: Density,
         textStyle: TextStyle,
         fontFamilyResolver: FontFamily.Resolver,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): RibbonTaskCollapsedPopupContentLayoutInfo {
         return RibbonTaskCollapsedPopupContentLayoutInfo(
             popupSize = Size(

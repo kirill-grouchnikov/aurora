@@ -29,7 +29,7 @@ import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.theming.LocalButtonShaper
+import org.pushingpixels.aurora.theming.LocalComponentShaper
 import org.pushingpixels.aurora.theming.LocalTextStyle
 import org.pushingpixels.aurora.theming.Side
 import org.pushingpixels.aurora.theming.Sides
@@ -106,7 +106,7 @@ internal fun commandButtonStripIntrinsicSize(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
-    val buttonShaper = LocalButtonShaper.current
+    val componentShaper = LocalComponentShaper.current
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
     val commandButtonPresentationModel = getCommandButtonPresentationModel(presentationModel)
@@ -126,7 +126,7 @@ internal fun commandButtonStripIntrinsicSize(
                 commandButtonPresentationModel
             )
         val preferredSize = layoutManager.getPreferredSize(
-            command, commandButtonPresentationModel, preLayoutInfo, buttonShaper
+            command, commandButtonPresentationModel, preLayoutInfo, componentShaper
         )
         if (presentationModel.orientation == StripOrientation.Vertical) {
             width = max(width, preferredSize.width)

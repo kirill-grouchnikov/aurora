@@ -60,7 +60,7 @@ import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
-import org.pushingpixels.aurora.theming.shaper.ClassicButtonShaper
+import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
 import org.pushingpixels.aurora.window.ribbon.*
@@ -370,7 +370,7 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
 
     AuroraDecorationArea(
         decorationAreaType = DecorationAreaType.TitlePane,
-        buttonShaper = ClassicButtonShaper.Instance
+        componentShaper = ClassicComponentShaper.Instance
     ) {
         Layout(
             modifier = Modifier
@@ -746,14 +746,14 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
-    val buttonShaper = AuroraSkin.buttonShaper
+    val componentShaper = AuroraSkin.componentShaper
     val decorationAreaType = AuroraSkin.decorationAreaType
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
     val resolvedTextStyle = remember { resolveDefaults(mergedTextStyle, layoutDirection) }
     val coroutineScope = rememberCoroutineScope()
 
-    val bandContentHeight = getBandContentHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver, buttonShaper)
+    val bandContentHeight = getBandContentHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver, componentShaper)
     val bandTitleHeight = getBandTitleHeight(layoutDirection, density, resolvedTextStyle, fontFamilyResolver)
     val bandFullHeight = (bandContentHeight + bandTitleHeight)
 
@@ -768,7 +768,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                 fontFamilyResolver = fontFamilyResolver,
                 skinColors = skinColors,
                 skinPainters = painters,
-                buttonShaper = buttonShaper,
+                componentShaper = componentShaper,
                 decorationAreaType = decorationAreaType,
                 compositionLocalContext = compositionLocalContext,
                 anchorBoundsInWindow = Rect(
@@ -1026,7 +1026,7 @@ fun AuroraApplicationScope.AuroraRibbonWindow(
                 displayName = skin.displayName,
                 decorationAreaType = DecorationAreaType.None,
                 colors = skin.colors,
-                buttonShaper = skin.buttonShaper,
+                componentShaper = skin.componentShaper,
                 painters = skin.painters,
                 animationConfig = AuroraSkin.animationConfig
             ) {
@@ -1102,7 +1102,7 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
-    val buttonShaper = AuroraSkin.buttonShaper
+    val componentShaper = AuroraSkin.componentShaper
     val decorationAreaType = AuroraSkin.decorationAreaType
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
     val compositionLocalContext by rememberUpdatedState(currentCompositionLocalContext)
@@ -1179,7 +1179,7 @@ private fun Modifier.ribbonContextMenu(ribbon: Ribbon): Modifier {
                     fontFamilyResolver = fontFamilyResolver,
                     skinColors = skinColors,
                     skinPainters = painters,
-                    buttonShaper = buttonShaper,
+                    componentShaper = componentShaper,
                     decorationAreaType = decorationAreaType,
                     compositionLocalContext = compositionLocalContext,
                     anchorBoundsInWindow = Rect(

@@ -46,7 +46,7 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.painter.outline.OutlineSupplier
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.*
 
 @Immutable
@@ -246,7 +246,7 @@ internal fun <E> AuroraComboBox(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
-    val buttonShaper = AuroraSkin.buttonShaper
+    val componentShaper = AuroraSkin.componentShaper
     val popupOriginator = LocalPopupMenu.current ?: LocalWindow.current.rootPane
 
     val comboBoxTopLeftOffset = AuroraOffset(0.0f, 0.0f)
@@ -399,7 +399,7 @@ internal fun <E> AuroraComboBox(
                         fontFamilyResolver = fontFamilyResolver,
                         skinColors = skinColors,
                         skinPainters = painters,
-                        buttonShaper = buttonShaper,
+                        componentShaper = componentShaper,
                         decorationAreaType = decorationAreaType,
                         compositionLocalContext = compositionLocalContext,
                         anchorBoundsInWindow = Rect(

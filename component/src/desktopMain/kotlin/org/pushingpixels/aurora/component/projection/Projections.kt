@@ -34,7 +34,7 @@ import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.component.utils.getLabelPreferredWidth
 import org.pushingpixels.aurora.component.utils.popup.ColorSelectorCommandMenuPopupHandler
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
-import org.pushingpixels.aurora.theming.LocalButtonShaper
+import org.pushingpixels.aurora.theming.LocalComponentShaper
 import org.pushingpixels.aurora.theming.LocalTextStyle
 
 abstract class Projection<out C : ContentModel, out P : PresentationModel> {
@@ -98,7 +98,7 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
         val textStyle = LocalTextStyle.current
         val fontFamilyResolver = LocalFontFamilyResolver.current
         val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
-        val buttonShaper = LocalButtonShaper.current
+        val componentShaper = LocalComponentShaper.current
 
         val layoutManager = presentationModel.presentationState.createLayoutManager(
             layoutDirection = layoutDirection,
@@ -112,7 +112,7 @@ abstract class BaseCommandButtonProjection<out C : BaseCommand,
                 presentationModel
             )
         return layoutManager.getPreferredSize(
-            contentModel, presentationModel, preLayoutInfo, buttonShaper
+            contentModel, presentationModel, preLayoutInfo, componentShaper
         )
     }
 

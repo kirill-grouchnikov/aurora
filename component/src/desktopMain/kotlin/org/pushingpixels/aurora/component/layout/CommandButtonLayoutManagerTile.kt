@@ -23,7 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.*
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.theming.shaper.AuroraButtonShaper
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import kotlin.math.max
 
 internal open class CommandButtonLayoutManagerTile(
@@ -51,7 +51,7 @@ internal open class CommandButtonLayoutManagerTile(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): Size {
         val paddingValues = presentationModel.contentPadding
         val by = presentationModel.verticalGapScaleFactor * paddingValues.verticalPaddings.toPx()
@@ -157,9 +157,9 @@ internal open class CommandButtonLayoutManagerTile(
         command: BaseCommand,
         presentationModel: BaseCommandButtonPresentationModel,
         preLayoutInfo: CommandButtonLayoutManager.CommandButtonPreLayoutInfo,
-        buttonShaper: AuroraButtonShaper
+        componentShaper: AuroraComponentShaper
     ): CommandButtonLayoutManager.CommandButtonLayoutInfo {
-        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, buttonShaper)
+        val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, componentShaper)
 
         val buttonText = command.text
         val buttonExtraText = command.extraText

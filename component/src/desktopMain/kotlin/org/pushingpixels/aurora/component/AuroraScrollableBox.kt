@@ -67,7 +67,7 @@ fun AuroraHorizontallyScrollableBox(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
-    val buttonShaper = LocalButtonShaper.current
+    val componentShaper = LocalComponentShaper.current
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
@@ -171,7 +171,7 @@ fun AuroraHorizontallyScrollableBox(
                     scrollerPresentationModel
                 )
             val startwardScrollerSize = scrollerLayoutManager.getPreferredSize(
-                startwardScrollerCommand, scrollerPresentationModel, startwardScrollerPreLayoutInfo, buttonShaper
+                startwardScrollerCommand, scrollerPresentationModel, startwardScrollerPreLayoutInfo, componentShaper
             )
 
             // How big is the endward scroller?
@@ -181,7 +181,7 @@ fun AuroraHorizontallyScrollableBox(
                     scrollerPresentationModel
                 )
             val endwardScrollerSize = scrollerLayoutManager.getPreferredSize(
-                endwardScrollerCommand, scrollerPresentationModel, endwardScrollerPreLayoutInfo, buttonShaper
+                endwardScrollerCommand, scrollerPresentationModel, endwardScrollerPreLayoutInfo, componentShaper
             )
 
             // How much space does the scrollable content need?
@@ -244,7 +244,7 @@ fun AuroraVerticallyScrollableBox(
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
-    val buttonShaper = LocalButtonShaper.current
+    val componentShaper = LocalComponentShaper.current
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
@@ -410,7 +410,7 @@ fun AuroraVerticallyScrollableBox(
                     scrollerPresentationModel
                 )
             val topScrollerSize = scrollerLayoutManager.getPreferredSize(
-                topScrollerCommand, scrollerPresentationModel, topScrollerPreLayoutInfo, buttonShaper
+                topScrollerCommand, scrollerPresentationModel, topScrollerPreLayoutInfo, componentShaper
             )
 
             // How big is the bottom scroller?
@@ -420,7 +420,7 @@ fun AuroraVerticallyScrollableBox(
                     scrollerPresentationModel
                 )
             val bottomScrollerSize = scrollerLayoutManager.getPreferredSize(
-                bottomScrollerCommand, scrollerPresentationModel, bottomScrollerPreLayoutInfo, buttonShaper
+                bottomScrollerCommand, scrollerPresentationModel, bottomScrollerPreLayoutInfo, componentShaper
             )
 
             // How much space does the scrollable content need?
