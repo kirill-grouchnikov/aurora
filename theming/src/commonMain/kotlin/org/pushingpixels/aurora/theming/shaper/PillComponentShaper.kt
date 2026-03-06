@@ -30,26 +30,11 @@ import org.pushingpixels.aurora.theming.utils.getBaseOutline
  *
  * @author Kirill Grouchnikov
  */
-class PillComponentShaper : AuroraComponentShaper {
+class PillComponentShaper : ClassicComponentShaper() {
     override val displayName: String
         get() = "Pill"
 
-    override fun getButtonOutline(
-        width: Float,
-        height: Float,
-        insets: Float,
-        sides: Sides,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind,
-        layoutDirection: LayoutDirection,
-        density: Density
-    ): Outline {
-        val radius = (getCornerRadius(width, height, insets, density) - radiusAdjustment).coerceAtLeast(0.0f)
-
-        return getBaseOutline(layoutDirection, width, height, radius, sides, insets, outlineKind)
-    }
-
-    override fun getExtraContentPadding(uiPreferredSize: Size, layoutDirection: LayoutDirection, density: Density): PaddingValues {
+    override fun getButtonExtraContentPadding(uiPreferredSize: Size, layoutDirection: LayoutDirection, density: Density): PaddingValues {
         // Account for additional horizontal space needed for the pill shape -
         // half the height on the left and half the height on the right
         val horizontal = if (uiPreferredSize.width > uiPreferredSize.height) {
@@ -65,6 +50,23 @@ class PillComponentShaper : AuroraComponentShaper {
             (height - 2 * insets) / 2.0f
         } else {
             (width - 2 * insets) / 2.0f
+        }
+    }
+
+    override fun getButtonOutlineSupplier(buttonSides: Sides): OutlineSupplier {
+        return object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                val radius = (getCornerRadius(size.width, size.height, insets, density) - radiusAdjustment).coerceAtLeast(0.0f)
+
+                return getBaseOutline(layoutDirection, size.width, size.height, radius, buttonSides, insets, outlineKind)
+            }
         }
     }
 }

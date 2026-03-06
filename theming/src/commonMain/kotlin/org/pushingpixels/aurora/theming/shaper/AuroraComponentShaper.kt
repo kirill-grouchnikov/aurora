@@ -37,25 +37,12 @@ interface OutlineSupplier {
  * @author Kirill Grouchnikov
  */
 interface AuroraComponentShaper : AuroraTrait {
-    /** Returns the outline path. */
-    fun getButtonOutline(
-        width: Float, height: Float, insets: Float,
-        sides: Sides, radiusAdjustment: Float, outlineKind: OutlineKind,
-        layoutDirection: LayoutDirection, density: Density
-    ): Outline
+    fun getButtonOutlineSupplier(buttonSides: Sides): OutlineSupplier
 
     /**
-     * Returns the preferred size for the specified button dimensions.
-     *
-     * @param uiPreferredWidth
-     *            Preferred width of the button under the regular conditions
-     *            (plain rectangular button).
-     * @param uiPreferredHeight
-     *            Preferred width of the button under the regular conditions
-     *            (plain rectangular button).
-     * @return The preferred size for the specified dimensions.
+     * Returns the additional content padding for the specified button dimensions.
      */
-    fun getExtraContentPadding(
+    fun getButtonExtraContentPadding(
         uiPreferredSize: Size,
         layoutDirection: LayoutDirection,
         density: Density

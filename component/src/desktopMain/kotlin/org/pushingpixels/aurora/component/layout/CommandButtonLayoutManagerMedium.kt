@@ -125,7 +125,7 @@ open class CommandButtonLayoutManagerMedium(
         width -= 2 * layoutHGap
         val preferred = Size(width, by + max(prefIconHeight, textHeight))
         return if (hasText) {
-            val extraContentPadding = componentShaper.getExtraContentPadding(
+            val extraContentPadding = componentShaper.getButtonExtraContentPadding(
                 uiPreferredSize = preferred,
                 layoutDirection = layoutDirection,
                 density = _density
@@ -190,7 +190,7 @@ open class CommandButtonLayoutManagerMedium(
         )
         val preferredSize = getPreferredSize(command, presentationModel, preLayoutInfo, componentShaper)
         val originalPaddingValues = presentationModel.contentPadding
-        val extraPaddingValues = componentShaper.getExtraContentPadding(
+        val extraPaddingValues = componentShaper.getButtonExtraContentPadding(
             uiPreferredSize = preferredSizeIgnoringMinWidth,
             layoutDirection = layoutDirection,
             density = _density

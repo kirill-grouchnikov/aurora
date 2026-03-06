@@ -30,31 +30,33 @@ import org.pushingpixels.aurora.theming.utils.getClassicCornerRadius
  *
  * @author Kirill Grouchnikov
  */
-class ClassicComponentShaper : AuroraComponentShaper {
+open class ClassicComponentShaper : AuroraComponentShaper {
     override val displayName: String
         get() = "Classic"
-
-    override fun getButtonOutline(
-        width: Float,
-        height: Float,
-        insets: Float,
-        sides: Sides,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind,
-        layoutDirection: LayoutDirection,
-        density: Density
-    ): Outline {
-        val radius = (getCornerRadius(width, height, insets, density) - radiusAdjustment).coerceAtLeast(0.0f)
-
-        return getBaseOutline(layoutDirection, width, height, radius, sides, insets, outlineKind)
-    }
 
     private fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float {
         return density.getClassicCornerRadius()
     }
 
-    override fun getExtraContentPadding(uiPreferredSize: Size, layoutDirection: LayoutDirection, density: Density): PaddingValues {
+    override fun getButtonExtraContentPadding(uiPreferredSize: Size, layoutDirection: LayoutDirection, density: Density): PaddingValues {
         return PaddingValues.Zero
+    }
+
+    override fun getButtonOutlineSupplier(buttonSides: Sides): OutlineSupplier {
+       return object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                val radius = (getCornerRadius(size.width, size.height, insets, density) - radiusAdjustment).coerceAtLeast(0.0f)
+
+                return getBaseOutline(layoutDirection, size.width, size.height, radius, buttonSides, insets, outlineKind)
+            }
+        }
     }
 
     companion object {

@@ -553,31 +553,6 @@ private fun Modifier.commandButtonPopupModifier(
     }
 )
 
-private class CommandButtonOutlineSuppler(
-    val componentShaper: AuroraComponentShaper,
-    val presentationModel: BaseCommandButtonPresentationModel
-): OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        return componentShaper.getButtonOutline(
-            width = size.width,
-            height = size.height,
-            insets = insets,
-            sides = presentationModel.sides,
-            radiusAdjustment = radiusAdjustment,
-            outlineKind = outlineKind,
-            layoutDirection = layoutDirection,
-            density = density
-        )
-    }
-}
-
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 internal fun <M : BaseCommandMenuContentModel,
@@ -1106,7 +1081,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     )
                     actionAlpha = actionAlpha.coerceIn(0.0f, 1.0f)
 
-                    val outlineSupplier = CommandButtonOutlineSuppler(componentShaper, presentationModel)
+                    val outlineSupplier = componentShaper.getButtonOutlineSupplier(presentationModel.sides)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         withTransform({
@@ -1234,7 +1209,7 @@ internal fun <M : BaseCommandMenuContentModel,
                     )
                     popupAlpha = popupAlpha.coerceIn(0.0f, 1.0f)
 
-                    val outlineSupplier = CommandButtonOutlineSuppler(componentShaper, presentationModel)
+                    val outlineSupplier = componentShaper.getButtonOutlineSupplier(presentationModel.sides)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         withTransform({

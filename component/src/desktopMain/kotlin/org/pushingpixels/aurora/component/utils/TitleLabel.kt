@@ -33,8 +33,8 @@ import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import org.pushingpixels.aurora.theming.utils.paintOutline
 
@@ -99,25 +99,6 @@ internal fun TitleLabel(
                     size = this.size,
                     style = Fill
                 )
-
-                val borderOutline = componentShaper.getButtonOutline(
-                    layoutDirection = layoutDirection,
-                    width = width,
-                    height = height,
-                    insets = 0.5f,
-                    sides = Sides(
-                        straightSides = Side.entries.toSet(),
-                        openSides = setOf(Side.Leading, Side.Trailing)
-                    ),
-                    radiusAdjustment = 0.0f,
-                    outlineKind = OutlineKind.Outline,
-                    density = this
-                )
-
-                val outlineBoundingRect = borderOutline.bounds
-                if (outlineBoundingRect.isEmpty) {
-                    return@withTransform
-                }
 
                 paintOutline(
                     drawScope = this,
