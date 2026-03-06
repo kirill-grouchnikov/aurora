@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.tools.svgtranscoder.gradle
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.CacheableTask
 import org.pushingpixels.aurora.tools.svgtranscoder.SvgBatchBaseConverter
 import org.pushingpixels.aurora.tools.svgtranscoder.SvgTranscoder
 import org.pushingpixels.aurora.tools.svgtranscoder.TranscoderListener
@@ -24,6 +25,7 @@ import java.io.PrintWriter
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+@CacheableTask
 abstract class TranscodeBaseTask : DefaultTask() {
     protected fun transcodeAllFilesInFolder(
         inputFolder: File, outputFolder: File,

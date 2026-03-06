@@ -15,13 +15,17 @@
  */
 package org.pushingpixels.aurora.tools.svgtranscoder.gradle
 
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import java.io.File
 
+@CacheableTask
 open class TranscodeTask : TranscodeBaseTask() {
     @get:Input
     @set:Option(
@@ -42,6 +46,7 @@ open class TranscodeTask : TranscodeBaseTask() {
         option = "inputDirectory",
         description = "Configures the input directory."
     )
+    @PathSensitive(PathSensitivity.ABSOLUTE)
     var inputDirectory: File? = null
 
     @get:OutputDirectory
