@@ -64,6 +64,31 @@ open class ClassicComponentShaper : AuroraComponentShaper {
         return DefaultOutlineSuppler
     }
 
+    override fun getComboBoxOutlineSupplier(): OutlineSupplier {
+        return DefaultOutlineSuppler
+    }
+
+    override fun getLinearProgressBarProgressOutlineSupplier(sides: Sides): OutlineSupplier {
+        return object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                val radius = (getCornerRadius(size.width, size.height, insets, density) - radiusAdjustment).coerceAtLeast(0.0f)
+
+                return getBaseOutline(layoutDirection, size.width, size.height, radius, sides, insets, outlineKind)
+            }
+        }
+    }
+
+    override fun getLinearProgressBarTrackOutlineSupplier(): OutlineSupplier {
+        return DefaultOutlineSuppler
+    }
+
     override fun getRadioButtonOutlineSupplier(): OutlineSupplier {
         return RoundOutlineSuppler
     }

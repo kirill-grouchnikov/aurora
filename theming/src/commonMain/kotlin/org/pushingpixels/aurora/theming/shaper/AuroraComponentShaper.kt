@@ -50,5 +50,11 @@ interface AuroraComponentShaper : AuroraTrait {
 
     fun getCheckBoxOutlineSupplier(): OutlineSupplier
 
+    fun getComboBoxOutlineSupplier(): OutlineSupplier
+
+    fun getLinearProgressBarProgressOutlineSupplier(sides: Sides): OutlineSupplier
+
+    fun getLinearProgressBarTrackOutlineSupplier(): OutlineSupplier
+
     fun getRadioButtonOutlineSupplier(): OutlineSupplier
 }

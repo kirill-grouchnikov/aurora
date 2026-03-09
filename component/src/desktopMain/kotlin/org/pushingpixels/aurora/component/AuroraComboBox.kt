@@ -29,7 +29,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -46,36 +45,16 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.paintOutline
+import org.pushingpixels.aurora.theming.utils.paintSurface
 
 @Immutable
 @OptIn(AuroraInternalApi::class)
 private class ComboBoxDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
-
-private object ComboBoxOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        val cornerRadius = density.getClassicCornerRadius()
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = cornerRadius - radiusAdjustment,
-            sides = Sides(),
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
 
 @OptIn(AuroraInternalApi::class)
 private class ComboBoxLocator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
@@ -491,6 +470,7 @@ internal fun <E> AuroraComboBox(
             val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
             val outlinePainter = AuroraSkin.painters.outlinePainter
             val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
+            val componentShaper = AuroraSkin.componentShaper
 
             // Handle flat comboboxes
             val alpha =
@@ -516,7 +496,7 @@ internal fun <E> AuroraComboBox(
                     )
                 }) {
                     val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
-                    val outlineFill = ComboBoxOutlineSuppler.getOutline(
+                    val outlineFill = componentShaper.getComboBoxOutlineSupplier().getOutline(
                         layoutDirection = layoutDirection,
                         density = density,
                         size = this.size,
@@ -545,7 +525,7 @@ internal fun <E> AuroraComboBox(
                         outlinePainterOverlay = outlinePainterOverlay,
                         size = this.size,
                         alpha = alpha,
-                        outlineSupplier = ComboBoxOutlineSuppler,
+                        outlineSupplier = componentShaper.getComboBoxOutlineSupplier(),
                         colorTokens = drawingCache.colorTokens)
 
                     val arrowWidth = if (presentationModel.popupPlacementStrategy.isHorizontal)

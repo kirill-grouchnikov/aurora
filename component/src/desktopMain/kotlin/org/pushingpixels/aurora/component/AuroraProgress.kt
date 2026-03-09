@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
@@ -39,8 +38,12 @@ import org.pushingpixels.aurora.component.model.CircularProgressPresentationMode
 import org.pushingpixels.aurora.component.model.DeterminateProgressContentModel
 import org.pushingpixels.aurora.component.model.IndeterminateProgressContentModel
 import org.pushingpixels.aurora.component.model.LinearProgressPresentationModel
-import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
+import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.ComponentState
+import org.pushingpixels.aurora.theming.OutlineKind
+import org.pushingpixels.aurora.theming.Side
+import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.utils.*
 import kotlin.math.min
 
@@ -171,28 +174,6 @@ internal fun AuroraDeterminateCircularProgress(
     }
 }
 
-private object LinearProgressOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        val cornerRadius = density.getClassicCornerRadius()
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = cornerRadius - radiusAdjustment,
-            sides = Sides(),
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
-
 @Composable
 internal fun linearProgressIntrinsicSize(
     presentationModel: LinearProgressPresentationModel
@@ -210,6 +191,7 @@ internal fun AuroraIndeterminateLinearProgress(
     presentationModel: LinearProgressPresentationModel
 ) {
     val layoutDirection = LocalLayoutDirection.current
+    val density = LocalDensity.current
 
     val infiniteTransition = rememberInfiniteTransition()
     val progress by infiniteTransition.animateFloat(
@@ -242,6 +224,7 @@ internal fun AuroraIndeterminateLinearProgress(
 
     val outlinePainter = AuroraSkin.painters.outlinePainter
     val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
+    val componentShaper = AuroraSkin.componentShaper
 
     Canvas(
         modifier
@@ -260,15 +243,14 @@ internal fun AuroraIndeterminateLinearProgress(
 
         withTransform({
             clipPath(Path().also {
-                it.addRoundRect(
-                    RoundRect(
-                        left = 0.0f,
-                        top = 0.0f,
-                        right = size.width,
-                        bottom = size.height,
-                        cornerRadius = CornerRadius(radius, radius)
-                    )
-                )
+                it.addOutline(componentShaper.getLinearProgressBarTrackOutlineSupplier().getOutline(
+                    layoutDirection = layoutDirection,
+                    density = density,
+                    size = size,
+                    insets = 0.0f,
+                    radiusAdjustment = 0.0f,
+                    outlineKind = OutlineKind.Outline
+                ))
             })
         }) {
             val containerSurfaceAlpha =
@@ -318,7 +300,7 @@ internal fun AuroraIndeterminateLinearProgress(
             outlinePainterOverlay = outlinePainterOverlay,
             size = this.size,
             alpha = 1.0f,
-            outlineSupplier = LinearProgressOutlineSuppler,
+            outlineSupplier = componentShaper.getLinearProgressBarTrackOutlineSupplier(),
             colorTokens = fillColorTokens)
     }
 }
@@ -331,6 +313,7 @@ internal fun AuroraDeterminateLinearProgress(
     presentationModel: LinearProgressPresentationModel
 ) {
     val layoutDirection = LocalLayoutDirection.current
+    val density = LocalDensity.current
 
     val progressState =
         if (contentModel.enabled) ComponentState.Determinate else ComponentState.DisabledDeterminate
@@ -356,6 +339,7 @@ internal fun AuroraDeterminateLinearProgress(
     val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
     val outlinePainter = AuroraSkin.painters.outlinePainter
     val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
+    val componentShaper = AuroraSkin.componentShaper
 
     Canvas(
         modifier
@@ -373,15 +357,15 @@ internal fun AuroraDeterminateLinearProgress(
 
         withTransform({
             clipPath(Path().also {
-                it.addRoundRect(
-                    RoundRect(
-                        left = 0.0f,
-                        top = 0.0f,
-                        right = size.width,
-                        bottom = size.height,
-                        cornerRadius = CornerRadius(radius, radius)
-                    )
-                )
+                it.addOutline(componentShaper.getLinearProgressBarTrackOutlineSupplier().getOutline(
+                    layoutDirection = layoutDirection,
+                    density = density,
+                    size = size,
+                    insets = 0.0f,
+                    radiusAdjustment = 0.0f,
+                    outlineKind = OutlineKind.Outline
+                ))
+
             })
         }) {
             paintSurface(
@@ -397,22 +381,35 @@ internal fun AuroraDeterminateLinearProgress(
 
             val progressWidth = size.width * contentModel.progress
             if (progressWidth > 0.0f) {
-                paintSurface(
-                    drawScope = this,
-                    componentState = progressState,
-                    surfacePainter = surfacePainter,
-                    surfacePainterOverlay = surfacePainterOverlay,
-                    size = this.size,
-                    alpha = 1.0f,
-                    outline = Outline.Rectangle(
-                        Rect(
-                            offset = if (layoutDirection == LayoutDirection.Ltr) Offset.Zero else
-                                Offset(x = size.width - progressWidth, 0.0f),
-                            size = Size(progressWidth, size.height)
-                        )
-                    ),
-                    colorTokens = progressColorTokens
-                )
+                val progressSides = if (contentModel.progress < 1.0f) {
+                    Sides(straightSides = hashSetOf(Side.Trailing))
+                } else {
+                    Sides()
+                }
+                withTransform({
+                    translate(
+                        left = if (layoutDirection == LayoutDirection.Ltr) 0.0f else size.width - progressWidth,
+                        top = 0.0f)
+                }) {
+                    paintSurface(
+                        drawScope = this,
+                        componentState = progressState,
+                        surfacePainter = surfacePainter,
+                        surfacePainterOverlay = surfacePainterOverlay,
+                        size = this.size,
+                        alpha = 1.0f,
+                        outline = componentShaper.getLinearProgressBarProgressOutlineSupplier(sides = progressSides)
+                            .getOutline(
+                                layoutDirection = layoutDirection,
+                                density = density,
+                                size = Size(progressWidth, size.height),
+                                insets = 0.0f,
+                                radiusAdjustment = 0.0f,
+                                outlineKind = OutlineKind.Outline
+                            ),
+                        colorTokens = progressColorTokens
+                    )
+                }
             }
         }
 
@@ -423,7 +420,7 @@ internal fun AuroraDeterminateLinearProgress(
             outlinePainterOverlay = outlinePainterOverlay,
             size = this.size,
             alpha = 1.0f,
-            outlineSupplier = LinearProgressOutlineSuppler,
+            outlineSupplier = componentShaper.getLinearProgressBarTrackOutlineSupplier(),
             colorTokens = fillColorTokens)
     }
 }
