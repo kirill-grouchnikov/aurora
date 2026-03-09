@@ -47,4 +47,8 @@ interface AuroraComponentShaper : AuroraTrait {
         layoutDirection: LayoutDirection,
         density: Density
     ): PaddingValues
+
+    fun getCheckBoxOutlineSupplier(): OutlineSupplier
+
+    fun getRadioButtonOutlineSupplier(): OutlineSupplier
 }

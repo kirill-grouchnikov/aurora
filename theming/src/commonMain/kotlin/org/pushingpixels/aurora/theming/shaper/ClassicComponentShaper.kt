@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.theming.shaper
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.unit.Density
@@ -59,10 +60,60 @@ open class ClassicComponentShaper : AuroraComponentShaper {
         }
     }
 
+    override fun getCheckBoxOutlineSupplier(): OutlineSupplier {
+        return DefaultOutlineSuppler
+    }
+
+    override fun getRadioButtonOutlineSupplier(): OutlineSupplier {
+        return RoundOutlineSuppler
+    }
+
     companion object {
-        /**
-         * Reusable instance of this shaper.
-         */
+        /** Reusable instance of this shaper. */
         val Instance = ClassicComponentShaper()
+
+        private val DefaultOutlineSuppler = object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                val cornerRadius = density.getClassicCornerRadius()
+                return getBaseOutline(
+                    layoutDirection = layoutDirection,
+                    width = size.width,
+                    height = size.height,
+                    radius = cornerRadius - radiusAdjustment,
+                    sides = Sides(),
+                    insets = insets,
+                    outlineKind = outlineKind,
+                )
+            }
+        }
+
+        private val RoundOutlineSuppler = object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                return Outline.Rounded(
+                    roundRect = RoundRect(
+                        left = insets,
+                        top = insets,
+                        right = size.width - insets,
+                        bottom = size.height - insets,
+                        radiusX = size.width / 2.0f - insets,
+                        radiusY = size.height / 2.0f - insets
+                    )
+                )
+            }
+        }
     }
 }

@@ -25,24 +25,24 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.paintOutline
@@ -53,28 +53,6 @@ import org.pushingpixels.aurora.theming.utils.paintSurface
 private class RadioButtonDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
-
-private object RadioButtonMarkOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        return Outline.Rounded(
-            roundRect = RoundRect(
-                left = 0.5f + insets,
-                top = 0.5f + insets,
-                right = size.width - 0.5f - insets,
-                bottom = size.height - 0.5f - insets,
-                radiusX = (size.width - 1.0f) / 2.0f - insets,
-                radiusY = (size.height - 1.0f) / 2.0f - insets
-            )
-        )
-    }
-}
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -330,12 +308,14 @@ internal fun AuroraRadioButton(
         val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
         val outlinePainter = AuroraSkin.painters.outlinePainter
         val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
+        val componentShaper = AuroraSkin.componentShaper
+        val outlineSupplier = componentShaper.getRadioButtonOutlineSupplier()
 
         Canvas(
             Modifier.wrapContentSize(Alignment.Center).size(presentationModel.markSize)
         ) {
             val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
-            val outlineFill = RadioButtonMarkOutlineSuppler.getOutline(
+            val outlineFill = outlineSupplier.getOutline(
                 layoutDirection = layoutDirection,
                 density = density,
                 size = this.size,
@@ -360,29 +340,33 @@ internal fun AuroraRadioButton(
                 outlinePainterOverlay = outlinePainterOverlay,
                 size = this.size,
                 alpha = 1.0f,
-                outlineSupplier = RadioButtonMarkOutlineSuppler,
+                outlineSupplier = outlineSupplier,
                 colorTokens = drawingCache.colorTokens)
 
             // Draw the radio mark with the alpha that corresponds to the current
             // selection and potential transition
             val markCenter = this.size.width / 2.0f
             val markRadius = this.size.width / 4.5f
-            val outlineMark = Outline.Rounded(
-                roundRect = RoundRect(
-                    left = markCenter - markRadius, top = markCenter - markRadius,
-                    right = markCenter + markRadius, bottom = markCenter + markRadius,
-                    radiusX = markRadius, radiusY = markRadius
-                )
-            )
+            val markOutline = outlineSupplier.getOutline(
+                layoutDirection = layoutDirection,
+                density = density,
+                size = Size(2 * markRadius, 2* markRadius),
+                insets = 0.0f,
+                radiusAdjustment = 0.0f,
+                outlineKind = OutlineKind.Outline)
 
-            // Note that we apply alpha twice - once for the selected / checked
-            // state or transition, and the second time based on the enabled state
-            drawOutline(
-                outline = outlineMark,
-                color = markColor.withAlpha(markAlpha.value),
-                style = Fill,
-                alpha = onContainerAlpha
-            )
+            withTransform({
+                translate(markCenter - markRadius, markCenter - markRadius)
+            }) {
+                // Note that we apply alpha twice - once for the selected / checked
+                // state or transition, and the second time based on the enabled state
+                drawOutline(
+                    outline = markOutline,
+                    color = markColor.withAlpha(markAlpha.value),
+                    style = Fill,
+                    alpha = onContainerAlpha
+                )
+            }
         }
         Spacer(modifier = Modifier.width(SelectorSizingConstants.SelectorMarkTextGap *
                 presentationModel.horizontalGapScaleFactor))

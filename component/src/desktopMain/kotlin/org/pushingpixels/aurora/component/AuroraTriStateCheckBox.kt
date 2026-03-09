@@ -26,7 +26,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -38,14 +37,18 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.paintOutline
+import org.pushingpixels.aurora.theming.utils.paintSurface
 
 @Immutable
 @OptIn(AuroraInternalApi::class)
@@ -53,28 +56,6 @@ private class TriStateCheckBoxDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens(),
     val markPath: Path = Path()
 )
-
-private object TriStateCheckBoxMarkOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        val cornerRadius = density.getClassicCornerRadius();
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = cornerRadius - radiusAdjustment,
-            sides = Sides(),
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -398,13 +379,14 @@ internal fun AuroraTriStateCheckBox(
         val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
         val outlinePainter = AuroraSkin.painters.outlinePainter
         val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
+        val componentShaper = AuroraSkin.componentShaper
 
         Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.markSize)) {
             val width = this.size.width
             val height = this.size.height
 
             val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
-            val outlineFill = TriStateCheckBoxMarkOutlineSuppler.getOutline(
+            val outlineFill = componentShaper.getCheckBoxOutlineSupplier().getOutline(
                 layoutDirection = layoutDirection,
                 density = density,
                 size = this.size,
@@ -429,7 +411,7 @@ internal fun AuroraTriStateCheckBox(
                 outlinePainterOverlay = outlinePainterOverlay,
                 size = this.size,
                 alpha = 1.0f,
-                outlineSupplier = TriStateCheckBoxMarkOutlineSuppler,
+                outlineSupplier = componentShaper.getCheckBoxOutlineSupplier(),
                 colorTokens = drawingCache.colorTokens)
 
             // Draw the checkbox mark with the alpha that corresponds to the current
