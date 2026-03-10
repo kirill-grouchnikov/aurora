@@ -24,45 +24,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.paintOutline
+import org.pushingpixels.aurora.theming.utils.paintSurface
 
 @Immutable
 @OptIn(AuroraInternalApi::class)
 private class BoxWithHighlightsDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
-
-private object BoxWithHighlightsOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = 0.0f,
-            sides = Sides(),
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
 
 /**
  * A composable that wraps its content with top-level highlights. Notes:
@@ -80,7 +57,7 @@ fun AuroraBoxWithHighlights(
     enabled: Boolean = true,
     selected: Boolean = false,
     onClick: (() -> Unit)? = null,
-    sides: Sides = Sides(),
+    sides: Sides = Sides.ClosedRectangle,
     content: @Composable (colorTokens: ContainerColorTokens) -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -240,6 +217,8 @@ fun AuroraBoxWithHighlights(
 
         val highlightSurfacePainter = AuroraSkin.painters.highlightSurfacePainter
         val highlightOutlinePainter = AuroraSkin.painters.highlightOutlinePainter
+        val componentShaper = AuroraSkin.componentShaper
+        val outlineSupplier = componentShaper.getBaselineOutlineSupplier(sides)
 
         val alpha = 1.0f
 
@@ -257,7 +236,7 @@ fun AuroraBoxWithHighlights(
                 )
             }) {
                 val outlineInset = highlightOutlinePainter.getOutlineInset(InsetKind.Surface)
-                val outlineFill = BoxWithHighlightsOutlineSuppler.getOutline(
+                val outlineFill = outlineSupplier.getOutline(
                     layoutDirection = layoutDirection,
                     density = density,
                     size = this.size,
@@ -286,7 +265,7 @@ fun AuroraBoxWithHighlights(
                     outlinePainterOverlay = null,
                     size = this.size,
                     alpha = alpha,
-                    outlineSupplier = BoxWithHighlightsOutlineSuppler,
+                    outlineSupplier = outlineSupplier,
                     colorTokens = drawingCache.colorTokens)
             }
         }
