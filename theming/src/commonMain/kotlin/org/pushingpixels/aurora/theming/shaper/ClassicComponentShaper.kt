@@ -79,7 +79,8 @@ open class ClassicComponentShaper : AuroraComponentShaper {
                 radiusAdjustment: Float,
                 outlineKind: OutlineKind
             ): Outline {
-                val radius = (getCornerRadius(size.width, size.height, insets, density) - radiusAdjustment).coerceAtLeast(0.0f)
+                val radius = (getCornerRadius(size.width, size.height, insets, density) / 2.0f
+                        - radiusAdjustment).coerceAtLeast(0.0f)
 
                 return getBaseOutline(layoutDirection, size.width, size.height, radius, sides, insets, outlineKind)
             }
@@ -87,7 +88,7 @@ open class ClassicComponentShaper : AuroraComponentShaper {
     }
 
     override fun getLinearProgressBarTrackOutlineSupplier(): OutlineSupplier {
-        return DefaultOutlineSuppler
+        return DefaultHalfOutlineSuppler
     }
 
     override fun getRadioButtonOutlineSupplier(): OutlineSupplier {
@@ -96,6 +97,22 @@ open class ClassicComponentShaper : AuroraComponentShaper {
 
     override fun getScrollBarThumbOutlineSupplier(): OutlineSupplier {
         return ScrollBarThumbOutlineSuppler
+    }
+
+    override fun getSliderThumbOutlineSupplier(): OutlineSupplier {
+        return RoundOutlineSuppler
+    }
+
+    override fun getSliderTrackOutlineSupplier(): OutlineSupplier {
+        return DefaultHalfOutlineSuppler
+    }
+
+    override fun getSwitchThumbOutlineSupplier(): OutlineSupplier {
+        return RoundOutlineSuppler
+    }
+
+    override fun getSwitchTrackOutlineSupplier(): OutlineSupplier {
+        return SwitchTrackOutlineSuppler
     }
 
     override fun getTabButtonOutlineSupplier(sides: Sides): OutlineSupplier {
@@ -140,6 +157,28 @@ open class ClassicComponentShaper : AuroraComponentShaper {
                 outlineKind: OutlineKind
             ): Outline {
                 val cornerRadius = density.getClassicCornerRadius()
+                return getBaseOutline(
+                    layoutDirection = layoutDirection,
+                    width = size.width,
+                    height = size.height,
+                    radius = cornerRadius - radiusAdjustment,
+                    sides = Sides(),
+                    insets = insets,
+                    outlineKind = outlineKind,
+                )
+            }
+        }
+
+        private val DefaultHalfOutlineSuppler = object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                val cornerRadius = density.getClassicCornerRadius() / 2.0f
                 return getBaseOutline(
                     layoutDirection = layoutDirection,
                     width = size.width,
@@ -214,6 +253,27 @@ open class ClassicComponentShaper : AuroraComponentShaper {
                     width = size.width,
                     height = size.height,
                     radius = radius - radiusAdjustment,
+                    sides = Sides(),
+                    insets = insets,
+                    outlineKind = outlineKind,
+                )
+            }
+        }
+
+        private val SwitchTrackOutlineSuppler = object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                return getBaseOutline(
+                    layoutDirection = layoutDirection,
+                    width = size.width,
+                    height = size.height,
+                    radius = size.height / 2.0f - radiusAdjustment,
                     sides = Sides(),
                     insets = insets,
                     outlineKind = outlineKind,

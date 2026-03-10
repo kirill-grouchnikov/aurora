@@ -25,50 +25,29 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.SwitchContentModel
 import org.pushingpixels.aurora.component.model.SwitchPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.paintOutline
+import org.pushingpixels.aurora.theming.utils.paintSurface
 
 @Immutable
 @OptIn(AuroraInternalApi::class)
 private class SwitchDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
-
-private object SwitchOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = size.height / 2.0f - radiusAdjustment,
-            sides = Sides(),
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
 
 @Composable
 internal fun switchIntrinsicSize(
@@ -282,10 +261,11 @@ internal fun AuroraSwitch(
         val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
         val outlinePainter = AuroraSkin.painters.outlinePainter
         val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
+        val componentShaper = AuroraSkin.componentShaper
 
         Canvas(Modifier.wrapContentSize(Alignment.Center).size(presentationModel.trackSize)) {
             val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
-            val outlineFill = SwitchOutlineSuppler.getOutline(
+            val outlineFill = componentShaper.getSwitchTrackOutlineSupplier().getOutline(
                 layoutDirection = layoutDirection,
                 density = density,
                 size = this.size,
@@ -310,7 +290,7 @@ internal fun AuroraSwitch(
                 outlinePainterOverlay = outlinePainterOverlay,
                 size = this.size,
                 alpha = 1.0f,
-                outlineSupplier = SwitchOutlineSuppler,
+                outlineSupplier = componentShaper.getSwitchTrackOutlineSupplier(),
                 colorTokens = drawingCache.colorTokens)
 
             val thumbSize = presentationModel.thumbSizeOff +
@@ -331,22 +311,25 @@ internal fun AuroraSwitch(
 
             val thumbRadiusPx = thumbSize.toPx() / 2.0f
             val thumbVerticalCenterPx = presentationModel.trackSize.height.toPx() / 2.0f
-            val thumbOutline = Outline.Rounded(
-                roundRect = RoundRect(
-                    left = thumbXStart.toPx(),
-                    top = thumbVerticalCenterPx - thumbRadiusPx,
-                    right = thumbXStart.toPx() + 2.0f * thumbRadiusPx,
-                    bottom = thumbVerticalCenterPx + thumbRadiusPx,
-                    radiusX = thumbRadiusPx, radiusY = thumbRadiusPx
-                )
-            )
+            val thumbOutline = componentShaper.getSwitchThumbOutlineSupplier().getOutline(
+                layoutDirection = layoutDirection,
+                density = density,
+                size = Size(2 * thumbRadiusPx, 2 * thumbRadiusPx),
+                insets = 0.0f,
+                radiusAdjustment = 0.0f,
+                outlineKind = OutlineKind.Outline)
 
-            drawOutline(
-                outline = thumbOutline,
-                style = Fill,
-                color = thumbColor,
-                alpha = thumbAlpha
-            )
+            val thumbX = thumbXStart.toPx()
+            withTransform({
+                translate(thumbX, thumbVerticalCenterPx - thumbRadiusPx)
+            }) {
+                drawOutline(
+                    outline = thumbOutline,
+                    style = Fill,
+                    color = thumbColor,
+                    alpha = thumbAlpha
+                )
+            }
         }
     }
 }

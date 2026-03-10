@@ -60,6 +60,14 @@ interface AuroraComponentShaper : AuroraTrait {
 
     fun getScrollBarThumbOutlineSupplier(): OutlineSupplier
 
+    fun getSliderThumbOutlineSupplier(): OutlineSupplier
+
+    fun getSliderTrackOutlineSupplier(): OutlineSupplier
+
+    fun getSwitchThumbOutlineSupplier(): OutlineSupplier
+
+    fun getSwitchTrackOutlineSupplier(): OutlineSupplier
+
     fun getTabButtonOutlineSupplier(sides: Sides): OutlineSupplier
 
     fun getTextFieldOutlineSupplier(): OutlineSupplier

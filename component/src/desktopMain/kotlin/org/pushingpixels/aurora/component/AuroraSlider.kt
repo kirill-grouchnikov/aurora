@@ -29,10 +29,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -40,7 +38,6 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraRect
@@ -51,7 +48,6 @@ import org.pushingpixels.aurora.component.model.SliderPresentationModel
 import org.pushingpixels.aurora.component.model.SliderSizingConstants
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.utils.*
 import kotlin.math.roundToInt
@@ -83,50 +79,6 @@ internal fun sliderIntrinsicSize(
         SliderSizingConstants.DefaultWidth.value * density.density,
         height.value * density.density
     )
-}
-
-private object SliderTrackOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        val cornerRadius = density.getClassicCornerRadius() / 2.0f
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = cornerRadius - radiusAdjustment,
-            sides = Sides(),
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
-
-private object SliderThumbOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        return Outline.Rounded(
-            roundRect = RoundRect(
-                left = 0.5f + insets,
-                top = 0.5f + insets,
-                right = size.width - 0.5f - insets,
-                bottom = size.height - 0.5f - insets,
-                radiusX = (size.width - 1.0f) / 2.0f - insets,
-                radiusY = (size.height - 1.0f) / 2.0f - insets
-            )
-        )
-    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
@@ -194,6 +146,9 @@ internal fun AuroraSlider(
     val trackSurfacePainter = MatteSurfacePainter()
     val outlinePainter = AuroraSkin.painters.outlinePainter
     val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
+
+    val componentShaper = AuroraSkin.componentShaper
+    val trackOutlineSupplier = componentShaper.getSliderTrackOutlineSupplier()
 
     val dragStartX = remember { mutableStateOf(0.0f) }
     val cumulativeDragAmount = remember { mutableStateOf(0.0f) }
@@ -449,7 +404,7 @@ internal fun AuroraSlider(
             val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
             val trackSize = Size(drawingCache.trackRect.width, drawingCache.trackRect.height)
 
-            val outlineFill = SliderTrackOutlineSuppler.getOutline(
+            val outlineFill = trackOutlineSupplier.getOutline(
                 layoutDirection = layoutDirection,
                 density = density,
                 size = trackSize,
@@ -475,7 +430,7 @@ internal fun AuroraSlider(
                     outlinePainterOverlay = outlinePainterOverlay,
                     size = trackSize,
                     alpha = 1.0f,
-                    outlineSupplier = SliderTrackOutlineSuppler,
+                    outlineSupplier = trackOutlineSupplier,
                     colorTokens = drawingCache.colorTokens)
             }
 
@@ -495,7 +450,7 @@ internal fun AuroraSlider(
                         height = drawingCache.trackRect.height
                     )
                     translate(left = drawingCache.trackRect.x, top = drawingCache.trackRect.y) {
-                        val selectedFill = SliderTrackOutlineSuppler.getOutline(
+                        val selectedFill = trackOutlineSupplier.getOutline(
                             layoutDirection = layoutDirection,
                             density = density,
                             size = selectionSize,
@@ -520,7 +475,7 @@ internal fun AuroraSlider(
                             outlinePainterOverlay = outlinePainterOverlay,
                             size = selectionSize,
                             alpha = 1.0f,
-                            outlineSupplier = SliderTrackOutlineSuppler,
+                            outlineSupplier = trackOutlineSupplier,
                             colorTokens = selectionColorTokens)
 
                     }
@@ -530,7 +485,7 @@ internal fun AuroraSlider(
                         height = drawingCache.trackRect.height
                     )
                     translate(left = selectionCenterX, top = drawingCache.trackRect.y) {
-                        val selectedFill = SliderTrackOutlineSuppler.getOutline(
+                        val selectedFill = trackOutlineSupplier.getOutline(
                             layoutDirection = layoutDirection,
                             density = density,
                             size = selectionSize,
@@ -555,7 +510,7 @@ internal fun AuroraSlider(
                             outlinePainterOverlay = outlinePainterOverlay,
                             size = selectionSize,
                             alpha = 1.0f,
-                            outlineSupplier = SliderTrackOutlineSuppler,
+                            outlineSupplier = trackOutlineSupplier,
                             colorTokens = selectionColorTokens)
 
                     }
@@ -622,7 +577,7 @@ internal fun AuroraSlider(
                 translate(left = drawingCache.thumbRect.x, top = drawingCache.thumbRect.y)
             }) {
                 val thumbOutlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
-                val thumbOutlineFill = SliderThumbOutlineSuppler.getOutline(
+                val thumbOutlineFill = componentShaper.getSliderThumbOutlineSupplier().getOutline(
                     layoutDirection = layoutDirection,
                     density = density,
                     size = Size(thumbSize, thumbSize),
@@ -647,7 +602,7 @@ internal fun AuroraSlider(
                     outlinePainterOverlay = outlinePainterOverlay,
                     size = Size(thumbSize, thumbSize),
                     alpha = 1.0f,
-                    outlineSupplier = SliderThumbOutlineSuppler,
+                    outlineSupplier = componentShaper.getSliderThumbOutlineSupplier(),
                     colorTokens = drawingCache.colorTokens)
             }
         }
