@@ -18,16 +18,10 @@ package org.pushingpixels.aurora.theming
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import org.pushingpixels.aurora.theming.utils.paintOutline
 
 @Composable
@@ -36,7 +30,8 @@ fun Modifier.auroraBorder(): Modifier = this.then(
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
         outlinePainter = AuroraSkin.painters.outlinePainter,
-        outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
+        outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay,
+        componentShaper = AuroraSkin.componentShaper
     )
 )
 
@@ -47,63 +42,17 @@ fun Modifier.auroraBorder(sides: Sides): Modifier = this.then(
         colors = AuroraSkin.colors,
         outlinePainter = AuroraSkin.painters.outlinePainter,
         outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay,
+        componentShaper = AuroraSkin.componentShaper,
         sides = sides
     )
 )
-
-private object BorderOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        val cornerRadius = with (density) {
-            2.0f.dp.toPx()
-        }
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = cornerRadius - radiusAdjustment,
-            sides = Sides(),
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
-
-private class BorderWithSidesOutlineSuppler(val sides: Sides): OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        val cornerRadius = with (density) {
-            2.0f.dp.toPx()
-        }
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = cornerRadius - radiusAdjustment,
-            sides = sides,
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
 
 private class AuroraBorder(
     private val decorationAreaType: DecorationAreaType,
     private val colors: AuroraSkinColors,
     private val outlinePainter: AuroraOutlinePainter,
     private val outlinePainterOverlay: AuroraOutlinePainter.Overlay?,
+    private val componentShaper: AuroraComponentShaper,
 ) : DrawModifier {
     @OptIn(AuroraInternalApi::class)
     override fun ContentDrawScope.draw() {
@@ -116,7 +65,7 @@ private class AuroraBorder(
             outlinePainterOverlay = outlinePainterOverlay,
             size = this.size,
             alpha = 1.0f,
-            outlineSupplier = BorderOutlineSuppler,
+            outlineSupplier = componentShaper.getBaselineOutlineSupplier(),
             colorTokens = borderTokens)
 
         // And don't forget to draw the content
@@ -129,6 +78,7 @@ private class AuroraBorderWithSides(
     private val colors: AuroraSkinColors,
     private val outlinePainter: AuroraOutlinePainter,
     private val outlinePainterOverlay: AuroraOutlinePainter.Overlay?,
+    private val componentShaper: AuroraComponentShaper,
     private val sides: Sides
 ) : DrawModifier {
 
@@ -143,7 +93,7 @@ private class AuroraBorderWithSides(
             outlinePainterOverlay = outlinePainterOverlay,
             size = this.size,
             alpha = 1.0f,
-            outlineSupplier = BorderWithSidesOutlineSuppler(sides),
+            outlineSupplier = componentShaper.getBaselineOutlineSupplier(sides),
             colorTokens = borderTokens)
 
         // And don't forget to draw the content

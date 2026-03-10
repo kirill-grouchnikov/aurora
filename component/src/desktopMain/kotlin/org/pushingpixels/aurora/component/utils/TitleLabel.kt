@@ -18,49 +18,20 @@ package org.pushingpixels.aurora.component.utils
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.LabelPresentationModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
-import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.getBaseOutline
+import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.ComponentState
+import org.pushingpixels.aurora.theming.Side
+import org.pushingpixels.aurora.theming.Sides
 import org.pushingpixels.aurora.theming.utils.paintOutline
-
-private object TitleLabelOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = 0.0f,
-            sides = Sides(
-                straightSides = Side.entries.toSet(),
-                openSides = setOf(Side.Leading, Side.Trailing)
-            ),
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
 
 @Composable
 @OptIn(AuroraInternalApi::class)
@@ -71,8 +42,9 @@ internal fun TitleLabel(
 ) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
-    val componentShaper = remember { ClassicComponentShaper() }
     val outlinePainter = AuroraSkin.painters.outlinePainter
+    val componentShaper = AuroraSkin.componentShaper
+    val sides = Sides(straightSides = Side.entries.toSet(), openSides = setOf(Side.Leading, Side.Trailing))
 
     Box(modifier = modifier) {
         Canvas(modifier = Modifier.matchParentSize()) {
@@ -107,7 +79,7 @@ internal fun TitleLabel(
                     outlinePainterOverlay = null,
                     size = this.size,
                     alpha = 1.0f,
-                    outlineSupplier = TitleLabelOutlineSuppler,
+                    outlineSupplier = componentShaper.getBaselineOutlineSupplier(sides),
                     colorTokens = neutralColorTokens)
             }
         }
