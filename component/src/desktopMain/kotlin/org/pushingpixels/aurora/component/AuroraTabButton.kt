@@ -25,9 +25,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -42,16 +40,15 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.Command
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -60,28 +57,6 @@ import kotlin.math.roundToInt
 private class TabButtonDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
-
-private class TabButtonOutlineSuppler(val presentationModel: CommandButtonPresentationModel): OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        val cornerRadius = density.getClassicCornerRadius()
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = cornerRadius - radiusAdjustment,
-            sides = presentationModel.sides,
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -292,7 +267,7 @@ internal fun AuroraTabButton(
                         } else 1.0f
                     )
 
-                    val outlineSupplier = TabButtonOutlineSuppler(presentationModel)
+                    val outlineSupplier = AuroraSkin.componentShaper.getTabButtonOutlineSupplier(presentationModel.sides)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = size.width

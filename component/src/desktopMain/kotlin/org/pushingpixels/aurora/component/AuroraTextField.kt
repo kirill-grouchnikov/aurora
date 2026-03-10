@@ -30,17 +30,17 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.byAlpha
@@ -51,7 +51,6 @@ import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
 import org.pushingpixels.aurora.component.model.TextFieldValueContentModel
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
@@ -62,24 +61,6 @@ import kotlin.math.max
 private class TextFieldDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
-
-private object TextFieldOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        return Outline.Rectangle(
-            Rect(
-                left = insets, top = insets,
-                right = size.width - insets, bottom = size.height - insets
-            )
-        )
-    }
-}
 
 @Composable
 internal fun AuroraTextField(
@@ -236,6 +217,7 @@ internal fun AuroraTextField(
 
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
+    val componentShaper = AuroraSkin.componentShaper
 
     // Populate the cached color tokens for drawing the text field border
     // based on the current model state info
@@ -311,7 +293,7 @@ internal fun AuroraTextField(
                 // Get the base border color
                 var borderColor = drawingCache.colorTokens.containerOutline
                 drawOutline(
-                    outline = TextFieldOutlineSuppler.getOutline(
+                    outline = componentShaper.getTextFieldOutlineSupplier().getOutline(
                         layoutDirection = this.layoutDirection,
                         density = this,
                         size = size,

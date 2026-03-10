@@ -27,8 +27,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -45,8 +43,10 @@ import org.pushingpixels.aurora.component.utils.StateTransitionTracker
 import org.pushingpixels.aurora.component.utils.TransitionInfo
 import org.pushingpixels.aurora.component.utils.populateColorTokens
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.paintOutline
+import org.pushingpixels.aurora.theming.utils.paintSurface
 import kotlin.math.roundToInt
 
 object ScrollBarSizingConstants {
@@ -61,64 +61,6 @@ object ScrollBarSizingConstants {
 private class ScrollBarDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
-
-private object ScrollBarVerticalThumbOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        // Adaptive corner radius, either half the height (which will be width after
-        // rotation) for larger thumbs, or quarter the height for smaller thumbs
-        val adjustedInsets = insets + 1.0f
-        val radius: Float = if (size.width >= 1.5 * size.height)
-            (size.height - 2.0f * adjustedInsets) / 2.0f
-        else
-            (size.height - 2.0f * adjustedInsets) / 4.0f
-
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = radius - radiusAdjustment,
-            sides = Sides(),
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
-
-private object ScrollBarHorizontalThumbOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        // Adaptive corner radius, either half the height for larger thumbs, or quarter the
-        // height for smaller thumbs
-        val adjustedInsets = insets + 1.0f
-        val radius: Float = if (size.width >= 1.5 * size.height)
-            (size.height - 2.0f * adjustedInsets) / 2.0f
-        else
-            (size.height - 2.0f * adjustedInsets) / 4.0f
-
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = radius - radiusAdjustment,
-            sides = Sides(),
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
 
 // Based on code in Scrollbar.desktop.kt
 
@@ -230,6 +172,7 @@ private fun Scrollbar(
     val density = LocalDensity.current
 
     val decorationAreaType = AuroraSkin.decorationAreaType
+    val componentShaper = AuroraSkin.componentShaper
 
     // Transition for the selection state
     val selectionTransition = updateTransition(false)
@@ -382,13 +325,8 @@ private fun Scrollbar(
                 val outlinePainterOverlay = AuroraSkin.painterOverlays?.outlinePainterOverlay
 
                 Canvas(Modifier.matchParentSize()) {
-                    val outlineSupplier = if (isVertical) {
-                        ScrollBarVerticalThumbOutlineSuppler
-                    } else {
-                        ScrollBarHorizontalThumbOutlineSuppler
-                    }
                     val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
-                    val outlineFill = outlineSupplier.getOutline(
+                    val outlineFill = componentShaper.getScrollBarThumbOutlineSupplier().getOutline(
                         layoutDirection = layoutDirection,
                         density = density,
                         size = this.size,
@@ -413,7 +351,7 @@ private fun Scrollbar(
                         outlinePainterOverlay = outlinePainterOverlay,
                         size = this.size,
                         alpha = 1.0f,
-                        outlineSupplier = outlineSupplier,
+                        outlineSupplier = componentShaper.getScrollBarThumbOutlineSupplier(),
                         colorTokens = drawingCache.colorTokens)
                 }
             }

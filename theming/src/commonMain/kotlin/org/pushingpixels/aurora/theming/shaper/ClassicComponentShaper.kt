@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.theming.shaper
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
@@ -93,6 +94,38 @@ open class ClassicComponentShaper : AuroraComponentShaper {
         return RoundOutlineSuppler
     }
 
+    override fun getScrollBarThumbOutlineSupplier(): OutlineSupplier {
+        return ScrollBarThumbOutlineSuppler
+    }
+
+    override fun getTabButtonOutlineSupplier(sides: Sides): OutlineSupplier {
+        return object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                val cornerRadius = density.getClassicCornerRadius()
+                return getBaseOutline(
+                    layoutDirection = layoutDirection,
+                    width = size.width,
+                    height = size.height,
+                    radius = cornerRadius - radiusAdjustment,
+                    sides = sides,
+                    insets = insets,
+                    outlineKind = outlineKind,
+                )
+            }
+        }
+    }
+
+    override fun getTextFieldOutlineSupplier(): OutlineSupplier {
+        return RectangleOutlineSuppler
+    }
+
     companion object {
         /** Reusable instance of this shaper. */
         val Instance = ClassicComponentShaper()
@@ -137,6 +170,53 @@ open class ClassicComponentShaper : AuroraComponentShaper {
                         radiusX = size.width / 2.0f - insets,
                         radiusY = size.height / 2.0f - insets
                     )
+                )
+            }
+        }
+
+        private val RectangleOutlineSuppler = object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                return Outline.Rectangle(
+                    Rect(
+                        left = insets, top = insets,
+                        right = size.width - insets, bottom = size.height - insets
+                    )
+                )
+            }
+        }
+
+        private val ScrollBarThumbOutlineSuppler = object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                // Adaptive corner radius, either half the height (which will be width after rotation for vertical
+                // scrollbars) for larger thumbs, or quarter the height for smaller thumbs
+                val adjustedInsets = insets + 1.0f
+                val radius: Float = if (size.width >= 1.5 * size.height)
+                    (size.height - 2.0f * adjustedInsets) / 2.0f
+                else
+                    (size.height - 2.0f * adjustedInsets) / 4.0f
+
+                return getBaseOutline(
+                    layoutDirection = layoutDirection,
+                    width = size.width,
+                    height = size.height,
+                    radius = radius - radiusAdjustment,
+                    sides = Sides(),
+                    insets = insets,
+                    outlineKind = outlineKind,
                 )
             }
         }

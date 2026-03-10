@@ -57,4 +57,10 @@ interface AuroraComponentShaper : AuroraTrait {
     fun getLinearProgressBarTrackOutlineSupplier(): OutlineSupplier
 
     fun getRadioButtonOutlineSupplier(): OutlineSupplier
+
+    fun getScrollBarThumbOutlineSupplier(): OutlineSupplier
+
+    fun getTabButtonOutlineSupplier(sides: Sides): OutlineSupplier
+
+    fun getTextFieldOutlineSupplier(): OutlineSupplier
 }
