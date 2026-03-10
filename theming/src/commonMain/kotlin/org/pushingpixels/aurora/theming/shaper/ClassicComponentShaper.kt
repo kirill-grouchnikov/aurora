@@ -44,6 +44,27 @@ open class ClassicComponentShaper : AuroraComponentShaper {
         return PaddingValues.Zero
     }
 
+    override fun getBaselineOutlineSupplier(): OutlineSupplier {
+        return DefaultOutlineSuppler
+    }
+
+    override fun getBaselineOutlineSupplier(sides: Sides): OutlineSupplier {
+        return object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                val radius = (getCornerRadius(size.width, size.height, insets, density) - radiusAdjustment).coerceAtLeast(0.0f)
+
+                return getBaseOutline(layoutDirection, size.width, size.height, radius, sides, insets, outlineKind)
+            }
+        }
+    }
+
     override fun getButtonOutlineSupplier(buttonSides: Sides): OutlineSupplier {
        return object: OutlineSupplier {
             override fun getOutline(

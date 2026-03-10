@@ -23,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalDensity
@@ -44,8 +43,11 @@ import org.pushingpixels.aurora.component.model.PresentationModel
 import org.pushingpixels.aurora.component.projection.Projection
 import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
-import org.pushingpixels.aurora.theming.utils.*
+import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.getContainerTokens
+import org.pushingpixels.aurora.theming.utils.paintOutline
+import org.pushingpixels.aurora.theming.utils.paintSurface
 
 @AuroraInternalApi
 object KeyTipTracker {
@@ -301,6 +303,7 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
+    val componentShaper = AuroraSkin.componentShaper
 
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -329,7 +332,8 @@ fun RibbonKeyTipOverlay(modifier: Modifier, insets: Dp) {
                             decorationAreaType,
                             skinColors,
                             null,
-                            painters
+                            painters,
+                            componentShaper
                         )
                     }
                 }
@@ -377,28 +381,6 @@ internal fun getAdjustedAnchor(
     }
 }
 
-private object KeyTipOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        val cornerRadius = density.getClassicCornerRadius()
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = cornerRadius - radiusAdjustment,
-            sides = Sides(),
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
-
 @OptIn(AuroraInternalApi::class)
 internal fun DrawScope.drawKeyTip(
     keyTipInfo: KeyTipTracker.KeyTipLink,
@@ -411,7 +393,8 @@ internal fun DrawScope.drawKeyTip(
     decorationAreaType: DecorationAreaType,
     skinColors: AuroraSkinColors,
     tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
-    painters: AuroraPainters
+    painters: AuroraPainters,
+    componentShaper: AuroraComponentShaper
 ) {
     val leftPadding = KeyTipPaddingValues.calculateLeftPadding(layoutDirection)
     val topPadding = KeyTipPaddingValues.calculateTopPadding()
@@ -439,7 +422,7 @@ internal fun DrawScope.drawKeyTip(
         translate(left = fullOffsetX, top = fullOffsetY)
     }) {
         val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
-        val outlineFill = KeyTipOutlineSuppler.getOutline(
+        val outlineFill = componentShaper.getBaselineOutlineSupplier().getOutline(
             layoutDirection = layoutDirection,
             density = this,
             size = Size(tipWidth, tipHeight),
@@ -464,7 +447,7 @@ internal fun DrawScope.drawKeyTip(
             outlinePainterOverlay = null,
             size = Size(tipWidth, tipHeight),
             alpha = 1.0f,
-            outlineSupplier = KeyTipOutlineSuppler,
+            outlineSupplier = componentShaper.getBaselineOutlineSupplier(),
             colorTokens = colorTokens)
 
         val keyTipTextColor = if (!state.isDisabled) colorTokens.onContainer

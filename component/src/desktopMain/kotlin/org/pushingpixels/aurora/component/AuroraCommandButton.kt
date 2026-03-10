@@ -29,7 +29,6 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
@@ -49,7 +48,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.resolveDefaults
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
 import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
@@ -61,8 +63,6 @@ import org.pushingpixels.aurora.component.projection.VerticalSeparatorProjection
 import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
-import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import org.pushingpixels.aurora.theming.utils.*
 import java.awt.event.KeyEvent
 import kotlin.math.max
@@ -1716,24 +1716,6 @@ private fun CommandButtonExtraTextContent(
     }
 }
 
-private object CommandButtonSelectedIconOutlineSuppler: OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        return Outline.Rectangle(
-            Rect(
-                left = insets, top = insets,
-                right = size.width - insets, bottom = size.height - insets
-            )
-        )
-    }
-}
-
 @OptIn(AuroraInternalApi::class)
 @Composable
 private fun CommandButtonIconContent(
@@ -1760,6 +1742,9 @@ private fun CommandButtonIconContent(
     val surfacePainter = AuroraSkin.painters.surfacePainter
     val outlinePainter = AuroraSkin.painters.outlinePainter
 
+    val componentShaper = AuroraSkin.componentShaper
+    val iconSelectionOutlineSupplier = componentShaper.getBaselineOutlineSupplier(Sides.ClosedRectangle)
+
     Box {
         if (showSelectionAroundIcon) {
             Canvas(modifier = Modifier.matchParentSize()) {
@@ -1779,7 +1764,7 @@ private fun CommandButtonIconContent(
                 )
 
                 val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
-                val outlineFill = CommandButtonSelectedIconOutlineSuppler.getOutline(
+                val outlineFill = iconSelectionOutlineSupplier.getOutline(
                     layoutDirection = layoutDirection,
                     density = this,
                     size = this.size,
@@ -1804,7 +1789,7 @@ private fun CommandButtonIconContent(
                     outlinePainterOverlay = null,
                     size = this.size,
                     alpha = selectionAlpha,
-                    outlineSupplier = CommandButtonSelectedIconOutlineSuppler,
+                    outlineSupplier = iconSelectionOutlineSupplier,
                     colorTokens = highlightColorTokens)
             }
         }
@@ -1951,6 +1936,7 @@ private fun CommandButtonKeyTip(
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
     val painters = AuroraSkin.painters
+    val componentShaper = AuroraSkin.componentShaper
 
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -1980,9 +1966,10 @@ private fun CommandButtonKeyTip(
                 layoutDirection = layoutDirection,
                 insets = 0.dp,
                 decorationAreaType = decorationAreaType,
-                painters = painters,
                 skinColors = skinColors,
                 tokensOverlayProvider = originalProjection.presentationModel.colorTokensOverlayProvider,
+                painters = painters,
+                componentShaper = componentShaper
             )
         }
     }

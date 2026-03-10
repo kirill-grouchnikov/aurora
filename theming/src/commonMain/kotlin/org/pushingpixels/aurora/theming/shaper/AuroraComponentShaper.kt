@@ -37,6 +37,10 @@ interface OutlineSupplier {
  * @author Kirill Grouchnikov
  */
 interface AuroraComponentShaper : AuroraTrait {
+    fun getBaselineOutlineSupplier(): OutlineSupplier
+
+    fun getBaselineOutlineSupplier(sides: Sides): OutlineSupplier
+
     fun getButtonOutlineSupplier(buttonSides: Sides): OutlineSupplier
 
     /**
