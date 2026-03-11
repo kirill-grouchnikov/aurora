@@ -33,7 +33,6 @@ import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 fun robotDefaultDarkSkin(accentColor: Color, name: String) : AuroraSkinDefinition {
-    val componentShaper = ClassicComponentShaper()
     val painters = AuroraPainters(
         decorationPainter = MarbleNoiseDecorationPainter(
             colorQuery1 = { it.containerSurfaceHighest },
@@ -93,6 +92,6 @@ fun robotDefaultDarkSkin(accentColor: Color, name: String) : AuroraSkinDefinitio
         displayName = name,
         colors = skinColors,
         painters = painters,
-        componentShaper = componentShaper,
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
     )
 }

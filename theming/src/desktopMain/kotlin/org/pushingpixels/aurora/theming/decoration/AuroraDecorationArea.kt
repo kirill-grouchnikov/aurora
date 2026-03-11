@@ -29,19 +29,13 @@ fun AuroraDecorationArea(
     componentShaper: AuroraComponentShaper? = null,
     content: @Composable () -> Unit
 ) {
-    val componentShaperToUse = componentShaper ?: when (decorationAreaType) {
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header,
-        DecorationAreaType.Toolbar,
-        DecorationAreaType.Footer -> ClassicComponentShaper()
-
-        else -> AuroraSkin.componentShaper
-    }
+    val componentShaperToUse = componentShaper ?: AuroraSkin.componentShapers.getComponentShaper(decorationAreaType)
     CompositionLocalProvider(
         LocalDisplayName provides AuroraSkin.displayName,
         LocalDecorationAreaType provides decorationAreaType,
         LocalSkinColors provides AuroraSkin.colors,
         LocalComponentShaper provides componentShaperToUse,
+        LocalComponentShapers provides AuroraSkin.componentShapers,
         LocalPainters provides AuroraSkin.painters,
         LocalAnimationConfig provides AuroraSkin.animationConfig
     ) {

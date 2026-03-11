@@ -130,7 +130,7 @@ fun ravenSkin(): AuroraSkinDefinition {
             highlightSurfacePainter = ClassicSurfacePainter(),
             highlightOutlinePainter = FlatOutlinePainter(),
         ),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 

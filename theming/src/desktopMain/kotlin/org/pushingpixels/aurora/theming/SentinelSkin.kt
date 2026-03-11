@@ -197,6 +197,6 @@ fun sentinelSkin(): AuroraSkinDefinition {
         displayName = "Sentinel",
         colors = sentinelSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }

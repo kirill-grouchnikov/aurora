@@ -148,7 +148,7 @@ fun nebulaSkin(): AuroraSkinDefinition {
         displayName = "Nebula",
         colors = nebulaBaseSkinColors(accentContainerColorTokens),
         painters = nebulaBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -195,7 +195,7 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
             )
 
         },
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -215,7 +215,7 @@ fun nebulaBrickWallSkin(): AuroraSkinDefinition {
         displayName = "Nebula Brick Wall",
         colors = nebulaBaseSkinColors(accentContainerColorTokens),
         painters = nebulaBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 

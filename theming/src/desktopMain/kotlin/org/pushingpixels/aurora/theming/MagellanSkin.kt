@@ -247,6 +247,6 @@ fun magellanSkin(): AuroraSkinDefinition {
         displayName = "Magellan",
         colors = magellanSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }

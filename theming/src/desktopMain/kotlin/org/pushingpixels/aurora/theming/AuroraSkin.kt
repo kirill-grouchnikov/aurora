@@ -48,6 +48,12 @@ object AuroraSkin {
         get() = LocalComponentShaper.current
 
     @OptIn(AuroraInternalApi::class)
+    val componentShapers: AuroraComponentShapers
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalComponentShapers.current
+
+    @OptIn(AuroraInternalApi::class)
     val painters: AuroraPainters
         @Composable
         @ReadOnlyComposable
@@ -69,7 +75,7 @@ object AuroraSkin {
 data class AuroraSkinDefinition(
     override val displayName: String,
     val colors: AuroraSkinColors,
-    val componentShaper: AuroraComponentShaper,
+    val componentShapers: AuroraComponentShapers,
     val painters: AuroraPainters
 ) : AuroraTrait
 

@@ -221,7 +221,7 @@ fun autumnSkin(): AuroraSkinDefinition {
         displayName = "Autumn",
         colors = autumnSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 

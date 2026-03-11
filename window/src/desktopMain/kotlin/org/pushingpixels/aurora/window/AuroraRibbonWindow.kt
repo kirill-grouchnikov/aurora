@@ -1026,7 +1026,7 @@ fun AuroraApplicationScope.AuroraRibbonWindow(
                 displayName = skin.displayName,
                 decorationAreaType = DecorationAreaType.None,
                 colors = skin.colors,
-                componentShaper = skin.componentShaper,
+                componentShapers = skin.componentShapers,
                 painters = skin.painters,
                 animationConfig = AuroraSkin.animationConfig
             ) {

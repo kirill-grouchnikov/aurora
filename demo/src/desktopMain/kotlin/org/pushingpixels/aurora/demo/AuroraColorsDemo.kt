@@ -206,10 +206,7 @@ fun AuroraApplicationScope.DemoColorsArea(
             .fillMaxWidth()
             .auroraBackground()
     ) {
-        AuroraDecorationArea(
-            decorationAreaType = DecorationAreaType.ControlPane,
-            componentShaper = ClassicComponentShaper.Instance
-        ) {
+        AuroraDecorationArea(decorationAreaType = DecorationAreaType.ControlPane) {
             Column(
                 modifier = Modifier.fillMaxHeight().auroraBackground()
                     .padding(vertical = 8.dp, horizontal = 12.dp),

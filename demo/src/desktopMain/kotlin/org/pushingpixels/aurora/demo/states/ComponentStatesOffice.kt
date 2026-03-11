@@ -276,7 +276,7 @@ private fun officeSkin(): AuroraSkinDefinition {
             ),
             highlightOutlinePainter = FlatOutlinePainter(),
         ),
-        componentShaper = ClassicComponentShaper(),
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
     )
 }
 

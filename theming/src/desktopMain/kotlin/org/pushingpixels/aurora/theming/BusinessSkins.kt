@@ -154,7 +154,7 @@ fun businessSkin(): AuroraSkinDefinition {
             it.registerDecorationAreaTokensBundle(businessFooterBundle, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -213,7 +213,7 @@ fun businessBlackSteelSkin(): AuroraSkinDefinition {
                 DecorationAreaType.ControlPane, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -271,7 +271,7 @@ fun businessBlueSteelSkin(): AuroraSkinDefinition {
                 DecorationAreaType.ControlPane, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 

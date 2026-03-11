@@ -199,6 +199,6 @@ fun marinerSkin(): AuroraSkinDefinition {
         displayName = "Mariner",
         colors = marinerSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }

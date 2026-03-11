@@ -149,6 +149,6 @@ fun visorSkin(): AuroraSkinDefinition {
         displayName = "Visor",
         colors = visorSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }

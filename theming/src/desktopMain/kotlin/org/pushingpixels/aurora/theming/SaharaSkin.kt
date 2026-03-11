@@ -96,7 +96,7 @@ fun saharaSkin(): AuroraSkinDefinition {
         displayName = "Sahara",
         colors = saharaSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 

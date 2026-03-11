@@ -117,7 +117,7 @@ fun moderateSkin(): AuroraSkinDefinition {
         displayName = "Moderate",
         colors = moderateSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 

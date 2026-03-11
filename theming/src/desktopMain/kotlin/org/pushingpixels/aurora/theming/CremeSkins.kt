@@ -140,7 +140,7 @@ fun cremeSkin(): AuroraSkinDefinition {
         displayName = "Creme",
         colors = cremeBaseSkinColors(accentContainerColorTokens),
         painters = cremeBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -174,6 +174,6 @@ fun cremeCoffeeSkin(): AuroraSkinDefinition {
         displayName = "Creme Coffee",
         colors = cremeBaseSkinColors(accentContainerColorTokens),
         painters = cremeBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }

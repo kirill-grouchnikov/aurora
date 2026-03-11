@@ -227,6 +227,6 @@ fun twilightSkin(): AuroraSkinDefinition {
         displayName = "Twilight",
         colors = twilightSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }

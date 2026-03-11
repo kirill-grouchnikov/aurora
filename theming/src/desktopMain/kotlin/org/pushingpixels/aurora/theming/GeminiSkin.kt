@@ -250,6 +250,6 @@ fun geminiSkin(): AuroraSkinDefinition {
         displayName = "Gemini",
         colors = geminiSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }

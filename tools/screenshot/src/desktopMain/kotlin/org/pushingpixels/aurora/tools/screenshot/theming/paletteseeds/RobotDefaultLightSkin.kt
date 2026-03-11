@@ -33,7 +33,6 @@ private val MutedLightSeed: Hct = Hct.fromInt(java.awt.Color(208, 212, 216).rgb)
 private val NeutralLightSeed: Hct = Hct.fromInt(java.awt.Color(252, 249, 248).rgb)
 
 fun robotDefaultLightSkin(accentColor: Color, name: String) : AuroraSkinDefinition {
-    val componentShaper = ClassicComponentShaper()
     val painters = AuroraPainters(
         decorationPainter = MarbleNoiseDecorationPainter(
             colorQuery1 = { it.containerSurface },
@@ -77,6 +76,6 @@ fun robotDefaultLightSkin(accentColor: Color, name: String) : AuroraSkinDefiniti
         displayName = name,
         colors = skinColors,
         painters = painters,
-        componentShaper = componentShaper,
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
     )
 }

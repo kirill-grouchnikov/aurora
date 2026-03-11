@@ -138,6 +138,6 @@ fun ceruleanSkin(): AuroraSkinDefinition {
         displayName = "Cerulean",
         colors = ceruleanSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }

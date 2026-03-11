@@ -136,7 +136,7 @@ fun graphiteSkin(): AuroraSkinDefinition {
         displayName = "Graphite",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -159,7 +159,7 @@ fun graphiteAquaSkin(): AuroraSkinDefinition {
         displayName = "Graphite Aqua",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -210,7 +210,7 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
         displayName = "Graphite Chalk",
         colors = colors,
         painters = graphiteBasePainters(outlinePainter = FlatOutlinePainter()),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -278,7 +278,7 @@ fun graphiteGlassSkin(): AuroraSkinDefinition {
                 tokens -> tokens.inverseContainerOutline.withAlpha(0.375f)
             }), DecorationAreaType.Toolbar)
         },
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -309,7 +309,7 @@ fun graphiteElectricSkin(): AuroraSkinDefinition {
         displayName = "Graphite Electric",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -340,7 +340,7 @@ fun graphiteGoldSkin(): AuroraSkinDefinition {
         displayName = "Graphite Gold",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -371,7 +371,7 @@ fun graphiteSiennaSkin(): AuroraSkinDefinition {
         displayName = "Graphite Sienna",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 
@@ -402,7 +402,7 @@ fun graphiteSunsetSkin(): AuroraSkinDefinition {
         displayName = "Graphite Sunset",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 

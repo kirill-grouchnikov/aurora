@@ -114,7 +114,7 @@ fun mistSilverSkin(): AuroraSkinDefinition {
         displayName = "Mist Silver",
         colors = mistBaseSkinColors(accentContainerColorTokens),
         painters = mistBasePainters(),
-        componentShaper = PillComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(PillComponentShaper())
     )
 }
 
@@ -144,7 +144,7 @@ fun mistAquaSkin(): AuroraSkinDefinition {
         displayName = "Mist Aqua",
         colors = mistBaseSkinColors(accentContainerColorTokens),
         painters = mistBasePainters(),
-        componentShaper = PillComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(PillComponentShaper())
     )
 }
 

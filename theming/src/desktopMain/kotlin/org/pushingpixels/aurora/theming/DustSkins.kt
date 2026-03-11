@@ -161,7 +161,7 @@ fun dustSkin(): AuroraSkinDefinition {
         displayName = "Dust",
         colors = dustBaseSkinColors(accentContainerColorTokens),
         painters = dustBasePainters(),
-        componentShaper = ClassicComponentShaper(),
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
     )
 }
 
@@ -195,7 +195,7 @@ fun dustCoffeeSkin(): AuroraSkinDefinition {
         displayName = "Dust Coffee",
         colors = dustBaseSkinColors(accentContainerColorTokens),
         painters = dustBasePainters(),
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 

@@ -136,6 +136,6 @@ fun greenMagicSkin(): AuroraSkinDefinition {
         displayName = "Green Magic",
         colors = greenMagicSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }

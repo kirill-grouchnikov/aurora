@@ -92,7 +92,7 @@ fun sampleDarkSkin(): AuroraSkinDefinition {
         displayName = "Sample Dark",
         colors = sampleDarkSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }
 

@@ -136,6 +136,6 @@ fun nightShadeSkin(): AuroraSkinDefinition {
         displayName = "Night Shade",
         colors = nightShadeSkinColors(),
         painters = painters,
-        componentShaper = ClassicComponentShaper()
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
     )
 }

@@ -69,6 +69,10 @@ val LocalComponentShaper  = staticCompositionLocalOf<AuroraComponentShaper> {
     error("LocalComponentShaper not provided")
 }
 @AuroraInternalApi
+val LocalComponentShapers  = staticCompositionLocalOf<AuroraComponentShapers> {
+    error("LocalComponentShapers not provided")
+}
+@AuroraInternalApi
 val LocalPainters = staticCompositionLocalOf<AuroraPainters> {
     error("LocalPainters not provided")
 }

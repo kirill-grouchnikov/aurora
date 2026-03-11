@@ -1298,7 +1298,7 @@ fun AuroraApplicationScope.AuroraWindow(
                 displayName = skin.displayName,
                 decorationAreaType = DecorationAreaType.None,
                 colors = skin.colors,
-                componentShaper = skin.componentShaper,
+                componentShapers = skin.componentShapers,
                 painters = skin.painters,
                 animationConfig = AuroraSkin.animationConfig
             ) {
@@ -1341,7 +1341,7 @@ internal fun AuroraSkin(
     displayName: String = AuroraSkin.displayName,
     decorationAreaType: DecorationAreaType,
     colors: AuroraSkinColors = AuroraSkin.colors,
-    componentShaper: AuroraComponentShaper = AuroraSkin.componentShaper,
+    componentShapers: AuroraComponentShapers = AuroraSkin.componentShapers,
     painters: AuroraPainters = AuroraSkin.painters,
     animationConfig: AnimationConfig = AuroraSkin.animationConfig,
     content: @Composable () -> Unit
@@ -1350,7 +1350,8 @@ internal fun AuroraSkin(
         LocalDisplayName provides displayName,
         LocalDecorationAreaType provides decorationAreaType,
         LocalSkinColors provides colors,
-        LocalComponentShaper provides componentShaper,
+        LocalComponentShapers provides componentShapers,
+        LocalComponentShaper provides componentShapers.getComponentShaper(decorationAreaType),
         LocalPainters provides painters,
         LocalAnimationConfig provides animationConfig
     ) {
