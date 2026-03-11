@@ -52,7 +52,6 @@ import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
-import org.pushingpixels.aurora.theming.utils.getBaseOutline
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.max
 import kotlin.math.min
@@ -554,6 +553,9 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
     ) {
         val skinColors = AuroraSkin.colors
         val decorationAreaType = AuroraSkin.decorationAreaType
+        val componentShaper = AuroraSkin.componentShaper
+
+        val cellOutlineSupplier = componentShaper.getBaselineOutlineSupplier(Sides.ClosedRectangle)
 
         var wasRollover by remember { mutableStateOf(false) }
 
@@ -603,7 +605,14 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
                 val brightness = hsb[2] * 0.7f
                 val borderColor = Color(brightness, brightness, brightness)
 
-                val borderOutline = getBaseOutline(layoutDirection, width, height, 0.0f, sides, 0.0f, OutlineKind.Outline)
+                val borderOutline = cellOutlineSupplier.getOutline(
+                    layoutDirection = layoutDirection,
+                    density = this,
+                    size = this.size,
+                    insets = 0.0f,
+                    radiusAdjustment = 0.0f,
+                    outlineKind = OutlineKind.Outline
+                )
                 drawOutline(
                     outline = borderOutline,
                     color = borderColor,

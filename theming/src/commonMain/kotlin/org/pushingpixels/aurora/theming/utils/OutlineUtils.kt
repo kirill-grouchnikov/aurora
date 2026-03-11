@@ -32,7 +32,7 @@ import org.pushingpixels.aurora.theming.Sides
  * `sides` has open side(s), the returned outline will have a non-continuous path
  * with "jumps" that correspond to the open side(s).
  */
-fun getBaseOutline(
+internal fun getBaseOutline(
     layoutDirection: LayoutDirection,
     width: Float, height: Float,
     radius: Float, sides: Sides? = null,
