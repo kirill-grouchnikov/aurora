@@ -26,8 +26,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
@@ -40,7 +43,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import kotlinx.coroutines.launch
@@ -57,9 +59,11 @@ import org.pushingpixels.aurora.component.projection.BaseCommandButtonProjection
 import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
-import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
-import org.pushingpixels.aurora.theming.utils.*
+import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
+import org.pushingpixels.aurora.theming.utils.getContainerTokens
+import org.pushingpixels.aurora.theming.utils.paintOutline
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -68,28 +72,6 @@ import kotlin.math.roundToInt
 private class RibbonTaskToggleButtonDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
 )
-
-private class RibbonTaskToggleButtonOutlineSuppler(val presentationModel: CommandButtonPresentationModel): OutlineSupplier {
-    override fun getOutline(
-        layoutDirection: LayoutDirection,
-        density: Density,
-        size: Size,
-        insets: Float,
-        radiusAdjustment: Float,
-        outlineKind: OutlineKind
-    ): Outline {
-        val cornerRadius = density.getClassicCornerRadius()
-        return getBaseOutline(
-            layoutDirection = layoutDirection,
-            width = size.width,
-            height = size.height,
-            radius = cornerRadius - radiusAdjustment,
-            sides = presentationModel.sides,
-            insets = insets,
-            outlineKind = outlineKind,
-        )
-    }
-}
 
 @OptIn(AuroraInternalApi::class)
 @Composable
@@ -363,6 +345,7 @@ internal fun RibbonTaskToggleButton(
 
                     val outlinePainter = AuroraSkin.painters.outlinePainter
                     val decorationPainter = AuroraSkin.painters.decorationPainter
+                    val componentShaper = AuroraSkin.componentShaper
 
                     val actionAlpha = max(actionRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
@@ -374,7 +357,7 @@ internal fun RibbonTaskToggleButton(
                         } else 1.0f
                     )
 
-                    val outlineSupplier = RibbonTaskToggleButtonOutlineSuppler(presentationModel)
+                    val outlineSupplier = componentShaper.getBaselineOutlineSupplier(presentationModel.sides)
 
                     Canvas(modifier = Modifier.matchParentSize().graphicsLayer(alpha = actionAlpha)) {
                         val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
