@@ -20,9 +20,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.theming.OutlineKind
 import org.pushingpixels.aurora.theming.Side
 import org.pushingpixels.aurora.theming.Sides
@@ -199,5 +197,3 @@ fun getBaseOutline(
 
     return Outline.Generic(path = path)
 }
-
-fun Density.getClassicCornerRadius(): Float = 3.0.dp.toPx()
