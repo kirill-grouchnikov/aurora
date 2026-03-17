@@ -51,6 +51,9 @@ fun populateColorTokens(
     var onContainerVariant = currColorTokens.onContainerVariant
     var containerOutline = currColorTokens.containerOutline
     var containerOutlineVariant = currColorTokens.containerOutlineVariant
+    var containerSurfaceEnabledAlpha = currColorTokens.containerSurfaceEnabledAlpha
+    var onContainerEnabledAlpha = currColorTokens.onContainerEnabledAlpha
+    var containerOutlineEnabledAlpha = currColorTokens.containerOutlineEnabledAlpha
     var containerSurfaceDisabledAlpha = currColorTokens.containerSurfaceDisabledAlpha
     var onContainerDisabledAlpha = currColorTokens.onContainerDisabledAlpha
     var containerOutlineDisabledAlpha = currColorTokens.containerOutlineDisabledAlpha
@@ -97,6 +100,12 @@ fun populateColorTokens(
             contributionTokens.containerOutline, 1.0f - amount)
         containerOutlineVariant = containerOutlineVariant.interpolateTowards(
             contributionTokens.containerOutlineVariant, 1.0f - amount)
+        containerSurfaceEnabledAlpha = ((1.0f - amount) * containerSurfaceEnabledAlpha +
+                amount * contributionTokens.containerSurfaceEnabledAlpha).coerceIn(0.0f, 1.0f)
+        onContainerEnabledAlpha = ((1.0f - amount) * onContainerEnabledAlpha +
+                amount * contributionTokens.onContainerEnabledAlpha).coerceIn(0.0f, 1.0f)
+        containerOutlineEnabledAlpha = ((1.0f - amount) * containerOutlineEnabledAlpha +
+                amount * contributionTokens.containerOutlineEnabledAlpha).coerceIn(0.0f, 1.0f)
         containerSurfaceDisabledAlpha = ((1.0f - amount) * containerSurfaceDisabledAlpha +
                 amount * contributionTokens.containerSurfaceDisabledAlpha).coerceIn(0.0f, 1.0f)
         onContainerDisabledAlpha = ((1.0f - amount) * onContainerDisabledAlpha +
@@ -130,6 +139,9 @@ fun populateColorTokens(
     colorTokens.onContainerVariantAttr = onContainerVariant
     colorTokens.containerOutlineAttr = containerOutline
     colorTokens.containerOutlineVariantAttr = containerOutlineVariant
+    colorTokens.containerSurfaceEnabledAlphaAttr = containerSurfaceEnabledAlpha
+    colorTokens.onContainerEnabledAlphaAttr = onContainerEnabledAlpha
+    colorTokens.containerOutlineEnabledAlphaAttr = containerOutlineEnabledAlpha
     colorTokens.containerSurfaceDisabledAlphaAttr = containerSurfaceDisabledAlpha
     colorTokens.onContainerDisabledAlphaAttr = onContainerDisabledAlpha
     colorTokens.containerOutlineDisabledAlphaAttr = containerOutlineDisabledAlpha
@@ -181,6 +193,9 @@ internal fun populateColorTokens(
     var onContainerVariant = currColorTokens.onContainerVariant
     var containerOutline = currColorTokens.containerOutline
     var containerOutlineVariant = currColorTokens.containerOutlineVariant
+    var containerSurfaceEnabledAlpha = currColorTokens.containerSurfaceEnabledAlpha
+    var onContainerEnabledAlpha = currColorTokens.onContainerEnabledAlpha
+    var containerOutlineEnabledAlpha = currColorTokens.containerOutlineEnabledAlpha
     var containerSurfaceDisabledAlpha = currColorTokens.containerSurfaceDisabledAlpha
     var onContainerDisabledAlpha = currColorTokens.onContainerDisabledAlpha
     var containerOutlineDisabledAlpha = currColorTokens.containerOutlineDisabledAlpha
@@ -241,6 +256,12 @@ internal fun populateColorTokens(
             contributionTokens.containerOutline, 1.0f - amount)
         containerOutlineVariant = containerOutlineVariant.interpolateTowards(
             contributionTokens.containerOutlineVariant, 1.0f - amount)
+        containerSurfaceEnabledAlpha = ((1.0f - amount) * containerSurfaceEnabledAlpha +
+                amount * contributionTokens.containerSurfaceEnabledAlpha).coerceIn(0.0f, 1.0f)
+        onContainerEnabledAlpha = ((1.0f - amount) * onContainerEnabledAlpha +
+                amount * contributionTokens.onContainerEnabledAlpha).coerceIn(0.0f, 1.0f)
+        containerOutlineEnabledAlpha = ((1.0f - amount) * containerOutlineEnabledAlpha +
+                amount * contributionTokens.containerOutlineEnabledAlpha).coerceIn(0.0f, 1.0f)
         containerSurfaceDisabledAlpha = ((1.0f - amount) * containerSurfaceDisabledAlpha +
                 amount * contributionTokens.containerSurfaceDisabledAlpha).coerceIn(0.0f, 1.0f)
         onContainerDisabledAlpha = ((1.0f - amount) * onContainerDisabledAlpha +
@@ -276,6 +297,9 @@ internal fun populateColorTokens(
     colorTokens.onContainerVariantAttr = onContainerVariant
     colorTokens.containerOutlineAttr = containerOutline
     colorTokens.containerOutlineVariantAttr = containerOutlineVariant
+    colorTokens.containerSurfaceEnabledAlphaAttr = containerSurfaceEnabledAlpha
+    colorTokens.onContainerEnabledAlphaAttr = onContainerEnabledAlpha
+    colorTokens.containerOutlineEnabledAlphaAttr = containerOutlineEnabledAlpha
     colorTokens.containerSurfaceDisabledAlphaAttr = containerSurfaceDisabledAlpha
     colorTokens.onContainerDisabledAlphaAttr = onContainerDisabledAlpha
     colorTokens.containerOutlineDisabledAlphaAttr = containerOutlineDisabledAlpha
@@ -326,6 +350,9 @@ internal fun populateColorTokens(
     var onContainerVariant = currColorTokens.onContainerVariant
     var containerOutline = currColorTokens.containerOutline
     var containerOutlineVariant = currColorTokens.containerOutlineVariant
+    var containerSurfaceEnabledAlpha = currColorTokens.containerSurfaceEnabledAlpha
+    var onContainerEnabledAlpha = currColorTokens.onContainerEnabledAlpha
+    var containerOutlineEnabledAlpha = currColorTokens.containerOutlineEnabledAlpha
     var containerSurfaceDisabledAlpha = currColorTokens.containerSurfaceDisabledAlpha
     var onContainerDisabledAlpha = currColorTokens.onContainerDisabledAlpha
     var containerOutlineDisabledAlpha = currColorTokens.containerOutlineDisabledAlpha
@@ -386,6 +413,12 @@ internal fun populateColorTokens(
             contributionTokens.containerOutline, 1.0f - amount)
         containerOutlineVariant = containerOutlineVariant.interpolateTowards(
             contributionTokens.containerOutlineVariant, 1.0f - amount)
+        containerSurfaceEnabledAlpha = ((1.0f - amount) * containerSurfaceEnabledAlpha +
+                amount * contributionTokens.containerSurfaceEnabledAlpha).coerceIn(0.0f, 1.0f)
+        onContainerEnabledAlpha = ((1.0f - amount) * onContainerEnabledAlpha +
+                amount * contributionTokens.onContainerEnabledAlpha).coerceIn(0.0f, 1.0f)
+        containerOutlineEnabledAlpha = ((1.0f - amount) * containerOutlineEnabledAlpha +
+                amount * contributionTokens.containerOutlineEnabledAlpha).coerceIn(0.0f, 1.0f)
         containerSurfaceDisabledAlpha = ((1.0f - amount) * containerSurfaceDisabledAlpha +
                 amount * contributionTokens.containerSurfaceDisabledAlpha).coerceIn(0.0f, 1.0f)
         onContainerDisabledAlpha = ((1.0f - amount) * onContainerDisabledAlpha +
@@ -421,6 +454,9 @@ internal fun populateColorTokens(
     colorTokens.onContainerVariantAttr = onContainerVariant
     colorTokens.containerOutlineAttr = containerOutline
     colorTokens.containerOutlineVariantAttr = containerOutlineVariant
+    colorTokens.containerSurfaceEnabledAlphaAttr = containerSurfaceEnabledAlpha
+    colorTokens.onContainerEnabledAlphaAttr = onContainerEnabledAlpha
+    colorTokens.containerOutlineEnabledAlphaAttr = containerOutlineEnabledAlpha
     colorTokens.containerSurfaceDisabledAlphaAttr = containerSurfaceDisabledAlpha
     colorTokens.onContainerDisabledAlphaAttr = onContainerDisabledAlpha
     colorTokens.containerOutlineDisabledAlphaAttr = containerOutlineDisabledAlpha
@@ -470,6 +506,9 @@ internal fun populateColorTokensForHighlights(
     var onContainerVariant = currColorTokens.onContainerVariant.byAlpha(currHighlightAmount)
     var containerOutline = currColorTokens.containerOutline.byAlpha(currHighlightAmount)
     var containerOutlineVariant = currColorTokens.containerOutlineVariant.byAlpha(currHighlightAmount)
+    var containerSurfaceEnabledAlpha = currColorTokens.containerSurfaceEnabledAlpha
+    var onContainerEnabledAlpha = currColorTokens.onContainerEnabledAlpha
+    var containerOutlineEnabledAlpha = currColorTokens.containerOutlineEnabledAlpha
     var containerSurfaceDisabledAlpha = currColorTokens.containerSurfaceDisabledAlpha
     var onContainerDisabledAlpha = currColorTokens.onContainerDisabledAlpha
     var containerOutlineDisabledAlpha = currColorTokens.containerOutlineDisabledAlpha
@@ -527,6 +566,12 @@ internal fun populateColorTokensForHighlights(
             contributionTokens.containerOutline.byAlpha(amount), 1.0f - amount)
         containerOutlineVariant = containerOutlineVariant.interpolateTowards(
             contributionTokens.containerOutlineVariant.byAlpha(amount), 1.0f - amount)
+        containerSurfaceEnabledAlpha = ((1.0f - amount) * containerSurfaceEnabledAlpha +
+                amount * contributionTokens.containerSurfaceEnabledAlpha).coerceIn(0.0f, 1.0f)
+        onContainerEnabledAlpha = ((1.0f - amount) * onContainerEnabledAlpha +
+                amount * contributionTokens.onContainerEnabledAlpha).coerceIn(0.0f, 1.0f)
+        containerOutlineEnabledAlpha = ((1.0f - amount) * containerOutlineEnabledAlpha +
+                amount * contributionTokens.containerOutlineEnabledAlpha).coerceIn(0.0f, 1.0f)
         containerSurfaceDisabledAlpha = ((1.0f - amount) * containerSurfaceDisabledAlpha +
                 amount * contributionTokens.containerSurfaceDisabledAlpha).coerceIn(0.0f, 1.0f)
         onContainerDisabledAlpha = ((1.0f - amount) * onContainerDisabledAlpha +
@@ -560,6 +605,9 @@ internal fun populateColorTokensForHighlights(
     colorTokens.onContainerVariantAttr = onContainerVariant
     colorTokens.containerOutlineAttr = containerOutline
     colorTokens.containerOutlineVariantAttr = containerOutlineVariant
+    colorTokens.containerSurfaceEnabledAlphaAttr = containerSurfaceEnabledAlpha
+    colorTokens.onContainerEnabledAlphaAttr = onContainerEnabledAlpha
+    colorTokens.containerOutlineEnabledAlphaAttr = containerOutlineEnabledAlpha
     colorTokens.containerSurfaceDisabledAlphaAttr = containerSurfaceDisabledAlpha
     colorTokens.onContainerDisabledAlphaAttr = onContainerDisabledAlpha
     colorTokens.containerOutlineDisabledAlphaAttr = containerOutlineDisabledAlpha

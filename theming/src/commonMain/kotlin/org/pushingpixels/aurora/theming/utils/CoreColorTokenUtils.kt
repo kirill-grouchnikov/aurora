@@ -110,6 +110,15 @@ private fun ContainerColorTokens.overlay(overlay: Color, overlayAmount: Float): 
         override val containerOutlineVariant: Color
             get() = containerOutlineVariant
 
+        override val containerSurfaceEnabledAlpha: Float
+            get() = original.containerSurfaceEnabledAlpha
+
+        override val onContainerEnabledAlpha: Float
+            get() = original.onContainerEnabledAlpha
+
+        override val containerOutlineEnabledAlpha: Float
+            get() = original.containerOutlineEnabledAlpha
+
         override val containerSurfaceDisabledAlpha: Float
             get() = original.containerSurfaceDisabledAlpha
 

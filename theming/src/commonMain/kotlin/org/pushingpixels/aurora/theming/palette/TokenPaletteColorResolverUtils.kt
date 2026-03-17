@@ -64,6 +64,18 @@ val DefaultPaletteColorResolver: TokenPaletteColorResolver
             return Color(tokenPalette.containerOutlineVariant)
         }
 
+        override fun getContainerSurfaceEnabledAlpha(tokenPalette: TokenPalette): Float {
+            return 1.0f
+        }
+
+        override fun getOnContainerEnabledAlpha(tokenPalette: TokenPalette): Float {
+            return 1.0f
+        }
+
+        override fun getContainerOutlineEnabledAlpha(tokenPalette: TokenPalette): Float {
+            return 1.0f
+        }
+
         override fun getContainerSurfaceDisabledAlpha(tokenPalette: TokenPalette): Float {
             return 0.3f
         }
@@ -225,6 +237,33 @@ fun TokenPaletteColorResolver.overlayWith(overlay: TokenPaletteColorResolverOver
             val spec = overlay.containerOutlineDisabledAlpha
             return if (spec == null) {
                 original.getContainerOutlineDisabledAlpha(tokenPalette)
+            } else {
+                spec.invoke(tokenPalette)
+            }
+        }
+
+        override fun getContainerSurfaceEnabledAlpha(tokenPalette: TokenPalette): Float {
+            val spec = overlay.containerSurfaceEnabledAlpha
+            return if (spec == null) {
+                original.getContainerSurfaceEnabledAlpha(tokenPalette)
+            } else {
+                spec.invoke(tokenPalette)
+            }
+        }
+
+        override fun getOnContainerEnabledAlpha(tokenPalette: TokenPalette): Float {
+            val spec = overlay.onContainerEnabledAlpha
+            return if (spec == null) {
+                original.getOnContainerEnabledAlpha(tokenPalette)
+            } else {
+                spec.invoke(tokenPalette)
+            }
+        }
+
+        override fun getContainerOutlineEnabledAlpha(tokenPalette: TokenPalette): Float {
+            val spec = overlay.containerOutlineEnabledAlpha
+            return if (spec == null) {
+                original.getContainerOutlineEnabledAlpha(tokenPalette)
             } else {
                 spec.invoke(tokenPalette)
             }

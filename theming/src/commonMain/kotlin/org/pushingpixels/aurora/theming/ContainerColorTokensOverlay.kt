@@ -102,6 +102,15 @@ class ContainerColorTokensOverlay(
                     override val containerOutlineVariant: Color
                         get() = systemContainerTokens.containerOutlineVariant
 
+                    override val containerSurfaceEnabledAlpha: Float
+                        get() = systemContainerTokens.containerSurfaceEnabledAlpha
+
+                    override val onContainerEnabledAlpha: Float
+                        get() = systemContainerTokens.onContainerEnabledAlpha
+
+                    override val containerOutlineEnabledAlpha: Float
+                        get() = systemContainerTokens.containerOutlineEnabledAlpha
+
                     override val containerSurfaceDisabledAlpha: Float
                         get() = systemContainerTokens.containerSurfaceDisabledAlpha
 
@@ -195,6 +204,15 @@ class ContainerColorTokensOverlay(
 
                     override val containerOutlineVariant: Color
                         get() = systemContainerTokens.containerOutlineVariant
+
+                    override val containerSurfaceEnabledAlpha: Float
+                        get() = systemContainerTokens.containerSurfaceEnabledAlpha
+
+                    override val onContainerEnabledAlpha: Float
+                        get() = systemContainerTokens.onContainerEnabledAlpha
+
+                    override val containerOutlineEnabledAlpha: Float
+                        get() = systemContainerTokens.containerOutlineEnabledAlpha
 
                     override val containerSurfaceDisabledAlpha: Float
                         get() = systemContainerTokens.containerSurfaceDisabledAlpha

@@ -87,6 +87,15 @@ internal fun getSystemTokens(seed: Hct, containerConfiguration: ContainerConfigu
             else
                 getColor(ContrastCurve(85.0, 80.0, 70.0, 50.0))
 
+        override val containerSurfaceEnabledAlpha: Float
+            get() = 1.0f
+
+        override val onContainerEnabledAlpha: Float
+            get() = 1.0f
+
+        override val containerOutlineEnabledAlpha: Float
+            get() = 1.0f
+
         override val containerSurfaceDisabledAlpha: Float
             get() = 0.3f
 

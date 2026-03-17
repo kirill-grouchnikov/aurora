@@ -76,6 +76,15 @@ fun getContainerTokens(
         override val containerOutlineVariant: Color
             get() = colorResolver.getContainerOutlineVariant(dynamicPalette)
 
+        override val containerSurfaceEnabledAlpha: Float
+            get() = colorResolver.getContainerSurfaceEnabledAlpha(dynamicPalette)
+
+        override val onContainerEnabledAlpha: Float
+            get() = colorResolver.getOnContainerEnabledAlpha(dynamicPalette)
+
+        override val containerOutlineEnabledAlpha: Float
+            get() = colorResolver.getContainerOutlineEnabledAlpha(dynamicPalette)
+
         override val containerSurfaceDisabledAlpha: Float
             get() = colorResolver.getContainerSurfaceDisabledAlpha(dynamicPalette)
 
@@ -157,6 +166,15 @@ fun getBimodalContainerTokens(
 
         override val containerOutlineVariant: Color
             get() = colorResolver.getContainerOutlineVariant(dynamicPalette)
+
+        override val containerSurfaceEnabledAlpha: Float
+            get() = colorResolver.getContainerSurfaceEnabledAlpha(dynamicPalette)
+
+        override val onContainerEnabledAlpha: Float
+            get() = colorResolver.getOnContainerEnabledAlpha(dynamicPalette)
+
+        override val containerOutlineEnabledAlpha: Float
+            get() = colorResolver.getContainerOutlineEnabledAlpha(dynamicPalette)
 
         override val containerSurfaceDisabledAlpha: Float
             get() = colorResolver.getContainerSurfaceDisabledAlpha(dynamicPalette)

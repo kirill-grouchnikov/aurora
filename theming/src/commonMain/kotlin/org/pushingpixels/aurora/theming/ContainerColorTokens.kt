@@ -35,6 +35,10 @@ interface ContainerColorTokens {
     val containerOutline: Color
     val containerOutlineVariant: Color
 
+    val containerSurfaceEnabledAlpha: Float
+    val onContainerEnabledAlpha: Float
+    val containerOutlineEnabledAlpha: Float
+
     val containerSurfaceDisabledAlpha: Float
     val onContainerDisabledAlpha: Float
     val containerOutlineDisabledAlpha: Float
