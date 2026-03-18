@@ -21,7 +21,10 @@ import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
+import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
+import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
+import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
@@ -186,14 +189,13 @@ fun businessBlackSteelSkin(): AuroraSkinDefinition {
             containerConfiguration = ContainerConfiguration.defaultLight())
     )
 
-
     return AuroraSkinDefinition(
-        displayName = "Business Blue Steel",
+        displayName = "Business Black Steel",
         colors = businessBaseSkinColors(
             accentContainerColorTokens = accentContainerColorTokens,
             isHeaderDark = true
         ).also {
-            val businessBlueSteelControlBundle = ContainerColorTokensBundle(
+            val businessBlackSteelControlBundle = ContainerColorTokensBundle(
                 activeContainerTokens = getContainerTokens(
                     seed = Hct.fromInt(0xFF94B9D3u.toInt()),
                     containerConfiguration = ContainerConfiguration.defaultLight()),
@@ -205,11 +207,11 @@ fun businessBlackSteelSkin(): AuroraSkinDefinition {
                     containerConfiguration = ContainerConfiguration.defaultLight()),
                 isSystemDark = false
             )
-            businessBlueSteelControlBundle.registerActiveContainerTokens(
+            businessBlackSteelControlBundle.registerActiveContainerTokens(
                 colorTokens = accentContainerColorTokens.defaultAreaActiveTokens!!,
                 associationKind = ContainerColorTokensAssociationKind.Highlight,
                 activeStates = ComponentState.activeStates)
-            it.registerDecorationAreaTokensBundle(businessBlueSteelControlBundle,
+            it.registerDecorationAreaTokensBundle(businessBlackSteelControlBundle,
                 DecorationAreaType.ControlPane, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
