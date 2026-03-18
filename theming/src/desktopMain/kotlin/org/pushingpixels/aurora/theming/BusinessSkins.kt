@@ -21,10 +21,7 @@ import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
-import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
-import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
-import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
@@ -197,13 +194,13 @@ fun businessBlackSteelSkin(): AuroraSkinDefinition {
         ).also {
             val businessBlackSteelControlBundle = ContainerColorTokensBundle(
                 activeContainerTokens = getContainerTokens(
-                    seed = Hct.fromInt(0xFF94B9D3u.toInt()),
+                    seed = Hct.fromInt(0xFFAFBEC7u.toInt()),
                     containerConfiguration = ContainerConfiguration.defaultLight()),
                 mutedContainerTokens = getContainerTokens(
-                    seed = Hct.fromInt(0xFFBFCFDBu.toInt()),
+                    seed = Hct.fromInt(0xFFD5DBDFu.toInt()),
                     containerConfiguration = ContainerConfiguration.defaultLight()),
                 neutralContainerTokens = getContainerTokens(
-                    seed = Hct.fromInt(0xFFBFCFDBu.toInt()),
+                    seed = Hct.fromInt(0xFFD5DBDFu.toInt()),
                     containerConfiguration = ContainerConfiguration.defaultLight()),
                 isSystemDark = false
             )
@@ -253,23 +250,23 @@ fun businessBlueSteelSkin(): AuroraSkinDefinition {
             accentContainerColorTokens = accentContainerColorTokens,
             isHeaderDark = false
         ).also {
-            val businessBlackSteelControlBundle = ContainerColorTokensBundle(
+            val businessBlueSteelControlBundle = ContainerColorTokensBundle(
                 activeContainerTokens = getContainerTokens(
-                    seed = Hct.fromInt(0xFFAFBEC7u.toInt()),
+                    seed = Hct.fromInt(0xFF94B9D3u.toInt()),
                     containerConfiguration = ContainerConfiguration.defaultLight()),
                 mutedContainerTokens = getContainerTokens(
-                    seed = Hct.fromInt(0xFFD5DBDFu.toInt()),
+                    seed = Hct.fromInt(0xFFBFCFDBu.toInt()),
                     containerConfiguration = ContainerConfiguration.defaultLight()),
                 neutralContainerTokens = getContainerTokens(
-                    seed = Hct.fromInt(0xFFD5DBDFu.toInt()),
+                    seed = Hct.fromInt(0xFFBFCFDBu.toInt()),
                     containerConfiguration = ContainerConfiguration.defaultLight()),
                 isSystemDark = false
             )
-            businessBlackSteelControlBundle.registerActiveContainerTokens(
+            businessBlueSteelControlBundle.registerActiveContainerTokens(
                 colorTokens = accentContainerColorTokens.defaultAreaActiveTokens!!,
                 associationKind = ContainerColorTokensAssociationKind.Highlight,
                 activeStates = ComponentState.activeStates)
-            it.registerDecorationAreaTokensBundle(businessBlackSteelControlBundle,
+            it.registerDecorationAreaTokensBundle(businessBlueSteelControlBundle,
                 DecorationAreaType.ControlPane, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
