@@ -287,7 +287,8 @@ internal fun AuroraRadioButton(
                 .sumOf { it.contribution.toDouble() }
                 .toFloat()
         val onContainerAlpha = if (currentState.value.isDisabled)
-            drawingCache.colorTokens.onContainerDisabledAlpha else 1.0f
+            drawingCache.colorTokens.onContainerDisabledAlpha else
+                drawingCache.colorTokens.onContainerEnabledAlpha
 
         // Text color. Note that the text doesn't "participate" in state changes that
         // involve rollover, selection or pressed bits

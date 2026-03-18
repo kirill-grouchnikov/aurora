@@ -344,7 +344,9 @@ internal fun AuroraTabButton(
                                 color = underlineColor,
                                 alpha = if (currentActionState.value.isDisabled) {
                                     actionAlpha * underlineColorTokens.onContainerDisabledAlpha
-                                } else actionAlpha
+                                } else {
+                                    actionAlpha * underlineColorTokens.onContainerEnabledAlpha
+                                }
                             )
                         }
                     }

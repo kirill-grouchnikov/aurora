@@ -255,7 +255,8 @@ internal fun AuroraSwitch(
             isTextInFilledArea = false
         )
         val thumbAlpha = if (currentState.value.isDisabled)
-            drawingCache.colorTokens.onContainerDisabledAlpha else 1.0f
+            drawingCache.colorTokens.onContainerDisabledAlpha else
+                drawingCache.colorTokens.onContainerEnabledAlpha
 
         val surfacePainter = AuroraSkin.painters.surfacePainter
         val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay

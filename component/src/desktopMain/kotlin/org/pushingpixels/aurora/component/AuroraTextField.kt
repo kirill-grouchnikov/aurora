@@ -303,9 +303,8 @@ internal fun AuroraTextField(
                     ),
                     style = Stroke(width = 1.0f),
                     color = borderColor,
-                    alpha = if (currentState.value.isDisabled) {
-                        drawingCache.colorTokens.onContainerDisabledAlpha
-                    } else 1.0f
+                    alpha = if (currentState.value.isDisabled) drawingCache.colorTokens.onContainerDisabledAlpha else
+                        drawingCache.colorTokens.onContainerEnabledAlpha
                 )
 
                 if (!contentModel.readOnly) {

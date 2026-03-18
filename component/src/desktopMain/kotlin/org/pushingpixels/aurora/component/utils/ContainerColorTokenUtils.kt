@@ -744,6 +744,8 @@ internal fun getTextColor(
 
     if (tweakedCurrState.isDisabled) {
         foreground = foreground.withAlpha(colorTokens.onContainerDisabledAlpha)
+    } else {
+        foreground = foreground.withAlpha(colorTokens.onContainerEnabledAlpha)
     }
 
     return foreground
@@ -814,6 +816,8 @@ internal fun getTextVariantColor(
 
     if (tweakedCurrState.isDisabled) {
         foreground = foreground.withAlpha(colorTokens.onContainerDisabledAlpha)
+    } else {
+        foreground = foreground.withAlpha(colorTokens.onContainerEnabledAlpha)
     }
 
     return foreground

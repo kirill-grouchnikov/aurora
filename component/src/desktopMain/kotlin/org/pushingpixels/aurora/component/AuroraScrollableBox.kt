@@ -295,7 +295,7 @@ fun AuroraVerticallyScrollableBox(
                             val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
                             val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
                             val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                                colorTokens.onContainerDisabledAlpha else 1.0f
+                                colorTokens.onContainerDisabledAlpha else colorTokens.onContainerEnabledAlpha
                             translate(left = dx, top = dy) {
                                 drawDoubleArrow(
                                     drawScope = this,
@@ -341,7 +341,7 @@ fun AuroraVerticallyScrollableBox(
                             val dx = (iconSize.toPx() - arrowDoubleWidth) / 2
                             val dy = (iconSize.toPx() - arrowDoubleHeight) / 2
                             val alpha = if (modelStateInfoSnapshot.currModelState.isDisabled)
-                                colorTokens.onContainerDisabledAlpha else 1.0f
+                                colorTokens.onContainerDisabledAlpha else colorTokens.onContainerEnabledAlpha
                             translate(left = dx, top = dy) {
                                 drawDoubleArrow(
                                     drawScope = this,

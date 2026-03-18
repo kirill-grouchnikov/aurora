@@ -36,9 +36,10 @@ fun paintSurface(
     outline: Outline,
     colorTokens: ContainerColorTokens) {
 
-    // If we're in a disabled state, apply the matching alpha
+    // Apply the matching alpha
     val containerSurfaceAlpha = alpha *
-            (if (componentState.isDisabled) colorTokens.containerSurfaceDisabledAlpha else 1.0f)
+        (if (componentState.isDisabled) colorTokens.containerSurfaceDisabledAlpha else
+            colorTokens.containerSurfaceEnabledAlpha)
     surfacePainter.paintSurface(
         drawScope = drawScope,
         size = size,
@@ -67,9 +68,10 @@ fun paintOutline(
     outlineSupplier: OutlineSupplier,
     colorTokens: ContainerColorTokens) {
 
-    // If we're in a disabled state, apply the matching alpha
+    // Apply the matching alpha
     val containerOutlineAlpha = alpha *
-            (if (componentState.isDisabled) colorTokens.containerOutlineDisabledAlpha else 1.0f)
+        (if (componentState.isDisabled) colorTokens.containerOutlineDisabledAlpha else
+            colorTokens.containerOutlineEnabledAlpha)
     outlinePainter.paintOutline(
         drawScope = drawScope,
         size = size,

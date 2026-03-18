@@ -91,7 +91,7 @@ internal fun AuroraIndeterminateCircularProgress(
         inactiveContainerType = ContainerType.Neutral
     )
     val color = colorTokens.onContainer
-    val alpha = if (contentModel.enabled) 1.0f else colorTokens.onContainerDisabledAlpha
+    val alpha = if (contentModel.enabled) colorTokens.onContainerEnabledAlpha else colorTokens.onContainerDisabledAlpha
 
     Canvas(
         modifier
@@ -148,7 +148,7 @@ internal fun AuroraDeterminateCircularProgress(
         inactiveContainerType = ContainerType.Neutral
     )
     val color = colorTokens.onContainer
-    val alpha = if (contentModel.enabled) 1.0f else colorTokens.onContainerDisabledAlpha
+    val alpha = if (contentModel.enabled) colorTokens.onContainerEnabledAlpha else colorTokens.onContainerDisabledAlpha
 
     Canvas(
         modifier
@@ -254,7 +254,8 @@ internal fun AuroraIndeterminateLinearProgress(
             })
         }) {
             val containerSurfaceAlpha =
-                if (componentState.isDisabled) progressColorTokens.containerSurfaceDisabledAlpha else 1.0f
+                if (componentState.isDisabled) progressColorTokens.containerSurfaceDisabledAlpha else
+                    progressColorTokens.containerSurfaceEnabledAlpha
             drawOutline(
                 outline = Outline.Rectangle(Rect(offset = Offset.Zero, size = size)),
                 style = Fill,

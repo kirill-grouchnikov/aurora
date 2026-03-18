@@ -1821,7 +1821,8 @@ private fun CommandButtonIconContent(
                 inactiveContainerType = ContainerType.Muted,
                 skipFlatCheck = false
             )
-            val markAlpha = if (currState.isDisabled) markColorTokens.onContainerDisabledAlpha else 1.0f
+            val markAlpha = if (currState.isDisabled) markColorTokens.onContainerDisabledAlpha else
+                markColorTokens.onContainerEnabledAlpha
 
             Canvas(modifier = Modifier.matchParentSize()) {
                 val width = this.size.width

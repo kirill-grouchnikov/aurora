@@ -450,8 +450,8 @@ internal fun DrawScope.drawKeyTip(
             outlineSupplier = componentShaper.getBaselineOutlineSupplier(),
             colorTokens = colorTokens)
 
-        val keyTipTextColor = if (!state.isDisabled) colorTokens.onContainer
-            else colorTokens.onContainer.withAlpha(colorTokens.onContainerDisabledAlpha)
+        val alpha = if (state.isDisabled) colorTokens.onContainerDisabledAlpha else colorTokens.onContainerEnabledAlpha
+        val keyTipTextColor = colorTokens.onContainer.withAlpha(alpha)
         drawText(
             textMeasurer = textMeasurer,
             text = keyTipInfo.keyTip,
