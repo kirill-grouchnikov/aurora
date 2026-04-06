@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.theming.AuroraSkinColors
 import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.DecorationAreaType
+import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter.OverlayPainter
 
 /**
  * Overlay painter that paints a single line at the bottom edge of the relevant
@@ -28,7 +29,7 @@ import org.pushingpixels.aurora.theming.DecorationAreaType
  *
  * @author Kirill Grouchnikov
  */
-class BottomLineOverlayPainter(private val colorTokensQuery: (ContainerColorTokens) -> Color) : AuroraOverlayPainter {
+class BottomLineOverlayPainter(private val colorTokensQuery: (ContainerColorTokens) -> Color) : OverlayPainter {
     override val displayName = "Bottom Line"
 
     override fun paintOverlay(

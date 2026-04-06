@@ -19,19 +19,38 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import org.pushingpixels.aurora.theming.AuroraSkinColors
 import org.pushingpixels.aurora.theming.AuroraTrait
 import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.painter.overlay.AuroraOverlayPainter
 import java.util.Collections
 
 /**
- * Decoration painter interface for Aurora.
+ * Decoration painter for Aurora.
  *
  * @author Kirill Grouchnikov
  */
 abstract class AuroraDecorationPainter : AuroraTrait {
-    private val overlayPaintersMap: MutableMap<DecorationAreaType, MutableList<AuroraOverlayPainter>> = hashMapOf()
+    interface OverlayPainter : AuroraTrait {
+        /**
+         * Paints the overlay.
+         *
+         * @param drawScope Draw scope.
+         * @param decorationAreaType Decoration area type.
+         * @param width Width.
+         * @param height Height.
+         * @param colors Colors for painting the overlay.
+         */
+        fun paintOverlay(
+            drawScope: DrawScope,
+            decorationAreaType: DecorationAreaType,
+            width: Float,
+            height: Float,
+            colors: AuroraSkinColors
+        )
+    }
+
+    private val overlayPaintersMap: MutableMap<DecorationAreaType, MutableList<OverlayPainter>> = hashMapOf()
 
     /**
      * Adds the specified overlay painter to the end of the list of overlay
@@ -42,7 +61,7 @@ abstract class AuroraDecorationPainter : AuroraTrait {
      * @param areaTypes      Decoration area types.
      */
     fun addOverlayPainter(
-        overlayPainter: AuroraOverlayPainter,
+        overlayPainter: OverlayPainter,
         vararg areaTypes: DecorationAreaType
     ) {
         for (areaType in areaTypes) {
@@ -62,7 +81,7 @@ abstract class AuroraDecorationPainter : AuroraTrait {
      * @param areaTypes      Decoration area types.
      */
     fun removeOverlayPainter(
-        overlayPainter: AuroraOverlayPainter,
+        overlayPainter: OverlayPainter,
         vararg areaTypes: DecorationAreaType
     ) {
         for (areaType in areaTypes) {
@@ -99,7 +118,7 @@ abstract class AuroraDecorationPainter : AuroraTrait {
      * @return A non-null, non-modifiable list of overlay painters associated
      * with the specified decoration area type.
      */
-    fun getOverlayPainters(decorationAreaType: DecorationAreaType): List<AuroraOverlayPainter> {
+    fun getOverlayPainters(decorationAreaType: DecorationAreaType): List<OverlayPainter> {
         return if (!overlayPaintersMap.containsKey(decorationAreaType)) {
             emptyList()
         } else Collections.unmodifiableList(overlayPaintersMap[decorationAreaType])

@@ -29,6 +29,7 @@ import org.pushingpixels.aurora.theming.AuroraSkinColors
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.DecorationAreaType
+import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter.OverlayPainter
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
 
@@ -39,7 +40,7 @@ import org.pushingpixels.aurora.theming.utils.getContainerTokens
  *
  * @author Kirill Grouchnikov
  */
-class BottomShadowOverlayPainter private constructor(private val endAlpha: Float) : AuroraOverlayPainter {
+class BottomShadowOverlayPainter private constructor(private val endAlpha: Float) : OverlayPainter {
     override val displayName = "Bottom Shadow"
 
     @OptIn(AuroraInternalApi::class)

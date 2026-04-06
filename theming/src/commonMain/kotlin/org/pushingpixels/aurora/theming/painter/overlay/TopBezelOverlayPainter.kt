@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import org.pushingpixels.aurora.theming.AuroraSkinColors
 import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.DecorationAreaType
+import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter.OverlayPainter
 
 /**
  * Overlay painter that paints a bezel line at the top edge of the relevant
@@ -31,7 +32,7 @@ import org.pushingpixels.aurora.theming.DecorationAreaType
 class TopBezelOverlayPainter(
     private val colorTokensQueryTop: (ContainerColorTokens) -> Color,
     private val colorTokensQueryBottom: (ContainerColorTokens) -> Color
-) : AuroraOverlayPainter {
+) : OverlayPainter {
     override val displayName = "Top Bezel"
 
     override fun paintOverlay(
