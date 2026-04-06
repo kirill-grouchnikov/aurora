@@ -166,31 +166,32 @@ private fun sentinelSkinColors(): AuroraSkinColors {
 }
 
 fun sentinelSkin(): AuroraSkinDefinition {
-    val painters = AuroraPainters(
-        decorationPainter = MatteDecorationPainter(),
-        surfacePainter = MatteSurfacePainter(),
-        outlinePainter = FlatOutlinePainter(),
-        highlightSurfacePainter = MatteSurfacePainter(),
-        highlightOutlinePainter = FlatOutlinePainter(),
-    )
-
+    val decorationPainter = MatteDecorationPainter()
     // Add overlay painters to paint drop shadow and a dark line along the bottom
     // edges of toolbars
-    painters.addOverlayPainter(
+    decorationPainter.addOverlayPainter(
         BottomShadowOverlayPainter.getInstance(100),
         DecorationAreaType.Toolbar
     )
-    painters.addOverlayPainter(
+    decorationPainter.addOverlayPainter(
         BottomLineOverlayPainter( { it.containerOutline } ),
         DecorationAreaType.Toolbar
     )
 
     // Add overlay painters to paint drop shadow and a dark line along the top
     // edges of footers
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(15), DecorationAreaType.Footer)
-    painters.addOverlayPainter(
+    decorationPainter.addOverlayPainter(TopShadowOverlayPainter.getInstance(15), DecorationAreaType.Footer)
+    decorationPainter.addOverlayPainter(
         TopLineOverlayPainter( { it.containerOutline } ),
         DecorationAreaType.Footer
+    )
+
+    val painters = AuroraPainters(
+        decorationPainter = decorationPainter,
+        surfacePainter = MatteSurfacePainter(),
+        outlinePainter = FlatOutlinePainter(),
+        highlightSurfacePainter = MatteSurfacePainter(),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 
     return AuroraSkinDefinition(

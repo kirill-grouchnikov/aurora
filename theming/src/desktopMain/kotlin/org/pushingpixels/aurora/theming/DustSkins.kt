@@ -111,22 +111,24 @@ private fun dustBasePainters(): AuroraPainters {
             ColorStop(fraction = 1.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
         )
     )
+
+    val decorationPainter = MatteDecorationPainter()
+    // add two overlay painters to create a bezel line between menu bar and toolbars
+    decorationPainter.addOverlayPainter(
+        BottomLineOverlayPainter( { it.containerOutline } ),
+        DecorationAreaType.Header
+    )
+    decorationPainter.addOverlayPainter(
+        TopLineOverlayPainter( { it.inverseContainerOutline.withAlpha(0.375f) } ),
+        DecorationAreaType.Toolbar)
+
     val painters = AuroraPainters(
-        decorationPainter = MatteDecorationPainter(),
+        decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(MatteSurfacePainter(), 0.3f),
         outlinePainter = outlinePainter,
         highlightSurfacePainter = MatteSurfacePainter(),
         highlightOutlinePainter = outlinePainter,
     )
-
-    // add two overlay painters to create a bezel line between menu bar and toolbars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter( { it.containerOutline } ),
-        DecorationAreaType.Header
-    )
-    painters.addOverlayPainter(
-        TopLineOverlayPainter( { it.inverseContainerOutline.withAlpha(0.375f) } ),
-        DecorationAreaType.Toolbar)
 
     return painters
 }

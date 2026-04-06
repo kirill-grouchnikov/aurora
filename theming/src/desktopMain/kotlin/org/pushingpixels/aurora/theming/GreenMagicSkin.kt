@@ -111,8 +111,17 @@ private fun greenMagicSkinColors(): AuroraSkinColors {
 }
 
 fun greenMagicSkin(): AuroraSkinDefinition {
+    val decorationPainter = ArcDecorationPainter()
+    // Add overlay painters to paint drop shadow and a dark line along the bottom
+    // edges of headers
+    decorationPainter.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Header)
+    decorationPainter.addOverlayPainter(
+        BottomLineOverlayPainter( { it.containerOutlineVariant } ),
+        DecorationAreaType.Header
+    )
+
     val painters = AuroraPainters(
-        decorationPainter = ArcDecorationPainter(),
+        decorationPainter = decorationPainter,
         surfacePainter = FractionBasedSurfacePainter(
             ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurfaceLowest),
             ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
@@ -122,14 +131,6 @@ fun greenMagicSkin(): AuroraSkinDefinition {
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = ClassicSurfacePainter(),
         highlightOutlinePainter = FlatOutlinePainter(),
-    )
-
-    // Add overlay painters to paint drop shadow and a dark line along the bottom
-    // edges of headers
-    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Header)
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter( { it.containerOutlineVariant } ),
-        DecorationAreaType.Header
     )
 
     return AuroraSkinDefinition(

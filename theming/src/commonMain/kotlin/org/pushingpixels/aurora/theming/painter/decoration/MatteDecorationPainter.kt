@@ -33,7 +33,7 @@ import org.pushingpixels.aurora.theming.DecorationAreaType
  *
  * @author Kirill Grouchnikov
  */
-class MatteDecorationPainter : AuroraDecorationPainter {
+class MatteDecorationPainter : AuroraDecorationPainter() {
     override val displayName: String
         get() = "Matte"
 

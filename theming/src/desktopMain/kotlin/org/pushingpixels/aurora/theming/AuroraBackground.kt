@@ -42,7 +42,6 @@ fun Modifier.auroraBackground() = this.then(
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
         decorationPainter = AuroraSkin.painters.decorationPainter,
-        overlayPainters = AuroraSkin.painters.getOverlayPainters(AuroraSkin.decorationAreaType)
     )
 )
 
@@ -58,7 +57,6 @@ fun Modifier.auroraBackgroundNoOverlays() = this.then(
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
         decorationPainter = AuroraSkin.painters.decorationPainter,
-        overlayPainters = emptyList()
     )
 )
 
@@ -67,7 +65,6 @@ private class AuroraBackground(
     private val decorationAreaType: DecorationAreaType,
     private val colors: AuroraSkinColors,
     private val decorationPainter: AuroraDecorationPainter,
-    private val overlayPainters: List<AuroraOverlayPainter>
 ) : OnGloballyPositionedModifier, DrawModifier {
     var offset = Offset.Zero
 
@@ -98,6 +95,7 @@ private class AuroraBackground(
             )
         }
 
+        val overlayPainters = decorationPainter.getOverlayPainters(decorationAreaType)
         if (overlayPainters.isNotEmpty()) {
             // If we have overlay painters registered for this decoration area, ask
             // each one to paint their visuals

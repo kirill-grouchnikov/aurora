@@ -66,25 +66,25 @@ private fun businessBaseSkinColors(
 }
 
 private fun businessBasePainters(): AuroraPainters {
+    val decorationPainter = BrushedMetalDecorationPainter(
+        colorQuery1 = { if (it.isDark) it.containerSurfaceDim else it.containerSurfaceBright },
+        colorQuery2 = { if (it.isDark) it.containerSurfaceBright else it.containerSurfaceDim },
+    )
+    // add an overlay painter to paint a drop shadow along the top edge of toolbars
+    decorationPainter.addOverlayPainter(TopShadowOverlayPainter.getInstance(80), DecorationAreaType.Toolbar)
+    // add an overlay painter to paint separator lines along the bottom
+    // edges of title panes and menu bars
+    decorationPainter.addOverlayPainter(
+        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
+        DecorationAreaType.Header
+    )
+
     val painters = AuroraPainters(
-        decorationPainter = BrushedMetalDecorationPainter(
-            colorQuery1 = { if (it.isDark) it.containerSurfaceDim else it.containerSurfaceBright },
-            colorQuery2 = { if (it.isDark) it.containerSurfaceBright else it.containerSurfaceDim },
-        ),
+        decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.8f),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = ClassicSurfacePainter(),
         highlightOutlinePainter = FlatOutlinePainter()
-    )
-
-    // add an overlay painter to paint a drop shadow along the top edge of toolbars
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(80), DecorationAreaType.Toolbar)
-
-    // add an overlay painter to paint separator lines along the bottom
-    // edges of title panes and menu bars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
-        DecorationAreaType.Header
     )
 
     return painters

@@ -31,7 +31,7 @@ import org.pushingpixels.aurora.theming.DecorationAreaType
  *
  * @author Kirill Grouchnikov
  */
-class ArcDecorationPainter : AuroraDecorationPainter {
+class ArcDecorationPainter : AuroraDecorationPainter() {
     override val displayName = "Arc"
 
     override fun paintDecorationArea(

@@ -103,30 +103,32 @@ private fun nebulaBaseSkinColors(accentContainerColorTokens: AccentContainerColo
 }
 
 private fun nebulaBasePainters(): AuroraPainters {
-    val painters = AuroraPainters(
-        decorationPainter = MarbleNoiseDecorationPainter(
-            colorQuery1 = { it.containerSurface },
-            colorQuery2 = { it.containerSurfaceHighest },
-            textureAlpha = 0.2f,
-            baseDecorationPainter = ArcDecorationPainter()
-        ),
-        surfacePainter = SpecularRectangularSurfacePainter(ClassicSurfacePainter(), 1.0f),
-        outlinePainter = FlatOutlinePainter(),
-        highlightSurfacePainter = MatteSurfacePainter(),
-        highlightOutlinePainter = FlatOutlinePainter(),
+    val decorationPainter = MarbleNoiseDecorationPainter(
+        colorQuery1 = { it.containerSurface },
+        colorQuery2 = { it.containerSurfaceHighest },
+        textureAlpha = 0.2f,
+        baseDecorationPainter = ArcDecorationPainter()
     )
 
     // add an overlay painter to paint a drop shadow along the top edge of toolbars
-    painters.addOverlayPainter(
+    decorationPainter.addOverlayPainter(
         TopShadowOverlayPainter.getInstance(60),
         DecorationAreaType.Toolbar
     )
 
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
-    painters.addOverlayPainter(
+    decorationPainter.addOverlayPainter(
         BottomLineOverlayPainter( { it.containerOutline } ),
         DecorationAreaType.TitlePane, DecorationAreaType.Header
+    )
+
+    val painters = AuroraPainters(
+        decorationPainter = decorationPainter,
+        surfacePainter = SpecularRectangularSurfacePainter(ClassicSurfacePainter(), 1.0f),
+        outlinePainter = FlatOutlinePainter(),
+        highlightSurfacePainter = MatteSurfacePainter(),
+        highlightOutlinePainter = FlatOutlinePainter(),
     )
 
     return painters
@@ -188,9 +190,9 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
         painters = nebulaBasePainters().also { painters ->
             // Clear the top shadow painter on the toolbars and add combined
             // separator + drop shadow along the toolbar bottom
-            painters.clearOverlayPainters(DecorationAreaType.Toolbar)
-            painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
-            painters.addOverlayPainter(
+            painters.decorationPainter.clearOverlayPainters(DecorationAreaType.Toolbar)
+            painters.decorationPainter.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
+            painters.decorationPainter.addOverlayPainter(
                 BottomLineOverlayPainter({ it.containerOutline }), DecorationAreaType.Toolbar
             )
 

@@ -20,9 +20,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
-import org.pushingpixels.aurora.theming.painter.overlay.AuroraOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.AuroraSurfacePainter
-import java.util.*
 
 data class AuroraPainters(
     val decorationPainter: AuroraDecorationPainter,
@@ -30,80 +28,7 @@ data class AuroraPainters(
     val outlinePainter: AuroraOutlinePainter,
     val highlightSurfacePainter: AuroraSurfacePainter,
     val highlightOutlinePainter: AuroraOutlinePainter,
-    val overlayPaintersMap: MutableMap<DecorationAreaType, MutableList<AuroraOverlayPainter>> = hashMapOf()
-) {
-    /**
-     * Adds the specified overlay painter to the end of the list of overlay
-     * painters associated with the specified decoration area types.
-     *
-     * @param overlayPainter Overlay painter to add to the end of the list of overlay
-     * painters associated with the specified decoration area types.
-     * @param areaTypes      Decoration area types.
-     */
-    fun addOverlayPainter(
-        overlayPainter: AuroraOverlayPainter,
-        vararg areaTypes: DecorationAreaType
-    ) {
-        for (areaType in areaTypes) {
-            if (!overlayPaintersMap.containsKey(areaType)) {
-                overlayPaintersMap[areaType] = arrayListOf()
-            }
-            overlayPaintersMap[areaType]!!.add(overlayPainter)
-        }
-    }
-
-    /**
-     * Removes the specified overlay painter from the list of overlay painters
-     * associated with the specified decoration area types.
-     *
-     * @param overlayPainter Overlay painter to remove from the list of overlay painters
-     * associated with the specified decoration area types.
-     * @param areaTypes      Decoration area types.
-     */
-    fun removeOverlayPainter(
-        overlayPainter: AuroraOverlayPainter,
-        vararg areaTypes: DecorationAreaType
-    ) {
-        for (areaType in areaTypes) {
-            if (!overlayPaintersMap.containsKey(areaType)) {
-                return
-            }
-            overlayPaintersMap[areaType]!!.remove(overlayPainter)
-            if (overlayPaintersMap[areaType]!!.isEmpty()) {
-                overlayPaintersMap.remove(areaType)
-            }
-        }
-    }
-
-    /**
-     * Removes all overlay painters associated with the specified decoration area types.
-     *
-     * @param areaTypes Decoration area types.
-     */
-    fun clearOverlayPainters(vararg areaTypes: DecorationAreaType) {
-        for (areaType in areaTypes) {
-            if (!overlayPaintersMap.containsKey(areaType)) {
-                return
-            }
-            overlayPaintersMap[areaType]!!.clear()
-            overlayPaintersMap.remove(areaType)
-        }
-    }
-
-    /**
-     * Returns a non-null, non-modifiable list of overlay painters associated
-     * with the specified decoration area type.
-     *
-     * @param decorationAreaType Decoration area type.
-     * @return A non-null, non-modifiable list of overlay painters associated
-     * with the specified decoration area type.
-     */
-    fun getOverlayPainters(decorationAreaType: DecorationAreaType): List<AuroraOverlayPainter> {
-        return if (!overlayPaintersMap.containsKey(decorationAreaType)) {
-            emptyList()
-        } else Collections.unmodifiableList(overlayPaintersMap[decorationAreaType])
-    }
-}
+)
 
 data class AuroraPainterOverlays(
     val surfacePainterOverlay: AuroraSurfacePainter.Overlay? = null,

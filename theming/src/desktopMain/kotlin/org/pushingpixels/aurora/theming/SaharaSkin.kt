@@ -75,23 +75,24 @@ private fun saharaSkinColors(): AuroraSkinColors {
 }
 
 fun saharaSkin(): AuroraSkinDefinition {
+    val decorationPainter = MatteDecorationPainter()
+    // add an overlay painter to paint a drop shadow along the top
+    // edge of toolbars
+    decorationPainter.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
+    // add an overlay painter to paint separator lines along the bottom
+    // edges of menu bars
+    decorationPainter.addOverlayPainter(
+        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
+        DecorationAreaType.Header
+    )
+
     val painters = AuroraPainters(
-        decorationPainter = MatteDecorationPainter(),
+        decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(ClassicSurfacePainter(), 0.6f),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = ClassicSurfacePainter(),
         highlightOutlinePainter = FlatOutlinePainter()
     )
-    // add an overlay painter to paint a drop shadow along the top
-    // edge of toolbars
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
-    // add an overlay painter to paint separator lines along the bottom
-    // edges of menu bars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
-        DecorationAreaType.Header
-    )
-
     return AuroraSkinDefinition(
         displayName = "Sahara",
         colors = saharaSkinColors(),

@@ -180,8 +180,38 @@ fun twilightSkin(): AuroraSkinDefinition {
             ColorStop(fraction = 1.0f, alpha = 0.09375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
         )
     )
+
+    val decorationPainter = MatteDecorationPainter()
+    // Add overlay painters to paint drop shadows along the bottom
+    // edges of toolbars and footers
+    decorationPainter.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
+    decorationPainter.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Footer)
+
+    // add an overlay painter to paint a dark line along the bottom
+    // edge of toolbars
+    decorationPainter.addOverlayPainter(
+        BottomLineOverlayPainter( { it.containerOutlineVariant } ),
+        DecorationAreaType.Toolbar
+    )
+
+    // add an overlay painter to paint a light line along the top
+    // edge of toolbars
+    decorationPainter.addOverlayPainter(
+        TopLineOverlayPainter( { it.inverseContainerOutline.withAlpha(0.125f) } ),
+        DecorationAreaType.Toolbar
+    )
+
+    // add an overlay painter to paint a bezel line along the top
+    // edge of footer
+    decorationPainter.addOverlayPainter(
+        TopBezelOverlayPainter(
+            colorTokensQueryTop = { it.containerOutlineVariant },
+            colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) }
+        ), DecorationAreaType.Footer
+    )
+
     val painters = AuroraPainters(
-        decorationPainter = MatteDecorationPainter(),
+        decorationPainter = decorationPainter,
         surfacePainter = FractionBasedSurfacePainter(
             ColorStop(fraction = 0.0f, colorQuery = {
                 it.containerSurfaceHigh.interpolateTowards(it.containerSurface, 0.4f)
@@ -193,34 +223,6 @@ fun twilightSkin(): AuroraSkinDefinition {
         outlinePainter = outlinePainter,
         highlightSurfacePainter = ClassicSurfacePainter(),
         highlightOutlinePainter = outlinePainter,
-    )
-
-    // Add overlay painters to paint drop shadows along the bottom
-    // edges of toolbars and footers
-    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
-    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Footer)
-
-    // add an overlay painter to paint a dark line along the bottom
-    // edge of toolbars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter( { it.containerOutlineVariant } ),
-        DecorationAreaType.Toolbar
-    )
-
-    // add an overlay painter to paint a light line along the top
-    // edge of toolbars
-    painters.addOverlayPainter(
-        TopLineOverlayPainter( { it.inverseContainerOutline.withAlpha(0.125f) } ),
-        DecorationAreaType.Toolbar
-    )
-
-    // add an overlay painter to paint a bezel line along the top
-    // edge of footer
-    painters.addOverlayPainter(
-        TopBezelOverlayPainter(
-            colorTokensQueryTop = { it.containerOutlineVariant },
-            colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) }
-        ), DecorationAreaType.Footer
     )
 
     return AuroraSkinDefinition(

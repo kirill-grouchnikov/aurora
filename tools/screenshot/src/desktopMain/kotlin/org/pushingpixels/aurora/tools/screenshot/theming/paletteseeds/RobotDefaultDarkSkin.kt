@@ -33,13 +33,18 @@ import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 fun robotDefaultDarkSkin(accentColor: Color, name: String) : AuroraSkinDefinition {
+    val decorationPainter = MarbleNoiseDecorationPainter(
+        colorQuery1 = { it.containerSurfaceHighest },
+        colorQuery2 = { it.containerSurface },
+        textureAlpha = 0.3f,
+        baseDecorationPainter = ArcDecorationPainter()
+    )
+    decorationPainter.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header)
+
     val painters = AuroraPainters(
-        decorationPainter = MarbleNoiseDecorationPainter(
-            colorQuery1 = { it.containerSurfaceHighest },
-            colorQuery2 = { it.containerSurface },
-            textureAlpha = 0.3f,
-            baseDecorationPainter = ArcDecorationPainter()
-        ),
+        decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(ClassicSurfacePainter(), 1.0f),
         outlinePainter = InlayOutlinePainter(
             displayName = "Robot",
@@ -52,9 +57,6 @@ fun robotDefaultDarkSkin(accentColor: Color, name: String) : AuroraSkinDefinitio
         highlightSurfacePainter = ClassicSurfacePainter(),
         highlightOutlinePainter = FlatOutlinePainter()
     )
-    painters.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header)
 
     val skinColors = AuroraSkinColors()
 

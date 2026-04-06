@@ -272,9 +272,9 @@ fun graphiteGlassSkin(): AuroraSkinDefinition {
         ).also {
             // add two overlay painters to create a bezel line between
             // menu bar and toolbars
-            it.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { tokens -> tokens.containerOutline }),
+            it.decorationPainter.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { tokens -> tokens.containerOutline }),
                 DecorationAreaType.Header)
-            it.addOverlayPainter(TopLineOverlayPainter(colorTokensQuery = {
+            it.decorationPainter.addOverlayPainter(TopLineOverlayPainter(colorTokensQuery = {
                 tokens -> tokens.inverseContainerOutline.withAlpha(0.375f)
             }), DecorationAreaType.Toolbar)
         },

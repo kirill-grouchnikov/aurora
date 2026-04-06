@@ -122,17 +122,18 @@ private fun ceruleanSkinColors(): AuroraSkinColors {
 }
 
 fun ceruleanSkin(): AuroraSkinDefinition {
+    val decorationPainter = ArcDecorationPainter()
+    // Add an overlay painter to paint a drop shadow along the top
+    // edge of toolbars
+    decorationPainter.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
+
     val painters = AuroraPainters(
-        decorationPainter = ArcDecorationPainter(),
+        decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.5f),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = GlassSurfacePainter(),
         highlightOutlinePainter = FlatOutlinePainter()
     )
-
-    // Add an overlay painter to paint a drop shadow along the top
-    // edge of toolbars
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
 
     return AuroraSkinDefinition(
         displayName = "Cerulean",

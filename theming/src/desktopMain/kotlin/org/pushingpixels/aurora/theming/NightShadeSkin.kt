@@ -100,8 +100,29 @@ fun nightShadeSkin(): AuroraSkinDefinition {
             ColorStop(fraction = 1.0f, alpha = 0.046875f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
         )
     )
+
+    val decorationPainter = MatteDecorationPainter()
+    // Add overlay painters to paint drop shadows along the bottom
+    // edges of toolbars and footers
+    decorationPainter.addOverlayPainter(
+        BottomShadowOverlayPainter.getInstance(100),
+        DecorationAreaType.Toolbar, DecorationAreaType.Footer
+    )
+
+    // add an overlay painter to paint a dark line along the bottom
+    // edge of toolbars
+    decorationPainter.addOverlayPainter(BottomLineOverlayPainter( { it.containerOutlineVariant } ),
+        DecorationAreaType.Toolbar)
+
+    // add an overlay painter to paint a bezel line along the top
+    // edge of footer
+    decorationPainter.addOverlayPainter(TopBezelOverlayPainter(
+        colorTokensQueryTop = { it.containerOutlineVariant },
+        colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) }
+    ), DecorationAreaType.Footer)
+
     val painters = AuroraPainters(
-        decorationPainter = MatteDecorationPainter(),
+        decorationPainter = decorationPainter,
         surfacePainter = FractionBasedSurfacePainter(
             ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurfaceLow),
             ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
@@ -112,25 +133,6 @@ fun nightShadeSkin(): AuroraSkinDefinition {
         highlightSurfacePainter = MatteSurfacePainter(),
         highlightOutlinePainter = outlinePainter,
     )
-
-    // Add overlay painters to paint drop shadows along the bottom
-    // edges of toolbars and footers
-    painters.addOverlayPainter(
-        BottomShadowOverlayPainter.getInstance(100),
-        DecorationAreaType.Toolbar, DecorationAreaType.Footer
-    )
-
-    // add an overlay painter to paint a dark line along the bottom
-    // edge of toolbars
-    painters.addOverlayPainter(BottomLineOverlayPainter( { it.containerOutlineVariant } ),
-        DecorationAreaType.Toolbar)
-
-    // add an overlay painter to paint a bezel line along the top
-    // edge of footer
-    painters.addOverlayPainter(TopBezelOverlayPainter(
-        colorTokensQueryTop = { it.containerOutlineVariant },
-        colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) }
-    ), DecorationAreaType.Footer)
 
     return AuroraSkinDefinition(
         displayName = "Night Shade",

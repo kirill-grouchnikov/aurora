@@ -77,20 +77,21 @@ private fun cremeBasePainters(): AuroraPainters {
             ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
         )
     )
+
+    val decorationPainter = ArcDecorationPainter()
+    // Add overlay painters to paint drop shadows along the bottom edges of toolbars
+    decorationPainter.addOverlayPainter(BottomShadowOverlayPainter.getInstance(40), DecorationAreaType.Toolbar)
+    // add an overlay painter to paint a dark line along the bottom edge of toolbars
+    decorationPainter.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
+        DecorationAreaType.Toolbar)
+
     val painters = AuroraPainters(
-        decorationPainter = ArcDecorationPainter(),
+        decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(MatteSurfacePainter(), 0.5f),
         outlinePainter = outlinePainter,
         highlightSurfacePainter = MatteSurfacePainter(),
         highlightOutlinePainter = outlinePainter
     )
-
-    // Add overlay painters to paint drop shadows along the bottom edges of toolbars
-    painters.addOverlayPainter(BottomShadowOverlayPainter.getInstance(40), DecorationAreaType.Toolbar)
-
-    // add an overlay painter to paint a dark line along the bottom edge of toolbars
-    painters.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
-        DecorationAreaType.Toolbar)
 
     return painters
 }

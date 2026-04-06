@@ -33,21 +33,23 @@ private val MutedLightSeed: Hct = Hct.fromInt(java.awt.Color(208, 212, 216).rgb)
 private val NeutralLightSeed: Hct = Hct.fromInt(java.awt.Color(252, 249, 248).rgb)
 
 fun robotDefaultLightSkin(accentColor: Color, name: String) : AuroraSkinDefinition {
+    val decorationPainter = MarbleNoiseDecorationPainter(
+        colorQuery1 = { it.containerSurface },
+        colorQuery2 = { it.containerSurfaceHighest },
+        textureAlpha = 0.6f,
+        baseDecorationPainter = ArcDecorationPainter()
+    )
+    decorationPainter.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
+        DecorationAreaType.TitlePane,
+        DecorationAreaType.Header)
+
     val painters = AuroraPainters(
-        decorationPainter = MarbleNoiseDecorationPainter(
-            colorQuery1 = { it.containerSurface },
-            colorQuery2 = { it.containerSurfaceHighest },
-            textureAlpha = 0.6f,
-            baseDecorationPainter = ArcDecorationPainter()
-        ),
+        decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(ClassicSurfacePainter(), 1.0f),
         outlinePainter = FlatOutlinePainter(),
         highlightSurfacePainter = ClassicSurfacePainter(),
         highlightOutlinePainter = FlatOutlinePainter()
     )
-    painters.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
-        DecorationAreaType.TitlePane,
-        DecorationAreaType.Header)
 
     val skinColors = AuroraSkinColors()
 

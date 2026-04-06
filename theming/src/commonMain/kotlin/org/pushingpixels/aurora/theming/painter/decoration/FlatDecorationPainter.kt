@@ -29,7 +29,7 @@ import org.pushingpixels.aurora.theming.DecorationAreaType
  *
  * @author Kirill Grouchnikov
  */
-class FlatDecorationPainter : AuroraDecorationPainter {
+class FlatDecorationPainter : AuroraDecorationPainter() {
     override val displayName: String
         get() = "Flat"
 

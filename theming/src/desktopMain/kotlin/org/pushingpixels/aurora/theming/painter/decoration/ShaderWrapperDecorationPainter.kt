@@ -38,7 +38,7 @@ abstract class ShaderWrapperDecorationPainter(
     val runtimeEffect: RuntimeEffect,
     val baseShader: Shader,
     val baseDecorationPainter: AuroraDecorationPainter? = null
-) : AuroraDecorationPainter {
+) : AuroraDecorationPainter() {
     abstract fun getShaderData(
         density: Density,
         componentSize: Size,

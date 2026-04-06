@@ -196,11 +196,23 @@ fun autumnSkin(): AuroraSkinDefinition {
             ColorStop(fraction = 1.0f, alpha = 0.9375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
         )
     )
+
+    val decorationPainter = MarbleNoiseDecorationPainter(
+        colorQuery1 = { it.containerSurface },
+        colorQuery2 = { it.containerSurfaceHighest },
+        textureAlpha = 0.2f)
+    // add an overlay painter to paint a drop shadow along the top
+    // edge of toolbars
+    decorationPainter.addOverlayPainter(TopShadowOverlayPainter.getInstance(70), DecorationAreaType.Toolbar)
+    // add an overlay painter to paint separator lines along the bottom
+    // edges of title panes and menu bars
+    decorationPainter.addOverlayPainter(
+        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutlineVariant }),
+        DecorationAreaType.TitlePane, DecorationAreaType.Header
+    )
+
     val painters = AuroraPainters(
-        decorationPainter = MarbleNoiseDecorationPainter(
-            colorQuery1 = { it.containerSurface },
-            colorQuery2 = { it.containerSurfaceHighest },
-            textureAlpha = 0.2f),
+        decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(
             base = MatteSurfacePainter(),
             topQuery = { it.containerSurfaceLow },
@@ -209,15 +221,6 @@ fun autumnSkin(): AuroraSkinDefinition {
         outlinePainter = outlinePainter,
         highlightSurfacePainter = ClassicSurfacePainter(),
         highlightOutlinePainter = outlinePainter
-    )
-    // add an overlay painter to paint a drop shadow along the top
-    // edge of toolbars
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(70), DecorationAreaType.Toolbar)
-    // add an overlay painter to paint separator lines along the bottom
-    // edges of title panes and menu bars
-    painters.addOverlayPainter(
-        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutlineVariant }),
-        DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 
     return AuroraSkinDefinition(
