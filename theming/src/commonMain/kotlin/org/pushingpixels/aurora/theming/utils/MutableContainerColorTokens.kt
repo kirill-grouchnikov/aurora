@@ -29,6 +29,7 @@ data class MutableContainerColorTokens(
     var containerSurfaceHighestAttr: Color = Color.Unspecified,
     var containerSurfaceDimAttr: Color = Color.Unspecified,
     var containerSurfaceBrightAttr: Color = Color.Unspecified,
+    var containerShadowAttr: Color = Color.Unspecified,
     var onContainerAttr: Color = Color.Unspecified,
     var onContainerVariantAttr: Color = Color.Unspecified,
     var containerOutlineAttr: Color = Color.Unspecified,
@@ -64,6 +65,9 @@ data class MutableContainerColorTokens(
         get() = containerSurfaceDimAttr
     override val containerSurfaceBright: Color
         get() = containerSurfaceBrightAttr
+
+    override val containerShadow: Color
+        get() = containerShadowAttr
 
     override val onContainer: Color
         get() = onContainerAttr

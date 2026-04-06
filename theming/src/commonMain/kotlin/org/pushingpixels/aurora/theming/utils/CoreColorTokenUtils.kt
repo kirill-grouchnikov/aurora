@@ -98,6 +98,9 @@ private fun ContainerColorTokens.overlay(overlay: Color, overlayAmount: Float): 
         override val containerSurfaceBright: Color
             get() = containerSurfaceBright
 
+        override val containerShadow: Color
+            get() = containerShadow
+
         override val onContainer: Color
             get() = onContainer
 

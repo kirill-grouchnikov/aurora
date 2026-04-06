@@ -64,6 +64,9 @@ fun getContainerTokens(
         override val containerSurfaceBright: Color
             get() = colorResolver.getContainerSurfaceBright(dynamicPalette)
 
+        override val containerShadow: Color
+            get() = colorResolver.getContainerShadow(dynamicPalette)
+
         override val onContainer: Color
             get() = colorResolver.getOnContainer(dynamicPalette)
 
@@ -154,6 +157,9 @@ fun getBimodalContainerTokens(
 
         override val containerSurfaceBright: Color
             get() = colorResolver.getContainerSurfaceBright(dynamicPalette)
+
+        override val containerShadow: Color
+            get() = colorResolver.getContainerShadow(dynamicPalette)
 
         override val onContainer: Color
             get() = colorResolver.getOnContainer(dynamicPalette)

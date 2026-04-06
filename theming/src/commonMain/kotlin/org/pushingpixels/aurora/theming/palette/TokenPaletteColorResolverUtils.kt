@@ -48,6 +48,10 @@ val DefaultPaletteColorResolver: TokenPaletteColorResolver
             return Color(tokenPalette.containerSurfaceBright)
         }
 
+        override fun getContainerShadow(tokenPalette: TokenPalette): Color {
+            return Color(tokenPalette.containerShadow)
+        }
+
         override fun getOnContainer(tokenPalette: TokenPalette): Color {
             return Color(tokenPalette.onContainer)
         }
@@ -174,6 +178,15 @@ fun TokenPaletteColorResolver.overlayWith(overlay: TokenPaletteColorResolverOver
             val spec = overlay.containerSurfaceBright
             return if (spec == null) {
                 original.getContainerSurfaceBright(tokenPalette)
+            } else {
+                Color(spec.invoke(tokenPalette))
+            }
+        }
+
+        override fun getContainerShadow(tokenPalette: TokenPalette): Color {
+            val spec = overlay.containerShadow
+            return if (spec == null) {
+                original.getContainerShadow(tokenPalette)
             } else {
                 Color(spec.invoke(tokenPalette))
             }

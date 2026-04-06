@@ -63,6 +63,9 @@ internal fun getSystemTokens(seed: Hct, containerConfiguration: ContainerConfigu
         override val containerSurfaceBright: Color
             get() = if (containerConfiguration.isDark) getColor(40.0, 12.0) else getColor(85.0, 10.0)
 
+        override val containerShadow: Color
+            get() = Color(palette.getHct(0.0).toInt())
+
         override val onContainer: Color
             get() = if (containerConfiguration.isDark)
                 getColor(ContrastCurve(80.0, 90.0, 95.0, 100.0))

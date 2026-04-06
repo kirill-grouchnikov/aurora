@@ -28,6 +28,8 @@ interface TokenPaletteColorResolver {
     fun getContainerSurfaceDim(tokenPalette: TokenPalette): Color
     fun getContainerSurfaceBright(tokenPalette: TokenPalette): Color
 
+    fun getContainerShadow(tokenPalette: TokenPalette): Color
+
     fun getOnContainer(tokenPalette: TokenPalette): Color
     fun getOnContainerVariant(tokenPalette: TokenPalette): Color
 

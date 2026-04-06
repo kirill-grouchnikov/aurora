@@ -90,6 +90,9 @@ class ContainerColorTokensOverlay(
                     override val containerSurfaceBright: Color
                         get() = systemContainerTokens.containerSurfaceBright
 
+                    override val containerShadow: Color
+                        get() = systemContainerTokens.containerShadow
+
                     override val onContainer: Color
                         get() = systemContainerTokens.accentOnContainer
 
@@ -192,6 +195,9 @@ class ContainerColorTokensOverlay(
 
                     override val containerSurfaceBright: Color
                         get() = systemContainerTokens.containerSurfaceBright
+
+                    override val containerShadow: Color
+                        get() = systemContainerTokens.containerShadow
 
                     override val onContainer: Color
                         get() = systemContainerTokens.accentOnContainer

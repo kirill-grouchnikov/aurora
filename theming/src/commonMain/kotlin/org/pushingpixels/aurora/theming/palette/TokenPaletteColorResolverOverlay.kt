@@ -25,6 +25,7 @@ class TokenPaletteColorResolverOverlay(
     val containerSurfaceHighest: ((TokenPalette) -> Int)? = null,
     val containerSurfaceDim: ((TokenPalette) -> Int)? = null,
     val containerSurfaceBright: ((TokenPalette) -> Int)? = null,
+    val containerShadow: ((TokenPalette) -> Int)? = null,
     val onContainer: ((TokenPalette) -> Int)? = null,
     val onContainerVariant: ((TokenPalette) -> Int)? = null,
     val containerOutline: ((TokenPalette) -> Int)? = null,

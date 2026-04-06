@@ -29,6 +29,8 @@ interface ContainerColorTokens {
     val containerSurfaceDim: Color
     val containerSurfaceBright: Color
 
+    val containerShadow: Color
+
     val onContainer: Color
     val onContainerVariant: Color
 

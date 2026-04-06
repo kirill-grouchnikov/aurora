@@ -47,6 +47,7 @@ fun populateColorTokens(
     var containerSurfaceHighest = currColorTokens.containerSurfaceHighest
     var containerSurfaceDim = currColorTokens.containerSurfaceDim
     var containerSurfaceBright = currColorTokens.containerSurfaceBright
+    var containerShadow = currColorTokens.containerShadow
     var onContainer = currColorTokens.onContainer
     var onContainerVariant = currColorTokens.onContainerVariant
     var containerOutline = currColorTokens.containerOutline
@@ -92,6 +93,8 @@ fun populateColorTokens(
             contributionTokens.containerSurfaceDim, 1.0f - amount)
         containerSurfaceBright = containerSurfaceBright.interpolateTowards(
             contributionTokens.containerSurfaceBright, 1.0f - amount)
+        containerShadow = containerShadow.interpolateTowards(
+            contributionTokens.containerShadow, 1.0f - amount)
         onContainer = onContainer.interpolateTowards(
             contributionTokens.onContainer, 1.0f - amount)
         onContainerVariant = onContainerVariant.interpolateTowards(
@@ -135,6 +138,7 @@ fun populateColorTokens(
     colorTokens.containerSurfaceHighestAttr = containerSurfaceHighest
     colorTokens.containerSurfaceDimAttr = containerSurfaceDim
     colorTokens.containerSurfaceBrightAttr = containerSurfaceBright
+    colorTokens.containerShadowAttr = containerShadow
     colorTokens.onContainerAttr = onContainer
     colorTokens.onContainerVariantAttr = onContainerVariant
     colorTokens.containerOutlineAttr = containerOutline
@@ -189,6 +193,7 @@ internal fun populateColorTokens(
     var containerSurfaceHighest = currColorTokens.containerSurfaceHighest
     var containerSurfaceDim = currColorTokens.containerSurfaceDim
     var containerSurfaceBright = currColorTokens.containerSurfaceBright
+    var containerShadow = currColorTokens.containerShadow
     var onContainer = currColorTokens.onContainer
     var onContainerVariant = currColorTokens.onContainerVariant
     var containerOutline = currColorTokens.containerOutline
@@ -248,6 +253,8 @@ internal fun populateColorTokens(
             contributionTokens.containerSurfaceDim, 1.0f - amount)
         containerSurfaceBright = containerSurfaceBright.interpolateTowards(
             contributionTokens.containerSurfaceBright, 1.0f - amount)
+        containerShadow = containerShadow.interpolateTowards(
+            contributionTokens.containerShadow, 1.0f - amount)
         onContainer = onContainer.interpolateTowards(
             contributionTokens.onContainer, 1.0f - amount)
         onContainerVariant = onContainerVariant.interpolateTowards(
@@ -293,6 +300,7 @@ internal fun populateColorTokens(
     colorTokens.containerSurfaceHighestAttr = containerSurfaceHighest
     colorTokens.containerSurfaceDimAttr = containerSurfaceDim
     colorTokens.containerSurfaceBrightAttr = containerSurfaceBright
+    colorTokens.containerShadowAttr = containerShadow
     colorTokens.onContainerAttr = onContainer
     colorTokens.onContainerVariantAttr = onContainerVariant
     colorTokens.containerOutlineAttr = containerOutline
@@ -346,6 +354,7 @@ internal fun populateColorTokens(
     var containerSurfaceHighest = currColorTokens.containerSurfaceHighest
     var containerSurfaceDim = currColorTokens.containerSurfaceDim
     var containerSurfaceBright = currColorTokens.containerSurfaceBright
+    var containerShadow = currColorTokens.containerShadow
     var onContainer = currColorTokens.onContainer
     var onContainerVariant = currColorTokens.onContainerVariant
     var containerOutline = currColorTokens.containerOutline
@@ -405,6 +414,8 @@ internal fun populateColorTokens(
             contributionTokens.containerSurfaceDim, 1.0f - amount)
         containerSurfaceBright = containerSurfaceBright.interpolateTowards(
             contributionTokens.containerSurfaceBright, 1.0f - amount)
+        containerShadow = containerShadow.interpolateTowards(
+            contributionTokens.containerShadow, 1.0f - amount)
         onContainer = onContainer.interpolateTowards(
             contributionTokens.onContainer, 1.0f - amount)
         onContainerVariant = onContainerVariant.interpolateTowards(
@@ -450,6 +461,7 @@ internal fun populateColorTokens(
     colorTokens.containerSurfaceHighestAttr = containerSurfaceHighest
     colorTokens.containerSurfaceDimAttr = containerSurfaceDim
     colorTokens.containerSurfaceBrightAttr = containerSurfaceBright
+    colorTokens.containerShadowAttr = containerShadow
     colorTokens.onContainerAttr = onContainer
     colorTokens.onContainerVariantAttr = onContainerVariant
     colorTokens.containerOutlineAttr = containerOutline
@@ -502,6 +514,7 @@ internal fun populateColorTokensForHighlights(
     var containerSurfaceHighest = currColorTokens.containerSurfaceHighest.byAlpha(currHighlightAmount)
     var containerSurfaceDim = currColorTokens.containerSurfaceDim.byAlpha(currHighlightAmount)
     var containerSurfaceBright = currColorTokens.containerSurfaceBright.byAlpha(currHighlightAmount)
+    var containerShadow = currColorTokens.containerShadow
     var onContainer = currColorTokens.onContainer.byAlpha(currHighlightAmount)
     var onContainerVariant = currColorTokens.onContainerVariant.byAlpha(currHighlightAmount)
     var containerOutline = currColorTokens.containerOutline.byAlpha(currHighlightAmount)
@@ -558,6 +571,8 @@ internal fun populateColorTokensForHighlights(
             contributionTokens.containerSurfaceDim.byAlpha(amount), 1.0f - amount)
         containerSurfaceBright = containerSurfaceBright.interpolateTowards(
             contributionTokens.containerSurfaceBright.byAlpha(amount), 1.0f - amount)
+        containerShadow = containerShadow.interpolateTowards(
+            contributionTokens.containerShadow.byAlpha(amount), 1.0f - amount)
         onContainer = onContainer.interpolateTowards(
             contributionTokens.onContainer.byAlpha(amount), 1.0f - amount)
         onContainerVariant = onContainerVariant.interpolateTowards(
@@ -601,6 +616,7 @@ internal fun populateColorTokensForHighlights(
     colorTokens.containerSurfaceHighestAttr = containerSurfaceHighest
     colorTokens.containerSurfaceDimAttr = containerSurfaceDim
     colorTokens.containerSurfaceBrightAttr = containerSurfaceBright
+    colorTokens.containerShadowAttr = containerShadow
     colorTokens.onContainerAttr = onContainer
     colorTokens.onContainerVariantAttr = onContainerVariant
     colorTokens.containerOutlineAttr = containerOutline
