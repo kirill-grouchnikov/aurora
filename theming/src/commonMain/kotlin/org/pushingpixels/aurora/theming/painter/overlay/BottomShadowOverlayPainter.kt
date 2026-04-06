@@ -56,7 +56,7 @@ class BottomShadowOverlayPainter private constructor(private val endAlpha: Float
             decorationAreaType = decorationAreaType,
             componentState = ComponentState.Enabled,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-            inactiveContainerType = ContainerType.Neutral).containerOutline
+            inactiveContainerType = ContainerType.Neutral).containerShadow
 
         with(drawScope) {
             val shadowHeight = 4.0.dp.toPx()
@@ -67,7 +67,7 @@ class BottomShadowOverlayPainter private constructor(private val endAlpha: Float
                     style = Fill,
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            shadowColor.withAlpha(0.0625f),
+                            shadowColor.withAlpha(0.0f),
                             shadowColor.withAlpha(endAlpha)
                         ),
                         startY = 0.0f,
@@ -81,8 +81,8 @@ class BottomShadowOverlayPainter private constructor(private val endAlpha: Float
 
     companion object {
         private val Map: MutableMap<Int, BottomShadowOverlayPainter> = HashMap()
-        private const val DefaultShadowEndAlpha = 128.0f / 255.0f
-        private const val MinShadowEndAlpha = 32.0f / 255.0f
+        private const val DefaultShadowEndAlpha = 96.0f / 255.0f
+        private const val MinShadowEndAlpha = 24.0f / 255.0f
 
         /**
          * Returns an instance of bottom shadow overlay painter with the requested strength.

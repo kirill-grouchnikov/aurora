@@ -42,6 +42,7 @@ private fun autumnSkinColors(): AuroraSkinColors {
     // Also use higher alpha values for disabled controls for better contrast.
     val resolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
+            containerShadow = { Color(it.containerOutline).interpolateTowardsAsRGB(Color(it.containerOutlineVariant), 0.3f) } ,
             containerOutline = { Color(it.containerOutline).interpolateTowardsAsRGB(Color(it.containerOutlineVariant), 0.3f) },
             onContainer = { it.containerOutline },
             onContainerVariant = { it.containerOutlineVariant and 0xC0FFFFFFu.toInt() },
@@ -61,6 +62,7 @@ private fun autumnSkinColors(): AuroraSkinColors {
     // controls for better contrast.
     val mutedResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
+            containerShadow = { autumnDefaultActiveTokens.containerOutline.toArgb() },
             containerOutline = { autumnDefaultActiveTokens.containerOutline.toArgb() },
             containerOutlineVariant = { autumnDefaultActiveTokens.containerOutlineVariant.toArgb() },
             complementaryContainerOutline = { autumnDefaultActiveTokens.complementaryContainerOutline.toArgb() },
@@ -82,6 +84,7 @@ private fun autumnSkinColors(): AuroraSkinColors {
     // values for consistency with active controls.
     val neutralResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
+            containerShadow = { autumnDefaultActiveTokens.containerOutline.toArgb() },
             containerOutline = { autumnDefaultActiveTokens.containerOutline.toArgb() },
             containerOutlineVariant = { autumnDefaultActiveTokens.containerOutlineVariant.toArgb() },
             complementaryContainerOutline = { autumnDefaultActiveTokens.complementaryContainerOutline.toArgb() },
@@ -209,7 +212,7 @@ fun autumnSkin(): AuroraSkinDefinition {
     )
     // add an overlay painter to paint a drop shadow along the top
     // edge of toolbars
-    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(50), DecorationAreaType.Toolbar)
+    painters.addOverlayPainter(TopShadowOverlayPainter.getInstance(70), DecorationAreaType.Toolbar)
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
     painters.addOverlayPainter(

@@ -61,6 +61,8 @@ private fun ContainerColorTokens.overlay(overlay: Color, overlayAmount: Float): 
     val containerSurfaceDim: Color = original.containerSurfaceDim.overlayWith(overlayWithAlpha)
     val containerSurfaceBright: Color = original.containerSurfaceBright.overlayWith(overlayWithAlpha)
 
+    val containerShadow: Color = original.containerShadow
+
     // Leave on container and container outline tokens as they are
     val onContainer: Color = original.onContainer
     val onContainerVariant: Color = original.onContainerVariant

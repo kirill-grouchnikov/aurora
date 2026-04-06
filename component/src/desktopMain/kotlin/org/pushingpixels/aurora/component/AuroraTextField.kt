@@ -44,7 +44,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.byAlpha
-import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.TextFieldPresentationModel
 import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
@@ -53,7 +52,6 @@ import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
-import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.max
 
 @Immutable
@@ -308,40 +306,17 @@ internal fun AuroraTextField(
                 )
 
                 if (!contentModel.readOnly) {
-                    if (!currentState.value.isDisabled && (modelStateInfo.stateContributionMap.size > 1)) {
-                        // If we have more than one active state, compute the composite color from all
-                        // the contributions
-                        for (activeEntry in modelStateInfo.stateContributionMap.entries) {
-                            val activeState = activeEntry.key
-                            if (activeState == currentState.value) {
-                                continue
-                            }
-                            val contribution = activeEntry.value.contribution
-                            if (contribution == 0.0f) {
-                                continue
-                            }
-                            val activeColorTokens = getContainerTokens(
-                                colors = skinColors,
-                                tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-                                decorationAreaType = decorationAreaType,
-                                componentState = activeState,
-                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-                                inactiveContainerType = ContainerType.Neutral
-                            )
-                            val activeBorderColor = activeColorTokens.containerOutline
-                            borderColor = borderColor.interpolateTowards(
-                                activeBorderColor, 1.0f - contribution)
-                        }
-                    }
-
                     // Paint a translucent drop shadow along the top edge of this text field
                     val shadowHeight = 6.dp
-                    val topAlpha = if (currentState.value.isDisabled) 16 else 32
+                    val topAlpha = 24 * (if (currentState.value.isDisabled)
+                        drawingCache.colorTokens.containerOutlineDisabledAlphaAttr
+                        else drawingCache.colorTokens.containerOutlineEnabledAlphaAttr)
+                    val shadowColor = drawingCache.colorTokens.containerShadow
                     drawRect(
                         brush = Brush.verticalGradient(
                             colors = listOf(
-                                borderColor.withAlpha(topAlpha / 256.0f),
-                                borderColor.withAlpha(0.0f)
+                                shadowColor.withAlpha(topAlpha / 256.0f),
+                                shadowColor.withAlpha(0.0f)
                             ),
                             startY = 0.0f,
                             endY = shadowHeight.toPx(),

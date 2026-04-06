@@ -55,7 +55,7 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
             decorationAreaType = decorationAreaType,
             componentState = ComponentState.Enabled,
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-            inactiveContainerType = ContainerType.Neutral).containerOutline
+            inactiveContainerType = ContainerType.Neutral).containerShadow
 
         with(drawScope) {
             val shadowHeight = 4.0.dp.toPx()
@@ -66,7 +66,7 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
                 brush = Brush.verticalGradient(
                     colors = listOf(
                         shadowColor.withAlpha(startAlpha),
-                        shadowColor.withAlpha(0.0625f)
+                        shadowColor.withAlpha(0.0f)
                     ),
                     startY = 0.0f,
                     endY = shadowHeight,
@@ -78,8 +78,8 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
 
     companion object {
         private val Map: MutableMap<Int, TopShadowOverlayPainter> = HashMap()
-        private const val DefaultShadowStartAlpha = 160.0f / 255.0f
-        private const val MinShadowStartAlpha = 32.0f / 255.0f
+        private const val DefaultShadowStartAlpha = 120.0f / 255.0f
+        private const val MinShadowStartAlpha = 24.0f / 255.0f
 
         /**
          * Returns an instance of top shadow overlay painter with the requested strength.
