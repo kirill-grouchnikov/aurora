@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.theming.painter.overlay
+package org.pushingpixels.aurora.theming.painter.decoration.overlay
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color

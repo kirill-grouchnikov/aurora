@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.theming.painter.overlay
+package org.pushingpixels.aurora.theming.painter.decoration.overlay
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
@@ -33,14 +34,14 @@ import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
 
 /**
- * Overlay painter that paints a few pixel-high drop shadow at the top edge of
- * the relevant decoration area. The constructor is private to enforce that
+ * Overlay painter that paints a few pixel-high drop shadow at the bottom edge
+ * of the relevant decoration area. The constructor is private to enforce that
  * [.getInstance] is the only way an application can get an instance of this class.
  *
  * @author Kirill Grouchnikov
  */
-class TopShadowOverlayPainter private constructor(private val startAlpha: Float) : OverlayPainter {
-    override val displayName = "Top Shadow"
+class BottomShadowOverlayPainter private constructor(private val endAlpha: Float) : OverlayPainter {
+    override val displayName = "Bottom Shadow"
 
     @OptIn(AuroraInternalApi::class)
     override fun paintOverlay(
@@ -60,42 +61,44 @@ class TopShadowOverlayPainter private constructor(private val startAlpha: Float)
 
         with(drawScope) {
             val shadowHeight = 4.0.dp.toPx()
-            drawRect(
-                topLeft = Offset.Zero,
-                size = Size(width, shadowHeight),
-                style = Fill,
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        shadowColor.withAlpha(startAlpha),
-                        shadowColor.withAlpha(0.0f)
-                    ),
-                    startY = 0.0f,
-                    endY = shadowHeight,
-                    tileMode = TileMode.Clamp
+            translate(top = size.height - shadowHeight) {
+                drawRect(
+                    topLeft = Offset.Zero,
+                    size = Size(width, shadowHeight),
+                    style = Fill,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            shadowColor.withAlpha(0.0f),
+                            shadowColor.withAlpha(endAlpha)
+                        ),
+                        startY = 0.0f,
+                        endY = shadowHeight,
+                        tileMode = TileMode.Clamp
+                    )
                 )
-            )
+            }
         }
     }
 
     companion object {
-        private val Map: MutableMap<Int, TopShadowOverlayPainter> = HashMap()
-        private const val DefaultShadowStartAlpha = 120.0f / 255.0f
-        private const val MinShadowStartAlpha = 24.0f / 255.0f
+        private val Map: MutableMap<Int, BottomShadowOverlayPainter> = HashMap()
+        private const val DefaultShadowEndAlpha = 96.0f / 255.0f
+        private const val MinShadowEndAlpha = 24.0f / 255.0f
 
         /**
-         * Returns an instance of top shadow overlay painter with the requested strength.
+         * Returns an instance of bottom shadow overlay painter with the requested strength.
          *
          * @param strength Drop shadow strength. Must be in [0..100] range.
-         * @return Top shadow overlay painter with the requested strength.
+         * @return Bottom shadow overlay painter with the requested strength.
          */
         @Synchronized
-        fun getInstance(strength: Int): TopShadowOverlayPainter {
+        fun getInstance(strength: Int): BottomShadowOverlayPainter {
             require(strength in 0..100) { "Strength must be in [0..100] range" }
             var result = Map[strength]
             if (result == null) {
-                val startAlpha = MinShadowStartAlpha +
-                        (DefaultShadowStartAlpha - MinShadowStartAlpha) * strength / 100
-                result = TopShadowOverlayPainter(startAlpha = startAlpha)
+                val endAlpha = MinShadowEndAlpha +
+                        (DefaultShadowEndAlpha - MinShadowEndAlpha) * strength / 100
+                result = BottomShadowOverlayPainter(endAlpha = endAlpha)
                 Map[strength] = result
             }
             return result

@@ -18,11 +18,11 @@ package org.pushingpixels.aurora.theming
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
+import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
+import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomShadowOverlayPainter
+import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopBezelOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
-import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
-import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
-import org.pushingpixels.aurora.theming.painter.overlay.TopBezelOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens

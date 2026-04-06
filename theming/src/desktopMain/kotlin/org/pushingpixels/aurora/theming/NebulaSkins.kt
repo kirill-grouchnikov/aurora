@@ -17,10 +17,10 @@ package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
+import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
+import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomShadowOverlayPainter
+import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
-import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
-import org.pushingpixels.aurora.theming.painter.overlay.BottomShadowOverlayPainter
-import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter

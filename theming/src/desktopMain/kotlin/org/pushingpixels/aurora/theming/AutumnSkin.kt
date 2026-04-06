@@ -20,10 +20,10 @@ import androidx.compose.ui.graphics.toArgb
 import org.pushingpixels.aurora.common.interpolateTowardsAsRGB
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
+import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
+import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
-import org.pushingpixels.aurora.theming.painter.overlay.BottomLineOverlayPainter
-import org.pushingpixels.aurora.theming.painter.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
