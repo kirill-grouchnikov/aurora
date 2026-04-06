@@ -41,6 +41,7 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.common.Platform
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -881,6 +882,23 @@ internal fun Modifier.auroraWindowBorder(colorTokens: ContainerColorTokens): Mod
         )
 
         val quarterThickness = thickness / 4.0f
+        // top and left as 40% mix of outline variant and outline
+        val colorOutlineMixed = colorTokens.containerOutlineVariant.interpolateTowards(
+            colorTokens.containerOutline, 0.4f)
+        drawLine(
+            color = colorOutlineMixed,
+            start = Offset(x = 0f, y = quarterThickness / 2.0f),
+            end = Offset(x = width - quarterThickness, y = quarterThickness / 2.0f),
+            strokeWidth = quarterThickness,
+            cap = StrokeCap.Butt
+        )
+        drawLine(
+            color = colorOutlineMixed,
+            start = Offset(x = quarterThickness / 2.0f, y = 0f),
+            end = Offset(x = quarterThickness / 2.0f, y = height - quarterThickness),
+            strokeWidth = quarterThickness,
+            cap = StrokeCap.Butt
+        )
         // bottom and right as outline
         drawLine(
             color = colorTokens.containerOutline,
@@ -893,21 +911,6 @@ internal fun Modifier.auroraWindowBorder(colorTokens: ContainerColorTokens): Mod
             color = colorTokens.containerOutline,
             start = Offset(x = width - quarterThickness / 2.0f, y = 0f),
             end = Offset(x = width - quarterThickness / 2.0f, y = height),
-            strokeWidth = quarterThickness,
-            cap = StrokeCap.Butt
-        )
-        // top and left as outline variant
-        drawLine(
-            color = colorTokens.containerOutlineVariant,
-            start = Offset(x = 0f, y = quarterThickness / 2.0f),
-            end = Offset(x = width - quarterThickness, y = quarterThickness / 2.0f),
-            strokeWidth = quarterThickness,
-            cap = StrokeCap.Butt
-        )
-        drawLine(
-            color = colorTokens.containerOutlineVariant,
-            start = Offset(x = quarterThickness / 2.0f, y = 0f),
-            end = Offset(x = quarterThickness / 2.0f, y = height - quarterThickness),
             strokeWidth = quarterThickness,
             cap = StrokeCap.Butt
         )
