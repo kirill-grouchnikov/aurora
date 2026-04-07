@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,6 +32,7 @@ import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.Side
 import org.pushingpixels.aurora.theming.Sides
+import org.pushingpixels.aurora.theming.auroraFlatBackground
 import org.pushingpixels.aurora.theming.utils.paintOutline
 
 @Composable
@@ -46,7 +48,13 @@ internal fun TitleLabel(
     val componentShaper = AuroraSkin.componentShaper
     val sides = Sides(straightSides = Side.entries.toSet(), openSides = setOf(Side.Leading, Side.Trailing))
 
-    Box(modifier = modifier) {
+    val neutralColorTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
+    val fillColor = if (neutralColorTokens.isDark) {
+        neutralColorTokens.containerSurfaceLow
+    } else {
+        neutralColorTokens.containerSurfaceHigh
+    }
+    Box(modifier = modifier.auroraFlatBackground(fillColor)) {
         Canvas(modifier = Modifier.matchParentSize()) {
             val width = this.size.width
             val height = this.size.height
@@ -61,17 +69,6 @@ internal fun TitleLabel(
                 )
             }) {
                 val neutralColorTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
-                drawRect(
-                    color = if (neutralColorTokens.isDark) {
-                        neutralColorTokens.containerSurfaceLow
-                    } else {
-                        neutralColorTokens.containerSurfaceHigh
-                    },
-                    topLeft = Offset.Zero,
-                    size = this.size,
-                    style = Fill
-                )
-
                 paintOutline(
                     drawScope = this,
                     componentState = ComponentState.Enabled,

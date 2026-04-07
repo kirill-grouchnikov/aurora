@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -41,6 +42,22 @@ fun Modifier.auroraBackground() = this.then(
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
         decorationPainter = AuroraSkin.painters.decorationPainter,
+    )
+)
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+fun Modifier.auroraFlatBackground(color: Color) = this.then(
+    // TODO - is there another way to get window size in here without our own composition local?
+    AuroraFlatBackground(
+        rootSize = Size(
+            width = LocalTopWindowSize.current.width.value * LocalDensity.current.density,
+            height = LocalTopWindowSize.current.height.value * LocalDensity.current.density
+        ),
+        decorationAreaType = AuroraSkin.decorationAreaType,
+        decorationPainter = AuroraSkin.painters.decorationPainter,
+        color = color,
+        inlayColorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
     )
 )
 
@@ -116,6 +133,39 @@ private class AuroraBackground(
                 colorTokens = colorTokens
             )
         }
+
+        // And don't forget to draw the content
+        drawContent()
+    }
+}
+
+private class AuroraFlatBackground(
+    private val rootSize: Size,
+    private val decorationAreaType: DecorationAreaType,
+    private val decorationPainter: AuroraDecorationPainter,
+    private val color: Color,
+    private val inlayColorTokens: ContainerColorTokens,
+) : OnGloballyPositionedModifier, DrawModifier {
+    var offset = Offset.Zero
+
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        offset = coordinates.localToRoot(Offset.Zero)
+    }
+
+    override fun ContentDrawScope.draw() {
+        // Use flat fill
+        drawRect(color = color)
+
+        // Ask the inlay painter to paint its visuals
+        decorationPainter.inlayPainter?.paintInlay(
+            drawScope = this,
+            decorationAreaType = decorationAreaType,
+            rootSize = rootSize,
+            offsetFromRoot = offset,
+            width = size.width,
+            height = size.height,
+            colorTokens = inlayColorTokens
+        )
 
         // And don't forget to draw the content
         drawContent()

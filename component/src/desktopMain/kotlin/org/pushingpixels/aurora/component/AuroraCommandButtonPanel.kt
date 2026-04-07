@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,6 +42,7 @@ import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.PopupPlacementStrategy
+import org.pushingpixels.aurora.theming.auroraFlatBackground
 import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import kotlin.math.max
 
@@ -59,7 +59,7 @@ private fun LazyListScope.rowOfItems(
     item {
         Row(
             modifier = Modifier.fillMaxWidth()
-                .background(backgroundColor)
+                .auroraFlatBackground(backgroundColor)
                 .padding(horizontal = gap, vertical = gap / 2.0f)
         ) {
             for (index in indexRowStart until indexRowEnd) {
@@ -103,7 +103,7 @@ private fun LazyListScope.columnOfItems(
     item {
         Column(
             modifier = Modifier.fillMaxHeight()
-                .background(backgroundColor)
+                .auroraFlatBackground(backgroundColor)
                 .padding(horizontal = gap / 2.0f, vertical = gap)
         ) {
             for (index in indexColumnStart until indexColumnEnd) {
