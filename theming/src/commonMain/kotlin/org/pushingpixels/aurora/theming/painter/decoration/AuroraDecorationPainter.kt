@@ -50,7 +50,30 @@ abstract class AuroraDecorationPainter : AuroraTrait {
         )
     }
 
+    interface InlayPainter : AuroraTrait {
+        /**
+         * Paints the inlay.
+         *
+         * @param drawScope Draw scope.
+         * @param decorationAreaType Decoration area type.
+         * @param width Width.
+         * @param height Height.
+         * @param colors Colors for painting the overlay.
+         */
+        fun paintInlay(
+            drawScope: DrawScope,
+            decorationAreaType: DecorationAreaType,
+            rootSize: Size,
+            offsetFromRoot: Offset,
+            width: Float,
+            height: Float,
+            colorTokens: ContainerColorTokens
+        )
+    }
+
     private val overlayPaintersMap: MutableMap<DecorationAreaType, MutableList<OverlayPainter>> = hashMapOf()
+
+    public var inlayPainter: AuroraDecorationPainter.InlayPainter? = null
 
     /**
      * Adds the specified overlay painter to the end of the list of overlay
