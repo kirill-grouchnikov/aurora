@@ -26,7 +26,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopBezelOverl
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
-import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
@@ -221,7 +221,8 @@ fun twilightSkin(): AuroraSkinDefinition {
             displayName = "Twilight"
         ),
         outlinePainter = outlinePainter,
-        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Twilight",
+            { if (it.isDark) it.containerSurfaceHighest else it.containerSurfaceLowest }),
         highlightOutlinePainter = outlinePainter,
     )
 

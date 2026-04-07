@@ -25,7 +25,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopLineOverla
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
-import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
@@ -241,7 +241,8 @@ fun magellanSkin(): AuroraSkinDefinition {
             displayName = "Magellan"
         ),
         outlinePainter = outlinePainter,
-        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Magellan",
+            { if (it.isDark) it.containerSurfaceHighest else it.containerSurfaceLowest }),
         highlightOutlinePainter = outlinePainter
     )
 

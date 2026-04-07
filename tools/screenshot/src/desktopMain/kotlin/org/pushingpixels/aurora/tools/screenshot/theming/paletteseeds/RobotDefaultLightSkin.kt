@@ -23,6 +23,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecoration
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
@@ -47,7 +48,8 @@ fun robotDefaultLightSkin(accentColor: Color, name: String) : AuroraSkinDefiniti
         decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(ClassicSurfacePainter(), 1.0f),
         outlinePainter = FlatOutlinePainter(),
-        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Robot Light",
+            { if (it.isDark) it.containerSurfaceHighest else it.containerSurfaceLowest }),
         highlightOutlinePainter = FlatOutlinePainter()
     )
 

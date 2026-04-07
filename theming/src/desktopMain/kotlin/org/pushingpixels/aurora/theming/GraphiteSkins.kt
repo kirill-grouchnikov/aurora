@@ -25,7 +25,10 @@ import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
-import org.pushingpixels.aurora.theming.painter.surface.*
+import org.pushingpixels.aurora.theming.painter.surface.AuroraSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
@@ -86,7 +89,7 @@ private fun graphiteBasePainters(
             ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
             displayName = "Graphite"
         ),
-        highlightSurfacePainter = highlightSurfacePainter ?: MatteSurfacePainter(),
+        highlightSurfacePainter = highlightSurfacePainter ?: FlatSurfacePainter("Graphite", { it.containerSurface }),
         outlinePainter = outlinePainter ?: InlayOutlinePainter(
             displayName = "Graphite",
             outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
@@ -268,7 +271,8 @@ fun graphiteGlassSkin(): AuroraSkinDefinition {
                     displayName = "Graphite Glass"
                 )
             ),
-            highlightSurfacePainter = GlassSurfacePainter()
+            highlightSurfacePainter = FlatSurfacePainter("Graphite Glass",
+                { if (it.isDark) it.containerSurfaceLowest else it.containerSurfaceHigh })
         ).also {
             // add two overlay painters to create a bezel line between
             // menu bar and toolbars

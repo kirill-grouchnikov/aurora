@@ -21,6 +21,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOve
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
@@ -89,7 +90,7 @@ private fun cremeBasePainters(): AuroraPainters {
         decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(MatteSurfacePainter(), 0.5f),
         outlinePainter = outlinePainter,
-        highlightSurfacePainter = MatteSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Cerulean", { it.containerSurface }),
         highlightOutlinePainter = outlinePainter
     )
 

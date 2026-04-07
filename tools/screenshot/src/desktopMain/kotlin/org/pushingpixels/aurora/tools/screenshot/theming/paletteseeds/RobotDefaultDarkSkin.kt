@@ -26,6 +26,7 @@ import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
@@ -54,7 +55,8 @@ fun robotDefaultDarkSkin(accentColor: Color, name: String) : AuroraSkinDefinitio
                 ColorStop(fraction = 1.0f, alpha = 0.375f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
             )
         ),
-        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Robot Dark",
+            { if (it.isDark) it.containerSurfaceHighest else it.containerSurfaceLowest }),
         highlightOutlinePainter = FlatOutlinePainter()
     )
 

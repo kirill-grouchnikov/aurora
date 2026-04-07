@@ -15,11 +15,10 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.LuminousOutlinePainter
-import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.LuminousSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.PillComponentShaper
@@ -69,21 +68,8 @@ private fun mistBasePainters(): AuroraPainters {
         decorationPainter = MatteDecorationPainter(),
         surfacePainter = LuminousSurfacePainter(),
         outlinePainter = LuminousOutlinePainter(),
-        highlightSurfacePainter = LuminousSurfacePainter(
-            base = FractionBasedSurfacePainter(
-                ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerSurface),
-                ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
-                displayName = "Mist Highlight Surface Base"
-            ),
-            baseAlpha = 1.0f,
-            query = { tokens ->
-                if (tokens.isDark) {
-                    tokens.containerSurfaceHighest
-                } else {
-                    tokens.containerSurfaceLow
-                }
-            }
-        ),
+        highlightSurfacePainter = FlatSurfacePainter("Mist",
+            { if (it.isDark) it.containerSurfaceHighest else it.containerSurfaceLowest }),
         highlightOutlinePainter = FlatOutlinePainter(),
     )
 }

@@ -24,6 +24,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopBezelOverl
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
@@ -175,16 +176,8 @@ fun marinerSkin(): AuroraSkinDefinition {
             }),
             displayName = "Mariner"
         ),
-        highlightSurfacePainter = FractionBasedSurfacePainter(
-            ColorStop(fraction = 0.0f, colorQuery = {
-                if (it.isDark) it.containerSurfaceLow else it.containerSurfaceHigh
-            }),
-            ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
-            ColorStop(fraction = 1.0f, colorQuery = {
-                if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLow
-            }),
-            displayName = "Mariner Highlight"
-        ),
+        highlightSurfacePainter = FlatSurfacePainter("Mariner",
+            { if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLow }),
         outlinePainter = InlayOutlinePainter(
             displayName = "Mariner",
             outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),

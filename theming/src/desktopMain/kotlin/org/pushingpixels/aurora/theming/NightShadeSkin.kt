@@ -23,8 +23,8 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomShadowO
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopBezelOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
-import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
@@ -130,7 +130,7 @@ fun nightShadeSkin(): AuroraSkinDefinition {
             displayName = "Night Shade"
         ),
         outlinePainter = outlinePainter,
-        highlightSurfacePainter = MatteSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Night Shade", { it.containerSurface }),
         highlightOutlinePainter = outlinePainter,
     )
 

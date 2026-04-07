@@ -21,6 +21,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomShadowO
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
@@ -190,7 +191,7 @@ fun sentinelSkin(): AuroraSkinDefinition {
         decorationPainter = decorationPainter,
         surfacePainter = MatteSurfacePainter(),
         outlinePainter = FlatOutlinePainter(),
-        highlightSurfacePainter = MatteSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Sentinel", { it.containerSurface }),
         highlightOutlinePainter = FlatOutlinePainter(),
     )
 

@@ -22,7 +22,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomShadowO
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
-import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
@@ -127,7 +127,7 @@ private fun nebulaBasePainters(): AuroraPainters {
         decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(ClassicSurfacePainter(), 1.0f),
         outlinePainter = FlatOutlinePainter(),
-        highlightSurfacePainter = MatteSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Nebula", { it.containerSurface }),
         highlightOutlinePainter = FlatOutlinePainter(),
     )
 

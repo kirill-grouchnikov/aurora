@@ -19,7 +19,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
-import org.pushingpixels.aurora.theming.painter.surface.GlassSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
@@ -131,7 +131,8 @@ fun ceruleanSkin(): AuroraSkinDefinition {
         decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.5f),
         outlinePainter = FlatOutlinePainter(),
-        highlightSurfacePainter = GlassSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Cerulean",
+            { if (it.isDark) it.containerSurfaceLowest else it.containerSurfaceHigh }),
         highlightOutlinePainter = FlatOutlinePainter()
     )
 

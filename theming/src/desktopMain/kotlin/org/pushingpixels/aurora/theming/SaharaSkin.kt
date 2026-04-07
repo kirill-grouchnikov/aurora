@@ -20,6 +20,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOve
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
@@ -90,7 +91,8 @@ fun saharaSkin(): AuroraSkinDefinition {
         decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(ClassicSurfacePainter(), 0.6f),
         outlinePainter = FlatOutlinePainter(),
-        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Sahara",
+            { if (it.isDark) it.containerSurfaceHighest else it.containerSurfaceLowest }),
         highlightOutlinePainter = FlatOutlinePainter()
     )
     return AuroraSkinDefinition(

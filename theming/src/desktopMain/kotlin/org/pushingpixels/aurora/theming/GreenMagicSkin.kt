@@ -20,7 +20,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
-import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.getBimodalContainerTokens
@@ -129,7 +129,8 @@ fun greenMagicSkin(): AuroraSkinDefinition {
             displayName = "Green Magic"
         ),
         outlinePainter = FlatOutlinePainter(),
-        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Green Magic",
+            { if (it.isDark) it.containerSurfaceHighest else it.containerSurfaceLowest }),
         highlightOutlinePainter = FlatOutlinePainter(),
     )
 

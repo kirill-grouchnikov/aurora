@@ -20,6 +20,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOve
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.ClassicSurfacePainter
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
@@ -83,7 +84,8 @@ private fun businessBasePainters(): AuroraPainters {
         decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(base = ClassicSurfacePainter(), baseAlpha = 0.8f),
         outlinePainter = FlatOutlinePainter(),
-        highlightSurfacePainter = ClassicSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Business",
+            { if (it.isDark) it.containerSurfaceHighest else it.containerSurfaceLowest }),
         highlightOutlinePainter = FlatOutlinePainter()
     )
 

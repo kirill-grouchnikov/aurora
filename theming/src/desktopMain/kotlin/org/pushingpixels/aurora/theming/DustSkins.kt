@@ -22,6 +22,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOve
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfacePainter
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
@@ -126,7 +127,7 @@ private fun dustBasePainters(): AuroraPainters {
         decorationPainter = decorationPainter,
         surfacePainter = SpecularRectangularSurfacePainter(MatteSurfacePainter(), 0.3f),
         outlinePainter = outlinePainter,
-        highlightSurfacePainter = MatteSurfacePainter(),
+        highlightSurfacePainter = FlatSurfacePainter("Dust", { it.containerSurface }),
         highlightOutlinePainter = outlinePainter,
     )
 

@@ -26,6 +26,7 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopLineOverla
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
+import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
@@ -228,13 +229,7 @@ fun geminiSkin(): AuroraSkinDefinition {
             }),
             displayName = "Gemini"
         ),
-        highlightSurfacePainter = FractionBasedSurfacePainter(
-            ColorStop(fraction = 0.0f, colorQuery = {
-                if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLow
-            }),
-            ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerSurface),
-            displayName = "Gemini Highlight"
-        ),
+        highlightSurfacePainter = FlatSurfacePainter("Gemini", { it.containerSurface }),
         outlinePainter = InlayOutlinePainter(
             displayName = "Gemini",
             outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
