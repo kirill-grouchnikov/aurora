@@ -25,6 +25,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
 import androidx.compose.ui.draw.DrawModifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -32,6 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -51,6 +54,7 @@ import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjecti
 import org.pushingpixels.aurora.component.projection.IconProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import java.awt.*
 import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu
@@ -424,26 +428,39 @@ internal fun displayRichTooltipWindow(
     )
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 private fun Modifier.richTooltipBackground() = this.then(
     RichTooltipBackground(
+        rootSize = Size(
+            width = LocalTopWindowSize.current.width.value * LocalDensity.current.density,
+            height = LocalTopWindowSize.current.height.value * LocalDensity.current.density
+        ),
         decorationAreaType = AuroraSkin.decorationAreaType,
-        colors = AuroraSkin.colors
+        inlayPainter = AuroraSkin.painters.decorationPainter.inlayPainter,
+        colorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
     )
 )
 
 private class RichTooltipBackground(
     private val decorationAreaType: DecorationAreaType,
-    private val colors: AuroraSkinColors
-) : DrawModifier {
+    private val rootSize: Size,
+    private val inlayPainter: AuroraDecorationPainter.InlayPainter?,
+    private val colorTokens: ContainerColorTokens,
+) : OnGloballyPositionedModifier, DrawModifier {
+    var offset = Offset.Zero
+
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        offset = coordinates.localToRoot(Offset.Zero)
+    }
+
     override fun ContentDrawScope.draw() {
-        val tokens = colors.getNeutralContainerTokens(decorationAreaType)
-        val topColor = if (tokens.isDark) {
-            tokens.containerSurface
+        val topColor = if (colorTokens.isDark) {
+            colorTokens.containerSurface
         } else {
-            tokens.containerSurfaceLowest
+            colorTokens.containerSurfaceLowest
         }
-        val bottomColor = tokens.containerSurfaceLow
+        val bottomColor = colorTokens.containerSurfaceLow
         val brush = Brush.verticalGradient(
             0.0f to topColor,
             1.0f to bottomColor,
@@ -452,6 +469,16 @@ private class RichTooltipBackground(
             tileMode = TileMode.Clamp
         )
         drawRect(brush = brush)
+
+        inlayPainter?.paintInlay(
+            drawScope = this,
+            decorationAreaType = decorationAreaType,
+            rootSize = rootSize,
+            offsetFromRoot = offset,
+            width = size.width,
+            height = size.height,
+            colorTokens = colorTokens
+        )
 
         // And don't forget to draw the content
         drawContent()

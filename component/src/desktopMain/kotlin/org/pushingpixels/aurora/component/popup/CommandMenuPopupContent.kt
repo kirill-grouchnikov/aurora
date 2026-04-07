@@ -25,15 +25,21 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.OnGloballyPositionedModifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import java.awt.Component
 import java.awt.Rectangle
@@ -224,6 +230,7 @@ interface BaseCommandMenuHandler<in M : BaseCommandMenuContentModel,
     }
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 fun Modifier.auroraPopupMenuRowBackground(
     backgroundFillColorQuery: (Int, ContainerColorTokens) -> Color,
@@ -238,6 +245,13 @@ fun Modifier.auroraPopupMenuRowBackground(
 
     return this.then(
         PopupMenuRowBackground(
+            rootSize = Size(
+                width = LocalTopWindowSize.current.width.value * LocalDensity.current.density,
+                height = LocalTopWindowSize.current.height.value * LocalDensity.current.density
+            ),
+            decorationAreaType = AuroraSkin.decorationAreaType,
+            inlayPainter = AuroraSkin.painters.decorationPainter.inlayPainter,
+            colorTokens = colorTokens,
             backgroundFill = backgroundFill,
             gutterFill = gutterFill,
             gutterWidth = gutterWidth,
@@ -245,6 +259,7 @@ fun Modifier.auroraPopupMenuRowBackground(
     )
 }
 
+@OptIn(AuroraInternalApi::class)
 @Composable
 fun Modifier.auroraPopupMenuRowBackground(
     backgroundFillColorQuery: (Int, ContainerColorTokens) -> Color,
@@ -260,6 +275,13 @@ fun Modifier.auroraPopupMenuRowBackground(
 
     return this.then(
         PopupMenuRowBackground(
+            rootSize = Size(
+                width = LocalTopWindowSize.current.width.value * LocalDensity.current.density,
+                height = LocalTopWindowSize.current.height.value * LocalDensity.current.density
+            ),
+            decorationAreaType = AuroraSkin.decorationAreaType,
+            inlayPainter = AuroraSkin.painters.decorationPainter.inlayPainter,
+            colorTokens = colorTokens,
             backgroundFill = backgroundFill,
             gutterFill = gutterFill,
             gutterWidth = gutterWidth,
@@ -268,12 +290,31 @@ fun Modifier.auroraPopupMenuRowBackground(
 }
 
 private class PopupMenuRowBackground(
+    private val rootSize: Size,
+    private val decorationAreaType: DecorationAreaType,
+    private val inlayPainter: AuroraDecorationPainter.InlayPainter?,
+    private val colorTokens: ContainerColorTokens,
     private val backgroundFill: Color,
     private val gutterFill: Color?,
     private val gutterWidth: Float,
-) : DrawModifier {
+) : OnGloballyPositionedModifier, DrawModifier {
+    var offset = Offset.Zero
+
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        offset = coordinates.localToRoot(Offset.Zero)
+    }
+
     override fun ContentDrawScope.draw() {
         drawRect(color = backgroundFill)
+        inlayPainter?.paintInlay(
+            drawScope = this,
+            decorationAreaType = decorationAreaType,
+            rootSize = rootSize,
+            offsetFromRoot = offset,
+            width = size.width,
+            height = size.height,
+            colorTokens = colorTokens
+        )
 
         // Have gutter?
         if (gutterWidth > 0) {
@@ -283,12 +324,34 @@ private class PopupMenuRowBackground(
                     topLeft = Offset.Zero,
                     size = Size(width = gutterWidth, height = size.height)
                 )
+                inlayPainter?.paintInlay(
+                    drawScope = this,
+                    decorationAreaType = decorationAreaType,
+                    rootSize = rootSize,
+                    offsetFromRoot = offset,
+                    width = gutterWidth,
+                    height = size.height,
+                    colorTokens = colorTokens
+                )
             } else {
                 drawRect(
                     color = gutterFill!!,
                     topLeft = Offset(x = size.width - gutterWidth, y = 0.0f),
                     size = Size(width = gutterWidth, height = size.height)
                 )
+                withTransform({
+                    translate(left = size.width - gutterWidth, top = 0.0f)
+                }) {
+                    inlayPainter?.paintInlay(
+                        drawScope = this,
+                        decorationAreaType = decorationAreaType,
+                        rootSize = rootSize,
+                        offsetFromRoot = offset,
+                        width = gutterWidth,
+                        height = size.height,
+                        colorTokens = colorTokens
+                    )
+                }
             }
         }
         drawContent()
