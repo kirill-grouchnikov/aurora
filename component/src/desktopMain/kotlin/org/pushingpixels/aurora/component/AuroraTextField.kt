@@ -37,12 +37,19 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.OnGloballyPositionedModifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraOffset
+import org.pushingpixels.aurora.common.asOffset
 import org.pushingpixels.aurora.common.byAlpha
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.TextFieldPresentationModel
@@ -58,6 +65,26 @@ import kotlin.math.max
 @OptIn(AuroraInternalApi::class)
 private class TextFieldDrawingCache(
     val colorTokens: MutableContainerColorTokens = MutableContainerColorTokens()
+)
+
+@OptIn(AuroraInternalApi::class)
+private class TextFieldLocator(val topLeftOffset: AuroraOffset, val size: MutableState<IntSize>) :
+    OnGloballyPositionedModifier {
+    override fun onGloballyPositioned(coordinates: LayoutCoordinates) {
+        // Convert the top left corner of the component to the root coordinates
+        val converted = coordinates.localToRoot(Offset.Zero)
+        topLeftOffset.x = converted.x
+        topLeftOffset.y = converted.y
+
+        // And store the component size
+        size.value = coordinates.size
+    }
+}
+
+@OptIn(AuroraInternalApi::class)
+@Composable
+private fun Modifier.textFieldLocator(topLeftOffset: AuroraOffset, size: MutableState<IntSize>) = this.then(
+    TextFieldLocator(topLeftOffset, size)
 )
 
 @Composable
@@ -216,6 +243,10 @@ internal fun AuroraTextField(
     val skinColors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
     val componentShaper = AuroraSkin.componentShaper
+    val decorationPainter = AuroraSkin.painters.decorationPainter
+
+    val windowSize = LocalTopWindowSize.current
+    val density = LocalDensity.current
 
     // Populate the cached color tokens for drawing the text field border
     // based on the current model state info
@@ -259,7 +290,10 @@ internal fun AuroraTextField(
 
     val cursorColor = textColor
 
-    Box {
+    val textFieldTopLeftOffset = AuroraOffset(0.0f, 0.0f)
+    val textFieldSize = remember { mutableStateOf(IntSize(0, 0)) }
+
+    Box (modifier = Modifier.textFieldLocator(textFieldTopLeftOffset, textFieldSize)) {
         Canvas(modifier = Modifier.matchParentSize()) {
             val borderStrokeWidth = 1.0f
             if ((size.width <= borderStrokeWidth) || (size.height <= borderStrokeWidth)) {
@@ -287,9 +321,26 @@ internal fun AuroraTextField(
                 size = Size(size.width - borderStrokeWidth, size.height - borderStrokeWidth)
             )
 
+            withTransform({
+                translate(left = borderStrokeWidth / 2.0f, top = borderStrokeWidth / 2.0f)
+            }) {
+                decorationPainter.inlayPainter?.paintInlay(
+                    drawScope = this,
+                    decorationAreaType = decorationAreaType,
+                    rootSize = Size(
+                        width = windowSize.width.value * density.density,
+                        height = windowSize.height.value * density.density
+                    ),
+                    offsetFromRoot = Offset(textFieldTopLeftOffset.x, textFieldTopLeftOffset.y),
+                    width = size.width - borderStrokeWidth,
+                    height = size.height - borderStrokeWidth,
+                    colorTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
+                )
+            }
+
             if (presentationModel.showBorder) {
                 // Get the base border color
-                var borderColor = drawingCache.colorTokens.containerOutline
+                val borderColor = drawingCache.colorTokens.containerOutline
                 drawOutline(
                     outline = componentShaper.getTextFieldOutlineSupplier().getOutline(
                         layoutDirection = this.layoutDirection,

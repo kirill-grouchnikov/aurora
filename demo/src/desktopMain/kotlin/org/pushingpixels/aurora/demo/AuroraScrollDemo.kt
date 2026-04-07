@@ -208,7 +208,7 @@ fun main() = auroraApplication {
                     itemsIndexed(itemsList) { index, item ->
                         AuroraBoxWithHighlights(
                             modifier = Modifier.fillMaxWidth().height(32.dp)
-                                .background(if (index % 2 == 0) backgroundEvenRows else backgroundOddRows),
+                                .auroraFlatBackground(if (index % 2 == 0) backgroundEvenRows else backgroundOddRows),
                             selected = (stateSelection.value == item),
                             onClick = { stateSelection.value = item },
                             sides = Sides.ClosedRectangle,

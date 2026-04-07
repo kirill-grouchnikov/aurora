@@ -474,7 +474,7 @@ internal class RibbonApplicationMenuPopupHandler(
         val neutralColorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
         Row(
             modifier = Modifier.fillMaxSize()
-                .background(
+                .auroraFlatBackground(
                     color = if (neutralColorTokens.isDark) {
                         neutralColorTokens.containerSurfaceHighest
                     } else {
