@@ -18,7 +18,6 @@ package org.pushingpixels.aurora.theming.painter.decoration.overlay
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import org.pushingpixels.aurora.theming.AuroraSkinColors
 import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter.OverlayPainter
@@ -37,12 +36,11 @@ class BottomLineOverlayPainter(private val colorTokensQuery: (ContainerColorToke
         decorationAreaType: DecorationAreaType,
         width: Float,
         height: Float,
-        colors: AuroraSkinColors
+        colorTokens: ContainerColorTokens
     ) {
-        val neutralColorTokens = colors.getNeutralContainerTokens(decorationAreaType)
         with(drawScope) {
             drawLine(
-                color = colorTokensQuery.invoke(neutralColorTokens),
+                color = colorTokensQuery.invoke(colorTokens),
                 start = Offset(0.0f, height - 1.0f),
                 end = Offset(width, height - 1.0f)
             )

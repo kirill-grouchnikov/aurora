@@ -39,14 +39,14 @@ abstract class AuroraDecorationPainter : AuroraTrait {
          * @param decorationAreaType Decoration area type.
          * @param width Width.
          * @param height Height.
-         * @param colors Colors for painting the overlay.
+         * @param colorTokens Color tokens for painting the overlay.
          */
         fun paintOverlay(
             drawScope: DrawScope,
             decorationAreaType: DecorationAreaType,
             width: Float,
             height: Float,
-            colors: AuroraSkinColors
+            colorTokens: ContainerColorTokens
         )
     }
 
@@ -58,7 +58,7 @@ abstract class AuroraDecorationPainter : AuroraTrait {
          * @param decorationAreaType Decoration area type.
          * @param width Width.
          * @param height Height.
-         * @param colors Colors for painting the overlay.
+         * @param colorTokens Color tokens for painting the overlay.
          */
         fun paintInlay(
             drawScope: DrawScope,

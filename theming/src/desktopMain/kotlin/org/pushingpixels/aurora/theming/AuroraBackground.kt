@@ -94,16 +94,16 @@ private class AuroraBackground(
             )
         }
 
-        // Ask the inlay painter to paint its visuals
-        decorationPainter.inlayPainter?.paintInlay(
-            drawScope = this,
-            decorationAreaType = decorationAreaType,
-            rootSize = rootSize,
-            offsetFromRoot = offset,
-            width = size.width,
-            height = size.height,
-            colorTokens = colorTokens
-        )
+//        // Ask the inlay painter to paint its visuals
+//        decorationPainter.inlayPainter?.paintInlay(
+//            drawScope = this,
+//            decorationAreaType = decorationAreaType,
+//            rootSize = rootSize,
+//            offsetFromRoot = offset,
+//            width = size.width,
+//            height = size.height,
+//            colorTokens = colorTokens
+//        )
 
         // If we have overlay painters registered for this decoration area, ask
         // each one to paint their visuals
@@ -113,7 +113,7 @@ private class AuroraBackground(
                 decorationAreaType = decorationAreaType,
                 width = size.width,
                 height = size.height,
-                colors = colors
+                colorTokens = colorTokens
             )
         }
 

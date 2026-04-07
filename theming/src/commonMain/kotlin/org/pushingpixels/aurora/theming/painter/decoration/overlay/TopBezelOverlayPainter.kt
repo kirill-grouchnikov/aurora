@@ -18,7 +18,6 @@ package org.pushingpixels.aurora.theming.painter.decoration.overlay
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import org.pushingpixels.aurora.theming.AuroraSkinColors
 import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter.OverlayPainter
@@ -40,17 +39,16 @@ class TopBezelOverlayPainter(
         decorationAreaType: DecorationAreaType,
         width: Float,
         height: Float,
-        colors: AuroraSkinColors
+        colorTokens: ContainerColorTokens
     ) {
-        val neutralColorTokens = colors.getNeutralContainerTokens(decorationAreaType)
         with(drawScope) {
             drawLine(
-                color = colorTokensQueryTop.invoke(neutralColorTokens),
+                color = colorTokensQueryTop.invoke(colorTokens),
                 start = Offset.Zero,
                 end = Offset(width, 0.0f)
             )
             drawLine(
-                color = colorTokensQueryBottom.invoke(neutralColorTokens),
+                color = colorTokensQueryBottom.invoke(colorTokens),
                 start = Offset(0.0f, 1.0f),
                 end = Offset(width, 1.0f)
             )

@@ -25,13 +25,9 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.AuroraSkinColors
-import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.theming.ComponentState
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter.OverlayPainter
-import org.pushingpixels.aurora.theming.utils.ContainerType
-import org.pushingpixels.aurora.theming.utils.getContainerTokens
 
 /**
  * Overlay painter that paints a few pixel-high drop shadow at the bottom edge
@@ -49,15 +45,9 @@ class BottomShadowOverlayPainter private constructor(private val endAlpha: Float
         decorationAreaType: DecorationAreaType,
         width: Float,
         height: Float,
-        colors: AuroraSkinColors
+        colorTokens: ContainerColorTokens
     ) {
-        val shadowColor = getContainerTokens(
-            colors = colors,
-            tokensOverlayProvider = null,
-            decorationAreaType = decorationAreaType,
-            componentState = ComponentState.Enabled,
-            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-            inactiveContainerType = ContainerType.Neutral).containerShadow
+        val shadowColor = colorTokens.containerShadow
 
         with(drawScope) {
             val shadowHeight = 4.0.dp.toPx()
