@@ -72,6 +72,7 @@ private class AuroraBackground(
     }
 
     override fun ContentDrawScope.draw() {
+        val colorTokens = colors.getNeutralContainerTokens(decorationAreaType)
         if (decorationAreaType != DecorationAreaType.None
             && colors.isRegisteredAsDecorationArea(decorationAreaType)
         ) {
@@ -84,29 +85,25 @@ private class AuroraBackground(
                 outline = Outline.Rectangle(Rect(Offset.Zero, size)),
                 rootSize = rootSize,
                 offsetFromRoot = offset,
-                colorTokens = colors.getNeutralContainerTokens(decorationAreaType),
+                colorTokens = colorTokens,
             )
         } else {
-            // Otherwise use flat color fill
+            // Otherwise use flat container surface fill
             drawRect(
-                color = colors.getNeutralContainerTokens(decorationAreaType = decorationAreaType)
-                    .containerSurface
+                color = colorTokens.containerSurface
             )
         }
 
-        val overlayPainters = decorationPainter.getOverlayPainters(decorationAreaType)
-        if (overlayPainters.isNotEmpty()) {
-            // If we have overlay painters registered for this decoration area, ask
-            // each one to paint their visuals
-            for (overlayPainter in overlayPainters) {
-                overlayPainter.paintOverlay(
-                    drawScope = this,
-                    decorationAreaType = decorationAreaType,
-                    width = size.width,
-                    height = size.height,
-                    colors = colors
-                )
-            }
+        // If we have overlay painters registered for this decoration area, ask
+        // each one to paint their visuals
+        decorationPainter.getOverlayPainters(decorationAreaType).forEach {
+            it.paintOverlay(
+                drawScope = this,
+                decorationAreaType = decorationAreaType,
+                width = size.width,
+                height = size.height,
+                colors = colors
+            )
         }
 
         // And don't forget to draw the content
