@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.component.utils.popup
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -46,10 +45,10 @@ import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonKeyTipChainRoot
 import org.pushingpixels.aurora.component.utils.TitleLabel
 import org.pushingpixels.aurora.component.utils.appmenu.CommandButtonLayoutManagerAppMenuLevel2
 import org.pushingpixels.aurora.component.utils.getLabelPreferredHeight
+import org.pushingpixels.aurora.component.utils.paintAtScale1x
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import java.awt.*
-import java.awt.geom.Rectangle2D
 import javax.swing.JPopupMenu
 import javax.swing.UIManager
 import javax.swing.border.Border
@@ -578,49 +577,6 @@ internal class RibbonApplicationMenuPopupHandler(
         val awtFillColor = fillColor.awtColor
         popupContent.background = awtFillColor
 
-        val popupBorderColor = neutralColorTokens.containerOutline
-        val awtBorderColor = popupBorderColor.awtColor
-        val borderThickness = 1.0f / density.density
-
-        popupContent.border = object : Border {
-            override fun paintBorder(
-                c: Component,
-                g: Graphics,
-                x: Int,
-                y: Int,
-                width: Int,
-                height: Int
-            ) {
-                val g2d = g.create() as Graphics2D
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-                g2d.setRenderingHint(
-                    RenderingHints.KEY_STROKE_CONTROL,
-                    RenderingHints.VALUE_STROKE_PURE
-                )
-
-                g2d.color = awtFillColor
-                g2d.fill(Rectangle(0, 0, width, height))
-
-                val thickness = 0.5f
-                g2d.stroke = BasicStroke(thickness, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND)
-                g2d.color = awtBorderColor
-                g2d.draw(
-                    Rectangle2D.Float(
-                        borderThickness / 2.0f, borderThickness / 2.0f,
-                        width - borderThickness, height - borderThickness
-                    )
-                )
-                g2d.dispose()
-            }
-
-            override fun getBorderInsets(c: Component?): Insets {
-                return Insets(1, 1, 1, 1)
-            }
-
-            override fun isBorderOpaque(): Boolean {
-                return false
-            }
-        }
         popupContent.preferredSize = Dimension(popupRect.width, popupRect.height)
 
         val popupDpSize = DpSize(
@@ -638,6 +594,37 @@ internal class RibbonApplicationMenuPopupHandler(
 
         val popupMenu = AuroraSwingPopupMenu(toDismissPopupsOnActivation)
         popupMenu.background = awtFillColor
+
+        popupMenu.border = object : Border {
+            override fun paintBorder(
+                c: Component,
+                g: Graphics,
+                x: Int,
+                y: Int,
+                width: Int,
+                height: Int
+            ) {
+                val g2d = g.create() as Graphics2D
+                g2d.translate(x, y)
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+                g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE)
+                paintAtScale1x(g2d, 0, 0, width, height) { graphics1X, _, _, scaledWidth, scaledHeight, _ ->
+                    graphics1X.stroke = BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND)
+                    graphics1X.color = neutralColorTokens.containerOutline.awtColor
+                    graphics1X.drawRect(0, 0, scaledWidth - 1, scaledHeight - 1)
+                }
+                g2d.dispose()
+            }
+
+            override fun getBorderInsets(c: Component?): Insets {
+                return Insets(1, 1, 1, 1)
+            }
+
+            override fun isBorderOpaque(): Boolean {
+                return false
+            }
+        }
+
         popupContent.setContent {
             var activeLevel1Command by remember { mutableStateOf<Command?>(null) }
 
