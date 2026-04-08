@@ -42,6 +42,7 @@ fun Modifier.auroraBackground() = this.then(
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
         decorationPainter = AuroraSkin.painters.decorationPainter,
+        showOverlays = true
     )
 )
 
@@ -73,6 +74,7 @@ fun Modifier.auroraBackgroundNoOverlays() = this.then(
         decorationAreaType = AuroraSkin.decorationAreaType,
         colors = AuroraSkin.colors,
         decorationPainter = AuroraSkin.painters.decorationPainter,
+        showOverlays = false
     )
 )
 
@@ -81,6 +83,7 @@ private class AuroraBackground(
     private val decorationAreaType: DecorationAreaType,
     private val colors: AuroraSkinColors,
     private val decorationPainter: AuroraDecorationPainter,
+    private val showOverlays: Boolean
 ) : OnGloballyPositionedModifier, DrawModifier {
     var offset = Offset.Zero
 
@@ -122,16 +125,18 @@ private class AuroraBackground(
             colorTokens = colorTokens
         )
 
-        // If we have overlay painters registered for this decoration area, ask
-        // each one to paint their visuals
-        decorationPainter.getOverlayPainters(decorationAreaType).forEach {
-            it.paintOverlay(
-                drawScope = this,
-                decorationAreaType = decorationAreaType,
-                width = size.width,
-                height = size.height,
-                colorTokens = colorTokens
-            )
+        if (showOverlays) {
+            // If we have overlay painters registered for this decoration area, ask
+            // each one to paint their visuals
+            decorationPainter.getOverlayPainters(decorationAreaType).forEach {
+                it.paintOverlay(
+                    drawScope = this,
+                    decorationAreaType = decorationAreaType,
+                    width = size.width,
+                    height = size.height,
+                    colorTokens = colorTokens
+                )
+            }
         }
 
         // And don't forget to draw the content
