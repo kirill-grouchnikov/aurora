@@ -120,16 +120,16 @@ internal fun AuroraSlider(
 
     val trackFillState =
         if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected
-    val trackSelectedState =
-        if (contentModel.enabled) ComponentState.Selected else ComponentState.DisabledSelected
+    val trackProgressState =
+        if (contentModel.enabled) ComponentState.Determinate else ComponentState.DisabledDeterminate
 
     val decorationAreaType = AuroraSkin.decorationAreaType
 
-    val selectionColorTokens = getActiveContainerTokens(
+    val progressColorTokens = getActiveContainerTokens(
         colors = AuroraSkin.colors,
         tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
         decorationAreaType = AuroraSkin.decorationAreaType,
-        componentState = trackSelectedState,
+        componentState = trackProgressState,
     )
     val tickColorTokens = getContainerTokens(
         colors = AuroraSkin.colors,
@@ -335,7 +335,7 @@ internal fun AuroraSlider(
             }
         }.then(drag)
     ) {
-        // Populate the cached color tokens for filling the thumb
+        // Populate the cached color tokens for filling the overall track
         // based on the current model state info
         populateColorTokens(
             colorTokens = drawingCache.colorTokens,
@@ -349,20 +349,6 @@ internal fun AuroraSlider(
             treatEnabledAsActive = false,
             skipFlatCheck = false,
             inactiveContainerType = ContainerType.Muted)
-
-        // Compute the text color
-        val textColor = getTextColor(
-            modelStateInfo = modelStateInfo,
-            currState = currentState.value,
-            colors = AuroraSkin.colors,
-            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-            decorationAreaType = decorationAreaType,
-            associationKind = ContainerColorTokensAssociationKind.Default,
-            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
-            skipFlatCheck = false,
-            inactiveContainerType = ContainerType.Neutral,
-            isTextInFilledArea = false
-        )
 
         var prefHeight = SliderSizingConstants.DefaultSliderContentPadding.calculateTopPadding()
         prefHeight += SliderSizingConstants.TrackHeight
@@ -435,22 +421,13 @@ internal fun AuroraSlider(
             }
 
             if (selectionCenterX > 0.0f) {
-                val selectionSize = Size(
-                    width = if (ltr) {
-                        selectionCenterX - drawingCache.trackRect.x
-                    } else {
-                        drawingCache.trackRect.x + drawingCache.trackRect.width - selectionCenterX
-                    },
-                    height = drawingCache.trackRect.height
-                )
-
                 if (ltr) {
                     val selectionSize = Size(
                         width = selectionCenterX - drawingCache.trackRect.x,
                         height = drawingCache.trackRect.height
                     )
                     translate(left = drawingCache.trackRect.x, top = drawingCache.trackRect.y) {
-                        val selectedFill = trackOutlineSupplier.getOutline(
+                        val progressFill = trackOutlineSupplier.getOutline(
                             layoutDirection = layoutDirection,
                             density = density,
                             size = selectionSize,
@@ -465,8 +442,8 @@ internal fun AuroraSlider(
                             surfacePainterOverlay = surfacePainterOverlay,
                             size = selectionSize,
                             alpha = 1.0f,
-                            outline = selectedFill,
-                            colorTokens = selectionColorTokens)
+                            outline = progressFill,
+                            colorTokens = progressColorTokens)
 
                         paintOutline(
                             drawScope = this,
@@ -476,7 +453,7 @@ internal fun AuroraSlider(
                             size = selectionSize,
                             alpha = 1.0f,
                             outlineSupplier = trackOutlineSupplier,
-                            colorTokens = selectionColorTokens)
+                            colorTokens = progressColorTokens)
 
                     }
                 } else {
@@ -485,7 +462,7 @@ internal fun AuroraSlider(
                         height = drawingCache.trackRect.height
                     )
                     translate(left = selectionCenterX, top = drawingCache.trackRect.y) {
-                        val selectedFill = trackOutlineSupplier.getOutline(
+                        val progressFill = trackOutlineSupplier.getOutline(
                             layoutDirection = layoutDirection,
                             density = density,
                             size = selectionSize,
@@ -500,8 +477,8 @@ internal fun AuroraSlider(
                             surfacePainterOverlay = surfacePainterOverlay,
                             size = selectionSize,
                             alpha = 1.0f,
-                            outline = selectedFill,
-                            colorTokens = selectionColorTokens)
+                            outline = progressFill,
+                            colorTokens = progressColorTokens)
 
                         paintOutline(
                             drawScope = this,
@@ -511,7 +488,7 @@ internal fun AuroraSlider(
                             size = selectionSize,
                             alpha = 1.0f,
                             outlineSupplier = trackOutlineSupplier,
-                            colorTokens = selectionColorTokens)
+                            colorTokens = progressColorTokens)
 
                     }
                 }
@@ -593,7 +570,7 @@ internal fun AuroraSlider(
                     size = Size(thumbSize, thumbSize),
                     alpha = 1.0f,
                     outline = thumbOutlineFill,
-                    colorTokens = drawingCache.colorTokens)
+                    colorTokens = progressColorTokens)
 
                 paintOutline(
                     drawScope = this,
@@ -603,7 +580,7 @@ internal fun AuroraSlider(
                     size = Size(thumbSize, thumbSize),
                     alpha = 1.0f,
                     outlineSupplier = componentShaper.getSliderThumbOutlineSupplier(),
-                    colorTokens = drawingCache.colorTokens)
+                    colorTokens = progressColorTokens)
             }
         }
     }
