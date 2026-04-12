@@ -36,7 +36,7 @@ open class ClassicComponentShaper : AuroraComponentShaper {
     override val displayName: String
         get() = "Classic"
 
-    private fun getCornerRadius(width: Float, height: Float, insets: Float, density: Density): Float {
+    private fun getCornerRadius(density: Density): Float {
         return density.getClassicCornerRadius()
     }
 
@@ -58,7 +58,7 @@ open class ClassicComponentShaper : AuroraComponentShaper {
                 radiusAdjustment: Float,
                 outlineKind: OutlineKind
             ): Outline {
-                val radius = (getCornerRadius(size.width, size.height, insets, density) - radiusAdjustment).coerceAtLeast(0.0f)
+                val radius = (getCornerRadius(density) - radiusAdjustment).coerceAtLeast(0.0f)
 
                 return getBaseOutline(layoutDirection, size.width, size.height, radius, sides, insets, outlineKind)
             }
@@ -75,7 +75,7 @@ open class ClassicComponentShaper : AuroraComponentShaper {
                 radiusAdjustment: Float,
                 outlineKind: OutlineKind
             ): Outline {
-                val radius = (getCornerRadius(size.width, size.height, insets, density) - radiusAdjustment).coerceAtLeast(0.0f)
+                val radius = (getCornerRadius(density) - radiusAdjustment).coerceAtLeast(0.0f)
 
                 return getBaseOutline(layoutDirection, size.width, size.height, radius, buttonSides, insets, outlineKind)
             }
@@ -100,8 +100,7 @@ open class ClassicComponentShaper : AuroraComponentShaper {
                 radiusAdjustment: Float,
                 outlineKind: OutlineKind
             ): Outline {
-                val radius = (getCornerRadius(size.width, size.height, insets, density) / 2.0f
-                        - radiusAdjustment).coerceAtLeast(0.0f)
+                val radius = (getCornerRadius(density) / 2.0f - radiusAdjustment).coerceAtLeast(0.0f)
 
                 return getBaseOutline(layoutDirection, size.width, size.height, radius, sides, insets, outlineKind)
             }
