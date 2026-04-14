@@ -99,9 +99,9 @@ private fun getInterpolatedColors(colorTokens: ContainerColorTokens, filterRange
         val inverseContainerOutline = getColor(colorTokens.inverseContainerOutline,
             colorTokens.containerOutlineEnabledAlpha, inverseContainerSurface)
         val complementaryOnContainer = getColor(colorTokens.complementaryOnContainer,
-            colorTokens.onContainerEnabledAlpha, inverseContainerSurface)
+            colorTokens.onContainerEnabledAlpha, container)
         val complementaryContainerOutline = getColor(colorTokens.complementaryContainerOutline,
-            colorTokens.containerOutlineEnabledAlpha, inverseContainerSurface)
+            colorTokens.containerOutlineEnabledAlpha, container)
 
         tokenColorMapping[(containerOutlineVariant.colorBrightness * 255.0f).toInt()] = containerOutlineVariant
         tokenColorMapping[(containerOutline.colorBrightness * 255.0f).toInt()] = containerOutline
@@ -121,7 +121,7 @@ private fun getInterpolatedColors(colorTokens: ContainerColorTokens, filterRange
 
     when (filterRange) {
         FilterRange.FullSpan -> {
-            // Put full black and full white as bookends if needed
+            // Step 2A - put full black and full white as bookends if needed
             if (lowestTokensBrightness > 0) {
                 colorTokensBrightness.add(0, 0)
                 tokenColorMapping[0] = Color.Black
@@ -133,7 +133,7 @@ private fun getInterpolatedColors(colorTokens: ContainerColorTokens, filterRange
             }
         }
         FilterRange.TonalContainerSurfaces -> {
-            // Step 2 - create a "stretched" brightness mapping where the lowest brightness
+            // Step 2B - create a "stretched" brightness mapping where the lowest brightness
             // is mapped to 0 and the highest to 255
             val lowestColorTokensBrightness = colorTokensBrightness[0]
             val highestColorTokensBrightness = colorTokensBrightness[colorTokensBrightness.size - 1]
