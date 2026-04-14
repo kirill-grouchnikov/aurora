@@ -42,7 +42,6 @@ import org.pushingpixels.aurora.demo.svg.tango.*
 import org.pushingpixels.aurora.demo.svg.vaadin.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
-import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.window.AuroraApplicationScope
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
@@ -267,6 +266,7 @@ fun DemoToolbar(
     alignmentCommands: CommandGroup,
     styleCommands: CommandGroup,
     resourceBundle: ResourceBundle,
+    iconThemingEnabled: Boolean = false,
     iconDimension: DpSize = DpSize(16.dp, 16.dp)
 ) {
     Row(
@@ -276,16 +276,30 @@ fun DemoToolbar(
             .auroraBackground()
             .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
+
+        val basePresentationModel = CommandButtonPresentationModel(
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+            iconDimension = iconDimension,
+            iconActiveFilterStrategy = if (iconThemingEnabled) IconFilterStrategy.ThemedFollowColorTokens else IconFilterStrategy.Original,
+            iconEnabledFilterStrategy = if (iconThemingEnabled) IconFilterStrategy.ThemedFollowColorTokens else IconFilterStrategy.Original,
+        )
+        val baseStripPresentationModel = CommandStripPresentationModel(
+            commandPresentationState = CommandButtonPresentationState.SmallFitToIcon,
+            orientation = StripOrientation.Horizontal,
+            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
+            iconDimension = iconDimension,
+            iconActiveFilterStrategy = if (iconThemingEnabled) IconFilterStrategy.ThemedFollowColorTokens else IconFilterStrategy.Original,
+            iconEnabledFilterStrategy = if (iconThemingEnabled) IconFilterStrategy.ThemedFollowColorTokens else IconFilterStrategy.Original,
+        )
+
         CommandButtonProjection(
             contentModel = Command(
                 text = resourceBundle.getString("Edit.cut.text"),
                 icon = edit_cut(),
                 action = { println("Cut!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
+            presentationModel = basePresentationModel.copy(
                 presentationState = CommandButtonPresentationState.MediumFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = iconDimension
             )
         ).project()
         CommandButtonProjection(
@@ -295,10 +309,8 @@ fun DemoToolbar(
                 isActionEnabled = false,
                 action = { println("Copy!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
+            presentationModel = basePresentationModel.copy(
                 presentationState = CommandButtonPresentationState.MediumFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = iconDimension
             )
         ).project()
         CommandButtonProjection(
@@ -307,10 +319,8 @@ fun DemoToolbar(
                 icon = edit_paste(),
                 action = { println("Paste!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
+            presentationModel = basePresentationModel.copy(
                 presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = iconDimension
             )
         ).project()
         CommandButtonProjection(
@@ -319,10 +329,8 @@ fun DemoToolbar(
                 icon = edit_select_all(),
                 action = { println("Select all!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
+            presentationModel = basePresentationModel.copy(
                 presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = iconDimension
             )
         ).project()
         CommandButtonProjection(
@@ -331,10 +339,8 @@ fun DemoToolbar(
                 icon = edit_delete(),
                 action = { println("Delete!") }
             ),
-            presentationModel = CommandButtonPresentationModel(
+            presentationModel = basePresentationModel.copy(
                 presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = iconDimension
             )
         ).project()
 
@@ -344,12 +350,7 @@ fun DemoToolbar(
 
         CommandButtonStripProjection(
             contentModel = alignmentCommands,
-            presentationModel = CommandStripPresentationModel(
-                commandPresentationState = CommandButtonPresentationState.SmallFitToIcon,
-                orientation = StripOrientation.Horizontal,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = iconDimension
-            )
+            presentationModel = baseStripPresentationModel
         ).project()
 
         Spacer(modifier = Modifier.width(4.dp))
@@ -358,12 +359,7 @@ fun DemoToolbar(
 
         CommandButtonStripProjection(
             contentModel = styleCommands,
-            presentationModel = CommandStripPresentationModel(
-                commandPresentationState = CommandButtonPresentationState.SmallFitToIcon,
-                orientation = StripOrientation.Horizontal,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = iconDimension
-            )
+            presentationModel = baseStripPresentationModel
         ).project()
 
         Spacer(modifier.weight(weight = 1.0f, fill = true))
@@ -372,10 +368,8 @@ fun DemoToolbar(
             contentModel = Command(text = resourceBundle.getString("AppMenuExit.text"),
                 icon = process_stop(),
                 action = { exitProcess(0) }),
-            presentationModel = CommandButtonPresentationModel(
+            presentationModel = basePresentationModel.copy(
                 presentationState = CommandButtonPresentationState.SmallFitToIcon,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Flat,
-                iconDimension = iconDimension
             )
         ).project()
     }
@@ -502,6 +496,8 @@ fun AuroraApplicationScope.DemoArea(
     modifier: Modifier = Modifier,
     contentEnabled: Boolean,
     onContentEnabledChanged: (Boolean) -> Unit,
+    toolbarIconThemingEnabled: Boolean,
+    onToolbarIconThemingEnabledChanged: (Boolean) -> Unit,
     onSkinChange: (AuroraSkinDefinition) -> Unit,
     resourceBundle: ResourceBundle,
     styleCommands: CommandGroup
@@ -523,6 +519,12 @@ fun AuroraApplicationScope.DemoArea(
                     text = resourceBundle.getString("Content.enabled"),
                     selected = contentEnabled,
                     onClick = { onContentEnabledChanged.invoke(!contentEnabled) }
+                )).project()
+
+                CheckBoxProjection(contentModel = SelectorContentModel(
+                    text = resourceBundle.getString("ThemedToolbarIcons.use"),
+                    selected = toolbarIconThemingEnabled,
+                    onClick = { onToolbarIconThemingEnabledChanged.invoke(!toolbarIconThemingEnabled) }
                 )).project()
 
                 AuroraSkinSwitcher(onSkinChange)
@@ -1244,6 +1246,7 @@ fun AuroraApplicationScope.DemoContent(
     resourceBundle: ResourceBundle
 ) {
     var contentEnabled by remember { mutableStateOf(true) }
+    var toolbarIconThemingEnabled by remember { mutableStateOf(false) }
     var alignment by remember { mutableStateOf(DemoAlignment.Center) }
 
     var style by remember {
@@ -1392,7 +1395,8 @@ fun AuroraApplicationScope.DemoContent(
             DemoToolbar(
                 alignmentCommands = alignmentCommands,
                 styleCommands = styleCommands,
-                resourceBundle = resourceBundle
+                resourceBundle = resourceBundle,
+                iconThemingEnabled = toolbarIconThemingEnabled
             )
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.None) {
@@ -1402,7 +1406,9 @@ fun AuroraApplicationScope.DemoContent(
                 onSkinChange = onSkinChange,
                 resourceBundle = resourceBundle,
                 contentEnabled = contentEnabled,
-                onContentEnabledChanged = { contentEnabled = it }
+                onContentEnabledChanged = { contentEnabled = it },
+                toolbarIconThemingEnabled = toolbarIconThemingEnabled,
+                onToolbarIconThemingEnabledChanged = { toolbarIconThemingEnabled = it },
             )
         }
         AuroraDecorationArea(decorationAreaType = DecorationAreaType.Footer) {

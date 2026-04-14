@@ -43,6 +43,7 @@ import org.pushingpixels.aurora.demo.svg.tango.media_floppy
 import org.pushingpixels.aurora.demo.svg.tango.x_office_document_template
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.utils.FilterRange
 import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
@@ -99,7 +100,8 @@ fun IconDemoArea() {
                     modifier = Modifier.size(40.dp).paint(
                         painter = media_floppy(),
                         colorFilter = getContainerColorTokensFilter(
-                            colorTokens = autumnSkin().colors.getMutedContainerTokens(DecorationAreaType.None))
+                            colorTokens = autumnSkin().colors.getMutedContainerTokens(DecorationAreaType.None),
+                            filterRange = FilterRange.FullSpan)
                     )
                 )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 1")).project()
@@ -109,7 +111,8 @@ fun IconDemoArea() {
                     modifier = Modifier.size(40.dp).paint(
                         painter = drive_harddisk(),
                         colorFilter = getContainerColorTokensFilter(
-                            colorTokens = nebulaAmethystSkin().colors.getMutedContainerTokens(DecorationAreaType.None))
+                            colorTokens = nebulaAmethystSkin().colors.getMutedContainerTokens(DecorationAreaType.None),
+                            filterRange = FilterRange.FullSpan)
                     )
                 )
                 LabelProjection(contentModel = LabelContentModel(text = "icon 2")).project()
@@ -119,7 +122,8 @@ fun IconDemoArea() {
                     modifier = Modifier.size(40.dp).paint(
                         painter = help_browser(),
                         colorFilter = getContainerColorTokensFilter(
-                            colorTokens = magellanSkin().colors.getMutedContainerTokens(DecorationAreaType.None))
+                            colorTokens = magellanSkin().colors.getMutedContainerTokens(DecorationAreaType.None),
+                            filterRange = FilterRange.FullSpan)
                     )
                 )
                 LabelProjection(
@@ -132,7 +136,8 @@ fun IconDemoArea() {
                     modifier = Modifier.size(40.dp).paint(
                         painter = x_office_document_template(),
                         colorFilter = getContainerColorTokensFilter(
-                            colorTokens = twilightSkin().colors.getMutedContainerTokens(DecorationAreaType.None))
+                            colorTokens = twilightSkin().colors.getMutedContainerTokens(DecorationAreaType.None),
+                            filterRange = FilterRange.FullSpan)
                     )
                 )
                 LabelProjection(

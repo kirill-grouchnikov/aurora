@@ -22,6 +22,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.DpSize
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.FilterRange
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
@@ -61,7 +63,8 @@ private class CombinedIconModifier(
                             componentState = modelStateInfoSnapshot.currModelState,
                             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                             inactiveContainerType = ContainerType.Neutral
-                        )
+                        ),
+                        filterRange = FilterRange.FullSpan
                     )
                 IconFilterStrategy.Original -> null
             }
@@ -94,6 +97,7 @@ private class CombinedIconModifier(
                             inactiveContainerType = ContainerType.Muted)
                         getContainerColorTokensFilter(
                             colorTokens = mutableContainerColorTokens,
+                            filterRange = FilterRange.FullSpan
                         )
                     }
                 }
@@ -147,18 +151,20 @@ internal fun AuroraThemedIcon(
             }
 
             IconFilterStrategy.ThemedFollowColorTokens -> {
+                val colorTokens = getContainerTokens(
+                    colors = colors,
+                    tokensOverlayProvider = tokensOverlayProvider,
+                    decorationAreaType = decorationAreaType,
+                    componentState = modelStateInfoSnapshot.currModelState,
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                    inactiveContainerType = ContainerType.Neutral)
                 Box(
                     modifier.size(size).paint(
                         painter = icon,
+                        alpha = colorTokens.onContainerDisabledAlpha,
                         colorFilter = getContainerColorTokensFilter(
-                            colorTokens = getContainerTokens(
-                                colors = colors,
-                                tokensOverlayProvider = tokensOverlayProvider,
-                                decorationAreaType = decorationAreaType,
-                                componentState = modelStateInfoSnapshot.currModelState,
-                                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-                                inactiveContainerType = ContainerType.Neutral
-                            )
+                            colorTokens = colorTokens,
+                            filterRange = FilterRange.FullSpan
                         )
                     )
                 )

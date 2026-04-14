@@ -20,57 +20,136 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asComposeColorFilter
 import org.jetbrains.skia.ColorMatrix
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.HashMapKey
 import org.pushingpixels.aurora.common.colorBrightness
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.theming.ContainerColorTokens
 import kotlin.math.roundToInt
 
-private val interpolations: MutableMap<ContainerColorTokens, Array<Color?>> = hashMapOf()
+@OptIn(AuroraInternalApi::class)
+private val interpolations: MutableMap<HashMapKey, Array<Color?>> = hashMapOf()
 private const val MapSteps = 256
 
+enum class FilterRange {
+    FullSpan, TonalContainerSurfaces
+}
+
+private fun getColor(content: Color, contentAlpha: Float, surface: Color): Color {
+    val finalContentAlpha = contentAlpha * content.alpha
+    if (finalContentAlpha == 1.0f) {
+        return content
+    }
+
+    val contentR = content.red
+    val contentG = content.green
+    val contentB = content.blue
+
+    val surfaceR = surface.red
+    val surfaceG = surface.green
+    val surfaceB = surface.blue
+
+    val resultR = surfaceR + contentAlpha * (contentR - surfaceR)
+    val resultG = surfaceG + contentAlpha * (contentG - surfaceG)
+    val resultB = surfaceB + contentAlpha * (contentB - surfaceB)
+
+    return Color(resultR, resultG, resultB)
+}
+
 @OptIn(AuroraInternalApi::class)
-private fun getInterpolatedColors(colorTokens: ContainerColorTokens): Array<Color?> {
-    if ((colorTokens !is MutableContainerColorTokens) && interpolations.containsKey(colorTokens)) {
-        return interpolations[colorTokens]!!
+private fun getInterpolatedColors(colorTokens: ContainerColorTokens, filterRange: FilterRange): Array<Color?> {
+    val key = HashMapKey(colorTokens, filterRange)
+    if ((colorTokens !is MutableContainerColorTokens) && interpolations.containsKey(key)) {
+        return interpolations[key]!!
     }
 
     val result = arrayOfNulls<Color>(MapSteps)
 
     // collect the brightness factors of the color tokens
-    val tokenColorMapping = hashMapOf<Int, Color>()
+    var tokenColorMapping = hashMapOf<Int, Color>()
     val containerLowest = colorTokens.containerSurfaceLowest
     val containerLow = colorTokens.containerSurfaceLow
     val container = colorTokens.containerSurface
     val containerHigh = colorTokens.containerSurfaceHigh
     val containerHighest = colorTokens.containerSurfaceHighest
-    val containerOutlineVariant = colorTokens.containerOutlineVariant
-    val containerOutline = colorTokens.containerOutline
+    val containerDim = colorTokens.containerSurfaceDim
+    val containerBright = colorTokens.containerSurfaceBright
 
-    // Step 1 - map the color tokens colors based on their brightness
+    // Step 1A - map the color tokens colors based on their brightness
     tokenColorMapping[(containerLowest.colorBrightness * 255.0f).toInt()] = containerLowest
     tokenColorMapping[(containerLow.colorBrightness * 255.0f).toInt()] = containerLow
     tokenColorMapping[(container.colorBrightness * 255.0f).toInt()] = container
     tokenColorMapping[(containerHigh.colorBrightness * 255.0f).toInt()] = containerHigh
     tokenColorMapping[(containerHighest.colorBrightness * 255.0f).toInt()] = containerHighest
-    tokenColorMapping[(containerOutlineVariant.colorBrightness * 255.0f).toInt()] = containerOutlineVariant
-    tokenColorMapping[(containerOutline.colorBrightness * 255.0f).toInt()] = containerOutline
+    tokenColorMapping[(containerDim.colorBrightness * 255.0f).toInt()] = containerDim
+    tokenColorMapping[(containerBright.colorBrightness * 255.0f).toInt()] = containerBright
 
-    var colorTokensBrightness: List<Int> = ArrayList(tokenColorMapping.keys).sorted()
+    if (filterRange == FilterRange.FullSpan) {
+        // Step 1B - more color tokens
+        val containerOutlineVariant = getColor(colorTokens.containerOutlineVariant,
+            colorTokens.containerOutlineEnabledAlpha, container)
+        val containerOutline = getColor(colorTokens.containerOutline,
+            colorTokens.containerOutlineEnabledAlpha, container)
+        val onContainerVariant = getColor(colorTokens.onContainerVariant,
+            colorTokens.onContainerEnabledAlpha, container)
+        val onContainer = getColor(colorTokens.onContainer,
+            colorTokens.onContainerEnabledAlpha, container)
+        val inverseContainerSurface = colorTokens.inverseContainerSurface
+        val inverseOnContainer = getColor(colorTokens.inverseOnContainer,
+            colorTokens.onContainerEnabledAlpha, inverseContainerSurface)
+        val inverseContainerOutline = getColor(colorTokens.inverseContainerOutline,
+            colorTokens.containerOutlineEnabledAlpha, inverseContainerSurface)
+        val complementaryOnContainer = getColor(colorTokens.complementaryOnContainer,
+            colorTokens.onContainerEnabledAlpha, inverseContainerSurface)
+        val complementaryContainerOutline = getColor(colorTokens.complementaryContainerOutline,
+            colorTokens.containerOutlineEnabledAlpha, inverseContainerSurface)
 
-    // Step 2 - create a "stretched" brightness mapping where the lowest brightness
-    // is mapped to 0 and the highest to 255
-    val lowestColorTokensBrightness = colorTokensBrightness[0]
-    val highestColorTokensBrightness = colorTokensBrightness[colorTokensBrightness.size - 1]
-    val hasSameBrightness = highestColorTokensBrightness == lowestColorTokensBrightness
-
-    val stretchedColorMapping: MutableMap<Int, Color> = hashMapOf()
-    for ((brightness, value) in tokenColorMapping) {
-        val stretched = if (hasSameBrightness) brightness
-        else 255 - 255 * (highestColorTokensBrightness - brightness) /
-                (highestColorTokensBrightness - lowestColorTokensBrightness)
-        stretchedColorMapping[stretched] = value
+        tokenColorMapping[(containerOutlineVariant.colorBrightness * 255.0f).toInt()] = containerOutlineVariant
+        tokenColorMapping[(containerOutline.colorBrightness * 255.0f).toInt()] = containerOutline
+        tokenColorMapping[(onContainerVariant.colorBrightness * 255.0f).toInt()] = onContainerVariant
+        tokenColorMapping[(onContainer.colorBrightness * 255.0f).toInt()] = onContainer
+        tokenColorMapping[(inverseContainerSurface.colorBrightness * 255.0f).toInt()] = inverseContainerSurface
+        tokenColorMapping[(inverseOnContainer.colorBrightness * 255.0f).toInt()] = inverseOnContainer
+        tokenColorMapping[(inverseContainerOutline.colorBrightness * 255.0f).toInt()] = inverseContainerOutline
+        tokenColorMapping[(complementaryOnContainer.colorBrightness * 255.0f).toInt()] = complementaryOnContainer
+        tokenColorMapping[(complementaryContainerOutline.colorBrightness * 255.0f).toInt()] = complementaryContainerOutline
     }
-    colorTokensBrightness = ArrayList(stretchedColorMapping.keys).sorted()
+
+    var colorTokensBrightness: MutableList<Int> = ArrayList(tokenColorMapping.keys).sorted().toMutableList()
+    val lowestTokensBrightness = colorTokensBrightness.first()
+    val highestTokensBrightness = colorTokensBrightness.last()
+    val hasSameBrightness = (highestTokensBrightness == lowestTokensBrightness)
+
+    when (filterRange) {
+        FilterRange.FullSpan -> {
+            // Put full black and full white as bookends if needed
+            if (lowestTokensBrightness > 0) {
+                colorTokensBrightness.add(0, 0)
+                tokenColorMapping[0] = Color.Black
+            }
+
+            if (highestTokensBrightness < 255) {
+                colorTokensBrightness.add(255)
+                tokenColorMapping[255] = Color.White
+            }
+        }
+        FilterRange.TonalContainerSurfaces -> {
+            // Step 2 - create a "stretched" brightness mapping where the lowest brightness
+            // is mapped to 0 and the highest to 255
+            val lowestColorTokensBrightness = colorTokensBrightness[0]
+            val highestColorTokensBrightness = colorTokensBrightness[colorTokensBrightness.size - 1]
+            val hasSameBrightness = highestColorTokensBrightness == lowestColorTokensBrightness
+
+            val stretchedColorMapping = hashMapOf<Int, Color>()
+            for ((brightness, value) in tokenColorMapping) {
+                val stretched = if (hasSameBrightness) brightness
+                else 255 - 255 * (highestColorTokensBrightness - brightness) /
+                    (highestColorTokensBrightness - lowestColorTokensBrightness)
+                stretchedColorMapping[stretched] = value
+            }
+            colorTokensBrightness = ArrayList(stretchedColorMapping.keys).sorted().toMutableList()
+            tokenColorMapping = stretchedColorMapping
+        }
+    }
 
     // Step 3 - create the full brightness mapping that assigns colors to
     // all intermediate brightness values. The intermediate brightness values
@@ -78,10 +157,10 @@ private fun getInterpolatedColors(colorTokens: ContainerColorTokens): Array<Colo
     for (i in 0 until MapSteps) {
         val brightness = (256.0 * i / MapSteps).toInt()
         if (colorTokensBrightness.contains(brightness)) {
-            result[i] = stretchedColorMapping[brightness]
+            result[i] = tokenColorMapping[brightness]
         } else {
             if (hasSameBrightness) {
-                result[i] = stretchedColorMapping[lowestColorTokensBrightness]
+                result[i] = tokenColorMapping[brightness]
             } else {
                 var currIndex = 0
                 while (true) {
@@ -89,8 +168,8 @@ private fun getInterpolatedColors(colorTokens: ContainerColorTokens): Array<Colo
                     val nextStopValue = colorTokensBrightness[currIndex + 1]
                     if ((brightness > currStopValue) && (brightness < nextStopValue)) {
                         // interpolate
-                        val currStopColor = stretchedColorMapping[currStopValue]!!
-                        val nextStopColor = stretchedColorMapping[nextStopValue]!!
+                        val currStopColor = tokenColorMapping[currStopValue]!!
+                        val nextStopColor = tokenColorMapping[nextStopValue]!!
                         result[i] = currStopColor.interpolateTowards(
                             nextStopColor,
                             1.0f - (brightness - currStopValue).toFloat() / (nextStopValue - currStopValue).toFloat()
@@ -103,13 +182,13 @@ private fun getInterpolatedColors(colorTokens: ContainerColorTokens): Array<Colo
         }
     }
     if (colorTokens !is MutableContainerColorTokens) {
-        interpolations[colorTokens] = result
+        interpolations[key] = result
     }
     return result
 }
 
-fun getContainerColorTokensFilter(colorTokens: ContainerColorTokens): ColorFilter {
-    val filtering = getInterpolatedColors(colorTokens)
+fun getContainerColorTokensFilter(colorTokens: ContainerColorTokens, filterRange: FilterRange): ColorFilter {
+    val filtering = getInterpolatedColors(colorTokens, filterRange)
     val reds = ByteArray(256)
     val greens = ByteArray(256)
     val blues = ByteArray(256)

@@ -52,6 +52,7 @@ import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
+import org.pushingpixels.aurora.theming.utils.FilterRange
 import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
 import java.awt.*
 import java.awt.event.AWTEventListener
@@ -159,7 +160,7 @@ internal fun AuroraWindowScope.WindowTitlePaneTextAndIcon(
                         ColorFilter.tint(color = colorTokens.onContainer)
 
                     IconFilterStrategy.ThemedFollowColorTokens ->
-                        getContainerColorTokensFilter(colorTokens)
+                        getContainerColorTokensFilter(colorTokens, FilterRange.FullSpan)
 
                     IconFilterStrategy.Original -> null
                 }
