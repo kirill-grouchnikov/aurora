@@ -84,7 +84,7 @@ abstract class ShaderWrapperDecorationPainter(
             clipPath.addOutline(outline)
             clipPath(path = clipPath) {
                 drawRect(
-                    brush = ShaderBrush(shader),
+                    brush = ShaderBrush(shader.asComposeShader()),
                     topLeft = Offset(-offsetFromRoot.x, -offsetFromRoot.y),
                     size = Size(
                         componentSize.width + offsetFromRoot.x,

@@ -28,9 +28,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.skiaCanvas
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -967,8 +967,8 @@ internal class RibbonBuilder(
 
                             override fun DrawScope.onDraw() {
                                 this.drawIntoCanvas { canvas ->
-                                    val nativeCanvas = canvas.nativeCanvas
-                                    nativeCanvas.drawTextLine(
+                                    val skiaCanvas = canvas.skiaCanvas
+                                    skiaCanvas.drawTextLine(
                                         line = TextLine.make(
                                             text = "$index",
                                             font = overlayFont
@@ -1011,8 +1011,8 @@ internal class RibbonBuilder(
 
                             override fun DrawScope.onDraw() {
                                 this.drawIntoCanvas { canvas ->
-                                    val nativeCanvas = canvas.nativeCanvas
-                                    nativeCanvas.drawTextLine(
+                                    val skiaCanvas = canvas.skiaCanvas
+                                    skiaCanvas.drawTextLine(
                                         line = TextLine.make(
                                             text = "$index",
                                             font = overlayFont

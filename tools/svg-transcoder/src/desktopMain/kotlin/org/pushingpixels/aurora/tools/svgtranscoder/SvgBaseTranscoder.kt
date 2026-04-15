@@ -748,7 +748,7 @@ abstract class SvgBaseTranscoder(private val classname: String) {
 
             printWriterManager!!.print("style = org.jetbrains.skia.GradientStyle(tileMode = $tileMode, isPremul = true, localMatrix = null)")
 
-            printWriterManager!!.println("))")
+            printWriterManager!!.println(").asComposeShader())")
         }
     }
 

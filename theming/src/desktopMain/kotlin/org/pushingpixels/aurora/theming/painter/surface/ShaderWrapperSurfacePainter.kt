@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.addOutline
+import androidx.compose.ui.graphics.asComposeShader
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.unit.Density
@@ -76,7 +77,7 @@ abstract class ShaderWrapperSurfacePainter(
             clipPath.addOutline(outline)
             clipPath(path = clipPath) {
                 drawRect(
-                    brush = ShaderBrush(shader),
+                    brush = ShaderBrush(shader.asComposeShader()),
                     topLeft = Offset(0.0f, 0.0f),
                     size = size
                 )
