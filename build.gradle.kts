@@ -91,9 +91,12 @@ tasks.register("getDependencies") {
             project.configurations.matching { it.name == "desktopRuntimeClasspath" }
         runtimeClasspath.all {
             for (dep in map { file: File -> file.absoluteFile }) {
-                project.copy {
-                    from(dep)
-                    into("${rootProject.projectDir}/build/libs")
+                if (!dep.absolutePath.contains("org.jetbrains.compose.runtime")) {
+                    println("Copying ${dep.name} from ${dep.absolutePath}")
+                    project.copy {
+                        from(dep)
+                        into("${rootProject.projectDir}/build/libs")
+                    }
                 }
             }
         }
