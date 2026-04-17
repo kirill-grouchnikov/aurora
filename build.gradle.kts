@@ -1,5 +1,8 @@
+import org.jetbrains.kotlin.daemon.common.toHexString
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.security.MessageDigest
+import java.util.HexFormat
 
 buildscript {
     repositories {
@@ -87,15 +90,16 @@ tasks.register("copyJars") {
 
 tasks.register("getDependencies") {
     subprojects {
+        var digest = MessageDigest.getInstance("SHA-1")
         val runtimeClasspath =
             project.configurations.matching { it.name == "desktopRuntimeClasspath" }
         runtimeClasspath.all {
             for (dep in map { file: File -> file.absoluteFile }) {
-                if (!dep.absolutePath.contains("org.jetbrains.compose.runtime")) {
-                    project.copy {
-                        from(dep)
-                        into("${rootProject.projectDir}/build/libs")
-                    }
+                var hex = digest.digest(dep.absolutePath.toByteArray()).toHexString()
+                project.copy {
+                    from(dep)
+                    into("${rootProject.projectDir}/build/libs")
+                    rename { it.replace(".jar", "-$hex.jar")}
                 }
             }
         }
