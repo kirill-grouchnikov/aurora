@@ -92,7 +92,6 @@ tasks.register("getDependencies") {
         runtimeClasspath.all {
             for (dep in map { file: File -> file.absoluteFile }) {
                 if (!dep.absolutePath.contains("org.jetbrains.compose.runtime")) {
-                    println("Copying ${dep.name} from ${dep.absolutePath}")
                     project.copy {
                         from(dep)
                         into("${rootProject.projectDir}/build/libs")
