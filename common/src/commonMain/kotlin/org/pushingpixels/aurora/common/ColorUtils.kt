@@ -16,6 +16,8 @@
 package org.pushingpixels.aurora.common
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import org.pushingpixels.ephemeral.chroma.blend.Blend
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -29,90 +31,14 @@ fun Color.interpolateTowards(other: Color, thisLikeness: Float): Color {
     require((thisLikeness >= 0.0f) && (thisLikeness <= 1.0f)) {
         "Color likeness should be in 0.0-1.0 range [is $thisLikeness]"
     }
-    val alpha1: Float = this.alpha
-    val alpha2: Float = other.alpha
-    val r = getInterpolatedChannelValue(this.red, other.red, thisLikeness)
-    val g = getInterpolatedChannelValue(this.green, other.green, thisLikeness)
-    val b = getInterpolatedChannelValue(this.blue, other.blue, thisLikeness)
-    val a = (if (alpha1 == alpha2) alpha1 else
-        thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2).coerceIn(0.0f, 1.0f)
-    return Color(r, g, b, a, this.colorSpace)
+    return Color(Blend.harmonizeAll(this.toArgb(), other.toArgb(), (1.0f - thisLikeness).toDouble()))
 }
 
 fun Color.interpolateTowardsAsRGB(other: Color, thisLikeness: Float): Int {
     require((thisLikeness >= 0.0f) && (thisLikeness <= 1.0f)) {
         "Color likeness should be in 0.0-1.0 range [is $thisLikeness]"
     }
-    val alpha1: Float = this.alpha
-    val alpha2: Float = other.alpha
-    val r = getInterpolatedChannelValue(this.red, other.red, thisLikeness)
-    val g = getInterpolatedChannelValue(this.green, other.green, thisLikeness)
-    val b = getInterpolatedChannelValue(this.blue, other.blue, thisLikeness)
-    val a = (if (alpha1 == alpha2) alpha1 else
-        thisLikeness * alpha1 + (1.0f - thisLikeness) * alpha2).coerceIn(0.0f, 1.0f)
-
-    return ((a * 255.0f + 0.5f).toInt() shl 24) or
-            ((r * 255.0f + 0.5f).toInt() shl 16) or
-            ((g * 255.0f + 0.5f).toInt() shl 8) or
-            (b * 255.0f + 0.5f).toInt()
-}
-
-private fun getInterpolatedChannelValue(value1: Float, value2: Float, value1Likeness: Float): Float {
-    if (value1 == value2) {
-        return value1
-    }
-    if (value1Likeness == 1.0f) {
-        return value1
-    }
-    if (value1Likeness == 0.0f) {
-        return value2
-    }
-
-    // Step 1 - convert channel from electro to optical
-    val optical1 = EOCF_sRGB(value1)
-    val optical2 = EOCF_sRGB(value2)
-
-    // Step 2 - interpolate
-    val interpolatedOptical = value1Likeness * optical1 +
-            (1.0f - value1Likeness) * optical2
-
-    // Step 3 - convert interpolated from optical to electro
-    val interpolatedElectro = OECF_sRGB(interpolatedOptical)
-
-    // Step 4 - convert to 0..1 range
-    // using some interpolation values (such as 0.29 from issue 401)
-    // results in an incorrect final value without Math.round.
-    var result = interpolatedElectro
-    if (result < 0.0f) {
-        result = 0.0f
-    }
-    if (result > 1.0f) {
-        result = 1.0f
-    }
-    return result
-}
-
-// Opto-electronic conversion function for the sRGB color space
-// Takes a gamma-encoded sRGB value and converts it to a linear sRGB value
-private fun OECF_sRGB(linear: Float): Float {
-    // IEC 61966-2-1:1999
-    return if (linear <= 0.0031308f) linear * 12.92f else
-        linear.pow(1.0f / 2.4f) * 1.055f - 0.055f
-}
-
-// Electro-optical conversion function for the sRGB color space
-// Takes a linear sRGB value and converts it to a gamma-encoded sRGB value
-private fun EOCF_sRGB(srgb: Float): Float {
-    // IEC 61966-2-1:1999
-    return if (srgb <= 0.04045f) srgb / 12.92f else ((srgb + 0.055f) / 1.055f).pow(2.4f)
-}
-
-fun RGBtoHSB(fromArgb: Int): FloatArray {
-    val r = fromArgb ushr 16 and 0xFF
-    val g = fromArgb ushr 8 and 0xFF
-    val b = fromArgb ushr 0 and 0xFF
-
-    return RGBtoHSB(r = r / 255.0f, g = g / 255.0f, b = b / 255.0f)
+    return Blend.harmonizeAll(this.toArgb(), other.toArgb(), (1.0f - thisLikeness).toDouble())
 }
 
 fun RGBtoHSB(from: Color): FloatArray {
@@ -184,29 +110,6 @@ fun HSBtoRGB(from: FloatArray): Color {
     return Color(chroma + m, m, x + m)
 }
 
-fun Color.withBrightness(brightnessSource: Color): Color {
-    val hsbvalsOrig = RGBtoHSB(this)
-    val hsbvalsBrightnessSrc = RGBtoHSB(brightnessSource)
-    return HSBtoRGB(
-        floatArrayOf(
-            hsbvalsOrig[0], hsbvalsOrig[1],
-            (hsbvalsBrightnessSrc[2] + hsbvalsOrig[2]) / 2.0f
-        )
-    ).byAlpha(this.alpha)
-}
-
-fun Color.withBrightness(brightnessFactor: Float): Color {
-    val hsbvalsOrig = RGBtoHSB(this)
-
-    // Brightness factor is in -1.0...1.0 range. Negative values are treated as darkening
-    // and positive values are treated as brightening - leaving the hue and saturation intact
-    val newBrightness =
-        if (brightnessFactor > 0.0f) hsbvalsOrig[2] + (1.0f - hsbvalsOrig[2]) * brightnessFactor else hsbvalsOrig[2] + hsbvalsOrig[2] * brightnessFactor
-    return HSBtoRGB(
-        floatArrayOf(hsbvalsOrig[0], hsbvalsOrig[1], newBrightness)
-    ).byAlpha(this.alpha)
-}
-
 /** Returns the inverted version of this color. */
 fun Color.inverted(): Color {
     return Color(1.0f - this.red, 1.0f - this.green, 1.0f - this.blue, this.alpha)
@@ -224,50 +127,6 @@ fun Color.withAlpha(alpha: Float): Color {
 fun Color.byAlpha(alpha: Float): Color {
     return Color(this.red, this.green, this.blue, this.alpha * alpha, this.colorSpace)
 }
-
-/** Returns saturated version of this color. */
-fun Color.withSaturation(factor: Float): Color {
-    val red = this.red
-    val green = this.green
-    val blue = this.blue
-    if (red == green || green == blue) {
-        // monochrome
-        return this
-    }
-    val hsbvals = RGBtoHSB(this)
-    var saturation = hsbvals[1]
-    saturation = if (factor > 0.0) {
-        saturation + factor * (1.0f - saturation)
-    } else {
-        saturation + factor * saturation
-    }
-    return HSBtoRGB(floatArrayOf(hsbvals[0], saturation, hsbvals[2])).byAlpha(this.alpha)
-}
-
-/** Returns hue-shifted (in HSB space) version of this color. */
-fun Color.withHueShift(hueShift: Float): Color {
-    val hsbvals = RGBtoHSB(this)
-    var hue = hsbvals[0]
-    hue += hueShift
-    if (hue < 0.0) {
-        hue += 1.0f
-    }
-    if (hue > 1.0) {
-        hue -= 1.0f
-    }
-    return HSBtoRGB(floatArrayOf(hue, hsbvals[1], hsbvals[2])).byAlpha(this.alpha)
-}
-
-/** Returns a lighter version of this color. */
-fun Color.lighter(diff: Float): Color {
-    return interpolateTowards(Color.White, 1.0f - diff)
-}
-
-/** Returns a darker version of this color. */
-fun Color.darker(diff: Float): Color {
-    return interpolateTowards(Color.Black, 1.0f - diff)
-}
-
 
 fun Color.overlayWith(overlay: Color): Color {
     val baseAlpha = this.alpha
@@ -299,9 +158,6 @@ fun Color.overlayWith(overlay: Color): Color {
 /** Returns the brightness of this color in [0.0-1.0] range ignoring the alpha. */
 val Color.colorBrightness: Float
     get() = getColorBrightness(this.red, this.green, this.blue)
-
-val Color.colorStrength: Float
-    get() = max(this.colorBrightness, this.inverted().colorBrightness)
 
 /** Returns the brightness of the specified color values in [0.0-1.0] range. */
 fun getColorBrightness(r: Float, g: Float, b: Float): Float {
