@@ -601,7 +601,8 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
 
                 drawRect(color = color)
 
-                val brightness = color.colorBrightness
+                val hsb = RGBtoHSB(from = color)
+                val brightness = hsb[2] * 0.7f
                 val borderColor = Color(brightness, brightness, brightness)
 
                 val borderOutline = cellOutlineSupplier.getOutline(
