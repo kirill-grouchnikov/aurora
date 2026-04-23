@@ -233,7 +233,7 @@ private fun ScreenshotToolbar(
         modifier = modifier
             .fillMaxWidth()
             .auroraBackground()
-            .padding(horizontal = 8.dp, vertical = 2.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         CommandButtonProjection(
             contentModel = Command(
