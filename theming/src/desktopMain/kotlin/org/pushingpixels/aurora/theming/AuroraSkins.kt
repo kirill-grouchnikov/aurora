@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.theming
 fun getAuroraSkins(): List<Pair<String, () -> AuroraSkinDefinition>> {
     return listOf(
         Pair("Autumn", ::autumnSkin),
+        Pair("Blueprint", ::blueprintSkin),
         Pair("Business", ::businessSkin),
         Pair("Business Black Steel", ::businessBlackSteelSkin),
         Pair("Business Blue Steel", ::businessBlueSteelSkin),
