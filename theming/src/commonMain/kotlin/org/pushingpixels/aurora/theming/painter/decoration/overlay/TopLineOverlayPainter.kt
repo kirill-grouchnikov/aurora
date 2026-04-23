@@ -28,7 +28,10 @@ import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPaint
  *
  * @author Kirill Grouchnikov
  */
-class TopLineOverlayPainter(private val colorTokensQuery: (ContainerColorTokens) -> Color) : OverlayPainter {
+class TopLineOverlayPainter(
+    private val colorTokensQuery: (ContainerColorTokens) -> Color,
+    private val strokeWidth: Float = 1.0f) : OverlayPainter {
+
     override val displayName = "Top Line"
 
     override fun paintOverlay(
@@ -42,7 +45,7 @@ class TopLineOverlayPainter(private val colorTokensQuery: (ContainerColorTokens)
             drawLine(
                 color = colorTokensQuery.invoke(colorTokens),
                 start = Offset.Zero,
-                end = Offset(width, 0.0f)
+                end = Offset(width, strokeWidth / 2.0f)
             )
         }
     }

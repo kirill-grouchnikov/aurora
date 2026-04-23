@@ -28,7 +28,10 @@ import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPaint
  *
  * @author Kirill Grouchnikov
  */
-class BottomLineOverlayPainter(private val colorTokensQuery: (ContainerColorTokens) -> Color) : OverlayPainter {
+class BottomLineOverlayPainter(
+    private val colorTokensQuery: (ContainerColorTokens) -> Color,
+    private val strokeWidth: Float = 1.0f) : OverlayPainter {
+
     override val displayName = "Bottom Line"
 
     override fun paintOverlay(
@@ -41,8 +44,8 @@ class BottomLineOverlayPainter(private val colorTokensQuery: (ContainerColorToke
         with(drawScope) {
             drawLine(
                 color = colorTokensQuery.invoke(colorTokens),
-                start = Offset(0.0f, height - 1.0f),
-                end = Offset(width, height - 1.0f)
+                start = Offset(0.0f, height - strokeWidth),
+                end = Offset(width, height - strokeWidth)
             )
         }
     }
