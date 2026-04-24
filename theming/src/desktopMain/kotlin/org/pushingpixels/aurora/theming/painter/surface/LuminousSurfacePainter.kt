@@ -33,7 +33,7 @@ class LuminousSurfacePainter(
         runtimeEffect = getLuminousEffect(),
         baseSurfacePainter = base
     ) {
-    override val displayName = "Luminous ${baseSurfacePainter.displayName}"
+    override val displayName = "Luminous ${baseSurfacePainter?.displayName}"
 
     override fun getShaderData(
         density: Density,

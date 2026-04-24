@@ -25,6 +25,10 @@ import org.pushingpixels.aurora.theming.painter.outline.AuroraOutlinePainter
 import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.painter.surface.AuroraSurfacePainter
 
+fun interface StateAlpha {
+    fun getStateAlpha(componentState: ComponentState, colorTokens: ContainerColorTokens): Float
+}
+
 @AuroraInternalApi
 fun paintSurface(
     drawScope: DrawScope,
@@ -34,12 +38,14 @@ fun paintSurface(
     size: Size,
     alpha: Float,
     outline: Outline,
-    colorTokens: ContainerColorTokens) {
+    colorTokens: ContainerColorTokens,
+    stateAlpha: StateAlpha? = null) {
 
     // Apply the matching alpha
-    val containerSurfaceAlpha = alpha *
+    val stateBasedAlpha = stateAlpha?.getStateAlpha(componentState, colorTokens) ?:
         (if (componentState.isDisabled) colorTokens.containerSurfaceDisabledAlpha else
             colorTokens.containerSurfaceEnabledAlpha)
+    val containerSurfaceAlpha = alpha * stateBasedAlpha
     surfacePainter.paintSurface(
         drawScope = drawScope,
         size = size,
@@ -66,12 +72,14 @@ fun paintOutline(
     size: Size,
     alpha: Float,
     outlineSupplier: OutlineSupplier,
-    colorTokens: ContainerColorTokens) {
+    colorTokens: ContainerColorTokens,
+    stateAlpha: StateAlpha? = null) {
 
     // Apply the matching alpha
-    val containerOutlineAlpha = alpha *
-        (if (componentState.isDisabled) colorTokens.containerOutlineDisabledAlpha else
-            colorTokens.containerOutlineEnabledAlpha)
+    val stateBasedAlpha = stateAlpha?.getStateAlpha(componentState, colorTokens) ?:
+    (if (componentState.isDisabled) colorTokens.containerOutlineDisabledAlpha else
+        colorTokens.containerOutlineEnabledAlpha)
+    val containerOutlineAlpha = alpha * stateBasedAlpha
     outlinePainter.paintOutline(
         drawScope = drawScope,
         size = size,

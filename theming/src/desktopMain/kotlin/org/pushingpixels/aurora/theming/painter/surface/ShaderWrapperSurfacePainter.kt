@@ -31,15 +31,14 @@ import org.jetbrains.skia.Shader
 import org.pushingpixels.aurora.theming.ContainerColorTokens
 
 /**
- * Implementation of [AuroraSurfacePainter] that uses a Skia shader to paint on
- * filled areas.
+ * Implementation of [AuroraSurfacePainter] that uses a Skia shader to paint surfaces
  *
  * @author Kirill Grouchnikov
  */
 abstract class ShaderWrapperSurfacePainter(
     val runtimeEffect: RuntimeEffect,
     baseShader: Shader? = null,
-    val baseSurfacePainter: AuroraSurfacePainter
+    val baseSurfacePainter: AuroraSurfacePainter? = null,
 ) : AuroraSurfacePainter {
     private val shaderChildren: Array<Shader?>? =
         if (baseShader != null) arrayOf(baseShader) else null
@@ -59,7 +58,7 @@ abstract class ShaderWrapperSurfacePainter(
         alpha: Float
     ) {
         with(drawScope) {
-            baseSurfacePainter.paintSurface(
+            baseSurfacePainter?.paintSurface(
                 drawScope = this,
                 size = size,
                 outline = outline,

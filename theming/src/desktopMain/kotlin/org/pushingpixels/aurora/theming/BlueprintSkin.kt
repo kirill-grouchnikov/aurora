@@ -495,29 +495,26 @@ private class RectangularComponentShaper: AuroraComponentShaper {
 private fun getStripeEffect(): RuntimeEffect {
     @Language("GLSL")
     val stripeDesc = """
-            uniform vec4 color;
+            uniform vec4 baseColor;
+            uniform vec4 stripeColor;
             uniform float alpha;
+            uniform float stripeWidth;
 
             half4 main(vec2 fragcoord) {
                 float combined = floor(fragcoord.x) + floor(fragcoord.y);
-                if (mod(combined, 6.0) >= 4.0) {
-                    float falpha = alpha * color.a;
-                    return half4(color.r * falpha, color.g * falpha, color.b * falpha, falpha);
+                if (mod(combined, 3.0 * stripeWidth) >= 2.0 * stripeWidth) {
+                    float falpha = alpha * stripeColor.a;
+                    return half4(stripeColor.r * falpha, stripeColor.g * falpha, stripeColor.b * falpha, falpha);
                 }
-                return half4(0.0, 0.0, 0.0, 0.0);
+                float falpha = alpha * baseColor.a;
+                return half4(baseColor.r * falpha, baseColor.g * falpha, baseColor.b * falpha, falpha);
             }
         """
 
     return RuntimeEffect.makeForShader(stripeDesc)
 }
 
-private class BlueprintSurfacePainter: ShaderWrapperSurfacePainter(
-    runtimeEffect = getStripeEffect(),
-    baseSurfacePainter = FlatSurfacePainter(
-        displayName = "Blueprint Base",
-        colorQuery = { it.containerSurfaceLow.withAlpha(0.8f) }
-    )
-) {
+private class BlueprintSurfacePainter: ShaderWrapperSurfacePainter(runtimeEffect = getStripeEffect()) {
     override val displayName: String
         get() = "Blueprint"
 
@@ -527,15 +524,25 @@ private class BlueprintSurfacePainter: ShaderWrapperSurfacePainter(
         colorTokens: ContainerColorTokens,
         alpha: Float
     ): Data {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
+        val stripeWidth = with(density) { 1.0.dp.toPx() }
+
+        val dataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
+        // RGBA for the base color
+        val baseColor = colorTokens.containerSurfaceDim.withAlpha(0.9f)
+        dataBuffer.putFloat(0, baseColor.red)
+        dataBuffer.putFloat(4, baseColor.green)
+        dataBuffer.putFloat(8, baseColor.blue)
+        dataBuffer.putFloat(12, baseColor.alpha)
         // RGBA for the stripe color
-        val stripeColor = colorTokens.containerSurfaceLow.copy(alpha = 0.3f)
-        dataBuffer.putFloat(0, stripeColor.red)
-        dataBuffer.putFloat(4, stripeColor.green)
-        dataBuffer.putFloat(8, stripeColor.blue)
-        dataBuffer.putFloat(12, stripeColor.alpha)
+        val stripeColor = colorTokens.containerSurfaceLow
+        dataBuffer.putFloat(16, stripeColor.red)
+        dataBuffer.putFloat(20, stripeColor.green)
+        dataBuffer.putFloat(24, stripeColor.blue)
+        dataBuffer.putFloat(28, stripeColor.alpha)
         // Alpha
-        dataBuffer.putFloat(16, alpha)
+        dataBuffer.putFloat(32, alpha)
+        // Stripe width
+        dataBuffer.putFloat(36, stripeWidth)
 
         return Data.makeFromBytes(dataBuffer.array())
     }

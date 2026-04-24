@@ -35,7 +35,7 @@ class SpecularRectangularSurfacePainter(
         runtimeEffect = getSpecularRectangularEffect(),
         baseSurfacePainter = base
     ) {
-    override val displayName = "Specular Rectangular ${baseSurfacePainter.displayName}"
+    override val displayName = "Specular Rectangular ${baseSurfacePainter?.displayName}"
 
     override fun getShaderData(
         density: Density,

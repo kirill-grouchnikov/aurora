@@ -570,7 +570,14 @@ internal fun AuroraSlider(
                     size = Size(thumbSize, thumbSize),
                     alpha = 1.0f,
                     outline = thumbOutlineFill,
-                    colorTokens = progressColorTokens)
+                    colorTokens = progressColorTokens,
+                    stateAlpha = { componentState, colorTokens ->
+                        if (componentState.isDisabled) {
+                            colorTokens.containerSurfaceDisabledAlpha
+                        } else {
+                            1.0f
+                        }
+                    })
 
                 paintOutline(
                     drawScope = this,
@@ -580,7 +587,14 @@ internal fun AuroraSlider(
                     size = Size(thumbSize, thumbSize),
                     alpha = 1.0f,
                     outlineSupplier = componentShaper.getSliderThumbOutlineSupplier(),
-                    colorTokens = progressColorTokens)
+                    colorTokens = progressColorTokens,
+                    stateAlpha = { componentState, colorTokens ->
+                        if (componentState.isDisabled) {
+                            colorTokens.containerOutlineDisabledAlpha
+                        } else {
+                            1.0f
+                        }
+                    })
             }
         }
     }
