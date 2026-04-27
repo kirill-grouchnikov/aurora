@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
+import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -138,6 +139,7 @@ fun greenMagicSkin(): AuroraSkinDefinition {
         displayName = "Green Magic",
         colors = greenMagicSkinColors(),
         painters = painters,
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }

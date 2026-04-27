@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
+import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
@@ -140,6 +141,7 @@ fun ceruleanSkin(): AuroraSkinDefinition {
         displayName = "Cerulean",
         colors = ceruleanSkinColors(),
         painters = painters,
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }

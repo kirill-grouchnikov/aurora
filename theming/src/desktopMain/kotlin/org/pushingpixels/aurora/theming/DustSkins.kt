@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -165,6 +166,7 @@ fun dustSkin(): AuroraSkinDefinition {
         colors = dustBaseSkinColors(accentContainerColorTokens),
         painters = dustBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 
@@ -198,7 +200,8 @@ fun dustCoffeeSkin(): AuroraSkinDefinition {
         displayName = "Dust Coffee",
         colors = dustBaseSkinColors(accentContainerColorTokens),
         painters = dustBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 

@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.theming
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import org.pushingpixels.aurora.common.interpolateTowardsAsRGB
+import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -227,7 +228,8 @@ fun autumnSkin(): AuroraSkinDefinition {
         displayName = "Autumn",
         colors = autumnSkinColors(),
         painters = painters,
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 

@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.FlatDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -139,7 +140,8 @@ fun graphiteSkin(): AuroraSkinDefinition {
         displayName = "Graphite",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 
@@ -162,7 +164,8 @@ fun graphiteAquaSkin(): AuroraSkinDefinition {
         displayName = "Graphite Aqua",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 
@@ -213,7 +216,8 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
         displayName = "Graphite Chalk",
         colors = colors,
         painters = graphiteBasePainters(outlinePainter = FlatOutlinePainter()),
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 
@@ -282,7 +286,8 @@ fun graphiteGlassSkin(): AuroraSkinDefinition {
                 tokens -> tokens.inverseContainerOutline.withAlpha(0.375f)
             }), DecorationAreaType.Toolbar)
         },
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 
@@ -313,7 +318,8 @@ fun graphiteElectricSkin(): AuroraSkinDefinition {
         displayName = "Graphite Electric",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 
@@ -344,7 +350,8 @@ fun graphiteGoldSkin(): AuroraSkinDefinition {
         displayName = "Graphite Gold",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 
@@ -375,7 +382,8 @@ fun graphiteSiennaSkin(): AuroraSkinDefinition {
         displayName = "Graphite Sienna",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 
@@ -406,7 +414,8 @@ fun graphiteSunsetSkin(): AuroraSkinDefinition {
         displayName = "Graphite Sunset",
         colors = colors,
         painters = graphiteBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 

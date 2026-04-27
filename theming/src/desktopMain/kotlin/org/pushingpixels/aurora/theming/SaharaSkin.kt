@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
+import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
@@ -99,7 +100,8 @@ fun saharaSkin(): AuroraSkinDefinition {
         displayName = "Sahara",
         colors = saharaSkinColors(),
         painters = painters,
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 

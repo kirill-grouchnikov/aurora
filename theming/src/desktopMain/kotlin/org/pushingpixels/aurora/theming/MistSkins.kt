@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
+import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.LuminousOutlinePainter
@@ -100,7 +101,8 @@ fun mistSilverSkin(): AuroraSkinDefinition {
         displayName = "Mist Silver",
         colors = mistBaseSkinColors(accentContainerColorTokens),
         painters = mistBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(PillComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(PillComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 
@@ -130,7 +132,8 @@ fun mistAquaSkin(): AuroraSkinDefinition {
         displayName = "Mist Aqua",
         colors = mistBaseSkinColors(accentContainerColorTokens),
         painters = mistBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(PillComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(PillComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 

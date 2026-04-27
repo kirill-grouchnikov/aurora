@@ -66,6 +66,12 @@ object AuroraSkin {
         get() = LocalPainterOverlays.current
 
     @OptIn(AuroraInternalApi::class)
+    val decorators: AuroraDecorators
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDecorators.current
+
+    @OptIn(AuroraInternalApi::class)
     val animationConfig: AnimationConfig
         @Composable
         @ReadOnlyComposable
@@ -76,7 +82,8 @@ data class AuroraSkinDefinition(
     override val displayName: String,
     val colors: AuroraSkinColors,
     val componentShapers: AuroraComponentShapers,
-    val painters: AuroraPainters
+    val painters: AuroraPainters,
+    val decorators: AuroraDecorators,
 ) : AuroraTrait
 
 data class AccentContainerColorTokens(

@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
+import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.BrushedMetalDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
@@ -156,7 +157,8 @@ fun businessSkin(): AuroraSkinDefinition {
             it.registerDecorationAreaTokensBundle(businessFooterBundle, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 
@@ -214,7 +216,8 @@ fun businessBlackSteelSkin(): AuroraSkinDefinition {
                 DecorationAreaType.ControlPane, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 
@@ -272,7 +275,8 @@ fun businessBlueSteelSkin(): AuroraSkinDefinition {
                 DecorationAreaType.ControlPane, DecorationAreaType.Footer)
         },
         painters = businessBasePainters(),
-        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper())
+        componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }
 

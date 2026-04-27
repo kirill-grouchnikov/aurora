@@ -28,6 +28,8 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.pushingpixels.aurora.common.withAlpha
+import org.pushingpixels.aurora.theming.AuroraDecorators
+import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
@@ -575,6 +577,7 @@ fun blueprintSkin(): AuroraSkinDefinition {
         displayName = "Blueprint",
         colors = blueprintSkinColors(),
         painters = painters,
-        componentShapers = AuroraComponentShapers.withNoDefaults(RectangularComponentShaper())
+        componentShapers = AuroraComponentShapers.withNoDefaults(RectangularComponentShaper()),
+        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
     )
 }

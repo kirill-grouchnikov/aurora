@@ -81,6 +81,10 @@ val LocalPainterOverlays = staticCompositionLocalOf<AuroraPainterOverlays?> {
     null
 }
 @AuroraInternalApi
+val LocalDecorators = staticCompositionLocalOf<AuroraDecorators> {
+    error("LocalDecorators not provided")
+}
+@AuroraInternalApi
 val LocalDecorationAreaType = staticCompositionLocalOf<DecorationAreaType> {
     error("LocalDecorationAreaType not provided")
 }

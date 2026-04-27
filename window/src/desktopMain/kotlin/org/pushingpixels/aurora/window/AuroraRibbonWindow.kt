@@ -60,6 +60,7 @@ import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
+import org.pushingpixels.aurora.theming.decorator.window.AuroraWindowDecorator
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.FilterRange
@@ -652,6 +653,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
     icon: Painter?,
     iconFilterStrategy: IconFilterStrategy,
     windowTitlePaneConfiguration: AuroraWindowTitlePaneConfigurations.AuroraPlain,
+    windowDecorator: AuroraWindowDecorator,
     ribbon: Ribbon,
     content: @Composable AuroraWindowScope.() -> Unit
 ) {
@@ -735,7 +737,7 @@ private fun AuroraWindowScope.RibbonWindowInnerContent(
                 }
             }
         }
-        RibbonKeyTipOverlay(Modifier.fillMaxSize(), WindowSizingConstants.DecoratedBorderThickness)
+        RibbonKeyTipOverlay(Modifier.fillMaxSize(), windowDecorator.getWindowBorderInsets())
     }
 
     val density = LocalDensity.current
@@ -823,17 +825,18 @@ fun AuroraWindowScope.AuroraRibbonWindowContent(
     val neutralColorTokens = skinColors.getNeutralContainerTokens(DecorationAreaType.TitlePane)
     val coroutineScope = rememberCoroutineScope()
 
+    val windowDecorator = AuroraSkin.decorators.windowDecorator
     Box(
         Modifier
             .fillMaxSize()
-            .auroraWindowBorder(neutralColorTokens)
-            .padding(WindowSizingConstants.DecoratedBorderThickness)
+            .auroraWindowBorder(windowDecorator, neutralColorTokens)
     ) {
         RibbonWindowInnerContent(
             title,
             icon,
             iconFilterStrategy,
             windowTitlePaneConfiguration,
+            windowDecorator,
             ribbon,
             content
         )
@@ -1029,6 +1032,7 @@ fun AuroraApplicationScope.AuroraRibbonWindow(
                 colors = skin.colors,
                 componentShapers = skin.componentShapers,
                 painters = skin.painters,
+                decorators = skin.decorators,
                 animationConfig = AuroraSkin.animationConfig
             ) {
                 density.value = LocalDensity.current

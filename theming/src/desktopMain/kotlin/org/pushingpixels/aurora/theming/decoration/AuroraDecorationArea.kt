@@ -37,6 +37,7 @@ fun AuroraDecorationArea(
         LocalComponentShaper provides componentShaperToUse,
         LocalComponentShapers provides AuroraSkin.componentShapers,
         LocalPainters provides AuroraSkin.painters,
+        LocalDecorators provides AuroraSkin.decorators,
         LocalAnimationConfig provides AuroraSkin.animationConfig
     ) {
         content()

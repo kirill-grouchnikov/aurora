@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.pushingpixels.aurora.window
 
 import androidx.compose.foundation.layout.*
@@ -23,11 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
@@ -41,7 +37,6 @@ import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
 import org.pushingpixels.aurora.common.Platform
-import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -49,7 +44,7 @@ import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
-import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
+import org.pushingpixels.aurora.theming.decorator.window.AuroraWindowDecorator
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.FilterRange
@@ -65,8 +60,6 @@ import javax.swing.SwingUtilities
 import kotlin.math.roundToInt
 
 object WindowSizingConstants {
-    val DecoratedBorderThickness = 4.dp
-
     // The amount of space that the cursor is changed on.
     val CornerDragWidth = 16.dp
 
@@ -869,54 +862,16 @@ private fun AuroraWindowScope.WindowInnerContent(
     }
 }
 
-internal fun Modifier.auroraWindowBorder(colorTokens: ContainerColorTokens): Modifier = drawBehind {
-    val width: Float = size.width
-    val height: Float = size.height
-    val thickness = WindowSizingConstants.DecoratedBorderThickness.toPx()
-
-    if ((width > thickness) && (height > thickness)) {
-        drawRect(
-            color = colorTokens.containerSurface,
-            topLeft = Offset(thickness / 2.0f, thickness / 2.0f),
-            size = Size(width - thickness, height - thickness),
-            style = Stroke(width = thickness)
-        )
-
-        val quarterThickness = thickness / 4.0f
-        // top and left as 40% mix of outline variant and outline
-        val colorOutlineMixed = colorTokens.containerOutlineVariant.interpolateTowards(
-            colorTokens.containerOutline, 0.4f)
-        drawLine(
-            color = colorOutlineMixed,
-            start = Offset(x = 0f, y = quarterThickness / 2.0f),
-            end = Offset(x = width - quarterThickness, y = quarterThickness / 2.0f),
-            strokeWidth = quarterThickness,
-            cap = StrokeCap.Butt
-        )
-        drawLine(
-            color = colorOutlineMixed,
-            start = Offset(x = quarterThickness / 2.0f, y = 0f),
-            end = Offset(x = quarterThickness / 2.0f, y = height - quarterThickness),
-            strokeWidth = quarterThickness,
-            cap = StrokeCap.Butt
-        )
-        // bottom and right as outline
-        drawLine(
-            color = colorTokens.containerOutline,
-            start = Offset(x = 0f, y = height - quarterThickness / 2.0f),
-            end = Offset(x = width, y = height - quarterThickness / 2.0f),
-            strokeWidth = quarterThickness,
-            cap = StrokeCap.Butt
-        )
-        drawLine(
-            color = colorTokens.containerOutline,
-            start = Offset(x = width - quarterThickness / 2.0f, y = 0f),
-            end = Offset(x = width - quarterThickness / 2.0f, y = height),
-            strokeWidth = quarterThickness,
-            cap = StrokeCap.Butt
-        )
-    }
-}
+internal fun Modifier.auroraWindowBorder(
+    auroraWindowDecorator: AuroraWindowDecorator,
+    colorTokens: ContainerColorTokens
+): Modifier = drawBehind {
+    auroraWindowDecorator.paintWindowBorder(
+        drawScope = this,
+        size = size,
+        colorTokens = colorTokens
+    )
+}.padding(auroraWindowDecorator.getWindowBorderInsets())
 
 @AuroraInternalApi
 @Composable
@@ -938,8 +893,7 @@ fun AuroraWindowScope.AuroraWindowContent(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .auroraWindowBorder(neutralColorTokens)
-                    .padding(WindowSizingConstants.DecoratedBorderThickness)
+                    .auroraWindowBorder(AuroraSkin.decorators.windowDecorator, neutralColorTokens)
             ) {
                 WindowInnerContent(
                     title,
@@ -1304,6 +1258,7 @@ fun AuroraApplicationScope.AuroraWindow(
                 colors = skin.colors,
                 componentShapers = skin.componentShapers,
                 painters = skin.painters,
+                decorators = skin.decorators,
                 animationConfig = AuroraSkin.animationConfig
             ) {
                 density.value = LocalDensity.current
@@ -1342,12 +1297,13 @@ fun AuroraApplicationScope.AuroraWindow(
 @OptIn(AuroraInternalApi::class)
 @Composable
 internal fun AuroraSkin(
-    displayName: String = AuroraSkin.displayName,
+    displayName: String,
     decorationAreaType: DecorationAreaType,
-    colors: AuroraSkinColors = AuroraSkin.colors,
-    componentShapers: AuroraComponentShapers = AuroraSkin.componentShapers,
-    painters: AuroraPainters = AuroraSkin.painters,
-    animationConfig: AnimationConfig = AuroraSkin.animationConfig,
+    colors: AuroraSkinColors,
+    componentShapers: AuroraComponentShapers,
+    painters: AuroraPainters,
+    decorators: AuroraDecorators,
+    animationConfig: AnimationConfig,
     content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(
@@ -1357,6 +1313,7 @@ internal fun AuroraSkin(
         LocalComponentShapers provides componentShapers,
         LocalComponentShaper provides componentShapers.getComponentShaper(decorationAreaType),
         LocalPainters provides painters,
+        LocalDecorators provides decorators,
         LocalAnimationConfig provides animationConfig
     ) {
         content()

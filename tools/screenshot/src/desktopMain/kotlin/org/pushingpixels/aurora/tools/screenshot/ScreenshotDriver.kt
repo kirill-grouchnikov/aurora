@@ -81,6 +81,7 @@ fun AuroraApplicationScope.screenshot(
                 LocalComponentShapers provides skin.componentShapers,
                 LocalComponentShaper provides skin.componentShapers.getComponentShaper(DecorationAreaType.None),
                 LocalPainters provides skin.painters,
+                LocalDecorators provides skin.decorators,
                 LocalAnimationConfig provides AnimationConfig(),
             ) {
                 ScreenshotContent(
