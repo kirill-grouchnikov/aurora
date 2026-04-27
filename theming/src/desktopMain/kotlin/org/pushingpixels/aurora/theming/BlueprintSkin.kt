@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
-import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
@@ -47,7 +46,7 @@ import java.nio.ByteOrder
 import kotlin.math.min
 
 private val GridSize = 8.dp
-private val GridAlpha = 0.2f
+private const val GridAlpha = 0.2f
 
 private fun blueprintSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
