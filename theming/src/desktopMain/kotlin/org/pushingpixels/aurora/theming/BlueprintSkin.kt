@@ -27,13 +27,11 @@ import androidx.compose.ui.unit.dp
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.AuroraDecorators
 import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
-import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
-import org.pushingpixels.aurora.theming.painter.surface.MatteSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.ShaderWrapperSurfacePainter
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
@@ -47,6 +45,9 @@ import org.pushingpixels.ephemeral.chroma.hct.Hct
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.min
+
+private val GridSize = 8.dp
+private val GridAlpha = 0.2f
 
 private fun blueprintSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
@@ -148,9 +149,6 @@ private class BlueprintDecorationPainter: AuroraDecorationPainter() {
 }
 
 private class BlueprintDecorationInlayPainter: AuroraDecorationPainter.InlayPainter {
-    private val GridSize = 8.dp
-    private val Alpha = 0.2f
-
     override val displayName: String
         get() = "Blueprint"
 
@@ -181,7 +179,7 @@ private class BlueprintDecorationInlayPainter: AuroraDecorationPainter.InlayPain
                     start = Offset(gridX, 0.0f),
                     end = Offset(gridX, height),
                     strokeWidth = Stroke.HairlineWidth,
-                    alpha = Alpha
+                    alpha = GridAlpha
                 )
 
                 gridX += gridSize
@@ -194,7 +192,7 @@ private class BlueprintDecorationInlayPainter: AuroraDecorationPainter.InlayPain
                     start = Offset(0.0f, gridY),
                     end = Offset(width, gridY),
                     strokeWidth = Stroke.HairlineWidth,
-                    alpha = Alpha
+                    alpha = GridAlpha
                 )
 
                 gridY += gridSize
@@ -550,6 +548,143 @@ private class BlueprintSurfacePainter: ShaderWrapperSurfacePainter(runtimeEffect
     }
 }
 
+private class BlueprintWindowDecorator: DefaultWindowDecorator() {
+    override fun paintWindowBorder(drawScope: DrawScope, size: Size, colorTokens: ContainerColorTokens) {
+        with (drawScope) {
+            val width: Float = size.width
+            val height: Float = size.height
+            val thickness = getWindowBorderInsets().toPx()
+
+            if ((width > thickness) && (height > thickness)) {
+                // Inner part, as surface
+                drawRect(
+                    color = colorTokens.containerSurface,
+                    topLeft = Offset(thickness / 2.0f, thickness / 2.0f),
+                    size = Size(width - thickness, height - thickness),
+                    style = Stroke(width = thickness)
+                )
+
+                // Grid dashes
+                val gridSize = GridSize.toPx()
+                val fullGridDashLength = thickness
+                val partialGridDashLength = thickness * 0.7f
+
+                // Top and bottom dashes
+                var dashIndex = 1
+                var dashX = thickness
+                while (dashX <= (width - thickness)) {
+                    val isFullDash = (dashIndex % 4 == 0)
+
+                    if (!isFullDash) {
+                        drawLine(
+                            color = colorTokens.containerOutlineVariant,
+                            start = Offset(dashX, 0.0f),
+                            end = Offset(dashX, thickness),
+                            strokeWidth = Stroke.HairlineWidth,
+                            alpha = GridAlpha
+                        )
+                        drawLine(
+                            color = colorTokens.containerOutlineVariant,
+                            start = Offset(dashX, height - thickness - 1.0f),
+                            end = Offset(dashX, height - 1.0f),
+                            strokeWidth = Stroke.HairlineWidth,
+                            alpha = GridAlpha
+                        )
+                    }
+
+                    val gridDashLength = if (isFullDash) fullGridDashLength else partialGridDashLength
+                    drawLine(
+                        color = colorTokens.containerOutline,
+                        start = Offset(dashX, 0.0f),
+                        end = Offset(dashX, gridDashLength),
+                        strokeWidth = 2.0f,
+                    )
+                    drawLine(
+                        color = colorTokens.containerOutline,
+                        start = Offset(dashX, height - gridDashLength - 1.0f),
+                        end = Offset(dashX, height - 1.0f),
+                        strokeWidth = 2.0f,
+                    )
+
+                    dashIndex++
+                    dashX += gridSize
+                }
+
+                // Left and right dashes
+                dashIndex = 1
+                var dashY = thickness
+                while (dashY <= (height - thickness)) {
+                    val isFullDash = (dashIndex % 4 == 0)
+
+                    if (!isFullDash) {
+                        drawLine(
+                            color = colorTokens.containerOutlineVariant,
+                            start = Offset(0.0f, dashY),
+                            end = Offset(thickness, dashY),
+                            strokeWidth = Stroke.HairlineWidth,
+                            alpha = GridAlpha
+                        )
+                        drawLine(
+                            color = colorTokens.containerOutlineVariant,
+                            start = Offset(width - thickness - 1, dashY),
+                            end = Offset(width - 1, dashY),
+                            strokeWidth = Stroke.HairlineWidth,
+                            alpha = GridAlpha
+                        )
+                    }
+
+                    val gridDashLength = if (isFullDash) fullGridDashLength else partialGridDashLength
+                    drawLine(
+                        color = colorTokens.containerOutline,
+                        start = Offset(0.0f, dashY),
+                        end = Offset(gridDashLength, dashY),
+                        strokeWidth = 2.0f,
+                    )
+                    drawLine(
+                        color = colorTokens.containerOutline,
+                        start = Offset(width - gridDashLength - 1, dashY),
+                        end = Offset(width - 1, dashY),
+                        strokeWidth = 2.0f,
+                    )
+
+                    dashIndex++
+                    dashY += gridSize
+                }
+
+                val quarterThickness = thickness / 4.0f
+                drawLine(
+                    color = colorTokens.containerOutline,
+                    start = Offset(x = 0f, y = quarterThickness / 2.0f),
+                    end = Offset(x = width - quarterThickness, y = quarterThickness / 2.0f),
+                    strokeWidth = quarterThickness,
+                    cap = StrokeCap.Butt
+                )
+                drawLine(
+                    color = colorTokens.containerOutline,
+                    start = Offset(x = quarterThickness / 2.0f, y = 0f),
+                    end = Offset(x = quarterThickness / 2.0f, y = height - quarterThickness),
+                    strokeWidth = quarterThickness,
+                    cap = StrokeCap.Butt
+                )
+                drawLine(
+                    color = colorTokens.containerOutline,
+                    start = Offset(x = 0f, y = height - quarterThickness / 2.0f),
+                    end = Offset(x = width, y = height - quarterThickness / 2.0f),
+                    strokeWidth = quarterThickness,
+                    cap = StrokeCap.Butt
+                )
+                drawLine(
+                    color = colorTokens.containerOutline,
+                    start = Offset(x = width - quarterThickness / 2.0f, y = 0f),
+                    end = Offset(x = width - quarterThickness / 2.0f, y = height),
+                    strokeWidth = quarterThickness,
+                    cap = StrokeCap.Butt
+                )
+            }
+        }
+    }
+}
+
 fun blueprintSkin(): AuroraSkinDefinition {
     val decorationPainter = BlueprintDecorationPainter()
     decorationPainter.inlayPainter = BlueprintDecorationInlayPainter()
@@ -578,6 +713,6 @@ fun blueprintSkin(): AuroraSkinDefinition {
         colors = blueprintSkinColors(),
         painters = painters,
         componentShapers = AuroraComponentShapers.withNoDefaults(RectangularComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators(windowDecorator = BlueprintWindowDecorator()),
     )
 }
