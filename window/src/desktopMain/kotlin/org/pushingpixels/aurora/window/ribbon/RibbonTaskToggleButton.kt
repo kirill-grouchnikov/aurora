@@ -356,7 +356,7 @@ internal fun RibbonTaskToggleButton(
                         } else 1.0f
                     )
 
-                    val outlineSupplier = componentShaper.getBaselineOutlineSupplier(presentationModel.sides)
+                    val outlineSupplier = componentShaper.getTabButtonOutlineSupplier(presentationModel.sides)
 
                     Canvas(modifier = Modifier.matchParentSize().graphicsLayer(alpha = actionAlpha)) {
                         val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
