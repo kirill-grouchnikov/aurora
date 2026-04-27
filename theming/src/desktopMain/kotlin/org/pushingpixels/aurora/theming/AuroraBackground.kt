@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.platform.LocalDensity
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.theming.decorator.window.AuroraWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 
 @OptIn(AuroraInternalApi::class)
@@ -35,11 +36,13 @@ import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPaint
 fun Modifier.auroraBackground() = this.then(
     // TODO - is there another way to get window size in here without our own composition local?
     AuroraBackground(
+        isWindowDecorated = LocalWindowDecorated.current,
         rootSize = Size(
             width = LocalTopWindowSize.current.width.value * LocalDensity.current.density,
             height = LocalTopWindowSize.current.height.value * LocalDensity.current.density
         ),
         decorationAreaType = AuroraSkin.decorationAreaType,
+        windowDecorator = AuroraSkin.decorators.windowDecorator,
         colors = AuroraSkin.colors,
         decorationPainter = AuroraSkin.painters.decorationPainter,
         showOverlays = true
@@ -51,12 +54,14 @@ fun Modifier.auroraBackground() = this.then(
 fun Modifier.auroraFlatBackground(color: Color) = this.then(
     // TODO - is there another way to get window size in here without our own composition local?
     AuroraFlatBackground(
+        isWindowDecorated = LocalWindowDecorated.current,
         rootSize = Size(
             width = LocalTopWindowSize.current.width.value * LocalDensity.current.density,
             height = LocalTopWindowSize.current.height.value * LocalDensity.current.density
         ),
         decorationAreaType = AuroraSkin.decorationAreaType,
         decorationPainter = AuroraSkin.painters.decorationPainter,
+        windowDecorator = AuroraSkin.decorators.windowDecorator,
         color = color,
         inlayColorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
     )
@@ -67,11 +72,13 @@ fun Modifier.auroraFlatBackground(color: Color) = this.then(
 fun Modifier.auroraBackgroundNoOverlays() = this.then(
     // TODO - is there another way to get window size in here without our own composition local?
     AuroraBackground(
+        isWindowDecorated = LocalWindowDecorated.current,
         rootSize = Size(
             width = LocalTopWindowSize.current.width.value * LocalDensity.current.density,
             height = LocalTopWindowSize.current.height.value * LocalDensity.current.density
         ),
         decorationAreaType = AuroraSkin.decorationAreaType,
+        windowDecorator = AuroraSkin.decorators.windowDecorator,
         colors = AuroraSkin.colors,
         decorationPainter = AuroraSkin.painters.decorationPainter,
         showOverlays = false
@@ -79,10 +86,12 @@ fun Modifier.auroraBackgroundNoOverlays() = this.then(
 )
 
 private class AuroraBackground(
+    private val isWindowDecorated: Boolean,
     private val rootSize: Size,
     private val decorationAreaType: DecorationAreaType,
     private val colors: AuroraSkinColors,
     private val decorationPainter: AuroraDecorationPainter,
+    private val windowDecorator: AuroraWindowDecorator,
     private val showOverlays: Boolean
 ) : OnGloballyPositionedModifier, DrawModifier {
     var offset = Offset.Zero
@@ -92,6 +101,10 @@ private class AuroraBackground(
     }
 
     override fun ContentDrawScope.draw() {
+        val extraOffset = if (isWindowDecorated) windowDecorator.getWindowBorderInsets().toPx() else 0.0f
+        val tweakedOffset = if (isWindowDecorated)
+            Offset(offset.x - extraOffset, offset.y - extraOffset) else offset
+
         val colorTokens = colors.getNeutralContainerTokens(decorationAreaType)
         if (decorationAreaType != DecorationAreaType.None
             && colors.isRegisteredAsDecorationArea(decorationAreaType)
@@ -104,7 +117,7 @@ private class AuroraBackground(
                 componentSize = size,
                 outline = Outline.Rectangle(Rect(Offset.Zero, size)),
                 rootSize = rootSize,
-                offsetFromRoot = offset,
+                offsetFromRoot = tweakedOffset,
                 colorTokens = colorTokens,
             )
         } else {
@@ -119,7 +132,7 @@ private class AuroraBackground(
             drawScope = this,
             decorationAreaType = decorationAreaType,
             rootSize = rootSize,
-            offsetFromRoot = offset,
+            offsetFromRoot = tweakedOffset,
             width = size.width,
             height = size.height,
             colorTokens = colorTokens
@@ -145,9 +158,11 @@ private class AuroraBackground(
 }
 
 private class AuroraFlatBackground(
+    private val isWindowDecorated: Boolean,
     private val rootSize: Size,
     private val decorationAreaType: DecorationAreaType,
     private val decorationPainter: AuroraDecorationPainter,
+    private val windowDecorator: AuroraWindowDecorator,
     private val color: Color,
     private val inlayColorTokens: ContainerColorTokens,
 ) : OnGloballyPositionedModifier, DrawModifier {
@@ -158,6 +173,10 @@ private class AuroraFlatBackground(
     }
 
     override fun ContentDrawScope.draw() {
+        val extraOffset = if (isWindowDecorated) windowDecorator.getWindowBorderInsets().toPx() else 0.0f
+        val tweakedOffset = if (isWindowDecorated)
+            Offset(offset.x - extraOffset, offset.y - extraOffset) else offset
+
         // Use flat fill
         drawRect(color = color)
 
@@ -166,7 +185,7 @@ private class AuroraFlatBackground(
             drawScope = this,
             decorationAreaType = decorationAreaType,
             rootSize = rootSize,
-            offsetFromRoot = offset,
+            offsetFromRoot = tweakedOffset,
             width = size.width,
             height = size.height,
             colorTokens = inlayColorTokens

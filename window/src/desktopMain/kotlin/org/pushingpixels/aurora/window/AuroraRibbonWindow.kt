@@ -1021,6 +1021,7 @@ fun AuroraApplicationScope.AuroraRibbonWindow(
         // Get the current composition context
         CompositionLocalProvider(
             LocalWindow provides window,
+            LocalWindowDecorated provides true,
             LocalWindowSize provides state.size,
             LocalTopWindowSize provides state.size,
             LocalLayoutDirection provides composeLayoutDirection
