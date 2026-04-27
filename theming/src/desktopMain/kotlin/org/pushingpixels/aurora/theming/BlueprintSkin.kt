@@ -572,7 +572,7 @@ private class BlueprintWindowDecorator: DefaultWindowDecorator() {
                 // Top and bottom dashes
                 var dashIndex = 1
                 var dashX = thickness
-                while (dashX <= (width - thickness)) {
+                while (dashX < (width - 1)) {
                     val isFullDash = (dashIndex % 4 == 0)
 
                     if (!isFullDash) {
@@ -613,7 +613,7 @@ private class BlueprintWindowDecorator: DefaultWindowDecorator() {
                 // Left and right dashes
                 dashIndex = 1
                 var dashY = thickness
-                while (dashY <= (height - thickness)) {
+                while (dashY < (height - 1)) {
                     val isFullDash = (dashIndex % 4 == 0)
 
                     if (!isFullDash) {
