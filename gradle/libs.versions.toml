@@ -1,13 +1,13 @@
 [versions]
 kotlin = "2.3.20"
 coroutines = "1.10.2"
-compose = "1.11.0-beta02"
+compose = "1.11.0-beta03"
 dokka = "2.2.0"
 batik = "1.19"
 
 ephemeral_chroma = "1.6-SNAPSHOT"
 
-versionchecker = "0.53.0"
+versionchecker = "0.54.0"
 mavenpublish = "0.36.0"
 
 [plugins]
