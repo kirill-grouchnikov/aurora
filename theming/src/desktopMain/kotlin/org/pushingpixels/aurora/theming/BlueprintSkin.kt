@@ -383,7 +383,7 @@ private class RectangularComponentShaper: AuroraComponentShaper {
         return SwitchTrackOutlineSuppler
     }
 
-    override fun getTabButtonOutlineSupplier(sides: Sides): OutlineSupplier {
+    override fun getTabOutlineSupplier(sides: Sides): OutlineSupplier {
         return object: OutlineSupplier {
             override fun getOutline(
                 layoutDirection: LayoutDirection,

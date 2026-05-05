@@ -24,15 +24,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.ClipOp
-import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -208,21 +201,11 @@ internal fun AuroraTabButton(
                     command.onTriggerActionToggleSelectedChange?.invoke(it)
                 }
             )
-            var actionAreaOffset = remember { Offset.Zero }
             Box(
                 modifier = modifierAction.auroraRichTooltip(
                     richTooltip = command.actionRichTooltip,
                     presentationModel = presentationModel.actionRichTooltipPresentationModel
-                ).onGloballyPositioned {
-                    if (it.parentCoordinates != null) {
-                        val selfToRoot = it.localToRoot(Offset.Zero)
-                        val parentToRoot = it.parentCoordinates!!.localToRoot(Offset.Zero)
-                        actionAreaOffset = Offset(
-                            x = selfToRoot.x - parentToRoot.x,
-                            y = selfToRoot.y - parentToRoot.y
-                        )
-                    }
-                }
+                )
             ) {
                 if (presentationModel.backgroundAppearanceStrategy != BackgroundAppearanceStrategy.Never) {
                     // Populate the cached color tokens for filling the action area
@@ -240,22 +223,8 @@ internal fun AuroraTabButton(
                         skipFlatCheck = false,
                         inactiveContainerType = ContainerType.Muted)
 
-                    val underlineColorTokens = getContainerTokens(
-                        colors = AuroraSkin.colors,
-                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-                        decorationAreaType = AuroraSkin.decorationAreaType,
-                        associationKind = ContainerColorTokensAssociationKind.Tab,
-                        componentState = ComponentState.Selected,
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
-                        inactiveContainerType = ContainerType.Neutral
-                    )
-                    val underlineColor = if (underlineColorTokens.isDark) {
-                        underlineColorTokens.complementaryContainerOutline
-                    } else {
-                        underlineColorTokens.containerOutline
-                    }
-
-                    val outlinePainter = AuroraSkin.painters.outlinePainter
+                    val outlineColorTokens = TabUtils.getTabOutlineColorTokens(
+                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider)
 
                     val actionAlpha = max(actionRolloverFraction,
                         if (presentationModel.backgroundAppearanceStrategy == BackgroundAppearanceStrategy.Flat) {
@@ -267,88 +236,38 @@ internal fun AuroraTabButton(
                         } else 1.0f
                     )
 
-                    val outlineSupplier = AuroraSkin.componentShaper.getTabButtonOutlineSupplier(presentationModel.sides)
+                    val outlineSupplier = AuroraSkin.componentShaper.getTabOutlineSupplier(presentationModel.sides)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = size.width
-                        val height = size.height
-
-                        withTransform({
-                            clipRect(
-                                left = 0.0f,
-                                top = 0.0f,
-                                right = width,
-                                bottom = height,
-                                clipOp = ClipOp.Intersect
-                            )
-                            translate(
-                                left = -actionAreaOffset.x,
-                                top = -actionAreaOffset.y
-                            )
-                        }) {
-                            val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
-                            val outlineFill = outlineSupplier.getOutline(
-                                layoutDirection = layoutDirection,
-                                density = density,
-                                size = this.size,
-                                insets = outlineInset,
-                                radiusAdjustment = 0.0f,
-                                outlineKind = OutlineKind.Surface)
-
-                            withTransform({
-                                clipRect(
-                                    left = 0.0f,
-                                    top = 0.0f,
-                                    right = width,
-                                    bottom = height * 0.18f,
-                                    clipOp = ClipOp.Intersect
-                                )
-                            }) {
-                                drawOutline(
-                                    outline = outlineFill,
-                                    style = Fill,
-                                    color = drawingCache.colorTokens.containerSurface,
-                                    alpha = actionAlpha
-                                )
-                            }
-                        }
+                        TabUtils.paintTabSurfaceHighlight(
+                            drawScope = this,
+                            outlineSupplier = outlineSupplier,
+                            density = density,
+                            size = size,
+                            surfaceHighlightColorTokens = drawingCache.colorTokens,
+                            alpha = actionAlpha
+                        )
                     }
 
                     Canvas(modifier = Modifier.matchParentSize()) {
                         val width = size.width
                         val height = size.height
 
-                        withTransform({
-                            clipRect(
-                                left = 0.0f,
-                                top = 0.0f,
-                                right = width,
-                                bottom = height,
-                                clipOp = ClipOp.Intersect
-                            )
-                            translate(
-                                left = -actionAreaOffset.x,
-                                top = -actionAreaOffset.y
-                            )
-                        }) {
-                            drawOutline(
-                                outline = outlineSupplier.getOutline(
-                                    layoutDirection = this.layoutDirection,
-                                    density = this,
-                                    size = size,
-                                    insets = 0.5f,
-                                    radiusAdjustment = 0.0f,
-                                    outlineKind = OutlineKind.Outline
-                                ),
-                                style = Stroke(width = 1.0f),
-                                color = underlineColor,
-                                alpha = if (currentActionState.value.isDisabled) {
-                                    actionAlpha * underlineColorTokens.onContainerDisabledAlpha
-                                } else {
-                                    actionAlpha * underlineColorTokens.onContainerEnabledAlpha
-                                }
-                            )
+                        var alpha = actionAlpha
+                        if (currentActionState.value.isDisabled) {
+                            alpha *= outlineColorTokens.containerOutlineDisabledAlpha
+                        } else {
+                            alpha *= outlineColorTokens.containerOutlineEnabledAlpha
                         }
+
+                        TabUtils.paintTabOutline(
+                            drawScope = this,
+                            outlineSupplier = outlineSupplier,
+                            density = density,
+                            size = size,
+                            outlineColorTokens = outlineColorTokens,
+                            alpha = alpha
+                        )
                     }
                 }
             }
@@ -367,7 +286,7 @@ internal fun AuroraTabButton(
             else ComponentState.DisabledUnselected
             for (text in preLayoutInfo.texts) {
                 TabButtonTextContent(
-                    text, presentationModel, null, currentStateForText, resolvedTextStyle
+                    text, presentationModel, actionModelStateInfo, currentStateForText, resolvedTextStyle
                 )
             }
         }) { measurables, constraints ->
@@ -442,25 +361,14 @@ internal fun AuroraTabButton(
 @Composable
 private fun TabButtonTextContent(
     text: String, presentationModel: CommandButtonPresentationModel,
-    modelStateInfo: ModelStateInfo?, currState: ComponentState,
+    modelStateInfo: ModelStateInfo, currState: ComponentState,
     style: TextStyle
 ) {
-    val decorationAreaType = AuroraSkin.decorationAreaType
-    val skinColors = AuroraSkin.colors
-
-    // Compute the text color based on the passed model state (which can be action
-    // or popup)
-    val textColor = getTextColor(
+    // Compute the text color based on the passed model state
+    val textColor = TabUtils.getTabContentColorTokens(
+        presentationModel = presentationModel,
         modelStateInfo = modelStateInfo,
-        currState = currState,
-        colors = skinColors,
-        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-        decorationAreaType = decorationAreaType,
-        associationKind = ContainerColorTokensAssociationKind.Tab,
-        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
-        skipFlatCheck = false,
-        inactiveContainerType = ContainerType.Muted,
-        isTextInFilledArea = true)
+        currState = currState)
 
     // Pass our text color to the children
     CompositionLocalProvider(
@@ -484,9 +392,6 @@ private fun TabButtonIconContent(
     command: Command, presentationModel: CommandButtonPresentationModel,
     iconSize: DpSize, modelStateInfo: ModelStateInfo, currState: ComponentState
 ) {
-    val skinColors = AuroraSkin.colors
-    val decorationAreaType = AuroraSkin.decorationAreaType
-
     Box {
         if (command.icon != null) {
             val icon = if (command.icon is TransitionAwarePainterDelegate)
@@ -494,19 +399,11 @@ private fun TabButtonIconContent(
             else
                 command.icon
 
-            // Compute the text color based on the passed model state (which can be action
-            // or popup)
-            val textColor = getTextColor(
+            // Compute the text color based on the passed model state
+            val textColor = TabUtils.getTabContentColorTokens(
+                presentationModel = presentationModel,
                 modelStateInfo = modelStateInfo,
-                currState = currState,
-                colors = skinColors,
-                tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-                decorationAreaType = decorationAreaType,
-                associationKind = ContainerColorTokensAssociationKind.Tab,
-                backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
-                skipFlatCheck = false,
-                inactiveContainerType = ContainerType.Muted,
-                isTextInFilledArea = true)
+                currState = currState)
 
             // Pass our text color and model state snapshot to the children
             CompositionLocalProvider(

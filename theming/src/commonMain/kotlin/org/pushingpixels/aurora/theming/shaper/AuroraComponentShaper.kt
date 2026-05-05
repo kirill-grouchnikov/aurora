@@ -72,7 +72,7 @@ interface AuroraComponentShaper : AuroraTrait {
 
     fun getSwitchTrackOutlineSupplier(): OutlineSupplier
 
-    fun getTabButtonOutlineSupplier(sides: Sides): OutlineSupplier
+    fun getTabOutlineSupplier(sides: Sides): OutlineSupplier
 
     fun getTextFieldOutlineSupplier(): OutlineSupplier
 }

@@ -42,11 +42,11 @@ import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.component.utils.TabUtils
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.component.utils.getStartwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.ContainerType
-import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.max
 
 @OptIn(AuroraInternalApi::class)
@@ -166,20 +166,9 @@ internal fun AuroraTabs(
         fontFamilyResolver = fontFamilyResolver
     )
 
-    val underlineColorTokens = getContainerTokens(
-        colors = AuroraSkin.colors,
-        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ContainerColorTokensAssociationKind.Tab,
-        componentState = ComponentState.Selected,
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
-        inactiveContainerType = ContainerType.Neutral
-    )
-    val underlineColor = if (underlineColorTokens.isDark) {
-        underlineColorTokens.complementaryContainerOutline
-    } else {
-        underlineColorTokens.containerOutline
-    }
+    val outlineColorTokens = TabUtils.getTabOutlineColorTokens(
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider)
+    val outlineColor = TabUtils.getTabOutlineColor(outlineColorTokens)
 
     val scope = rememberCoroutineScope()
     val scrollAmount = 12.dp.value * density.density
@@ -258,11 +247,11 @@ internal fun AuroraTabs(
 
                         // Left underline
                         Canvas(modifier = Modifier) {
-                            drawRect(color = underlineColor, topLeft = Offset.Zero, size = size)
+                            drawRect(color = outlineColor, topLeft = Offset.Zero, size = size)
                         }
                         // Right underline
                         Canvas(modifier = Modifier) {
-                            drawRect(color = underlineColor, topLeft = Offset.Zero, size = size)
+                            drawRect(color = outlineColor, topLeft = Offset.Zero, size = size)
                         }
                     },
                     measurePolicy = { measurables, constraints ->
@@ -342,16 +331,16 @@ internal fun AuroraTabs(
 
             // Leading underline to extend the whole width of the tabs and scroller buttons
             Canvas(modifier = Modifier) {
-                drawRect(color = underlineColor, topLeft = Offset.Zero, size = size)
+                drawRect(color = outlineColor, topLeft = Offset.Zero, size = size)
             }
             // Trailing underline to extend the whole width of the tabs and scroller buttons
             Canvas(modifier = Modifier) {
-                drawRect(color = underlineColor, topLeft = Offset.Zero, size = size)
+                drawRect(color = outlineColor, topLeft = Offset.Zero, size = size)
             }
             if (presentationModel.contentSeparatorKind == TabContentSeparatorKind.Double) {
                 // Bottom part of the double content separator
                 Canvas(modifier = Modifier) {
-                    drawRect(color = underlineColor, topLeft = Offset.Zero, size = size)
+                    drawRect(color = outlineColor, topLeft = Offset.Zero, size = size)
                 }
             }
         },
