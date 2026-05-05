@@ -16,9 +16,11 @@
 package org.pushingpixels.aurora.component.utils
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -28,18 +30,21 @@ import androidx.compose.ui.unit.Density
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
 import org.pushingpixels.aurora.theming.AuroraSkin
+import org.pushingpixels.aurora.theming.AuroraSkinColors
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.ContainerColorTokensAssociationKind
 import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
+import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.OutlineKind
+import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
 
 @OptIn(AuroraInternalApi::class)
-internal object TabUtils {
+object TabUtils {
     fun getTabOutlineColor(colorTokens: ContainerColorTokens): Color {
         return if (colorTokens.isDark) colorTokens.complementaryContainerOutline
             else colorTokens.containerOutline
@@ -75,6 +80,64 @@ internal object TabUtils {
             backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
             inactiveContainerType = ContainerType.Neutral
         )
+    }
+
+    fun paintTabSurface(
+        drawScope: DrawScope,
+        skinColors: AuroraSkinColors,
+        decorationAreaType: DecorationAreaType,
+        decorationPainter: AuroraDecorationPainter,
+        outlineFill: Outline,
+        density: Density,
+        rootSize: Size,
+        offsetFromRoot: Offset,
+        size: Size,
+        surfaceColorTokens: ContainerColorTokens,
+        alpha: Float) {
+
+        with (drawScope) {
+            withTransform({
+                clipRect(
+                    left = 0.0f,
+                    top = 0.0f,
+                    right = size.width,
+                    bottom = size.height,
+                    clipOp = ClipOp.Intersect
+                )
+            }) {
+                if (alpha > 0.0f) {
+                    if (skinColors.isRegisteredAsDecorationArea(decorationAreaType)) {
+                        // If the current skin has a decoration painter that provides custom visuals
+                        // for this decoration area, use it
+                        decorationPainter.paintDecorationArea(
+                            drawScope = this,
+                            decorationAreaType = decorationAreaType,
+                            componentSize = size,
+                            outline = outlineFill,
+                            rootSize = rootSize,
+                            offsetFromRoot = offsetFromRoot,
+                            colorTokens = surfaceColorTokens
+                        )
+                    } else {
+                        // Otherwise use flat color fill
+                        drawOutline(
+                            color = surfaceColorTokens.containerSurface,
+                            outline = outlineFill
+                        )
+                    }
+                    // Ask the inlay painter to paint its visuals
+                    decorationPainter.inlayPainter?.paintInlay(
+                        drawScope = this,
+                        decorationAreaType = decorationAreaType,
+                        rootSize = rootSize,
+                        offsetFromRoot = offsetFromRoot,
+                        width = size.width,
+                        height = size.height,
+                        colorTokens = surfaceColorTokens
+                    )
+                }
+            }
+        }
     }
 
     fun paintTabSurfaceHighlight(

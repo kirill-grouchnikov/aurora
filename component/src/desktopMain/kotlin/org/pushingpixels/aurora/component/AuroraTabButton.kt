@@ -250,9 +250,6 @@ internal fun AuroraTabButton(
                     }
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        val width = size.width
-                        val height = size.height
-
                         var alpha = actionAlpha
                         if (currentActionState.value.isDisabled) {
                             alpha *= outlineColorTokens.containerOutlineDisabledAlpha

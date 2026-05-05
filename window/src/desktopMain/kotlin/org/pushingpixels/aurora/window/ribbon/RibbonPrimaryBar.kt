@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.SubcomposeLayout
@@ -49,6 +50,7 @@ import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonContextualTaskGroup
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
+import org.pushingpixels.aurora.component.utils.TabUtils
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.utils.ContainerType
@@ -330,6 +332,7 @@ internal fun RibbonPrimaryBar(
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
+    val outlineColorTokens = TabUtils.getTabOutlineColorTokens(null)
 
     val taskButtonRowScrollState: ScrollState = rememberScrollState(0)
     Box(
@@ -338,6 +341,13 @@ internal fun RibbonPrimaryBar(
             .height((finalHeight / density.density).dp)
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
+            // Horizontal line across the entire bottom edge
+            drawLine(
+                color = TabUtils.getTabOutlineColor(outlineColorTokens),
+                start = Offset(0.0f, size.height - 0.5f),
+                end = Offset(size.width, size.height - 0.5f)
+            )
+
             val separatorTokens = getContainerTokens(
                 colors = skinColors,
                 tokensOverlayProvider = null,
@@ -352,13 +362,6 @@ internal fun RibbonPrimaryBar(
             } else {
                 separatorTokens.containerOutline.withAlpha(0.375f)
             }
-
-            // Horizontal separator line across the entire bottom edge
-            drawLine(
-                color = separatorPrimaryColor,
-                start = Offset(0.0f, size.height - 0.5f),
-                end = Offset(size.width, size.height - 0.5f)
-            )
 
             // Vertical separators along the left and right edges of each contextual task group
             val separatorBrush = Brush.verticalGradient(

@@ -304,43 +304,16 @@ internal fun RibbonTaskToggleButton(
                     // based on the current model state info
                     populateColorTokens(
                         colorTokens = drawingCache.colorTokens,
-                        modelStateInfo = actionModelNoSelectionStateInfo,
-                        currState = currentActionNoSelectionState.value,
-                        colorTokensDelegate = object: ColorTokensDelegate {
-                            override fun getContainerTokensForActiveState(state: ComponentState): ContainerColorTokens {
-                                return getContainerTokens(
-                                    colors = skinColors,
-                                    tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-                                    decorationAreaType = decorationAreaType,
-                                    componentState = state,
-                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-                                    inactiveContainerType = ContainerType.Active
-                                )
-                            }
-
-                            override fun getContainerTokensForCurrentState(state: ComponentState): ContainerColorTokens {
-                                return if (state == ComponentState.Enabled) {
-                                    getContainerTokens(
-                                        colors = skinColors,
-                                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-                                        decorationAreaType = decorationAreaType,
-                                        componentState = state,
-                                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-                                        inactiveContainerType = ContainerType.Neutral
-                                    )
-                                } else {
-                                    getContainerTokens(
-                                        colors = skinColors,
-                                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-                                        decorationAreaType = decorationAreaType,
-                                        componentState = state,
-                                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-                                        inactiveContainerType = ContainerType.Active
-                                    )
-                                }
-                            }
-                        }
-                    )
+                        colors = AuroraSkin.colors,
+                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
+                        decorationAreaType = decorationAreaType,
+                        modelStateInfo = actionModelStateInfo,
+                        currState = currentActionState.value,
+                        associationKind = ContainerColorTokensAssociationKind.Tab,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                        treatEnabledAsActive = true,
+                        skipFlatCheck = false,
+                        inactiveContainerType = ContainerType.Muted)
 
                     val outlinePainter = AuroraSkin.painters.outlinePainter
                     val decorationPainter = AuroraSkin.painters.decorationPainter
@@ -356,9 +329,20 @@ internal fun RibbonTaskToggleButton(
                         } else 1.0f
                     )
 
+                    val neutralSurfaceTokens = getContainerTokens(
+                        colors = skinColors,
+                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
+                        decorationAreaType = AuroraSkin.decorationAreaType,
+                        componentState = ComponentState.Enabled,
+                        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
+                        inactiveContainerType = ContainerType.Neutral
+                    )
+                    val outlineColorTokens = TabUtils.getTabOutlineColorTokens(
+                        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider)
+
                     val outlineSupplier = componentShaper.getTabOutlineSupplier(presentationModel.sides)
 
-                    Canvas(modifier = Modifier.matchParentSize().graphicsLayer(alpha = actionAlpha)) {
+                    Canvas(modifier = Modifier.matchParentSize()) {
                         val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
                         val outlineFill = outlineSupplier.getOutline(
                             layoutDirection = layoutDirection,
@@ -368,59 +352,44 @@ internal fun RibbonTaskToggleButton(
                             radiusAdjustment = 0.0f,
                             outlineKind = OutlineKind.Surface)
 
-                        withTransform({
-                            clipRect(
-                                left = 0.0f,
-                                top = 0.0f,
-                                right = size.width,
-                                bottom = size.height,
-                                clipOp = ClipOp.Intersect
-                            )
-                        }) {
-                            if (actionAlpha > 0.0f) {
-                                if (skinColors.isRegisteredAsDecorationArea(decorationAreaType)) {
-                                    // If the current skin has a decoration painter that provides custom visuals
-                                    // for this decoration area, use it
-                                    decorationPainter.paintDecorationArea(
-                                        drawScope = this,
-                                        decorationAreaType = decorationAreaType,
-                                        componentSize = size,
-                                        outline = outlineFill,
-                                        rootSize = rootSize,
-                                        offsetFromRoot = buttonTopLeftOffset.asOffset(density),
-                                        colorTokens = drawingCache.colorTokens
-                                    )
-                                } else {
-                                    // Otherwise use flat color fill
-                                    drawOutline(
-                                        color = drawingCache.colorTokens.containerSurface,
-                                        outline = outlineFill
-                                    )
-                                }
-                            }
-                        }
-                    }
+                        TabUtils.paintTabSurface(
+                            drawScope = this,
+                            skinColors = skinColors,
+                            decorationAreaType = decorationAreaType,
+                            decorationPainter = decorationPainter,
+                            outlineFill = outlineFill,
+                            density = density,
+                            rootSize = rootSize,
+                            offsetFromRoot = buttonTopLeftOffset.asOffset(density = density),
+                            size = size,
+                            surfaceColorTokens = neutralSurfaceTokens,
+                            alpha = actionAlpha
+                        )
 
-                    Canvas(modifier = Modifier.matchParentSize()) {
-                        withTransform({
-                            clipRect(
-                                left = 0.0f,
-                                top = 0.0f,
-                                right = size.width,
-                                bottom = size.height,
-                                clipOp = ClipOp.Intersect
-                            )
-                        }) {
-                            paintOutline(
-                                drawScope = this,
-                                componentState = currentActionState.value,
-                                outlinePainter = outlinePainter,
-                                outlinePainterOverlay = null,
-                                size = this.size,
-                                alpha = actionAlpha,
-                                outlineSupplier = outlineSupplier,
-                                colorTokens = drawingCache.colorTokens)
+                        TabUtils.paintTabSurfaceHighlight(
+                            drawScope = this,
+                            outlineSupplier = outlineSupplier,
+                            density = density,
+                            size = size,
+                            surfaceHighlightColorTokens = drawingCache.colorTokens,
+                            alpha = actionAlpha
+                        )
+
+                        var alpha = actionAlpha
+                        if (currentActionState.value.isDisabled) {
+                            alpha *= outlineColorTokens.containerOutlineDisabledAlpha
+                        } else {
+                            alpha *= outlineColorTokens.containerOutlineEnabledAlpha
                         }
+
+                        TabUtils.paintTabOutline(
+                            drawScope = this,
+                            outlineSupplier = outlineSupplier,
+                            density = density,
+                            size = size,
+                            outlineColorTokens = outlineColorTokens,
+                            alpha = alpha
+                        )
                     }
                 }
             }

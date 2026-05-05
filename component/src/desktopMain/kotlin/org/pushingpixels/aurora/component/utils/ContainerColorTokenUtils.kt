@@ -158,7 +158,7 @@ fun populateColorTokens(
 }
 
 @OptIn(AuroraInternalApi::class)
-internal fun populateColorTokens(
+fun populateColorTokens(
     colorTokens: MutableContainerColorTokens,
     colors: AuroraSkinColors,
     tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
