@@ -46,7 +46,7 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.skia.*
-import org.pushingpixels.aurora.common.colorBrightness
+import org.pushingpixels.aurora.common.tone
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
 import org.pushingpixels.aurora.component.ribbon.*
@@ -2181,7 +2181,7 @@ private fun RulerPanel(
         targetValue = if (ribbonColorData.isInPreview) ribbonColorData.previewColor else ribbonColorData.permanentColor
     )
     val legend = animateColorAsState(
-        targetValue = if (fill.value.colorBrightness > 0.7f) Color.DarkGray else Color.White
+        targetValue = if (fill.value.tone > 70) Color.DarkGray else Color.LightGray
     )
 
     val layoutDirection = LocalLayoutDirection.current

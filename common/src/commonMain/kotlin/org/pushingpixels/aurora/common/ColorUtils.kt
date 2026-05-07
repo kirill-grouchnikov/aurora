@@ -16,6 +16,8 @@
 package org.pushingpixels.aurora.common
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -152,10 +154,22 @@ val Color.colorBrightness: Float
     get() = getColorBrightness(this.red, this.green, this.blue)
 
 /** Returns the brightness of the specified color values in [0.0-1.0] range. */
-fun getColorBrightness(r: Float, g: Float, b: Float): Float {
+private fun getColorBrightness(r: Float, g: Float, b: Float): Float {
     // See https://en.wikipedia.org/wiki/Relative_luminance
     return (2126.0f * r + 7152.0f * g + 722.0f * b) / 10000.0f
 }
+
+/** Returns the hue of this color in [0.0-360.0) range. */
+val Color.hue: Double
+    get() = Hct.fromInt(this.toArgb()).hue
+
+/** Returns the chroma of this color. Lower bound is 0.0, upper bound depends on hue and tone. */
+val Color.chroma: Double
+    get() = Hct.fromInt(this.toArgb()).chroma
+
+/** Returns the tone of this color in [0.0-100.0] range. */
+val Color.tone: Double
+    get() = Hct.fromInt(this.toArgb()).tone
 
 private fun encodeChannel(number: Float): String {
     require(!(number < 0 || number > 1.0f)) { "" + number }
