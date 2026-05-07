@@ -31,6 +31,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -40,7 +41,9 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
-import org.pushingpixels.aurora.common.*
+import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraPopupManager
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.layout.CommandButtonLayoutManager
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.popup.BaseCascadingCommandMenuPopupLayoutInfo
@@ -53,9 +56,9 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
+import org.pushingpixels.ephemeral.chroma.hct.Hct
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.pow
 
 internal data class ColorSelectorPopupContentLayoutInfo(
     override val popupSize: Size,
@@ -424,26 +427,11 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
                     horizontalArrangement = Arrangement.spacedBy(menuPresentationModel.colorCellGap)
                 ) {
                     for (color in sectionColors) {
-                        val primaryHsb = RGBtoHSB(from = color)
-
-                        var bFactor: Float = (derivedRow - 1).toFloat() / sectionDerivedCount.toFloat()
-                        bFactor = bFactor.toDouble().pow(1.5).toFloat()
-                        var brightness = 1.0f - bFactor
-
-                        if (primaryHsb[1] == 0.0f) {
-                            // special handling for gray scale
-                            val max: Float = 0.5f + 0.5f * primaryHsb[2]
-                            brightness = max * (sectionDerivedCount - derivedRow + 1) / sectionDerivedCount
-                        }
-
-                        val secondary = HSBtoRGB(
-                            floatArrayOf(
-                                primaryHsb[0],
-                                primaryHsb[1] * (derivedRow + 1) / (sectionDerivedCount + 1),
-                                brightness
-                            )
-                        )
-
+                        val primaryHct = Hct.fromInt(color.toArgb())
+                        val tone = 1.0f - derivedRow.toFloat() / (sectionDerivedCount + 1).toFloat()
+                        val secondaryHct =
+                            Hct.from(primaryHct.hue, primaryHct.chroma, (100.0f * tone).toDouble());
+                        val secondary = Color(secondaryHct.toInt())
                         ColorSelectorCell(
                             menuContentModel = menuContentModel,
                             menuPresentationModel = menuPresentationModel,
@@ -601,9 +589,9 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
 
                 drawRect(color = color)
 
-                val hsb = RGBtoHSB(from = color)
-                val brightness = hsb[2] * 0.7f
-                val borderColor = Color(brightness, brightness, brightness)
+                val hct = Hct.fromInt(color.toArgb())
+                val borderHct = Hct.from(hct.hue, 0.0, 0.7 * hct.tone)
+                val borderColor = Color(borderHct.toInt())
 
                 val borderOutline = cellOutlineSupplier.getOutline(
                     layoutDirection = layoutDirection,
