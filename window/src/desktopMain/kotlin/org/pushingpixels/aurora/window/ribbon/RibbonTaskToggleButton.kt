@@ -26,11 +26,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
@@ -46,10 +42,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import kotlinx.coroutines.launch
-import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.AuroraOffset
-import org.pushingpixels.aurora.common.AuroraRect
-import org.pushingpixels.aurora.common.asOffset
+import org.pushingpixels.aurora.common.*
 import org.pushingpixels.aurora.component.auroraRichTooltip
 import org.pushingpixels.aurora.component.model.BaseCommand
 import org.pushingpixels.aurora.component.model.BaseCommandButtonPresentationModel
@@ -62,8 +55,8 @@ import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
-import org.pushingpixels.aurora.theming.utils.paintOutline
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 @Immutable
@@ -95,16 +88,6 @@ internal fun RibbonTaskToggleButton(
                 isEnabled = command.isActionEnabled,
                 isRollover = actionRollover,
                 isSelected = command.isActionToggle and command.isActionToggleSelected,
-                isPressed = isActionPressed
-            )
-        )
-    }
-    val currentActionNoSelectionState = remember {
-        mutableStateOf(
-            ComponentState.getState(
-                isEnabled = command.isActionEnabled,
-                isRollover = actionRollover,
-                isSelected = false,
                 isPressed = isActionPressed
             )
         )
@@ -203,38 +186,6 @@ internal fun RibbonTaskToggleButton(
         }
     }
 
-    val actionModelNoSelectionStateInfo =
-        remember { ModelStateInfo(currentActionNoSelectionState.value) }
-    val actionNoSelectionTransitionInfo = remember { mutableStateOf<TransitionInfo?>(null) }
-
-    StateTransitionTracker(
-        modelStateInfo = actionModelNoSelectionStateInfo,
-        currentState = currentActionNoSelectionState,
-        transitionInfo = actionNoSelectionTransitionInfo,
-        enabled = command.isActionEnabled,
-        selected = false,
-        rollover = actionRollover,
-        pressed = isActionPressed,
-        duration = AuroraSkin.animationConfig.regular
-    )
-
-    if (actionNoSelectionTransitionInfo.value != null) {
-        LaunchedEffect(currentActionNoSelectionState.value) {
-            val transitionFloat = Animatable(actionNoSelectionTransitionInfo.value!!.from)
-            val result = transitionFloat.animateTo(
-                targetValue = actionNoSelectionTransitionInfo.value!!.to,
-                animationSpec = tween(durationMillis = actionNoSelectionTransitionInfo.value!!.duration)
-            ) {
-                actionModelNoSelectionStateInfo.updateActiveStates(value)
-            }
-
-            if (result.endReason == AnimationEndReason.Finished) {
-                actionModelNoSelectionStateInfo.updateActiveStates(1.0f)
-                actionModelNoSelectionStateInfo.clear(currentActionNoSelectionState.value)
-            }
-        }
-    }
-
     val layoutManager =
         presentationModel.presentationState.createLayoutManager(
             layoutDirection = layoutDirection,
@@ -266,6 +217,14 @@ internal fun RibbonTaskToggleButton(
     val keyTipChainRoot = LocalRibbonKeyTipChainRoot.current
     val keyTipChainRootKeyTip = LocalRibbonKeyTipChainRootKeyTip.current
     val trackKeyTips = LocalRibbonTrackKeyTips.current
+
+    val textColor = getTextColor(
+        modelStateInfo = actionModelStateInfo,
+        currState = currentActionState.value,
+        skinColors = skinColors,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
+        decorationAreaType = decorationAreaType,
+    )
 
     Layout(
         modifier = modifier.ribbonTaskToggleButtonLocator(
@@ -395,11 +354,7 @@ internal fun RibbonTaskToggleButton(
             }
 
             for (text in preLayoutInfo.texts) {
-                TaskToggleButtonTextContent(
-                    text, presentationModel, actionModelNoSelectionStateInfo,
-                    currentActionState.value, currentActionNoSelectionState.value,
-                    resolvedTextStyle
-                )
+                TaskToggleButtonTextContent(text, presentationModel, textColor, resolvedTextStyle)
             }
         }) { measurables, constraints ->
 
@@ -485,24 +440,9 @@ internal fun RibbonTaskToggleButton(
 private fun TaskToggleButtonTextContent(
     text: String,
     presentationModel: CommandButtonPresentationModel,
-    modelStateInfo: ModelStateInfo,
-    currState: ComponentState,
-    currStateIgnoreSelection: ComponentState,
+    textColor: Color,
     style: TextStyle
 ) {
-    val decorationAreaType = AuroraSkin.decorationAreaType
-    val skinColors = AuroraSkin.colors
-
-    // Compute the text color based on the passed model state
-    val textColor = getTextColor(
-        modelStateInfo = modelStateInfo,
-        currState = currState,
-        currStateIgnoreSelection = currStateIgnoreSelection,
-        skinColors = skinColors,
-        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-        decorationAreaType = decorationAreaType,
-        containerColorTokensAssociationKind = ContainerColorTokensAssociationKind.Default
-    )
     // Pass our text color to the children
     CompositionLocalProvider(
         LocalTextColor provides textColor
@@ -525,60 +465,48 @@ private fun TaskToggleButtonTextContent(
 private fun getTextColor(
     modelStateInfo: ModelStateInfo,
     currState: ComponentState,
-    currStateIgnoreSelection: ComponentState,
     skinColors: AuroraSkinColors,
     tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
-    containerColorTokensAssociationKind: ContainerColorTokensAssociationKind
 ): Color {
     val activeStates: Map<ComponentState, StateContributionInfo> = modelStateInfo.stateContributionMap
 
-    val buttonColorTokens = getContainerTokens(
+    val parentSurfaceTokens = getContainerTokens(
+        colors = skinColors,
+        tokensOverlayProvider = tokensOverlayProvider,
+        decorationAreaType = DecorationAreaType.Header,
+        componentState = ComponentState.Enabled,
+        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+        inactiveContainerType = ContainerType.Neutral
+    )
+
+    var activeStateTotalContribution = if (currState.isActive) 1.0f else 0.0f
+    if (activeStates.size > 1) {
+        for ((activeState, value) in activeStates) {
+            if (activeState != currState) {
+                if (activeState != ComponentState.Enabled) {
+                    activeStateTotalContribution += value.contribution
+                }
+            }
+        }
+    }
+    activeStateTotalContribution = min(1.0f, activeStateTotalContribution)
+
+    if (activeStateTotalContribution == 0.0f) {
+        return parentSurfaceTokens.onContainer
+    }
+
+    val surfaceTokens = getContainerTokens(
         colors = skinColors,
         tokensOverlayProvider = tokensOverlayProvider,
         decorationAreaType = decorationAreaType,
-        componentState = currStateIgnoreSelection,
+        componentState = ComponentState.Enabled,
         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-        inactiveContainerType = ContainerType.Active
+        inactiveContainerType = ContainerType.Neutral
     )
 
-    val parentDecorationAreaType = DecorationAreaType.Header
-    val parentColorTokens = skinColors.getNeutralContainerTokens(decorationAreaType = parentDecorationAreaType)
-
-    if (currState.isDisabled || (activeStates.size == 1)) {
-        // In enabled state the task toggle button does not show any background. Take the foreground
-        // color from the tokens of the parent
-        val tokensForCurrState = if (currState == ComponentState.Enabled) parentColorTokens else buttonColorTokens
-        return tokensForCurrState.onContainer
-    }
-
-    // Get the combined foreground color from all states
-    var aggrRed = 0f
-    var aggrGreen = 0f
-    var aggrBlue = 0f
-    for ((activeState, value) in activeStates) {
-        val contribution = value.contribution
-        val correspondsToParentFill = (activeState == ComponentState.Enabled) &&
-                !currState.isFacetActive(ComponentStateFacet.Selection)
-
-        val activeColorTokens = getContainerTokens(
-            colors = skinColors,
-            tokensOverlayProvider = tokensOverlayProvider,
-            decorationAreaType = decorationAreaType,
-            associationKind = containerColorTokensAssociationKind,
-            componentState = activeState,
-            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-            inactiveContainerType = ContainerType.Active
-        )
-
-        val activeForeground = if (correspondsToParentFill) parentColorTokens.onContainer else
-            activeColorTokens.onContainer
-        aggrRed += contribution * activeForeground.red
-        aggrGreen += contribution * activeForeground.green
-        aggrBlue += contribution * activeForeground.blue
-    }
-    val foreground = Color(red = aggrRed, blue = aggrBlue, green = aggrGreen, alpha = 1.0f)
-    return foreground
+    return parentSurfaceTokens.onContainer.interpolateTowards(
+        surfaceTokens.onContainer, 1.0f - activeStateTotalContribution)
 }
 
 @OptIn(AuroraInternalApi::class)
