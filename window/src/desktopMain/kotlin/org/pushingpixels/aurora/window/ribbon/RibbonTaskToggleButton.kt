@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
@@ -301,7 +302,7 @@ internal fun RibbonTaskToggleButton(
 
                     val outlineSupplier = componentShaper.getTabOutlineSupplier(presentationModel.sides)
 
-                    Canvas(modifier = Modifier.matchParentSize()) {
+                    Canvas(modifier = Modifier.matchParentSize().graphicsLayer(alpha = actionAlpha)) {
                         val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
                         val outlineFill = outlineSupplier.getOutline(
                             layoutDirection = layoutDirection,
@@ -322,7 +323,7 @@ internal fun RibbonTaskToggleButton(
                             offsetFromRoot = buttonTopLeftOffset.asOffset(density = density),
                             size = size,
                             surfaceColorTokens = neutralSurfaceTokens,
-                            alpha = actionAlpha
+                            alpha = 1.0f
                         )
 
                         TabUtils.paintTabSurfaceHighlight(
@@ -331,15 +332,12 @@ internal fun RibbonTaskToggleButton(
                             density = density,
                             size = size,
                             surfaceHighlightColorTokens = drawingCache.colorTokens,
-                            alpha = actionAlpha
+                            alpha = if (currentActionState.value.isDisabled) {
+                                outlineColorTokens.containerSurfaceDisabledAlpha
+                            } else {
+                                outlineColorTokens.containerSurfaceEnabledAlpha
+                            }
                         )
-
-                        var alpha = actionAlpha
-                        if (currentActionState.value.isDisabled) {
-                            alpha *= outlineColorTokens.containerOutlineDisabledAlpha
-                        } else {
-                            alpha *= outlineColorTokens.containerOutlineEnabledAlpha
-                        }
 
                         TabUtils.paintTabOutline(
                             drawScope = this,
@@ -347,7 +345,11 @@ internal fun RibbonTaskToggleButton(
                             density = density,
                             size = size,
                             outlineColorTokens = outlineColorTokens,
-                            alpha = alpha
+                            alpha = if (currentActionState.value.isDisabled) {
+                                outlineColorTokens.containerOutlineDisabledAlpha
+                            } else {
+                                outlineColorTokens.containerOutlineEnabledAlpha
+                            }
                         )
                     }
                 }
