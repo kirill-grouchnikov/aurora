@@ -61,7 +61,6 @@ import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHan
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.decorator.window.AuroraWindowDecorator
-import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.FilterRange
 import org.pushingpixels.aurora.theming.utils.getContainerColorTokensFilter
@@ -370,10 +369,7 @@ private fun AuroraWindowScope.RibbonWindowTitlePane(
         remember { mutableStateOf(((extendedState != null) && ((extendedState and Frame.MAXIMIZED_BOTH) != 0))) }
     val skinColors = AuroraSkin.colors
 
-    AuroraDecorationArea(
-        decorationAreaType = DecorationAreaType.TitlePane,
-        componentShaper = ClassicComponentShaper.Instance
-    ) {
+    AuroraDecorationArea(decorationAreaType = DecorationAreaType.TitlePane) {
         Layout(
             modifier = Modifier
                 .fillMaxWidth()
