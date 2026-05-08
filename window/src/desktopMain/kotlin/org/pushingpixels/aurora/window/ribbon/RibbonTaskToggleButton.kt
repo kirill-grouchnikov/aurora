@@ -304,10 +304,11 @@ internal fun RibbonTaskToggleButton(
 
                     Canvas(modifier = Modifier.matchParentSize().graphicsLayer(alpha = actionAlpha)) {
                         val outlineInset = outlinePainter.getOutlineInset(InsetKind.Surface)
+                        val sizeForSurface = size.copy(height = size.height + 1)
                         val outlineFill = outlineSupplier.getOutline(
                             layoutDirection = layoutDirection,
                             density = density,
-                            size = this.size,
+                            size = sizeForSurface,
                             insets = outlineInset,
                             radiusAdjustment = 0.0f,
                             outlineKind = OutlineKind.Surface)
@@ -321,7 +322,7 @@ internal fun RibbonTaskToggleButton(
                             density = density,
                             rootSize = rootSize,
                             offsetFromRoot = buttonTopLeftOffset.asOffset(density = density),
-                            size = size,
+                            size = sizeForSurface,
                             surfaceColorTokens = neutralSurfaceTokens,
                             alpha = 1.0f
                         )

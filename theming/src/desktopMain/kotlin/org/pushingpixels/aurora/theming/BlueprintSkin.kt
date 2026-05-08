@@ -313,18 +313,7 @@ private class RectangularComponentShaper: AuroraComponentShaper {
     }
 
     override fun getButtonOutlineSupplier(buttonSides: Sides): OutlineSupplier {
-        return object: OutlineSupplier {
-            override fun getOutline(
-                layoutDirection: LayoutDirection,
-                density: Density,
-                size: Size,
-                insets: Float,
-                radiusAdjustment: Float,
-                outlineKind: OutlineKind
-            ): Outline {
-                return getRectangularOutline(layoutDirection, size.width, size.height, buttonSides, insets, outlineKind)
-            }
-        }
+        return getBaselineOutlineSupplier(buttonSides)
     }
 
     override fun getButtonExtraContentPadding(
@@ -340,7 +329,18 @@ private class RectangularComponentShaper: AuroraComponentShaper {
     }
 
     override fun getBaselineOutlineSupplier(sides: Sides): OutlineSupplier {
-        return RectangleOutlineSuppler
+        return object: OutlineSupplier {
+            override fun getOutline(
+                layoutDirection: LayoutDirection,
+                density: Density,
+                size: Size,
+                insets: Float,
+                radiusAdjustment: Float,
+                outlineKind: OutlineKind
+            ): Outline {
+                return getRectangularOutline(layoutDirection, size.width, size.height, sides, insets, outlineKind)
+            }
+        }
     }
 
     override fun getCheckBoxOutlineSupplier(): OutlineSupplier {
@@ -352,7 +352,7 @@ private class RectangularComponentShaper: AuroraComponentShaper {
     }
 
     override fun getLinearProgressBarProgressOutlineSupplier(sides: Sides): OutlineSupplier {
-        return RectangleOutlineSuppler
+        return getBaselineOutlineSupplier(sides)
     }
 
     override fun getLinearProgressBarTrackOutlineSupplier(): OutlineSupplier {
@@ -384,18 +384,7 @@ private class RectangularComponentShaper: AuroraComponentShaper {
     }
 
     override fun getTabOutlineSupplier(sides: Sides): OutlineSupplier {
-        return object: OutlineSupplier {
-            override fun getOutline(
-                layoutDirection: LayoutDirection,
-                density: Density,
-                size: Size,
-                insets: Float,
-                radiusAdjustment: Float,
-                outlineKind: OutlineKind
-            ): Outline {
-                return getRectangularOutline(layoutDirection, size.width, size.height, sides, insets, outlineKind)
-            }
-        }
+        return getBaselineOutlineSupplier(sides)
     }
 
     override fun getTextFieldOutlineSupplier(): OutlineSupplier {
