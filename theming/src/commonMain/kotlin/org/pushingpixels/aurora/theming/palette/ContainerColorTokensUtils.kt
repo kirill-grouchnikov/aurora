@@ -20,6 +20,7 @@ import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.DynamicBimodalPalette
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.DynamicPalette
+import org.pushingpixels.ephemeral.chroma.dynamiccolor.DuotonePalette
 import org.pushingpixels.ephemeral.chroma.hct.Hct
 
 fun getContainerTokens(seed: Hct, containerConfiguration: ContainerConfiguration): ContainerColorTokens {
@@ -208,5 +209,95 @@ fun getBimodalContainerTokens(
 
         override val accentOnContainer: Color
             get() = colorResolver.getAccentOnContainer(dynamicPalette)
+    }
+}
+
+fun getDuotoneContainerTokens(
+    seedContainer: Hct,
+    seedOnContainer: Hct,
+    containerConfiguration: ContainerConfiguration?,
+    colorResolver: TokenPaletteColorResolver
+): ContainerColorTokens {
+    val duotonePalette = DuotonePalette(
+        /* seedContainer */ seedContainer,
+        /* seedOnContainer */ seedOnContainer,
+        /* containerConfiguration */ containerConfiguration
+    )
+
+    return object : ContainerColorTokens {
+        override val isDark: Boolean
+            get() = duotonePalette.containerConfiguration.isDark()
+
+        override val containerSurfaceLowest: Color
+            get() = colorResolver.getContainerSurfaceLowest(duotonePalette)
+
+        override val containerSurfaceLow: Color
+            get() = colorResolver.getContainerSurfaceLow(duotonePalette)
+
+        override val containerSurface: Color
+            get() = colorResolver.getContainerSurface(duotonePalette)
+
+        override val containerSurfaceHigh: Color
+            get() = colorResolver.getContainerSurfaceHigh(duotonePalette)
+
+        override val containerSurfaceHighest: Color
+            get() = colorResolver.getContainerSurfaceHighest(duotonePalette)
+
+        override val containerSurfaceDim: Color
+            get() = colorResolver.getContainerSurfaceDim(duotonePalette)
+
+        override val containerSurfaceBright: Color
+            get() = colorResolver.getContainerSurfaceBright(duotonePalette)
+
+        override val containerShadow: Color
+            get() = colorResolver.getContainerShadow(duotonePalette)
+
+        override val onContainer: Color
+            get() = colorResolver.getOnContainer(duotonePalette)
+
+        override val onContainerVariant: Color
+            get() = colorResolver.getOnContainerVariant(duotonePalette)
+
+        override val containerOutline: Color
+            get() = colorResolver.getContainerOutline(duotonePalette)
+
+        override val containerOutlineVariant: Color
+            get() = colorResolver.getContainerOutlineVariant(duotonePalette)
+
+        override val containerSurfaceEnabledAlpha: Float
+            get() = colorResolver.getContainerSurfaceEnabledAlpha(duotonePalette)
+
+        override val onContainerEnabledAlpha: Float
+            get() = colorResolver.getOnContainerEnabledAlpha(duotonePalette)
+
+        override val containerOutlineEnabledAlpha: Float
+            get() = colorResolver.getContainerOutlineEnabledAlpha(duotonePalette)
+
+        override val containerSurfaceDisabledAlpha: Float
+            get() = colorResolver.getContainerSurfaceDisabledAlpha(duotonePalette)
+
+        override val onContainerDisabledAlpha: Float
+            get() = colorResolver.getOnContainerDisabledAlpha(duotonePalette)
+
+        override val containerOutlineDisabledAlpha: Float
+            get() = colorResolver.getContainerOutlineDisabledAlpha(duotonePalette)
+
+        override val inverseContainerSurface: Color
+            get() = colorResolver.getInverseContainerSurface(duotonePalette)
+
+        override val inverseOnContainer: Color
+            get() = colorResolver.getInverseOnContainer(duotonePalette)
+
+        override val inverseContainerOutline: Color
+            get() = colorResolver.getInverseContainerOutline(duotonePalette)
+
+        override val complementaryOnContainer: Color
+            get() = colorResolver.getComplementaryOnContainer(duotonePalette)
+
+        override val complementaryContainerOutline: Color
+            get() = colorResolver.getComplementaryContainerOutline(duotonePalette)
+
+        override val accentOnContainer: Color
+            get() = colorResolver.getAccentOnContainer(duotonePalette)
     }
 }

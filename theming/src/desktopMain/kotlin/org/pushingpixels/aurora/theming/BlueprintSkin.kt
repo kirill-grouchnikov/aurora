@@ -32,10 +32,7 @@ import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.ShaderWrapperSurfacePainter
-import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
-import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
-import org.pushingpixels.aurora.theming.palette.getContainerTokens
-import org.pushingpixels.aurora.theming.palette.overlayWith
+import org.pushingpixels.aurora.theming.palette.*
 import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper
 import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.ephemeral.chroma.blend.Blend
@@ -65,8 +62,6 @@ private fun blueprintSkinColors(): AuroraSkinColors {
             containerSurfaceDisabledAlpha = { 0.35f },
             containerOutlineDisabledAlpha = { 0.35f },
             onContainerDisabledAlpha = { 0.85f },
-            onContainer = { primaryBlue.toInt() },
-            onContainerVariant = { primaryBlue.toInt() and 0xC0FFFFFFu.toInt() },
             inverseContainerSurface = { primaryBlue.toInt() },
             inverseContainerOutline = { darkPrimaryBlue.toInt() },
         )
@@ -86,8 +81,9 @@ private fun blueprintSkinColors(): AuroraSkinColors {
     )
 
     val blueprintDefaultBundle = ContainerColorTokensBundle(
-        activeContainerTokens = getContainerTokens(
-            seed = Hct.fromInt(0xFFFFFFFFu.toInt()),
+        activeContainerTokens = getDuotoneContainerTokens(
+            seedContainer = Hct.fromInt(0xFFFFFFFFu.toInt()),
+            seedOnContainer = primaryBlue,
             containerConfiguration = ContainerConfiguration.defaultLight(),
             colorResolver = activeResolver
         ),
@@ -104,16 +100,15 @@ private fun blueprintSkinColors(): AuroraSkinColors {
         isSystemDark = true
     )
 
-    val blueprintHighlightContainerTokens = getContainerTokens(
-        seed = Hct.fromInt(0xFFFFFFFFu.toInt()),
-        containerConfiguration = ContainerConfiguration.defaultLight(),
-        colorResolver = activeResolver
-    )
-
     blueprintDefaultBundle.registerActiveContainerTokens(
-        colorTokens = blueprintHighlightContainerTokens,
+        colorTokens = blueprintDefaultBundle.getActiveContainerTokens(),
         associationKind = ContainerColorTokensAssociationKind.Highlight,
         activeStates = ComponentState.activeStates
+    )
+
+    blueprintDefaultBundle.registerNeutralContainerTokens(
+        colorTokens = blueprintDefaultBundle.getActiveContainerTokens(),
+        associationKind = ContainerColorTokensAssociationKind.Separator
     )
 
     result.registerDecorationAreaTokensBundle(blueprintDefaultBundle,
