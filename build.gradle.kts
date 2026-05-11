@@ -7,6 +7,7 @@ import java.util.HexFormat
 buildscript {
     repositories {
         google()
+        mavenLocal()
         mavenCentral()
         maven("https://plugins.gradle.org/m2/")
         maven("https://packages.jetbrains.team/maven/p/cmp/dev/")
@@ -31,6 +32,7 @@ plugins {
 allprojects {
     repositories {
         google()
+        mavenLocal()
         mavenCentral()
         maven("https://central.sonatype.com/repository/maven-snapshots/")
         maven("https://packages.jetbrains.team/maven/p/cmp/dev/")
