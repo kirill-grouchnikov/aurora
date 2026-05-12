@@ -31,6 +31,7 @@ import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePain
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
+import org.pushingpixels.aurora.theming.palette.getDuotoneContainerTokens
 import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
@@ -40,19 +41,14 @@ private fun magellanSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
 
     val magellanDefaultBundle = ContainerColorTokensBundle(
-        activeContainerTokens = 
-            getContainerTokens(
-                seed = Hct.fromInt(0xFF0070DFu.toInt()),
-                containerConfiguration = ContainerConfiguration( 
+        activeContainerTokens =
+            getDuotoneContainerTokens(
+                seedContainer = Hct.fromInt(0xFF0070DFu.toInt()),
+                seedOnContainer = Hct.fromInt(0xFFCCDDF5u.toInt()),
+                containerConfiguration = ContainerConfiguration(
                     /* isDark */ true,  
                     /* contrastLevel */ -0.1),  
-                colorResolver = DefaultPaletteColorResolver.overlayWith(
-                    TokenPaletteColorResolverOverlay(
-                        onContainer = { it.onContainer and 0xE0FFFFFFu.toInt() },
-                        onContainerVariant = { it.onContainerVariant and 0xE0FFFFFFu.toInt() },
-                    )
-                )
-            ),
+                colorResolver = DefaultPaletteColorResolver),
         mutedContainerTokens = 
             getContainerTokens(
                 seed = Hct.fromInt(0xFF004C92u.toInt()),  
@@ -61,32 +57,22 @@ private fun magellanSkinColors(): AuroraSkinColors {
                     /* contrastLevel */ 0.1)
             ),
         neutralContainerTokens =
-            getContainerTokens(
-                seed = Hct.fromInt(0xFF005CB7u.toInt()), 
+            getDuotoneContainerTokens(
+                seedContainer = Hct.fromInt(0xFF005CB7u.toInt()),
+                seedOnContainer = Hct.fromInt(0xFFCCDDF5u.toInt()),
                 containerConfiguration = ContainerConfiguration(
                     /* isDark */ true,  
                     /* contrastLevel */ -0.2),
-                colorResolver = DefaultPaletteColorResolver.overlayWith(
-                    TokenPaletteColorResolverOverlay(
-                        onContainer = { it.onContainer and 0xE0FFFFFFu.toInt() },
-                        onContainerVariant = { it.onContainerVariant and 0xE0FFFFFFu.toInt() },
-                    )
-                )
-            ),
+                colorResolver = DefaultPaletteColorResolver),
         isSystemDark = true
     )
 
     val magellanSelectedContainerTokens =
-        getContainerTokens(
-            seed = Hct.fromInt(0xFF006FDBu.toInt()),
+        getDuotoneContainerTokens(
+            seedContainer = Hct.fromInt(0xFF006FDBu.toInt()),
+            seedOnContainer = Hct.fromInt(0xFFE0EDFAu.toInt()),
             containerConfiguration = ContainerConfiguration.defaultDark(),
-            colorResolver = DefaultPaletteColorResolver.overlayWith(
-                TokenPaletteColorResolverOverlay(
-                    onContainer = { it.onContainer and 0xE0FFFFFFu.toInt() },
-                    onContainerVariant = { it.onContainerVariant and 0xE0FFFFFFu.toInt() },
-                )
-            )
-        )
+            colorResolver = DefaultPaletteColorResolver)
 
     val magellanPressedContainerTokens =
         getContainerTokens(
