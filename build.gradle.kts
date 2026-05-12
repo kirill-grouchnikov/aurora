@@ -97,6 +97,10 @@ tasks.register("getDependencies") {
             project.configurations.matching { it.name == "desktopRuntimeClasspath" }
         runtimeClasspath.all {
             for (dep in map { file: File -> file.absoluteFile }) {
+                // Force skip coroutines 1.9.0 as it's going to clash with 1.11.0 in the classpath
+                if (dep.name.equals("kotlinx-coroutines-core-jvm-1.9.0.jar")) {
+                    continue
+                }
                 var hex = digest.digest(dep.absolutePath.toByteArray()).toHexString()
                 project.copy {
                     from(dep)
