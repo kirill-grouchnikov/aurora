@@ -47,8 +47,7 @@ private fun magellanSkinColors(): AuroraSkinColors {
                 seedOnContainer = Hct.fromInt(0xFFCCDDF5u.toInt()),
                 containerConfiguration = ContainerConfiguration(
                     /* isDark */ true,  
-                    /* contrastLevel */ -0.1),  
-                colorResolver = DefaultPaletteColorResolver),
+                    /* contrastLevel */ -0.1)),
         mutedContainerTokens = 
             getContainerTokens(
                 seed = Hct.fromInt(0xFF004C92u.toInt()),  
@@ -62,8 +61,7 @@ private fun magellanSkinColors(): AuroraSkinColors {
                 seedOnContainer = Hct.fromInt(0xFFCCDDF5u.toInt()),
                 containerConfiguration = ContainerConfiguration(
                     /* isDark */ true,  
-                    /* contrastLevel */ -0.2),
-                colorResolver = DefaultPaletteColorResolver),
+                    /* contrastLevel */ -0.2)),
         isSystemDark = true
     )
 
@@ -71,8 +69,7 @@ private fun magellanSkinColors(): AuroraSkinColors {
         getDuotoneContainerTokens(
             seedContainer = Hct.fromInt(0xFF006FDBu.toInt()),
             seedOnContainer = Hct.fromInt(0xFFE0EDFAu.toInt()),
-            containerConfiguration = ContainerConfiguration.defaultDark(),
-            colorResolver = DefaultPaletteColorResolver)
+            containerConfiguration = ContainerConfiguration.defaultDark())
 
     val magellanPressedContainerTokens =
         getContainerTokens(

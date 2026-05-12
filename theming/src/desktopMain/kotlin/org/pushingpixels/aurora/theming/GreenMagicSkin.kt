@@ -59,8 +59,7 @@ private fun greenMagicSkinColors(): AuroraSkinColors {
         fidelityTone = 75.0,  // lighter tone for selected and rollover states
         containerConfiguration = ContainerConfiguration(
             /* isDark */ false,
-            /* contrastLevel */ 0.6),
-        colorResolver = DefaultPaletteColorResolver)
+            /* contrastLevel */ 0.6))
     val greenMagicPressedContainerTokens = getBimodalContainerTokens(
         seedOne = Hct.fromInt(0xFF00BF7Fu.toInt()),
         seedTwo = Hct.fromInt(0xFF00B39Au.toInt()),
@@ -68,8 +67,7 @@ private fun greenMagicSkinColors(): AuroraSkinColors {
         fidelityTone = 65.0,  // darker tone for pressed states
         containerConfiguration = ContainerConfiguration(
             /* isDark */ false,
-            /* contrastLevel */ 0.6),
-        colorResolver = DefaultPaletteColorResolver)
+            /* contrastLevel */ 0.6))
 
     greenMagicDefaultBundle.registerActiveContainerTokens(
         colorTokens = greenMagicSelectedContainerTokens,
@@ -97,8 +95,7 @@ private fun greenMagicSkinColors(): AuroraSkinColors {
         fidelityTone = 85.0,
         containerConfiguration = ContainerConfiguration(
             /* isDark */ false,
-            /* contrastLevel */ 0.6),
-        colorResolver = DefaultPaletteColorResolver),
+            /* contrastLevel */ 0.6)),
         DecorationAreaType.TitlePane, DecorationAreaType.Header)
 
     // Footers

@@ -132,8 +132,7 @@ private fun officeSkin(): AuroraSkinDefinition {
         containerConfiguration = ContainerConfiguration(
             /* isDark */ false,
             /* contrastLevel */ 0.2,
-            /* surfaceRangeAmplitudeFactor */ 1.0),
-        colorResolver = DefaultPaletteColorResolver
+            /* surfaceRangeAmplitudeFactor */ 1.0)
     )
     val rolloverSelectedContainerTokens = getBimodalContainerTokens(
         seedOne = Hct.fromInt(0xFFFFA300u.toInt()),
@@ -143,8 +142,7 @@ private fun officeSkin(): AuroraSkinDefinition {
         containerConfiguration = ContainerConfiguration(
             /* isDark */ false,
             /* contrastLevel */ 0.2,
-            /* surfaceRangeAmplitudeFactor */ 1.0),
-        colorResolver = DefaultPaletteColorResolver
+            /* surfaceRangeAmplitudeFactor */ 1.0)
     )
     val pressedContainerTokens = getContainerTokens(
         seed = Hct.fromInt(0xFFFF8C18u.toInt()),
