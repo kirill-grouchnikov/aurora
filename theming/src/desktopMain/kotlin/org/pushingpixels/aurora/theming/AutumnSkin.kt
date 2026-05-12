@@ -31,6 +31,7 @@ import org.pushingpixels.aurora.theming.painter.surface.SpecularRectangularSurfa
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
+import org.pushingpixels.aurora.theming.palette.getDuotoneContainerTokens
 import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
@@ -39,63 +40,59 @@ import org.pushingpixels.ephemeral.chroma.hct.Hct
 private fun autumnSkinColors(): AuroraSkinColors {
     val result = AuroraSkinColors()
 
-    // For active containers, use softer text / icon colors.
+    // For active containers, use softer outlines and shadows.
     // Also use higher alpha values for disabled controls for better contrast.
     val resolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
-            containerShadow = { Color(it.containerOutline).interpolateTowardsAsRGB(Color(it.containerOutlineVariant), 0.3f) } ,
             containerOutline = { Color(it.containerOutline).interpolateTowardsAsRGB(Color(it.containerOutlineVariant), 0.3f) },
-            onContainer = { it.containerOutline },
-            onContainerVariant = { it.containerOutlineVariant and 0xC0FFFFFFu.toInt() },
+            containerShadow = { it.containerOutline } ,
             containerSurfaceDisabledAlpha = { 0.4f },
+            onContainerDisabledAlpha = { 0.6f },
             containerOutlineDisabledAlpha = { 0.55f }
         )
     )
 
-    val autumnDefaultActiveTokens = getContainerTokens(
-        seed = Hct.fromInt(0xFFFFCB90u.toInt()),
+    val autumnDefaultActiveTokens = getDuotoneContainerTokens(
+        seedContainer = Hct.fromInt(0xFFFFCB90u.toInt()),
+        seedOnContainer = Hct.fromInt(0xFF996F3Cu.toInt()),
         containerConfiguration = ContainerConfiguration.defaultLight(),
         colorResolver = resolver
     )
 
-    // For muted containers (enabled controls), use tonal on container and container outline
-    // values for consistency with active controls. Also use higher alpha values for disabled
-    // controls for better contrast.
+    // For muted containers (enabled controls), use outlines and shadows consistent with active controls.
+    // Also use higher alpha values for disabled controls for better contrast.
     val mutedResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
-            containerShadow = { autumnDefaultActiveTokens.containerOutline.toArgb() },
             containerOutline = { autumnDefaultActiveTokens.containerOutline.toArgb() },
             containerOutlineVariant = { autumnDefaultActiveTokens.containerOutlineVariant.toArgb() },
             complementaryContainerOutline = { autumnDefaultActiveTokens.complementaryContainerOutline.toArgb() },
-            onContainer = { autumnDefaultActiveTokens.onContainer.toArgb() },
-            onContainerVariant = { autumnDefaultActiveTokens.onContainerVariant.toArgb() },
+            containerShadow = { autumnDefaultActiveTokens.containerOutline.toArgb() },
             containerSurfaceDisabledAlpha = { 0.5f },
             onContainerDisabledAlpha = { 0.6f },
             containerOutlineDisabledAlpha = { 0.55f },
         )
     )
 
-    val autumnDefaultMutedTokens = getContainerTokens(
-        seed = Hct.fromInt(0xFFFEDCB6u.toInt()),
+    val autumnDefaultMutedTokens = getDuotoneContainerTokens(
+        seedContainer = Hct.fromInt(0xFFFEDCB6u.toInt()),
+        seedOnContainer = Hct.fromInt(0xFF996F3Cu.toInt()),
         containerConfiguration = ContainerConfiguration.defaultLight(),
         colorResolver = mutedResolver
     )
 
-    // For neutral containers, use active on container and container outline
-    // values for consistency with active controls.
+    // For neutral containers, use outlines and shadows consistent with active controls.
     val neutralResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
-            containerShadow = { autumnDefaultActiveTokens.containerOutline.toArgb() },
             containerOutline = { autumnDefaultActiveTokens.containerOutline.toArgb() },
             containerOutlineVariant = { autumnDefaultActiveTokens.containerOutlineVariant.toArgb() },
+            containerShadow = { autumnDefaultActiveTokens.containerOutline.toArgb() },
             complementaryContainerOutline = { autumnDefaultActiveTokens.complementaryContainerOutline.toArgb() },
-            onContainer = { autumnDefaultActiveTokens.onContainer.toArgb() },
-            onContainerVariant = { autumnDefaultActiveTokens.onContainerVariant.toArgb() },
         )
     )
 
-    val autumnDefaultNeutralTokens = getContainerTokens(
-        seed = Hct.fromInt(0xFFFFE2C1u.toInt()),
+    val autumnDefaultNeutralTokens = getDuotoneContainerTokens(
+        seedContainer = Hct.fromInt(0xFFFFE2C1u.toInt()),
+        seedOnContainer = Hct.fromInt(0xFF996F3Cu.toInt()),
         containerConfiguration = ContainerConfiguration.defaultLight(),
         colorResolver = neutralResolver
     )
@@ -108,26 +105,26 @@ private fun autumnSkinColors(): AuroraSkinColors {
     )
 
     // Custom visuals for controls in selected state:
-    // 1. Deeper container surfaces (more saturated seed in fidelity mode)
-    // 2. Softer on container, mapped to container outline (used for texts and icons)
+    // 1. Deeper container surfaces (more saturated seed)
+    // 2. Softer on container
     // 3. Higher alpha values for disabled controls for better contrast
     autumnDefaultBundle.registerActiveContainerTokens(
-        getContainerTokens(
-            seed = Hct.fromInt(0xFFFDBD72u.toInt()),
+        getDuotoneContainerTokens(
+            seedContainer = Hct.fromInt(0xFFFDBD72u.toInt()),
+            seedOnContainer = Hct.fromInt(0xFFA06C29u.toInt()),
             containerConfiguration = ContainerConfiguration.defaultLight(),
-            colorResolver = resolver
-        ),
+            colorResolver = resolver),
         ContainerColorTokensAssociationKind.Default,
         ComponentState.Selected
     )
     autumnDefaultBundle.registerActiveContainerTokens(
-        getContainerTokens(
-            seed = Hct.fromInt(0xFFFCEF9Fu.toInt()),
+        getDuotoneContainerTokens(
+            seedContainer = Hct.fromInt(0xFFFCEF9Fu.toInt()),
+            seedOnContainer = Hct.fromInt(0xFF776E2Cu.toInt()),
             containerConfiguration = ContainerConfiguration(
                 /* isDark */ false,
                 /* contrastLevel */ 0.2),
-            colorResolver = resolver
-        ),
+            colorResolver = resolver),
         ContainerColorTokensAssociationKind.HighlightText,
         *ComponentState.activeStates
     )
@@ -148,13 +145,15 @@ private fun autumnSkinColors(): AuroraSkinColors {
         DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 
-    val autumnControlPaneActiveTokens = getContainerTokens(
-        seed = Hct.fromInt(0xFFFDBD72u.toInt()),
+    val autumnControlPaneActiveTokens = getDuotoneContainerTokens(
+        seedContainer = Hct.fromInt(0xFFFDBD72u.toInt()),
+        seedOnContainer = Hct.fromInt(0xFFA06C29u.toInt()),
         containerConfiguration = ContainerConfiguration.defaultLight(),
         colorResolver = resolver
     )
-    val autumnControlPaneMutedTokens = getContainerTokens(
-        seed = Hct.fromInt(0xFFFEDCB6u.toInt()),
+    val autumnControlPaneMutedTokens = getDuotoneContainerTokens(
+        seedContainer = Hct.fromInt(0xFFFEDCB6u.toInt()),
+        seedOnContainer = Hct.fromInt(0xFF996F3Cu.toInt()),
         containerConfiguration = ContainerConfiguration.defaultLight(),
         colorResolver = mutedResolver
     )

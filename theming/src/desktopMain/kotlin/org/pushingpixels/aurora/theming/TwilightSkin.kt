@@ -29,10 +29,7 @@ import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
-import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
-import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
-import org.pushingpixels.aurora.theming.palette.getContainerTokens
-import org.pushingpixels.aurora.theming.palette.overlayWith
+import org.pushingpixels.aurora.theming.palette.*
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
@@ -49,8 +46,9 @@ private fun twilightSkinColors(): AuroraSkinColors {
             containerOutlineDisabledAlpha = { 0.55f },
         )
     )
-    val twilightDefaultMutedTokens = getContainerTokens(
-        seed = Hct.fromInt(0xFF3B3A32u.toInt()),
+    val twilightDefaultMutedTokens = getDuotoneContainerTokens(
+        seedContainer = Hct.fromInt(0xFF3B3A32u.toInt()),
+        seedOnContainer = Hct.fromInt(0xFFCCC9BEu.toInt()),
         containerConfiguration = ContainerConfiguration(
             /* isDark */ true,
             /* contrastLevel */ -0.1),
@@ -59,7 +57,7 @@ private fun twilightSkinColors(): AuroraSkinColors {
     // For active containers, use higher alpha values for disabled
     // controls for better contrast. Also use muted outlines for border consistency
     // with enabled controls.
-    val resolver = DefaultPaletteColorResolver.overlayWith(
+    val activeResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
             containerOutline = { twilightDefaultMutedTokens.containerOutline.toArgb() },
             containerOutlineVariant = { twilightDefaultMutedTokens.containerOutlineVariant.toArgb() },
@@ -73,22 +71,14 @@ private fun twilightSkinColors(): AuroraSkinColors {
         containerConfiguration = ContainerConfiguration(
             /* isDark */ false,
             /* contrastLevel */ 0.2),
-        colorResolver = resolver)
+        colorResolver = activeResolver)
 
-    // For neutral containers, use the text / icon colors from the muted containers
-    // for better visual consistency
-    val neutralResolver = DefaultPaletteColorResolver.overlayWith(
-        TokenPaletteColorResolverOverlay(
-            containerOutline = { twilightDefaultMutedTokens.containerOutline.toArgb() },
-            containerOutlineVariant = { twilightDefaultMutedTokens.containerOutlineVariant.toArgb() },
-        )
-    )
-    val twilightDefaultNeutralTokens = getContainerTokens(
-        seed = Hct.fromInt(0xFF48443Bu.toInt()),
+    val twilightDefaultNeutralTokens = getDuotoneContainerTokens(
+        seedContainer = Hct.fromInt(0xFF48443Bu.toInt()),
+        seedOnContainer = Hct.fromInt(0xFFCCC9BEu.toInt()),
         containerConfiguration = ContainerConfiguration(
             /* isDark */ true,
-            /* contrastLevel */ -0.1),
-        colorResolver = neutralResolver)
+            /* contrastLevel */ -0.1))
 
     val twilightPaletteContainerColorResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
