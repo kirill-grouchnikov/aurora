@@ -1,7 +1,6 @@
 [versions]
 kotlin = "2.3.20"
-coroutines = "1.11.0"
-compose = "1.11.0-rc01"
+compose = "1.11.0"
 dokka = "2.2.0"
 batik = "1.19"
 
@@ -17,7 +16,6 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 [libraries]
 compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka"}
 batik = { module = "org.apache.xmlgraphics:batik-all", version.ref = "batik" }
 ephemeral-chroma = { module = "org.pushing-pixels:ephemeral-chroma-java", version.ref = "ephemeral_chroma" }
