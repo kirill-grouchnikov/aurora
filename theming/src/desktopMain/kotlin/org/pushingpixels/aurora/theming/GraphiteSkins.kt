@@ -208,6 +208,14 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
                 colorResolver = paletteColorResolver),
             associationKind = ContainerColorTokensAssociationKind.Default,
             ComponentState.PressedUnselected, ComponentState.PressedSelected)
+
+        it.registerNeutralContainerTokens(
+            colorTokens = getContainerTokens(
+                seed = Hct.fromInt(0xFF424242u.toInt()),
+                containerConfiguration = ContainerConfiguration(
+                    /* isDark */ true,
+                    /* contrastLevel */ 0.1)),
+            associationKind = ContainerColorTokensAssociationKind.Separator)
     }
 
     val colors = AuroraSkinColors()

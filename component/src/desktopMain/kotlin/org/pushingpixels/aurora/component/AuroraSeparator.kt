@@ -57,9 +57,9 @@ internal fun AuroraVerticalSeparator(
 
         if (height > 0.0f) {
             val primaryColor = if (separatorTokens.isDark) {
-                separatorTokens.complementaryContainerOutline.withAlpha(0.28125f)
+                separatorTokens.complementaryContainerOutline.withAlpha(0.375f)
             } else {
-                separatorTokens.containerOutline.withAlpha(0.375f)
+                separatorTokens.containerOutline.withAlpha(0.4375f)
             }
             val primaryBrush = Brush.verticalGradient(
                 0.0f to primaryColor.withAlpha(0.0f),

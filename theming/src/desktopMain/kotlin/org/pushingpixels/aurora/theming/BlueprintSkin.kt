@@ -57,13 +57,13 @@ private fun blueprintSkinColors(): AuroraSkinColors {
             containerOutlineVariant = { Blend.harmonize(
                 it.complementaryContainerOutline, it.containerSurface, 0.2
             ) },
-            complementaryContainerOutline = { it.containerOutline },
+            complementaryContainerOutline = { darkPrimaryBlue.toInt() },
+            inverseContainerSurface = { primaryBlue.toInt() },
+            inverseContainerOutline = { darkPrimaryBlue.toInt() },
             containerSurfaceEnabledAlpha = { 0.6f },
             containerSurfaceDisabledAlpha = { 0.35f },
             containerOutlineDisabledAlpha = { 0.35f },
             onContainerDisabledAlpha = { 0.85f },
-            inverseContainerSurface = { primaryBlue.toInt() },
-            inverseContainerOutline = { darkPrimaryBlue.toInt() },
         )
     )
     val mutedResolver = DefaultPaletteColorResolver.overlayWith(
