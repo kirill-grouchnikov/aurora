@@ -46,8 +46,7 @@ import org.pushingpixels.aurora.theming.utils.getContainerTokens
 @OptIn(AuroraInternalApi::class)
 object TabUtils {
     fun getTabOutlineColor(colorTokens: ContainerColorTokens): Color {
-        return if (colorTokens.isDark) colorTokens.complementaryContainerOutline
-            else colorTokens.containerOutline
+        return colorTokens.markerOnContainer
     }
 
     @Composable
@@ -71,15 +70,9 @@ object TabUtils {
 
     @Composable
     fun getTabOutlineColorTokens(tokensOverlayProvider: ContainerColorTokensOverlay.Provider?) : ContainerColorTokens {
-        return getContainerTokens(
-            colors = AuroraSkin.colors,
-            tokensOverlayProvider = tokensOverlayProvider,
-            decorationAreaType = AuroraSkin.decorationAreaType,
-            associationKind = ContainerColorTokensAssociationKind.Tab,
-            componentState = ComponentState.Selected,
-            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
-            inactiveContainerType = ContainerType.Neutral
-        )
+        val tokensOverlay = tokensOverlayProvider?.getOverlay(AuroraSkin.colors, AuroraSkin.decorationAreaType)
+        return tokensOverlay?.neutralContainerTokens
+            ?: AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
     }
 
     fun paintTabSurface(

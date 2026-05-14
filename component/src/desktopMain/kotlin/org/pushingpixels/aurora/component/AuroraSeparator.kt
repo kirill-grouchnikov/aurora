@@ -42,25 +42,13 @@ internal fun AuroraVerticalSeparator(
     contentModel: SeparatorContentModel,
     presentationModel: SeparatorPresentationModel
 ) {
-    val separatorTokens = getContainerTokens(
-        colors = AuroraSkin.colors,
-        tokensOverlayProvider = null,
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ContainerColorTokensAssociationKind.Separator,
-        componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected,
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-        inactiveContainerType = ContainerType.Neutral
-    )
+    val separatorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
 
     Canvas(modifier.width(SeparatorSizingConstants.Thickness)) {
         val height = size.height
 
         if (height > 0.0f) {
-            val primaryColor = if (separatorTokens.isDark) {
-                separatorTokens.complementaryContainerOutline.withAlpha(0.375f)
-            } else {
-                separatorTokens.containerOutline.withAlpha(0.4375f)
-            }
+            val primaryColor = separatorTokens.markerOnContainer
             val primaryBrush = Brush.verticalGradient(
                 0.0f to primaryColor.withAlpha(0.0f),
                 presentationModel.startGradientAmount.toPx() / height to primaryColor,
@@ -71,11 +59,7 @@ internal fun AuroraVerticalSeparator(
                 tileMode = TileMode.Repeated
             )
 
-            val secondaryColor = if (separatorTokens.isDark) {
-                separatorTokens.containerOutline.withAlpha(0.75f)
-            } else {
-                separatorTokens.complementaryContainerOutline.withAlpha(0.9375f)
-            }
+            val secondaryColor = separatorTokens.complementaryMarkerOnContainer
             val secondaryBrush = Brush.verticalGradient(
                 0.0f to secondaryColor.withAlpha(0.0f),
                 presentationModel.startGradientAmount.toPx() / height to secondaryColor,
@@ -109,25 +93,13 @@ internal fun AuroraHorizontalSeparator(
     contentModel: SeparatorContentModel,
     presentationModel: SeparatorPresentationModel
 ) {
-    val separatorTokens = getContainerTokens(
-        colors = AuroraSkin.colors,
-        tokensOverlayProvider = null,
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ContainerColorTokensAssociationKind.Separator,
-        componentState = if (contentModel.enabled) ComponentState.Enabled else ComponentState.DisabledUnselected,
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-        inactiveContainerType = ContainerType.Neutral
-    )
+    val separatorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
 
     Canvas(modifier.height(SeparatorSizingConstants.Thickness)) {
         val width = size.width
 
         if (width > 0.0f) {
-            val primaryColor = if (separatorTokens.isDark) {
-                separatorTokens.complementaryContainerOutline.withAlpha(0.28125f)
-            } else {
-                separatorTokens.containerOutline.withAlpha(0.375f)
-            }
+            val primaryColor = separatorTokens.markerOnContainer
             val primaryBrush = Brush.horizontalGradient(
                 0.0f to primaryColor.withAlpha(0.0f),
                 presentationModel.startGradientAmount.toPx() / width to primaryColor,
@@ -138,11 +110,7 @@ internal fun AuroraHorizontalSeparator(
                 tileMode = TileMode.Repeated
             )
 
-            val secondaryColor = if (separatorTokens.isDark) {
-                separatorTokens.containerOutline.withAlpha(0.75f)
-            } else {
-                separatorTokens.complementaryContainerOutline.withAlpha(0.9375f)
-            }
+            val secondaryColor = separatorTokens.complementaryMarkerOnContainer
             val secondaryBrush = Brush.horizontalGradient(
                 0.0f to secondaryColor.withAlpha(0.0f),
                 presentationModel.startGradientAmount.toPx() / width to secondaryColor,

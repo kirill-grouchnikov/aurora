@@ -35,7 +35,6 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.compose.resources.Font
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.demo.resources.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
@@ -106,9 +105,7 @@ fun main() = auroraApplication {
 @Composable
 private fun VisorMailPanelSeparator(isLeading: Boolean) {
     val separatorTokens = AuroraSkin.colors.getNeutralContainerTokens(
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ContainerColorTokensAssociationKind.Separator,
-    )
+        decorationAreaType = AuroraSkin.decorationAreaType)
 
     val ltr = (LocalLayoutDirection.current == LayoutDirection.Ltr)
     val isLeft = ltr xor isLeading
@@ -116,7 +113,7 @@ private fun VisorMailPanelSeparator(isLeading: Boolean) {
     Canvas(modifier = Modifier.fillMaxHeight().width(1.dp)) {
         val x = if (isLeft) 0.5f else size.width - 0.5f
         drawLine(
-            color = separatorTokens.containerOutline.withAlpha(0.5f),
+            color = separatorTokens.markerOnContainer,
             start = Offset(x, 0.0f),
             end = Offset(x, size.height),
             strokeWidth = 1.0f

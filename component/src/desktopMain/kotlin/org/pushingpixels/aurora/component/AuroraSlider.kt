@@ -131,15 +131,7 @@ internal fun AuroraSlider(
         decorationAreaType = AuroraSkin.decorationAreaType,
         componentState = trackProgressState,
     )
-    val tickColorTokens = getContainerTokens(
-        colors = AuroraSkin.colors,
-        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ContainerColorTokensAssociationKind.Separator,
-        componentState = trackFillState,
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
-        inactiveContainerType = ContainerType.Neutral
-    )
+    val tickColorTokens = AuroraSkin.colors.getNeutralContainerTokens(decorationAreaType)
 
     val surfacePainter = AuroraSkin.painters.surfacePainter
     val surfacePainterOverlay = AuroraSkin.painterOverlays?.surfacePainterOverlay
@@ -497,11 +489,7 @@ internal fun AuroraSlider(
             // Draw the ticks
             if ((presentationModel.tickSteps > 0) && presentationModel.drawTicks) {
                 val tickHeight = SliderSizingConstants.TickHeight.toPx()
-                val tickPrimaryColor = if (tickColorTokens.isDark) {
-                    tickColorTokens.complementaryContainerOutline.withAlpha(0.28125f)
-                } else {
-                    tickColorTokens.containerOutline.withAlpha(0.375f)
-                }
+                val tickPrimaryColor = tickColorTokens.markerOnContainer
                 val tickPrimaryBrush = Brush.verticalGradient(
                     0.0f to tickPrimaryColor,
                     0.75f to tickPrimaryColor,
@@ -510,11 +498,7 @@ internal fun AuroraSlider(
                     endY = tickHeight,
                     tileMode = TileMode.Repeated
                 )
-                val tickSecondaryColor = if (tickColorTokens.isDark) {
-                    tickColorTokens.containerOutline.withAlpha(0.75f)
-                } else {
-                    tickColorTokens.complementaryContainerOutline.withAlpha(0.9375f)
-                }
+                val tickSecondaryColor = tickColorTokens.complementaryMarkerOnContainer
                 val tickSecondaryBrush = Brush.verticalGradient(
                     0.0f to tickSecondaryColor,
                     0.75f to tickSecondaryColor,

@@ -501,21 +501,9 @@ internal object ColorSelectorCommandMenuPopupHandler : CascadingCommandMenuHandl
     @Composable
     @OptIn(AuroraInternalApi::class)
     private fun BottomLine() {
-        val separatorTokens = getContainerTokens(
-            colors = AuroraSkin.colors,
-            tokensOverlayProvider = null,
-            decorationAreaType = AuroraSkin.decorationAreaType,
-            associationKind = ContainerColorTokensAssociationKind.Separator,
-            componentState = ComponentState.Enabled,
-            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-            inactiveContainerType = ContainerType.Neutral
-        )
+        val separatorTokens = AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
 
-        val primaryColor = if (separatorTokens.isDark) {
-            separatorTokens.complementaryContainerOutline.withAlpha(0.28125f)
-        } else {
-            separatorTokens.containerOutline.withAlpha(0.375f)
-        }
+        val primaryColor = separatorTokens.markerOnContainer
 
         Box(modifier = Modifier.fillMaxWidth().height(1.0.dp)) {
             Canvas(modifier = Modifier.matchParentSize()) {
