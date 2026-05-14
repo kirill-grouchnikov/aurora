@@ -64,6 +64,8 @@ fun populateColorTokens(
     var complementaryOnContainer = currColorTokens.complementaryOnContainer
     var complementaryContainerOutline = currColorTokens.complementaryContainerOutline
     var accentOnContainer = currColorTokens.accentOnContainer
+    var markerOnContainer = currColorTokens.markerOnContainer
+    var complementaryMarkerOnContainer = currColorTokens.complementaryMarkerOnContainer
 
     for (contribution in modelStateInfo.stateContributionMap) {
         if (contribution.key == currState) {
@@ -127,6 +129,10 @@ fun populateColorTokens(
             contributionTokens.complementaryContainerOutline, 1.0f - amount)
         accentOnContainer = accentOnContainer.interpolateTowards(
             contributionTokens.accentOnContainer, 1.0f - amount)
+        markerOnContainer = markerOnContainer.interpolateTowards(
+            contributionTokens.markerOnContainer, 1.0f - amount)
+        complementaryMarkerOnContainer = complementaryMarkerOnContainer.interpolateTowards(
+            contributionTokens.complementaryMarkerOnContainer, 1.0f - amount)
     }
 
     // Update the mutable color tokens with the interpolated colors and alphas
@@ -155,6 +161,8 @@ fun populateColorTokens(
     colorTokens.complementaryOnContainerAttr = complementaryOnContainer
     colorTokens.complementaryContainerOutlineAttr = complementaryContainerOutline
     colorTokens.accentOnContainerAttr = accentOnContainer
+    colorTokens.markerOnContainerAttr = markerOnContainer
+    colorTokens.complementaryMarkerOnContainerAttr = complementaryMarkerOnContainer
 }
 
 @OptIn(AuroraInternalApi::class)
@@ -210,6 +218,8 @@ fun populateColorTokens(
     var complementaryOnContainer = currColorTokens.complementaryOnContainer
     var complementaryContainerOutline = currColorTokens.complementaryContainerOutline
     var accentOnContainer = currColorTokens.accentOnContainer
+    var markerOnContainer = currColorTokens.markerOnContainer
+    var complementaryMarkerOnContainer = currColorTokens.complementaryMarkerOnContainer
 
     for (contribution in modelStateInfo.stateContributionMap) {
         if (contribution.key == currState) {
@@ -287,6 +297,10 @@ fun populateColorTokens(
             contributionTokens.complementaryContainerOutline, 1.0f - amount)
         accentOnContainer = accentOnContainer.interpolateTowards(
             contributionTokens.accentOnContainer, 1.0f - amount)
+        markerOnContainer = markerOnContainer.interpolateTowards(
+            contributionTokens.markerOnContainer, 1.0f - amount)
+        complementaryMarkerOnContainer = complementaryMarkerOnContainer.interpolateTowards(
+            contributionTokens.complementaryMarkerOnContainer, 1.0f - amount)
 
         //println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
     }
@@ -317,6 +331,8 @@ fun populateColorTokens(
     colorTokens.complementaryOnContainerAttr = complementaryOnContainer
     colorTokens.complementaryContainerOutlineAttr = complementaryContainerOutline
     colorTokens.accentOnContainerAttr = accentOnContainer
+    colorTokens.markerOnContainerAttr = markerOnContainer
+    colorTokens.complementaryMarkerOnContainerAttr = complementaryMarkerOnContainer
 }
 
 @OptIn(AuroraInternalApi::class)
@@ -371,6 +387,8 @@ internal fun populateColorTokens(
     var complementaryOnContainer = currColorTokens.complementaryOnContainer
     var complementaryContainerOutline = currColorTokens.complementaryContainerOutline
     var accentOnContainer = currColorTokens.accentOnContainer
+    var markerOnContainer = currColorTokens.markerOnContainer
+    var complementaryMarkerOnContainer = currColorTokens.complementaryMarkerOnContainer
 
     for (contribution in modelStateInfoSnapshot.stateContributionMap) {
         if (contribution.key == modelStateInfoSnapshot.currModelState) {
@@ -448,6 +466,10 @@ internal fun populateColorTokens(
             contributionTokens.complementaryContainerOutline, 1.0f - amount)
         accentOnContainer = accentOnContainer.interpolateTowards(
             contributionTokens.accentOnContainer, 1.0f - amount)
+        markerOnContainer = markerOnContainer.interpolateTowards(
+            contributionTokens.markerOnContainer, 1.0f - amount)
+        complementaryMarkerOnContainer = complementaryMarkerOnContainer.interpolateTowards(
+            contributionTokens.complementaryMarkerOnContainer, 1.0f - amount)
 
         //println("\tcontribution of $amount from ${contribution.key} to $backgroundStart")
     }
@@ -478,6 +500,8 @@ internal fun populateColorTokens(
     colorTokens.complementaryOnContainerAttr = complementaryOnContainer
     colorTokens.complementaryContainerOutlineAttr = complementaryContainerOutline
     colorTokens.accentOnContainerAttr = accentOnContainer
+    colorTokens.markerOnContainerAttr = markerOnContainer
+    colorTokens.complementaryMarkerOnContainerAttr = complementaryMarkerOnContainer
 }
 
 @OptIn(AuroraInternalApi::class)
@@ -531,6 +555,8 @@ internal fun populateColorTokensForHighlights(
     var complementaryOnContainer = currColorTokens.complementaryOnContainer.byAlpha(currHighlightAmount)
     var complementaryContainerOutline = currColorTokens.complementaryContainerOutline.byAlpha(currHighlightAmount)
     var accentOnContainer = currColorTokens.accentOnContainer.byAlpha(currHighlightAmount)
+    var markerOnContainer = currColorTokens.markerOnContainer.byAlpha(currHighlightAmount)
+    var complementaryMarkerOnContainer = currColorTokens.complementaryMarkerOnContainer.byAlpha(currHighlightAmount)
 
     for (contribution in modelStateInfo.stateContributionMap) {
         if (contribution.key == currState) {
@@ -605,6 +631,10 @@ internal fun populateColorTokensForHighlights(
             contributionTokens.complementaryContainerOutline.byAlpha(amount), 1.0f - amount)
         accentOnContainer = accentOnContainer.interpolateTowards(
             contributionTokens.accentOnContainer.byAlpha(amount), 1.0f - amount)
+        markerOnContainer = markerOnContainer.interpolateTowards(
+            contributionTokens.markerOnContainer.byAlpha(amount), 1.0f - amount)
+        complementaryMarkerOnContainer = complementaryMarkerOnContainer.interpolateTowards(
+            contributionTokens.complementaryMarkerOnContainer.byAlpha(amount), 1.0f - amount)
     }
 
     // Update the mutable color tokens with the interpolated colors and alphas
@@ -633,6 +663,8 @@ internal fun populateColorTokensForHighlights(
     colorTokens.complementaryOnContainerAttr = complementaryOnContainer
     colorTokens.complementaryContainerOutlineAttr = complementaryContainerOutline
     colorTokens.accentOnContainerAttr = accentOnContainer
+    colorTokens.markerOnContainerAttr = markerOnContainer
+    colorTokens.complementaryMarkerOnContainerAttr = complementaryMarkerOnContainer
 }
 
 @OptIn(AuroraInternalApi::class)

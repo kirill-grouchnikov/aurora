@@ -41,4 +41,6 @@ class TokenPaletteColorResolverOverlay(
     val inverseContainerOutline: ((TokenPalette) -> Int)? = null,
     val complementaryOnContainer: ((TokenPalette) -> Int)? = null,
     val complementaryContainerOutline: ((TokenPalette) -> Int)? = null,
-    val accentOnContainer: ((TokenPalette) -> Int)? = null)
+    val accentOnContainer: ((TokenPalette) -> Int)? = null,
+    val markerOnContainer: ((TokenPalette) -> Int)? = null,
+    val complementaryMarkerOnContainer: ((TokenPalette) -> Int)? = null)

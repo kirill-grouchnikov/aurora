@@ -140,6 +140,12 @@ class ContainerColorTokensOverlay(
 
                     override val accentOnContainer: Color
                         get() = systemContainerTokens.accentOnContainer
+
+                    override val markerOnContainer: Color
+                        get() = systemContainerTokens.markerOnContainer
+
+                    override val complementaryMarkerOnContainer: Color
+                        get() = systemContainerTokens.complementaryMarkerOnContainer
                 }
 
                 result = ContainerColorTokensOverlay(
@@ -246,6 +252,12 @@ class ContainerColorTokensOverlay(
 
                     override val accentOnContainer: Color
                         get() = systemContainerTokens.accentOnContainer
+
+                    override val markerOnContainer: Color
+                        get() = systemContainerTokens.markerOnContainer
+
+                    override val complementaryMarkerOnContainer: Color
+                        get() = systemContainerTokens.complementaryMarkerOnContainer
                 }
 
                 result = ContainerColorTokensOverlay(

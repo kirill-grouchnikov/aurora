@@ -74,6 +74,8 @@ private fun ContainerColorTokens.overlay(overlay: Color, overlayAmount: Float): 
     val complementaryOnContainer: Color = original.complementaryOnContainer
     val complementaryContainerOutline: Color = original.complementaryContainerOutline
     val accentOnContainer: Color = original.accentOnContainer
+    val markerOnContainer: Color = original.markerOnContainer
+    val complementaryMarkerOnContainer: Color = original.complementaryMarkerOnContainer
 
     return object : ContainerColorTokens {
         override val isDark: Boolean
@@ -150,6 +152,12 @@ private fun ContainerColorTokens.overlay(overlay: Color, overlayAmount: Float): 
 
         override val accentOnContainer: Color
             get() = accentOnContainer
+
+        override val markerOnContainer: Color
+            get() = markerOnContainer
+
+        override val complementaryMarkerOnContainer: Color
+            get() = complementaryMarkerOnContainer
     }
 }
 

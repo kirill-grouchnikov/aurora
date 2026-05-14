@@ -53,4 +53,6 @@ interface ContainerColorTokens {
     val complementaryContainerOutline: Color
 
     val accentOnContainer: Color
+    val markerOnContainer: Color
+    val complementaryMarkerOnContainer: Color
 }

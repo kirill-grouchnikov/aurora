@@ -115,6 +115,14 @@ val DefaultPaletteColorResolver: TokenPaletteColorResolver
         override fun getAccentOnContainer(tokenPalette: TokenPalette): Color {
             return Color(tokenPalette.accentOnContainer)
         }
+
+        override fun getMarkerOnContainer(tokenPalette: TokenPalette): Color {
+            return Color(tokenPalette.markerOnContainer)
+        }
+
+        override fun getComplementaryMarkerOnContainer(tokenPalette: TokenPalette): Color {
+            return Color(tokenPalette.complementaryMarkerOnContainer)
+        }
     }
 
 fun TokenPaletteColorResolver.overlayWith(overlay: TokenPaletteColorResolverOverlay): TokenPaletteColorResolver {
@@ -331,6 +339,24 @@ fun TokenPaletteColorResolver.overlayWith(overlay: TokenPaletteColorResolverOver
             val spec = overlay.accentOnContainer
             return if (spec == null) {
                 original.getAccentOnContainer(tokenPalette)
+            } else {
+                Color(spec.invoke(tokenPalette))
+            }
+        }
+
+        override fun getMarkerOnContainer(tokenPalette: TokenPalette): Color {
+            val spec = overlay.markerOnContainer
+            return if (spec == null) {
+                original.getMarkerOnContainer(tokenPalette)
+            } else {
+                Color(spec.invoke(tokenPalette))
+            }
+        }
+
+        override fun getComplementaryMarkerOnContainer(tokenPalette: TokenPalette): Color {
+            val spec = overlay.complementaryMarkerOnContainer
+            return if (spec == null) {
+                original.getComplementaryMarkerOnContainer(tokenPalette)
             } else {
                 Color(spec.invoke(tokenPalette))
             }

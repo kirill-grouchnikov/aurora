@@ -52,4 +52,6 @@ interface TokenPaletteColorResolver {
     fun getComplementaryContainerOutline(tokenPalette: TokenPalette): Color
 
     fun getAccentOnContainer(tokenPalette: TokenPalette): Color
+    fun getMarkerOnContainer(tokenPalette: TokenPalette): Color
+    fun getComplementaryMarkerOnContainer(tokenPalette: TokenPalette): Color
 }

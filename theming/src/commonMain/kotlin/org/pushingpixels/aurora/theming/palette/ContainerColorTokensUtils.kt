@@ -108,6 +108,12 @@ fun getContainerTokens(
 
         override val accentOnContainer: Color
             get() = colorResolver.getAccentOnContainer(dynamicPalette)
+
+        override val markerOnContainer: Color
+            get() = colorResolver.getMarkerOnContainer(dynamicPalette)
+
+        override val complementaryMarkerOnContainer: Color
+            get() = colorResolver.getComplementaryMarkerOnContainer(dynamicPalette)
     }
 }
 
@@ -202,6 +208,12 @@ fun getBimodalContainerTokens(
 
         override val accentOnContainer: Color
             get() = colorResolver.getAccentOnContainer(bimodalPalette)
+
+        override val markerOnContainer: Color
+            get() = colorResolver.getMarkerOnContainer(bimodalPalette)
+
+        override val complementaryMarkerOnContainer: Color
+            get() = colorResolver.getComplementaryMarkerOnContainer(bimodalPalette)
     }
 }
 
@@ -292,5 +304,11 @@ fun getDuotoneContainerTokens(
 
         override val accentOnContainer: Color
             get() = colorResolver.getAccentOnContainer(duotonePalette)
+
+        override val markerOnContainer: Color
+            get() = colorResolver.getMarkerOnContainer(duotonePalette)
+
+        override val complementaryMarkerOnContainer: Color
+            get() = colorResolver.getComplementaryMarkerOnContainer(duotonePalette)
     }
 }

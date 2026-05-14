@@ -131,5 +131,11 @@ internal fun getSystemTokens(seed: Hct, containerConfiguration: ContainerConfigu
 
         override val accentOnContainer: Color
             get() = if (containerConfiguration.isDark) getColor(80.0, 0.0) else getColor(40.0, 0.0)
+
+        override val markerOnContainer: Color
+            get() = if (containerConfiguration.isDark) getColor(70.0, 0.0) else getColor(10.0, 0.0)
+
+        override val complementaryMarkerOnContainer: Color
+            get() = if (containerConfiguration.isDark) getColor(25.0, 0.0) else getColor(55.0, 0.0)
     }
 }

@@ -46,6 +46,8 @@ data class MutableContainerColorTokens(
     var complementaryOnContainerAttr: Color = Color.Unspecified,
     var complementaryContainerOutlineAttr: Color = Color.Unspecified,
     var accentOnContainerAttr: Color = Color.Unspecified,
+    var markerOnContainerAttr: Color = Color.Unspecified,
+    var complementaryMarkerOnContainerAttr: Color = Color.Unspecified,
 ) : ContainerColorTokens {
     override val isDark: Boolean
         get() = isDarkAttr
@@ -107,4 +109,8 @@ data class MutableContainerColorTokens(
 
     override val accentOnContainer: Color
         get() = accentOnContainerAttr
+    override val markerOnContainer: Color
+        get() = markerOnContainerAttr
+    override val complementaryMarkerOnContainer: Color
+        get() = complementaryMarkerOnContainerAttr
 }
