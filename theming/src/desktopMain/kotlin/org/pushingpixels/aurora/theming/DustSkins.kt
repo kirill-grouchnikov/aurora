@@ -121,7 +121,7 @@ private fun dustBasePainters(): AuroraPainters {
         DecorationAreaType.Header
     )
     decorationPainter.addOverlayPainter(
-        TopLineOverlayPainter( { it.inverseContainerOutline.withAlpha(0.375f) } ),
+        TopLineOverlayPainter( { it.markerOnContainer.withAlpha(0.25f) } ),
         DecorationAreaType.Toolbar)
 
     val painters = AuroraPainters(

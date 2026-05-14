@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.theming
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import org.pushingpixels.aurora.common.interpolateTowardsAsRGB
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
@@ -216,7 +217,7 @@ fun autumnSkin(): AuroraSkinDefinition {
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutlineVariant }),
+        BottomLineOverlayPainter(colorTokensQuery = { it.markerOnContainer.withAlpha(0.25f) }),
         DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 

@@ -130,8 +130,8 @@ fun marinerSkin(): AuroraSkinDefinition {
     // edge of footer
     decorationPainter.addOverlayPainter(
         TopBezelOverlayPainter(
-            colorTokensQueryTop = { it.containerOutline.withAlpha(0.3125f) },
-            colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.1875f) }
+            colorTokensQueryTop = ContainerColorTokens::complementaryMarkerOnContainer,
+            colorTokensQueryBottom = ContainerColorTokens::markerOnContainer,
         ),
         DecorationAreaType.Footer
     )
@@ -139,7 +139,7 @@ fun marinerSkin(): AuroraSkinDefinition {
     // add two overlay painters to create a bezel line between
     // menu bar and toolbars
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter( { it.containerSurfaceHighest } ),
+        BottomLineOverlayPainter( { it.markerOnContainer } ),
         DecorationAreaType.Header
     )
 
@@ -153,7 +153,7 @@ fun marinerSkin(): AuroraSkinDefinition {
     // add overlay painter to paint a dark line along the bottom
     // edge of toolbars
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline.withAlpha(0.5f) }),
+        BottomLineOverlayPainter(colorTokensQuery = { it.markerOnContainer.withAlpha(0.5f) }),
         DecorationAreaType.Toolbar
     )
 

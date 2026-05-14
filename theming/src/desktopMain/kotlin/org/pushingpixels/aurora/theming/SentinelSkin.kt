@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -176,7 +177,7 @@ fun sentinelSkin(): AuroraSkinDefinition {
         DecorationAreaType.Toolbar
     )
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter( { it.containerOutline } ),
+        BottomLineOverlayPainter( { it.complementaryMarkerOnContainer.withAlpha(0.5f) } ),
         DecorationAreaType.Toolbar
     )
 
@@ -184,7 +185,7 @@ fun sentinelSkin(): AuroraSkinDefinition {
     // edges of footers
     decorationPainter.addOverlayPainter(TopShadowOverlayPainter.getInstance(15), DecorationAreaType.Footer)
     decorationPainter.addOverlayPainter(
-        TopLineOverlayPainter( { it.containerOutline } ),
+        TopLineOverlayPainter( { it.complementaryMarkerOnContainer } ),
         DecorationAreaType.Footer
     )
 

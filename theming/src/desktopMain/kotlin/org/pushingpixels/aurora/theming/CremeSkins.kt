@@ -84,7 +84,7 @@ private fun cremeBasePainters(): AuroraPainters {
     // Add overlay painters to paint drop shadows along the bottom edges of toolbars
     decorationPainter.addOverlayPainter(BottomShadowOverlayPainter.getInstance(40), DecorationAreaType.Toolbar)
     // add an overlay painter to paint a dark line along the bottom edge of toolbars
-    decorationPainter.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
+    decorationPainter.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { it.markerOnContainer }),
         DecorationAreaType.Toolbar)
 
     val painters = AuroraPainters(

@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -104,7 +105,7 @@ fun moderateSkin(): AuroraSkinDefinition {
     // add an overlay painter to paint separator lines along the bottom
     // edges of menu bars
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
+        BottomLineOverlayPainter(colorTokensQuery = { it.markerOnContainer.withAlpha(0.5f) }),
         DecorationAreaType.Header
     )
 

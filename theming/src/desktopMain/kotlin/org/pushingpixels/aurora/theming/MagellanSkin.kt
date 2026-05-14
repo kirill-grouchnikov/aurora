@@ -197,7 +197,7 @@ fun magellanSkin(): AuroraSkinDefinition {
     // edge of toolbars
     decorationPainter.addOverlayPainter(
         TopLineOverlayPainter(colorTokensQuery = {
-            it.inverseContainerOutline.withAlpha(0.375f)
+            it.markerOnContainer.withAlpha(0.25f)
         }), DecorationAreaType.Toolbar
     )
 

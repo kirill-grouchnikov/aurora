@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
@@ -120,7 +121,7 @@ private fun nebulaBasePainters(): AuroraPainters {
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter( { it.containerOutline } ),
+        BottomLineOverlayPainter( { it.markerOnContainer.withAlpha(0.5f) } ),
         DecorationAreaType.TitlePane, DecorationAreaType.Header
     )
 
@@ -189,7 +190,7 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
             painters.decorationPainter.clearOverlayPainters(DecorationAreaType.Toolbar)
             painters.decorationPainter.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Toolbar)
             painters.decorationPainter.addOverlayPainter(
-                BottomLineOverlayPainter({ it.containerOutline }), DecorationAreaType.Toolbar
+                BottomLineOverlayPainter({ it.markerOnContainer.withAlpha(0.5f) }), DecorationAreaType.Toolbar
             )
 
         },

@@ -188,7 +188,7 @@ fun twilightSkin(): AuroraSkinDefinition {
     // add an overlay painter to paint a light line along the top
     // edge of toolbars
     decorationPainter.addOverlayPainter(
-        TopLineOverlayPainter( { it.inverseContainerOutline.withAlpha(0.125f) } ),
+        TopLineOverlayPainter( { it.complementaryMarkerOnContainer.withAlpha(0.5f) } ),
         DecorationAreaType.Toolbar
     )
 
@@ -196,8 +196,8 @@ fun twilightSkin(): AuroraSkinDefinition {
     // edge of footer
     decorationPainter.addOverlayPainter(
         TopBezelOverlayPainter(
-            colorTokensQueryTop = { it.containerOutlineVariant },
-            colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) }
+            colorTokensQueryTop = ContainerColorTokens::markerOnContainer,
+            colorTokensQueryBottom = ContainerColorTokens::complementaryMarkerOnContainer,
         ), DecorationAreaType.Footer
     )
 

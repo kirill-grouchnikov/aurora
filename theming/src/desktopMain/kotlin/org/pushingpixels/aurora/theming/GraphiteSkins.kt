@@ -285,7 +285,7 @@ fun graphiteGlassSkin(): AuroraSkinDefinition {
             it.decorationPainter.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { tokens -> tokens.containerOutline }),
                 DecorationAreaType.Header)
             it.decorationPainter.addOverlayPainter(TopLineOverlayPainter(colorTokensQuery = {
-                tokens -> tokens.inverseContainerOutline.withAlpha(0.375f)
+                tokens -> tokens.markerOnContainer.withAlpha(0.5f)
             }), DecorationAreaType.Toolbar)
         },
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),

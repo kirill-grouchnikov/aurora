@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
+import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.BrushedMetalDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -77,7 +78,9 @@ private fun businessBasePainters(): AuroraPainters {
     // add an overlay painter to paint separator lines along the bottom
     // edges of title panes and menu bars
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
+        BottomLineOverlayPainter(colorTokensQuery = {
+            (if (it.isDark) it.complementaryMarkerOnContainer else it.markerOnContainer).withAlpha(0.5f)
+        }),
         DecorationAreaType.Header
     )
 

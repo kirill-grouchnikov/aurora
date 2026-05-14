@@ -112,14 +112,14 @@ fun nightShadeSkin(): AuroraSkinDefinition {
 
     // add an overlay painter to paint a dark line along the bottom
     // edge of toolbars
-    decorationPainter.addOverlayPainter(BottomLineOverlayPainter( { it.containerOutlineVariant } ),
+    decorationPainter.addOverlayPainter(BottomLineOverlayPainter( { it.markerOnContainer.withAlpha(0.25f) } ),
         DecorationAreaType.Toolbar)
 
     // add an overlay painter to paint a bezel line along the top
     // edge of footer
     decorationPainter.addOverlayPainter(TopBezelOverlayPainter(
-        colorTokensQueryTop = { it.containerOutlineVariant },
-        colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) }
+        colorTokensQueryTop = ContainerColorTokens::markerOnContainer,
+        colorTokensQueryBottom = ContainerColorTokens::complementaryMarkerOnContainer,
     ), DecorationAreaType.Footer)
 
     val painters = AuroraPainters(

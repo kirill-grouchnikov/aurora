@@ -41,7 +41,7 @@ fun robotDefaultLightSkin(accentColor: Color, name: String) : AuroraSkinDefiniti
         textureAlpha = 0.6f,
         baseDecorationPainter = ArcDecorationPainter()
     )
-    decorationPainter.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline }),
+    decorationPainter.addOverlayPainter(BottomLineOverlayPainter(colorTokensQuery = { it.markerOnContainer }),
         DecorationAreaType.TitlePane,
         DecorationAreaType.Header)
 

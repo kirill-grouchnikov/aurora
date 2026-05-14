@@ -187,8 +187,8 @@ fun geminiSkin(): AuroraSkinDefinition {
     // edge of footer
     decorationPainter.addOverlayPainter(
         TopBezelOverlayPainter(
-            colorTokensQueryTop = ContainerColorTokens::containerOutlineVariant,
-            colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.28125f) },
+            colorTokensQueryTop = ContainerColorTokens::complementaryMarkerOnContainer,
+            colorTokensQueryBottom = ContainerColorTokens::markerOnContainer,
         ),
         DecorationAreaType.Footer
     )
@@ -196,11 +196,11 @@ fun geminiSkin(): AuroraSkinDefinition {
     // add two overlay painters to create a bezel line between
     // menu bar and toolbars
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter(ContainerColorTokens::containerOutline),
+        BottomLineOverlayPainter(ContainerColorTokens::complementaryMarkerOnContainer),
         DecorationAreaType.Header
     )
     decorationPainter.addOverlayPainter(
-        TopLineOverlayPainter( { it.complementaryContainerOutline.withAlpha(0.1875f) }),
+        TopLineOverlayPainter( { it.markerOnContainer.withAlpha(0.5f) }),
         DecorationAreaType.Toolbar
     )
 
@@ -214,7 +214,7 @@ fun geminiSkin(): AuroraSkinDefinition {
     // add overlay painter to paint a dark line along the bottom
     // edge of toolbars
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter(colorTokensQuery = ContainerColorTokens::containerOutline),
+        BottomLineOverlayPainter(colorTokensQuery = ContainerColorTokens::complementaryMarkerOnContainer),
         DecorationAreaType.Toolbar
     )
 

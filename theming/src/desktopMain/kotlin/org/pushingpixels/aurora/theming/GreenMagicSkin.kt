@@ -114,7 +114,7 @@ fun greenMagicSkin(): AuroraSkinDefinition {
     // edges of headers
     decorationPainter.addOverlayPainter(BottomShadowOverlayPainter.getInstance(100), DecorationAreaType.Header)
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter( { it.containerOutlineVariant } ),
+        BottomLineOverlayPainter( { it.markerOnContainer } ),
         DecorationAreaType.Header
     )
 
