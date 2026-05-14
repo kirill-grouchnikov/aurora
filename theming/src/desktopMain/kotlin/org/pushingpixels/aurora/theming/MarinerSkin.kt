@@ -103,14 +103,6 @@ private fun marinerSkinColors(): AuroraSkinColors {
         colorTokens = marinerSelectedContainerTokens,
         associationKind = ContainerColorTokensAssociationKind.Highlight,
         activeStates = ComponentState.activeStates)
-    // More muted separators
-    marinerHeaderBundle.registerNeutralContainerTokens(
-        getContainerTokens(
-            seed = Hct.fromInt(0xFF261D1Eu.toInt()),
-            containerConfiguration = ContainerConfiguration(
-                /* isDark */ true,
-                /* contrastLevel */ 0.7)),
-        ContainerColorTokensAssociationKind.Separator)
     result.registerDecorationAreaTokensBundle(marinerHeaderBundle,
         DecorationAreaType.TitlePane, DecorationAreaType.Header)
 

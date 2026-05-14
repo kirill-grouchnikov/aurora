@@ -73,6 +73,8 @@ private fun blueprintSkinColors(): AuroraSkinColors {
                 it.complementaryContainerOutline, it.containerSurface, 0.2
             ) },
             complementaryContainerOutline = { it.containerOutline },
+            markerOnContainer = { it.complementaryContainerOutline and 0xC0FFFFFFu.toInt() },
+            complementaryMarkerOnContainer = { it.containerOutlineVariant },
             containerSurfaceEnabledAlpha = { 0.0f },
             containerSurfaceDisabledAlpha = { 0.0f },
             containerOutlineDisabledAlpha = { 0.55f },
@@ -104,11 +106,6 @@ private fun blueprintSkinColors(): AuroraSkinColors {
         colorTokens = blueprintDefaultBundle.getActiveContainerTokens(),
         associationKind = ContainerColorTokensAssociationKind.Highlight,
         activeStates = ComponentState.activeStates
-    )
-
-    blueprintDefaultBundle.registerNeutralContainerTokens(
-        colorTokens = blueprintDefaultBundle.getActiveContainerTokens(),
-        associationKind = ContainerColorTokensAssociationKind.Separator
     )
 
     result.registerDecorationAreaTokensBundle(blueprintDefaultBundle,

@@ -45,6 +45,8 @@ private fun autumnSkinColors(): AuroraSkinColors {
     val resolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
             containerOutline = { Color(it.containerOutline).interpolateTowardsAsRGB(Color(it.containerOutlineVariant), 0.3f) },
+            markerOnContainer = { it.containerOutline },
+            complementaryMarkerOnContainer = { it.complementaryMarkerOnContainer and 0xC0FFFFFFu.toInt() },
             containerShadow = { it.containerOutline } ,
             containerSurfaceDisabledAlpha = { 0.4f },
             onContainerDisabledAlpha = { 0.6f },
@@ -67,6 +69,8 @@ private fun autumnSkinColors(): AuroraSkinColors {
             containerOutlineVariant = { autumnDefaultActiveTokens.containerOutlineVariant.toArgb() },
             complementaryContainerOutline = { autumnDefaultActiveTokens.complementaryContainerOutline.toArgb() },
             containerShadow = { autumnDefaultActiveTokens.containerOutline.toArgb() },
+            markerOnContainer = { autumnDefaultActiveTokens.containerOutline.toArgb() },
+            complementaryMarkerOnContainer = { it.complementaryMarkerOnContainer and 0xA0FFFFFFu.toInt() },
             containerSurfaceDisabledAlpha = { 0.5f },
             onContainerDisabledAlpha = { 0.6f },
             containerOutlineDisabledAlpha = { 0.55f },
@@ -87,6 +91,8 @@ private fun autumnSkinColors(): AuroraSkinColors {
             containerOutlineVariant = { autumnDefaultActiveTokens.containerOutlineVariant.toArgb() },
             containerShadow = { autumnDefaultActiveTokens.containerOutline.toArgb() },
             complementaryContainerOutline = { autumnDefaultActiveTokens.complementaryContainerOutline.toArgb() },
+            markerOnContainer = { autumnDefaultActiveTokens.containerOutline.toArgb() },
+            complementaryMarkerOnContainer = { it.complementaryMarkerOnContainer and 0xA0FFFFFFu.toInt() },
         )
     )
 
@@ -138,7 +144,9 @@ private fun autumnSkinColors(): AuroraSkinColors {
             containerConfiguration = ContainerConfiguration.defaultLight(),
             colorResolver = DefaultPaletteColorResolver.overlayWith(
                 TokenPaletteColorResolverOverlay(
-                    onContainer = { it.onContainerVariant }
+                    onContainer = { it.onContainerVariant },
+                    markerOnContainer = { autumnDefaultActiveTokens.containerOutline.toArgb() },
+                    complementaryMarkerOnContainer = { autumnDefaultActiveTokens.complementaryContainerOutline.toArgb() }
                 )
             )
         ),
@@ -159,7 +167,8 @@ private fun autumnSkinColors(): AuroraSkinColors {
     )
     val autumnControlPaneNeutralTokens = getContainerTokens(
         seed = Hct.fromInt(0xFFFED8B2u.toInt()),
-        containerConfiguration = ContainerConfiguration.defaultLight()
+        containerConfiguration = ContainerConfiguration.defaultLight(),
+        colorResolver = mutedResolver
     )
 
     val autumnControlPaneBundle = ContainerColorTokensBundle(

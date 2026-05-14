@@ -105,10 +105,7 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
     val skinColors = AuroraSkin.colors
     val showsIcon = (icon != null)
 
-    val contextualTaskGroupSeparatorTokens = AuroraSkin.colors.getNeutralContainerTokens(
-        decorationAreaType = AuroraSkin.decorationAreaType,
-        associationKind = ContainerColorTokensAssociationKind.Separator,
-    )
+    val contextualTaskGroupSeparatorTokens = skinColors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
 
     // Layout info for the contextual task groups is one frame behind, so we need to test
     // for matching span info
@@ -188,11 +185,7 @@ internal fun AuroraWindowScope.RibbonWindowTitlePaneMainContent(
                                     strokeWidth = 1.5f * density
                                 )
 
-                                val separatorPrimaryColor = if (contextualTaskGroupSeparatorTokens.isDark) {
-                                    contextualTaskGroupSeparatorTokens.complementaryContainerOutline.withAlpha(0.28125f)
-                                } else {
-                                    contextualTaskGroupSeparatorTokens.containerOutline.withAlpha(0.375f)
-                                }
+                                val separatorPrimaryColor = contextualTaskGroupSeparatorTokens.markerOnContainer
 
                                 // Vertical separators along the left and right edges
                                 val separatorBrush = Brush.verticalGradient(

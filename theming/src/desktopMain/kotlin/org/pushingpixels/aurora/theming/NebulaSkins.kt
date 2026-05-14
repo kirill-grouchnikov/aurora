@@ -180,12 +180,6 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
                  mutedContainerTokens = accentContainerColorTokens.headerAreaMutedTokens!!,
                  neutralContainerTokens = accentContainerColorTokens.headerAreaNeutralTokens!!,
                  isSystemDark = false)
-            nebulaAmethystToolbarBundle.registerNeutralContainerTokens(getContainerTokens(
-                seed = Hct.fromInt(0xFFD1A9F1u.toInt()),
-                containerConfiguration = ContainerConfiguration(
-                    /* isDark */ false,
-                    /* contrastLevel */ -1.0)),
-                ContainerColorTokensAssociationKind.Separator)
             it.registerDecorationAreaTokensBundle(nebulaAmethystToolbarBundle,
                 DecorationAreaType.Toolbar)
         },

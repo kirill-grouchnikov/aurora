@@ -174,7 +174,9 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
         TokenPaletteColorResolverOverlay(
             containerOutline = { it.complementaryContainerOutline and 0xA0FFFFFFu.toInt() },
             containerOutlineVariant = { it.complementaryContainerOutline and 0x80FFFFFFu.toInt() },
-            complementaryContainerOutline = { it.containerOutline }
+            complementaryContainerOutline = { it.containerOutline },
+            markerOnContainer = { it.complementaryContainerOutline and 0xA0FFFFFFu.toInt() },
+            complementaryMarkerOnContainer = { it.containerOutline }
         )
     )
     val accentContainerColorTokens = AccentContainerColorTokens(
@@ -208,14 +210,6 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
                 colorResolver = paletteColorResolver),
             associationKind = ContainerColorTokensAssociationKind.Default,
             ComponentState.PressedUnselected, ComponentState.PressedSelected)
-
-        it.registerNeutralContainerTokens(
-            colorTokens = getContainerTokens(
-                seed = Hct.fromInt(0xFF424242u.toInt()),
-                containerConfiguration = ContainerConfiguration(
-                    /* isDark */ true,
-                    /* contrastLevel */ 0.1)),
-            associationKind = ContainerColorTokensAssociationKind.Separator)
     }
 
     val colors = AuroraSkinColors()

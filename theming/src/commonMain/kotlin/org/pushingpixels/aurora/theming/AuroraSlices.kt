@@ -649,11 +649,6 @@ class ContainerColorTokensAssociationKind(
         val Default = ContainerColorTokensAssociationKind("default", null)
 
         /**
-         * Visual area of separators.
-         */
-        val Separator = ContainerColorTokensAssociationKind("separator", Default)
-
-        /**
          * Fill visual area of the tabs.
          */
         val Tab = ContainerColorTokensAssociationKind("tab", Default)
