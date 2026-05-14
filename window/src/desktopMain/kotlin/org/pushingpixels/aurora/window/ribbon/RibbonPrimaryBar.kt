@@ -345,20 +345,8 @@ internal fun RibbonPrimaryBar(
                 end = Offset(size.width, size.height - 0.5f)
             )
 
-            val separatorTokens = getContainerTokens(
-                colors = skinColors,
-                tokensOverlayProvider = null,
-                decorationAreaType = decorationAreaType,
-                associationKind = ContainerColorTokensAssociationKind.Separator,
-                componentState = ComponentState.Enabled,
-                backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-                inactiveContainerType = ContainerType.Neutral
-            )
-            val separatorPrimaryColor = if (separatorTokens.isDark) {
-                separatorTokens.complementaryContainerOutline.withAlpha(0.28125f)
-            } else {
-                separatorTokens.containerOutline.withAlpha(0.375f)
-            }
+            val separatorTokens = skinColors.getNeutralContainerTokens(decorationAreaType)
+            val separatorPrimaryColor = separatorTokens.markerOnContainer
 
             // Vertical separators along the left and right edges of each contextual task group
             val separatorBrush = Brush.verticalGradient(
