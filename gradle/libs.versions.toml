@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.3.20"
-compose = "1.11.0"
+compose = "1.11.1"
 dokka = "2.2.0"
 batik = "1.19"
 
