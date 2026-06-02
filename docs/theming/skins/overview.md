@@ -35,7 +35,7 @@ The skin definition consists of the following:
   * Component shaper.
   * Root pane decorator.
 
-In order to define a valid skin, you need to specify all its mandatory parameters. A valid skin must have a color tokens bundle for `DecorationAreaType.None`, a button shaper, a surface painter, a decoration painter, a highlight painter and an outline painter. All other parts are optional.
+In order to define a valid skin, you need to specify all its mandatory parameters. A valid skin must have a color tokens bundle for `DecorationAreaType.None`, a component shaper, a root pane decorator, a surface painter, a decoration painter, a highlight surface painter and an outline painter. All other parts are optional.
 
 ### Decoration areas
 
