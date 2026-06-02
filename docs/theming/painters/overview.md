@@ -16,7 +16,6 @@ Aurora uses the following painter types:
 * [Outline painters](outline.md)
 * [Highlight painters](highlight.md)
 * [Decoration painters](decoration.md)
-* [Overlay painters](overlay.md)
 
 The vast majority of Aurora visuals are painted by using these painters. The links above provide more technical information on how to specify custom painters and how to use them to paint custom components and window areas. Applications that wish to provide consistent appearance under different Aurora skins are strongly encouraged to use the published painter APIs.
 

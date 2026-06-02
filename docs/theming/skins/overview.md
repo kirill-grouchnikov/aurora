@@ -32,8 +32,8 @@ The skin definition consists of the following:
   * [Highlight painters](../painters/highlight.md)
   * [Decoration painter](../painters/decoration.md).
 * Miscellaneous:
-  * Button shaper.
-  * Optional [overlay painters](../painters/overlay.md) for some decoration areas.
+  * Component shaper.
+  * Root pane decorator.
 
 In order to define a valid skin, you need to specify all its mandatory parameters. A valid skin must have a color tokens bundle for `DecorationAreaType.None`, a button shaper, a surface painter, a decoration painter, a highlight painter and an outline painter. All other parts are optional.
 
@@ -147,7 +147,7 @@ result.registerAsDecorationArea(
 ```
 
 ### Overlays        
-To add polishing touches to the specific decoration areas, use [overlay painters](../painters/overlay.md) with the following API on `AuroraPainters`:
+To add polishing touches to the specific decoration areas, use [overlay painters](../painters/decoration.md#overlay-painters) with the following API on `AuroraDecorationPainter`:
 
 ```kotlin
 /**
@@ -161,7 +161,7 @@ To add polishing touches to the specific decoration areas, use [overlay painters
  *            Decoration area types.
  */
  fun addOverlayPainter(
-       overlayPainter: AuroraOverlayPainter,
+       overlayPainter: OverlayPainter,
        vararg areaTypes: DecorationAreaType
  )
 ```
@@ -170,15 +170,15 @@ Here is how the [Nebula skin](toneddown.md#nebula) is configured to paint drop s
 
 ```kotlin
 // add an overlay painter to paint a drop shadow along the top edge of toolbars
-painters.addOverlayPainter(
+decorationPainter.addOverlayPainter(
     TopShadowOverlayPainter.getInstance(60),
     DecorationAreaType.Toolbar
 )
 
 // add an overlay painter to paint separator lines along the bottom
 // edges of title panes and menu bars
-painters.addOverlayPainter(
-    BottomLineOverlayPainter( { it.containerOutline } ),
+decorationPainter.addOverlayPainter(
+    BottomLineOverlayPainter( { it.markerOnContainer.withAlpha(0.5f) } ),
     DecorationAreaType.TitlePane, DecorationAreaType.Header
 )
 ```
@@ -189,79 +189,83 @@ and here is how it looks like:
 
 ### Additional settings
 
-`AuroraSkinDefinition` groups its structure into three major categories: colors, painters and button shaper. Here is sample code from [Mariner skin](toneddown.md#mariner):
+`AuroraSkinDefinition` groups its structure into three major categories: colors, painters and component shaper. Here is sample code from [Mariner skin](toneddown.md#mariner):
 
 ```kotlin
 fun marinerSkin(): AuroraSkinDefinition {
-  val painters = AuroraPainters(
-      decorationPainter = MatteDecorationPainter(),
-      surfacePainter = FractionBasedSurfacePainter(
-          ColorStop(fraction = 0.0f, colorQuery = {
-              if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLowest
-          }),
-          ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
-          ColorStop(fraction = 1.0f, colorQuery = {
-              if (it.isDark) it.containerSurfaceLow else it.containerSurfaceHigh
-          }),
-          displayName = "Mariner"
-      ),
-      highlightSurfacePainter = FractionBasedSurfacePainter(
-          ColorStop(fraction = 0.0f, colorQuery = {
-              if (it.isDark) it.containerSurfaceLow else it.containerSurfaceHigh
-          }),
-          ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
-          ColorStop(fraction = 1.0f, colorQuery = {
-              if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLow
-          }),
-          displayName = "Mariner Highlight"
-      ),
-      outlinePainter = InlayOutlinePainter(
-          displayName = "Mariner",
-          outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
-          inner = OutlineSpec(
-              ColorStop(fraction = 0.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-              ColorStop(fraction = 1.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
-          )
-      ),
-      highlightOutlinePainter = FlatOutlinePainter(),
-  )
+  val decorationPainter = MatteDecorationPainter()
 
   // add an overlay painter to paint a bezel line along the top
   // edge of footer
-  painters.addOverlayPainter(
+  decorationPainter.addOverlayPainter(
       TopBezelOverlayPainter(
-          colorTokensQueryTop = { it.containerOutline.withAlpha(0.3125f) },
-          colorTokensQueryBottom = { it.inverseContainerOutline.withAlpha(0.1875f) }
+          colorTokensQueryTop = ContainerColorTokens::complementaryMarkerOnContainer,
+          colorTokensQueryBottom = ContainerColorTokens::markerOnContainer,
       ),
       DecorationAreaType.Footer
   )
 
   // add two overlay painters to create a bezel line between
   // menu bar and toolbars
-  painters.addOverlayPainter(
-      BottomLineOverlayPainter( { it.containerSurfaceHighest } ),
+  decorationPainter.addOverlayPainter(
+      BottomLineOverlayPainter( { it.markerOnContainer } ),
       DecorationAreaType.Header
   )
 
   // add overlay painter to paint drop shadows along the bottom
   // edges of toolbars
-  painters.addOverlayPainter(
+  decorationPainter.addOverlayPainter(
       BottomShadowOverlayPainter.getInstance(100),
       DecorationAreaType.Toolbar
   )
 
   // add overlay painter to paint a dark line along the bottom
   // edge of toolbars
-  painters.addOverlayPainter(
-      BottomLineOverlayPainter(colorTokensQuery = { it.containerOutline.withAlpha(0.5f) }),
+  decorationPainter.addOverlayPainter(
+      BottomLineOverlayPainter(colorTokensQuery = { it.markerOnContainer.withAlpha(0.5f) }),
       DecorationAreaType.Toolbar
+  )
+
+  val painters = AuroraPainters(
+    decorationPainter = decorationPainter,
+    surfacePainter = FractionBasedSurfacePainter(
+        ColorStop(fraction = 0.0f, colorQuery = {
+            if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLowest
+        }),
+        ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+        ColorStop(fraction = 1.0f, colorQuery = {
+            if (it.isDark) it.containerSurfaceLow else it.containerSurfaceHigh
+        }),
+        displayName = "Mariner"
+    ),
+    highlightSurfacePainter = FractionBasedSurfacePainter(
+        ColorStop(fraction = 0.0f, colorQuery = {
+            if (it.isDark) it.containerSurfaceLow else it.containerSurfaceHigh
+        }),
+        ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerSurface),
+        ColorStop(fraction = 1.0f, colorQuery = {
+            if (it.isDark) it.containerSurfaceHigh else it.containerSurfaceLow
+        }),
+        displayName = "Mariner Highlight"
+    ),
+    outlinePainter = InlayOutlinePainter(
+        displayName = "Mariner",
+        outer = OutlineSpec(colorQuery = ContainerColorTokens::containerOutline),
+        inner = OutlineSpec(
+            ColorStop(fraction = 0.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+            ColorStop(fraction = 1.0f, alpha = 0.25f, colorQuery = ContainerColorTokens::complementaryContainerOutline),
+        )
+    ),
+    highlightOutlinePainter = FlatOutlinePainter(),
   )
 
   return AuroraSkinDefinition(
       displayName = "Mariner",
       colors = marinerSkinColors(),
       painters = painters,
-      buttonShaper = ClassicButtonShaper()
+      buttonShaper = ClassicButtonShaper(),
+      componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
+      decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
   )
 }
 ```
