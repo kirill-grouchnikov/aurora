@@ -17,10 +17,10 @@ export JAVA_HOME=`/usr/libexec/java_home -v 22`
 alias JAVA="java"
 
 AURORA_VERSION=2.5-SNAPSHOT
-KOTLIN_VERSION=2.3.20
+KOTLIN_VERSION=2.4.0
 KOTLIN_COROUTINES_VERSION=1.11.0
 COMPOSE_VERSION=1.11.1
-CLASSPATH=../drop/$AURORA_VERSION/aurora-svg-transcoder-desktop-$AURORA_VERSION.jar:../build/libs/batik-all-1.19.jar:../build/libs/xml-apis-1.4.01.jar:../build/libs/xml-apis-ext-1.3.04.jar:../build/libs/xmlgraphics-commons-2.11.jar:../build/libs/kotlin-stdlib-$KOTLIN_VERSION.jar:../build/libs/kotlin-stdlib-common-$KOTLIN_VERSION.jar:../build/libs/kotlinx-coroutines-core-jvm-$KOTLIN_COROUTINES_VERSION.jar:../build/libs/ui-graphics-desktop-$COMPOSE_VERSION.jar:../build/libs/ui-geometry-desktop-$COMPOSE_VERSION.jar
+CLASSPATH=../drop/$AURORA_VERSION/aurora-svg-transcoder-desktop-$AURORA_VERSION.jar:../build/libs/*
 
 # Don't convert the demo transcoding to deep traversal since one of the
 # folders needs class name prefix while others don't
