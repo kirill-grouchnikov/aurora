@@ -1,6 +1,6 @@
 ## Components - command popup menus
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/color-selector-command1.png" width="669" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/color-selector-command1.png" width="666" border=0/>
 
 A projection of a color selector command is a popup button ("Styles3" button in the screenshot above) that displays a popup menu with regular commands and additional, optional three color selector panels:
 - color section with derived colors
