@@ -42,6 +42,8 @@ the [Ephemeral](https://github.com/kirill-grouchnikov/ephemeral) design system. 
   * [Highlight painters](docs/theming/painters/highlight.md)
   * [Decoration painters](docs/theming/painters/decoration.md)
   * [Overlay painters](docs/theming/painters/overlay.md)
+* Decorators
+  * [Window decorator](../decorators/window.md).
 * [Themed states](docs/theming/themed-states.md)
 
 ### Components
