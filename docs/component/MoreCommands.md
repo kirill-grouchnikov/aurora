@@ -33,7 +33,7 @@ Aurora commands are meant to be flexible enough to:
 
 First, let's take a look at these two popup menus:
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-popups.png" width="575" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-popups.png" width="534" border=0/>
 
 In both cases, the content and the presentation of the command button itself is driven by the same [command content model](Command.md) and by the same [command button presentation model](CommandButtonPresentation.md). However, it is clear that there can be an unbounded variety of **secondary / popup** content that suits individual application needs, and that Aurora should address such requirements.
 

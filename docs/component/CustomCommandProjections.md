@@ -5,7 +5,7 @@ As detailed in the [overview documentation](MoreCommands.md), Aurora commands ar
 * Restrict the command attributes to a smaller subset that is relevant for the particular usage
 * Plug in a custom content secondary content model that is relevant for the particular usage
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-popups.png" width="575" border=0/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/component/walkthrough/command-popups.png" width="534" border=0/>
 
 Let's take a look at all the pieces that participate in creating a custom application command button projection that looks like this:
 
