@@ -32,6 +32,7 @@ import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
 import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
@@ -94,7 +95,7 @@ fun sampleLightSkin(): AuroraSkinDefinition {
         colors = sampleLightSkinColors(),
         painters = painters,
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 

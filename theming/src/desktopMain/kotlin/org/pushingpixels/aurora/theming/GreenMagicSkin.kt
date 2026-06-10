@@ -15,7 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
+import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -23,7 +23,6 @@ import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomShadowO
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
 import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
-import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.getBimodalContainerTokens
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
@@ -137,6 +136,6 @@ fun greenMagicSkin(): AuroraSkinDefinition {
         colors = greenMagicSkinColors(),
         painters = painters,
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }

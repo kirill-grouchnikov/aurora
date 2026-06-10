@@ -16,7 +16,7 @@
 package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
+import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -153,7 +153,7 @@ fun nebulaSkin(): AuroraSkinDefinition {
         colors = nebulaBaseSkinColors(accentContainerColorTokens),
         painters = nebulaBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -195,7 +195,7 @@ fun nebulaAmethystSkin(): AuroraSkinDefinition {
 
         },
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -216,7 +216,7 @@ fun nebulaBrickWallSkin(): AuroraSkinDefinition {
         colors = nebulaBaseSkinColors(accentContainerColorTokens),
         painters = nebulaBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 

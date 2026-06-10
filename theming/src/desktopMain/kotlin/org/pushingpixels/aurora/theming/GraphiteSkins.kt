@@ -17,7 +17,7 @@ package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
+import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.FlatDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -141,7 +141,7 @@ fun graphiteSkin(): AuroraSkinDefinition {
         colors = colors,
         painters = graphiteBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -165,7 +165,7 @@ fun graphiteAquaSkin(): AuroraSkinDefinition {
         colors = colors,
         painters = graphiteBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -219,7 +219,7 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
         colors = colors,
         painters = graphiteBasePainters(outlinePainter = FlatOutlinePainter()),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -289,7 +289,7 @@ fun graphiteGlassSkin(): AuroraSkinDefinition {
             }), DecorationAreaType.Toolbar)
         },
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -321,7 +321,7 @@ fun graphiteElectricSkin(): AuroraSkinDefinition {
         colors = colors,
         painters = graphiteBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -353,7 +353,7 @@ fun graphiteGoldSkin(): AuroraSkinDefinition {
         colors = colors,
         painters = graphiteBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -385,7 +385,7 @@ fun graphiteSiennaSkin(): AuroraSkinDefinition {
         colors = colors,
         painters = graphiteBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -417,7 +417,7 @@ fun graphiteSunsetSkin(): AuroraSkinDefinition {
         colors = colors,
         painters = graphiteBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 

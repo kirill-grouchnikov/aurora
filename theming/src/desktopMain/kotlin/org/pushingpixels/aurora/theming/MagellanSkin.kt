@@ -17,7 +17,7 @@ package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
+import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -28,11 +28,8 @@ import org.pushingpixels.aurora.theming.painter.outline.InlayOutlinePainter
 import org.pushingpixels.aurora.theming.painter.outline.OutlineSpec
 import org.pushingpixels.aurora.theming.painter.surface.FlatSurfacePainter
 import org.pushingpixels.aurora.theming.painter.surface.FractionBasedSurfacePainter
-import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
-import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolverOverlay
 import org.pushingpixels.aurora.theming.palette.getContainerTokens
 import org.pushingpixels.aurora.theming.palette.getDuotoneContainerTokens
-import org.pushingpixels.aurora.theming.palette.overlayWith
 import org.pushingpixels.aurora.theming.shaper.ClassicComponentShaper
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
 import org.pushingpixels.ephemeral.chroma.hct.Hct
@@ -235,6 +232,6 @@ fun magellanSkin(): AuroraSkinDefinition {
         colors = magellanSkinColors(),
         painters = painters,
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }

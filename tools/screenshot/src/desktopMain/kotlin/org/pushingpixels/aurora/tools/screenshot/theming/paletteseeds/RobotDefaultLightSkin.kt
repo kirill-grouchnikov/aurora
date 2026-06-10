@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.tools.screenshot.theming.paletteseeds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
 import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.MarbleNoiseDecorationPainter
@@ -82,6 +83,6 @@ fun robotDefaultLightSkin(accentColor: Color, name: String) : AuroraSkinDefiniti
         colors = skinColors,
         painters = painters,
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }

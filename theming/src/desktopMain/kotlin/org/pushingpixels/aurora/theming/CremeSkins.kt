@@ -15,7 +15,7 @@
  */
 package org.pushingpixels.aurora.theming
 
-import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
+import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.ArcDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -144,7 +144,7 @@ fun cremeSkin(): AuroraSkinDefinition {
         colors = cremeBaseSkinColors(accentContainerColorTokens),
         painters = cremeBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -179,6 +179,6 @@ fun cremeCoffeeSkin(): AuroraSkinDefinition {
         colors = cremeBaseSkinColors(accentContainerColorTokens),
         painters = cremeBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }

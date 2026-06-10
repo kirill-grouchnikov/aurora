@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.theming
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
 import org.pushingpixels.aurora.theming.palette.DefaultPaletteColorResolver
 import org.pushingpixels.aurora.theming.palette.TokenPaletteColorResolver
 import org.pushingpixels.aurora.theming.shaper.AuroraComponentShaper

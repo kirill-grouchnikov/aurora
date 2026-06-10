@@ -13,10 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.pushingpixels.aurora.theming
+package org.pushingpixels.aurora.theming.decorator
 
 import org.pushingpixels.aurora.theming.decorator.window.AuroraWindowDecorator
+import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 
 data class AuroraDecorators(
     val windowDecorator: AuroraWindowDecorator,
-)
+) {
+    companion object {
+        fun buildDefault(): AuroraDecorators {
+            return AuroraDecorators(
+                windowDecorator = DefaultWindowDecorator()
+            )
+        }
+    }
+}

@@ -47,6 +47,9 @@ class MatteDecorationPainter : AuroraDecorationPainter() {
         colorTokens: ContainerColorTokens
     ) {
         with(drawScope) {
+            // 0 - flex point : gradient
+            // flex point - : flat fill
+
             val startColor = if (colorTokens.isDark) {
                 colorTokens.containerSurfaceHigh
             } else {
@@ -58,8 +61,7 @@ class MatteDecorationPainter : AuroraDecorationPainter() {
                 flexPoint,
                 componentSize.height - offsetFromRoot.y
             )
-            // 0 - flex : light -> medium
-            // flex - : medium fill
+
             val paint = if (gradientHeight == flexPoint)
                 Brush.verticalGradient(
                     0.0f to startColor,

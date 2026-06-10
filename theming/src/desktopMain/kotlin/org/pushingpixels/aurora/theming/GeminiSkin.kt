@@ -17,7 +17,7 @@ package org.pushingpixels.aurora.theming
 
 import androidx.compose.ui.graphics.toArgb
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
+import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.MatteDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
@@ -248,6 +248,6 @@ fun geminiSkin(): AuroraSkinDefinition {
         colors = geminiSkinColors(),
         painters = painters,
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }

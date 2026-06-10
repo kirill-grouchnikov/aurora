@@ -16,7 +16,7 @@
 package org.pushingpixels.aurora.theming
 
 import org.pushingpixels.aurora.common.withAlpha
-import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
+import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
 import org.pushingpixels.aurora.theming.painter.decoration.BrushedMetalDecorationPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.BottomLineOverlayPainter
 import org.pushingpixels.aurora.theming.painter.decoration.overlay.TopShadowOverlayPainter
@@ -161,7 +161,7 @@ fun businessSkin(): AuroraSkinDefinition {
         },
         painters = businessBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -220,7 +220,7 @@ fun businessBlackSteelSkin(): AuroraSkinDefinition {
         },
         painters = businessBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
@@ -279,7 +279,7 @@ fun businessBlueSteelSkin(): AuroraSkinDefinition {
         },
         painters = businessBasePainters(),
         componentShapers = AuroraComponentShapers.withDefaults(ClassicComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = DefaultWindowDecorator()),
+        decorators = AuroraDecorators.buildDefault(),
     )
 }
 
