@@ -15,11 +15,13 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.Density
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.byAlpha
+import org.pushingpixels.aurora.common.interpolateTowards
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
+import kotlin.math.min
 
 class DefaultTabDecorator: AuroraTabDecorator {
     override fun getTabExtraPadding(): PaddingValues {
@@ -31,6 +33,7 @@ class DefaultTabDecorator: AuroraTabDecorator {
     override fun getTabContentColor(currState: ComponentState,
         tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
         backgroundAppearanceStrategy: BackgroundAppearanceStrategy): Color {
+
         val skinColors = AuroraSkin.colors
         val decorationAreaType = AuroraSkin.decorationAreaType
 
@@ -39,7 +42,7 @@ class DefaultTabDecorator: AuroraTabDecorator {
             tokensOverlayProvider = tokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = ContainerColorTokensAssociationKind.Tab,
-            componentState = currState,
+            componentState = if (currState.isDisabled) ComponentState.DisabledUnselected else ComponentState.Enabled,
             backgroundAppearanceStrategy = backgroundAppearanceStrategy,
             inactiveContainerType = ContainerType.Muted,
             skipFlatCheck = false
@@ -47,6 +50,67 @@ class DefaultTabDecorator: AuroraTabDecorator {
         val alpha = if (currState.isDisabled) colorTokens.onContainerDisabledAlpha
             else colorTokens.onContainerEnabledAlpha
         return colorTokens.onContainer.byAlpha(alpha)
+    }
+
+    @OptIn(AuroraInternalApi::class)
+    @Composable
+    override fun getDecoratedTabContentColor(
+        currState: ComponentState,
+        activeStates: Map<ComponentState, Float>,
+        parentDecorationAreaType: DecorationAreaType,
+        tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
+        backgroundAppearanceStrategy: BackgroundAppearanceStrategy
+    ): Color {
+
+        val skinColors = AuroraSkin.colors
+        val decorationAreaType = AuroraSkin.decorationAreaType
+
+        val parentSurfaceTokens = getContainerTokens(
+            colors = skinColors,
+            tokensOverlayProvider = tokensOverlayProvider,
+            decorationAreaType = parentDecorationAreaType,
+            associationKind = ContainerColorTokensAssociationKind.Tab,
+            componentState = ComponentState.Enabled,
+            backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+            inactiveContainerType = ContainerType.Neutral,
+            skipFlatCheck = false
+        )
+
+        var activeStateTotalContribution = if (currState.isActive) 1.0f else 0.0f
+        if (activeStates.size > 1) {
+            for ((activeState, value) in activeStates) {
+                if (activeState != currState) {
+                    if (activeState != ComponentState.Enabled) {
+                        activeStateTotalContribution += value
+                    }
+                }
+            }
+        }
+        activeStateTotalContribution = min(1.0f, activeStateTotalContribution)
+
+        val surfaceTokens = getContainerTokens(
+            colors = skinColors,
+            tokensOverlayProvider = tokensOverlayProvider,
+            decorationAreaType = decorationAreaType,
+            associationKind = ContainerColorTokensAssociationKind.Tab,
+            componentState = ComponentState.Enabled,
+            backgroundAppearanceStrategy = backgroundAppearanceStrategy,
+            inactiveContainerType = ContainerType.Muted,
+            skipFlatCheck = false
+        )
+
+        val contentColor = parentSurfaceTokens.onContainer.interpolateTowards(
+            surfaceTokens.onContainer, 1.0f - activeStateTotalContribution)
+
+        val alpha = if (currState.isDisabled) {
+            (1.0f - activeStateTotalContribution) * parentSurfaceTokens.onContainerDisabledAlpha +
+                activeStateTotalContribution * surfaceTokens.onContainerDisabledAlpha
+        } else {
+            (1.0f - activeStateTotalContribution) * parentSurfaceTokens.onContainerEnabledAlpha +
+                activeStateTotalContribution * surfaceTokens.onContainerEnabledAlpha
+        }
+
+        return contentColor.byAlpha(alpha);
     }
 
     @Composable

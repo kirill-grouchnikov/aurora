@@ -41,6 +41,13 @@ interface AuroraTabDecorator {
         backgroundAppearanceStrategy: BackgroundAppearanceStrategy) : Color
 
     @Composable
+    fun getDecoratedTabContentColor(currState: ComponentState,
+        activeStates: Map<ComponentState, Float>,
+        parentDecorationAreaType: DecorationAreaType,
+        tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
+        backgroundAppearanceStrategy: BackgroundAppearanceStrategy) : Color
+
+    @Composable
     fun getTabOutlineColor(currState: ComponentState,
         tokensOverlayProvider: ContainerColorTokensOverlay.Provider?) : Color
 

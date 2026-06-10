@@ -43,7 +43,10 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import kotlinx.coroutines.launch
-import org.pushingpixels.aurora.common.*
+import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.AuroraOffset
+import org.pushingpixels.aurora.common.AuroraRect
+import org.pushingpixels.aurora.common.asOffset
 import org.pushingpixels.aurora.component.auroraRichTooltip
 import org.pushingpixels.aurora.component.model.BaseCommand
 import org.pushingpixels.aurora.component.model.BaseCommandButtonPresentationModel
@@ -57,7 +60,6 @@ import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 @Immutable
@@ -220,12 +222,14 @@ internal fun RibbonTaskToggleButton(
     val keyTipChainRootKeyTip = LocalRibbonKeyTipChainRootKeyTip.current
     val trackKeyTips = LocalRibbonTrackKeyTips.current
 
-    val textColor = getTextColor(
-        modelStateInfo = actionModelStateInfo,
+    val textColor = tabDecorator.getDecoratedTabContentColor(
         currState = currentActionState.value,
-        skinColors = skinColors,
+        activeStates = actionModelStateInfo.stateContributionMap.entries.associate {
+            it.key to it.value.contribution
+        },
+        parentDecorationAreaType = DecorationAreaType.Header,
         tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-        decorationAreaType = decorationAreaType,
+        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy
     )
 
     Layout(
@@ -456,54 +460,6 @@ private fun TaskToggleButtonTextContent(
             textAlign = textAlign
         )
     }
-}
-
-@OptIn(AuroraInternalApi::class)
-private fun getTextColor(
-    modelStateInfo: ModelStateInfo,
-    currState: ComponentState,
-    skinColors: AuroraSkinColors,
-    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
-    decorationAreaType: DecorationAreaType,
-): Color {
-    val activeStates: Map<ComponentState, StateContributionInfo> = modelStateInfo.stateContributionMap
-
-    val parentSurfaceTokens = getContainerTokens(
-        colors = skinColors,
-        tokensOverlayProvider = tokensOverlayProvider,
-        decorationAreaType = DecorationAreaType.Header,
-        componentState = ComponentState.Enabled,
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-        inactiveContainerType = ContainerType.Neutral
-    )
-
-    var activeStateTotalContribution = if (currState.isActive) 1.0f else 0.0f
-    if (activeStates.size > 1) {
-        for ((activeState, value) in activeStates) {
-            if (activeState != currState) {
-                if (activeState != ComponentState.Enabled) {
-                    activeStateTotalContribution += value.contribution
-                }
-            }
-        }
-    }
-    activeStateTotalContribution = min(1.0f, activeStateTotalContribution)
-
-    if (activeStateTotalContribution == 0.0f) {
-        return parentSurfaceTokens.onContainer
-    }
-
-    val surfaceTokens = getContainerTokens(
-        colors = skinColors,
-        tokensOverlayProvider = tokensOverlayProvider,
-        decorationAreaType = decorationAreaType,
-        componentState = ComponentState.Enabled,
-        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-        inactiveContainerType = ContainerType.Neutral
-    )
-
-    return parentSurfaceTokens.onContainer.interpolateTowards(
-        surfaceTokens.onContainer, 1.0f - activeStateTotalContribution)
 }
 
 @OptIn(AuroraInternalApi::class)
