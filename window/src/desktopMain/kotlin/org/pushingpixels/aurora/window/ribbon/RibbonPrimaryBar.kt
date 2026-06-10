@@ -84,6 +84,7 @@ internal fun RibbonPrimaryBar(
     val textStyle = LocalTextStyle.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
     val componentShaper = AuroraSkin.componentShaper
+    val tabDecorator = AuroraSkin.decorators.tabDecorator
 
     val resolvedTextStyle = remember { resolveDefaults(textStyle, layoutDirection) }
 
@@ -169,7 +170,7 @@ internal fun RibbonPrimaryBar(
 
     val taskButtonPresentationModel = CommandButtonPresentationModel(
         presentationState = RibbonTaskToggle,
-        contentPadding = TaskbarPrimaryBarTaskButtonContentPadding,
+        contentPadding = TaskbarPrimaryBarTaskButtonContentPadding + tabDecorator.getTabExtraPadding(),
         minWidth = TaskbarPrimaryBarTaskButtonMinWidth,
         horizontalAlignment = HorizontalAlignment.Center,
         sides = Sides(openSides = hashSetOf(Side.Bottom), straightSides = hashSetOf(Side.Bottom)),
@@ -328,7 +329,6 @@ internal fun RibbonPrimaryBar(
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
-    val tabDecorator = AuroraSkin.decorators.tabDecorator
     val outlineColor = tabDecorator.getTabOutlineColor(currState = ComponentState.Enabled,
         tokensOverlayProvider = null)
 

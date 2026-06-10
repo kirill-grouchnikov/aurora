@@ -26,7 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -46,6 +49,7 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.skia.*
+import org.pushingpixels.aurora.common.byAlpha
 import org.pushingpixels.aurora.common.tone
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.*
@@ -55,10 +59,12 @@ import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequenci
 import org.pushingpixels.aurora.demo.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
-import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.IconFilterStrategy
-import org.pushingpixels.aurora.theming.auroraBackground
-import org.pushingpixels.aurora.theming.dustCoffeeSkin
+import org.pushingpixels.aurora.theming.*
+import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
+import org.pushingpixels.aurora.theming.decorator.tab.DefaultTabDecorator
+import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
+import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
+import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.window.AuroraRibbonWindow
 import org.pushingpixels.aurora.window.auroraApplication
 import java.awt.GraphicsEnvironment
@@ -642,6 +648,91 @@ fun main() = auroraApplication {
                             }
                         )
                     ).project()
+                    CommandButtonProjection(
+                        contentModel = Command(text = resourceBundle.getString("Skin.underlineTabs"),
+                            isActionEnabled = true,
+                            action = { skin = geminiSkin().copy(
+                                decorators = AuroraDecorators(
+                                    tabDecorator = object: DefaultTabDecorator() {
+                                        override fun getTabExtraPadding(): PaddingValues {
+                                            return PaddingValues(start = 0.dp, end = 0.dp, top = 0.dp, bottom = 3.dp)
+                                        }
+
+                                        override fun shouldDrawUnbrokenContentEdge(): Boolean {
+                                            return true
+                                        }
+
+                                        @Composable
+                                        override fun getDecoratedTabContentColor(
+                                            currState: ComponentState,
+                                            activeStates: Map<ComponentState, Float>,
+                                            parentDecorationAreaType: DecorationAreaType,
+                                            tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
+                                            backgroundAppearanceStrategy: BackgroundAppearanceStrategy
+                                        ): Color {
+                                            val skinColors = AuroraSkin.colors
+
+                                            val parentSurfaceTokens = skinColors.getNeutralContainerTokens(
+                                                decorationAreaType = parentDecorationAreaType,
+                                                associationKind = ContainerColorTokensAssociationKind.Tab
+                                            )
+
+                                            val alpha = if (currState.isDisabled) parentSurfaceTokens.onContainerDisabledAlpha
+                                                else parentSurfaceTokens.onContainerEnabledAlpha
+                                            return parentSurfaceTokens.onContainer.byAlpha(alpha)
+                                        }
+
+                                        override fun paintTabSurface(
+                                            drawScope: DrawScope,
+                                            skinColors: AuroraSkinColors,
+                                            decorationAreaType: DecorationAreaType,
+                                            decorationPainter: AuroraDecorationPainter,
+                                            outlineFill: Outline,
+                                            density: Density,
+                                            rootSize: Size,
+                                            offsetFromRoot: Offset,
+                                            size: Size,
+                                            surfaceColorTokens: ContainerColorTokens,
+                                            alpha: Float
+                                        ) {}
+
+                                        override fun paintTabSurfaceHighlight(
+                                            drawScope: DrawScope,
+                                            outlineSupplier: OutlineSupplier,
+                                            density: Density,
+                                            size: Size,
+                                            surfaceHighlightColorTokens: ContainerColorTokens,
+                                            alpha: Float
+                                        ) {
+                                            with(drawScope) {
+                                                drawRect(
+                                                    color = surfaceHighlightColorTokens.containerSurfaceHighest,
+                                                    topLeft = Offset(0.0f, size.height - 3.dp.toPx()),
+                                                    size = Size(size.width, 3.dp.toPx()),
+                                                    style = Fill,
+                                                    alpha = alpha
+                                                )
+                                            }
+                                        }
+
+                                        override fun paintTabOutline(
+                                            drawScope: DrawScope,
+                                            outlineSupplier: OutlineSupplier,
+                                            density: Density,
+                                            size: Size,
+                                            outlineColor: Color,
+                                            alpha: Float
+                                        ) {}
+                                    },
+                                    windowDecorator = DefaultWindowDecorator()
+                                ))
+                            }),
+                        presentationModel = CommandButtonPresentationModel(
+                            presentationState = CommandButtonPresentationState.Medium,
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                        )
+                    ).project()
+
                     AuroraSkinSwitcher({ skin = it })
                     AuroraLocaleSwitcher(resourceBundle)
                 }

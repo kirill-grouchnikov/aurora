@@ -110,7 +110,7 @@ open class DefaultTabDecorator: AuroraTabDecorator {
                 activeStateTotalContribution * surfaceTokens.onContainerEnabledAlpha
         }
 
-        return contentColor.byAlpha(alpha);
+        return contentColor.byAlpha(alpha)
     }
 
     @Composable

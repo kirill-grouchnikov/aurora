@@ -32,15 +32,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import org.pushingpixels.aurora.common.byAlpha
 import org.pushingpixels.aurora.component.model.LabelContentModel
 import org.pushingpixels.aurora.component.model.TabContentModel
 import org.pushingpixels.aurora.component.model.TabsContentModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TabsProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
+import org.pushingpixels.aurora.theming.AuroraSkin
 import org.pushingpixels.aurora.theming.AuroraSkinColors
 import org.pushingpixels.aurora.theming.AuroraSkinDefinition
+import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
+import org.pushingpixels.aurora.theming.ComponentState
 import org.pushingpixels.aurora.theming.ContainerColorTokens
+import org.pushingpixels.aurora.theming.ContainerColorTokensAssociationKind
+import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.DecorationAreaType
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
@@ -67,6 +73,26 @@ fun geminiSkinWithUnderlineTabs(): AuroraSkinDefinition {
 
             override fun shouldDrawUnbrokenContentEdge(): Boolean {
                 return true
+            }
+
+            @Composable
+            override fun getDecoratedTabContentColor(
+                currState: ComponentState,
+                activeStates: Map<ComponentState, Float>,
+                parentDecorationAreaType: DecorationAreaType,
+                tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
+                backgroundAppearanceStrategy: BackgroundAppearanceStrategy
+            ): Color {
+                val skinColors = AuroraSkin.colors
+
+                val parentSurfaceTokens = skinColors.getNeutralContainerTokens(
+                    decorationAreaType = parentDecorationAreaType,
+                    associationKind = ContainerColorTokensAssociationKind.Tab
+                )
+
+                val alpha = if (currState.isDisabled) parentSurfaceTokens.onContainerDisabledAlpha
+                else parentSurfaceTokens.onContainerEnabledAlpha
+                return parentSurfaceTokens.onContainer.byAlpha(alpha)
             }
 
             override fun paintTabSurface(
