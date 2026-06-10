@@ -23,7 +23,7 @@ import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.min
 
-class DefaultTabDecorator: AuroraTabDecorator {
+open class DefaultTabDecorator: AuroraTabDecorator {
     override fun getTabExtraPadding(): PaddingValues {
         return PaddingValues.Zero
     }
@@ -124,6 +124,10 @@ class DefaultTabDecorator: AuroraTabDecorator {
         val alpha = if (currState.isDisabled) tokens.containerOutlineDisabledAlpha
             else tokens.containerOutlineEnabledAlpha
         return tokens.markerOnContainer.byAlpha(alpha)
+    }
+
+    override fun shouldDrawUnbrokenContentEdge(): Boolean {
+        return false
     }
 
     override fun paintTabSurface(

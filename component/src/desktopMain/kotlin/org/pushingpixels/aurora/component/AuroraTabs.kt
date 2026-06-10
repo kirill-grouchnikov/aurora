@@ -209,6 +209,7 @@ internal fun AuroraTabs(
             }
         })
 
+    val isUnderlineUnbroken = tabDecorator.shouldDrawUnbrokenContentEdge()
     Layout(modifier = modifier.fillMaxWidth().padding(top = presentationModel.topPadding),
         content = {
             // Startwards scroller
@@ -244,13 +245,20 @@ internal fun AuroraTabs(
                             )
                         }
 
-                        // Left underline
-                        Canvas(modifier = Modifier) {
-                            drawRect(color = outlineColor, topLeft = Offset.Zero, size = size)
-                        }
-                        // Right underline
-                        Canvas(modifier = Modifier) {
-                            drawRect(color = outlineColor, topLeft = Offset.Zero, size = size)
+                        if (isUnderlineUnbroken) {
+                            // Full underline
+                            Canvas(modifier = Modifier) {
+                                drawRect(color = outlineColor, topLeft = Offset.Zero, size = size)
+                            }
+                        } else {
+                            // Left underline
+                            Canvas(modifier = Modifier) {
+                                drawRect(color = outlineColor, topLeft = Offset.Zero, size = size)
+                            }
+                            // Right underline
+                            Canvas(modifier = Modifier) {
+                                drawRect(color = outlineColor, topLeft = Offset.Zero, size = size)
+                            }
                         }
                     },
                     measurePolicy = { measurables, constraints ->
@@ -259,7 +267,12 @@ internal fun AuroraTabs(
                         val trailingMarginPx = presentationModel.trailingMargin.toPx()
 
                         // Process tab buttons
-                        val tabButtonMeasurables = measurables.subList(0, measurables.size - 2)
+                        val tabCount = if (isUnderlineUnbroken) {
+                            measurables.size - 1
+                        } else {
+                            measurables.size - 2
+                        }
+                        val tabButtonMeasurables = measurables.subList(0, tabCount)
                         val tabButtonPlaceables = tabButtonMeasurables.map { it.measure(Constraints()) }
                         val height = tabButtonPlaceables.maxOf { it.measuredHeight }
                         val contentWidth = tabButtonPlaceables.sumOf { it.measuredWidth } +
@@ -269,30 +282,46 @@ internal fun AuroraTabs(
                                 (leadingMarginPx + trailingMarginPx).toInt()
 
                         // Process underlines
-                        val leadingUnderlineMeasurable = measurables[measurables.size - 2]
-                        val trailingUnderlineMeasurable = measurables[measurables.size - 1]
-                        val leadingUnderlinePlaceable: Placeable
-                        val trailingUnderlinePlaceable: Placeable
+                        val leadingUnderlinePlaceable: Placeable?
+                        val trailingUnderlinePlaceable: Placeable?
+                        val fullUnderlinePlaceable: Placeable?
 
-                        val leadingUnderlineStart = 0
-                        var leadingUnderlineEnd = leadingMarginPx
-                        if (contentModel.selectedTabIndex > 0) {
-                            leadingUnderlineEnd += tabButtonPlaceables.subList(0, contentModel.selectedTabIndex)
-                                .sumOf { it.measuredWidth }
-                            leadingUnderlineEnd += (contentModel.selectedTabIndex * presentationModel.interTabMargin.toPx())
-                        }
-                        leadingUnderlinePlaceable = leadingUnderlineMeasurable.measure(
-                            Constraints.fixed(width = (leadingUnderlineEnd - leadingUnderlineStart).toInt(), height = 1)
-                        )
-                        val trailingUnderlineStart =
-                            leadingUnderlineEnd + tabButtonPlaceables[contentModel.selectedTabIndex].measuredWidth
-                        val trailingUnderlineEnd = fullWidth
-                        trailingUnderlinePlaceable = trailingUnderlineMeasurable.measure(
-                            Constraints.fixed(
-                                width = (trailingUnderlineEnd - trailingUnderlineStart).toInt(),
-                                height = 1
+                        if (isUnderlineUnbroken) {
+                            val fullUnderlineMeasurable = measurables[measurables.size - 1]
+                            fullUnderlinePlaceable = fullUnderlineMeasurable.measure(
+                                Constraints.fixed(width = fullWidth, height = 1))
+
+                            leadingUnderlinePlaceable = null
+                            trailingUnderlinePlaceable = null
+                        } else {
+                            val leadingUnderlineMeasurable = measurables[measurables.size - 2]
+                            val trailingUnderlineMeasurable = measurables[measurables.size - 1]
+
+                            val leadingUnderlineStart = 0
+                            var leadingUnderlineEnd = leadingMarginPx
+                            if (contentModel.selectedTabIndex > 0) {
+                                leadingUnderlineEnd += tabButtonPlaceables.subList(0, contentModel.selectedTabIndex)
+                                    .sumOf { it.measuredWidth }
+                                leadingUnderlineEnd += (contentModel.selectedTabIndex * presentationModel.interTabMargin.toPx())
+                            }
+                            leadingUnderlinePlaceable = leadingUnderlineMeasurable.measure(
+                                Constraints.fixed(
+                                    width = (leadingUnderlineEnd - leadingUnderlineStart).toInt(),
+                                    height = 1
+                                )
                             )
-                        )
+                            val trailingUnderlineStart =
+                                leadingUnderlineEnd + tabButtonPlaceables[contentModel.selectedTabIndex].measuredWidth
+                            val trailingUnderlineEnd = fullWidth
+                            trailingUnderlinePlaceable = trailingUnderlineMeasurable.measure(
+                                Constraints.fixed(
+                                    width = (trailingUnderlineEnd - trailingUnderlineStart).toInt(),
+                                    height = 1
+                                )
+                            )
+
+                            fullUnderlinePlaceable = null
+                        }
 
                         layout(width = fullWidth, height = height) {
                             if (ltr) {
@@ -308,11 +337,12 @@ internal fun AuroraTabs(
                                     x -= (tabButtonPlaceable.measuredWidth + presentationModel.interTabMargin.toPx())
                                 }
                             }
-                            leadingUnderlinePlaceable.placeRelative(0, height - 1)
-                            trailingUnderlinePlaceable.placeRelative(
+                            leadingUnderlinePlaceable?.placeRelative(0, height - 1)
+                            trailingUnderlinePlaceable?.placeRelative(
                                 fullWidth - trailingUnderlinePlaceable.measuredWidth,
                                 height - 1
                             )
+                            fullUnderlinePlaceable?.placeRelative(0, height - 1)
                         }
                     }
                 )

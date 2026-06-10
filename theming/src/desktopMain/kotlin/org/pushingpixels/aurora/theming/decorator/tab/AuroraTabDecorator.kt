@@ -51,6 +51,8 @@ interface AuroraTabDecorator {
     fun getTabOutlineColor(currState: ComponentState,
         tokensOverlayProvider: ContainerColorTokensOverlay.Provider?) : Color
 
+    fun shouldDrawUnbrokenContentEdge(): Boolean
+
     fun paintTabSurface(
         drawScope: DrawScope,
         skinColors: AuroraSkinColors,
