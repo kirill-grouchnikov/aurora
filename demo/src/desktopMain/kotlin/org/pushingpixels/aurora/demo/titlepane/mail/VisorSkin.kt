@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.demo.titlepane.mail
 
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
-import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.ColorStop
 import org.pushingpixels.aurora.theming.painter.decoration.BrushedMetalDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter

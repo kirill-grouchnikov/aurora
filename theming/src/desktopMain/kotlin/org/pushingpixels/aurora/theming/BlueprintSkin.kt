@@ -29,6 +29,7 @@ import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
+import org.pushingpixels.aurora.theming.decorator.tab.DefaultTabDecorator
 import org.pushingpixels.aurora.theming.decorator.window.DefaultWindowDecorator
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.painter.outline.FlatOutlinePainter
@@ -694,6 +695,6 @@ fun blueprintSkin(): AuroraSkinDefinition {
         colors = blueprintSkinColors(),
         painters = painters,
         componentShapers = AuroraComponentShapers.withNoDefaults(RectangularComponentShaper()),
-        decorators = AuroraDecorators(windowDecorator = BlueprintWindowDecorator()),
+        decorators = AuroraDecorators(tabDecorator = DefaultTabDecorator(), windowDecorator = BlueprintWindowDecorator()),
     )
 }

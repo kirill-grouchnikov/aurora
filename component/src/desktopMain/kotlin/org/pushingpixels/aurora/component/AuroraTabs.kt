@@ -18,10 +18,7 @@ package org.pushingpixels.aurora.component
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -42,7 +39,6 @@ import kotlinx.coroutines.launch
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
-import org.pushingpixels.aurora.component.utils.TabUtils
 import org.pushingpixels.aurora.component.utils.getEndwardDoubleArrowIcon
 import org.pushingpixels.aurora.component.utils.getStartwardDoubleArrowIcon
 import org.pushingpixels.aurora.theming.*
@@ -118,6 +114,7 @@ internal fun AuroraTabs(
 ) {
     val colors = AuroraSkin.colors
     val decorationAreaType = AuroraSkin.decorationAreaType
+    val tabDecorator = AuroraSkin.decorators.tabDecorator
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val textStyle = LocalTextStyle.current
@@ -148,6 +145,9 @@ internal fun AuroraTabs(
         fontFamilyResolver = fontFamilyResolver
     )
 
+    // Account for additional padding from the current skin's tab decorator
+    val tweakedContentPadding = presentationModel.tabContentPadding + tabDecorator.getTabExtraPadding()
+
     // Presentation model for the content - copy fields from the tabs presentation model
     val contentPresentationModel = CommandButtonPresentationModel(
         presentationState = presentationModel.tabPresentationState,
@@ -156,7 +156,7 @@ internal fun AuroraTabs(
         iconEnabledFilterStrategy = presentationModel.tabIconEnabledFilterStrategy,
         iconDisabledFilterStrategy = presentationModel.tabIconDisabledFilterStrategy,
         sides = Sides(openSides = hashSetOf(Side.Bottom), straightSides = hashSetOf(Side.Bottom)),
-        contentPadding = presentationModel.tabContentPadding,
+        contentPadding = tweakedContentPadding,
         minWidth = presentationModel.tabMinWidth
     )
     val contentLayoutManager = contentPresentationModel.presentationState.createLayoutManager(
@@ -166,9 +166,8 @@ internal fun AuroraTabs(
         fontFamilyResolver = fontFamilyResolver
     )
 
-    val outlineColorTokens = TabUtils.getTabOutlineColorTokens(
+    val outlineColor = tabDecorator.getTabOutlineColor(currState = ComponentState.Enabled,
         tokensOverlayProvider = presentationModel.colorTokensOverlayProvider)
-    val outlineColor = TabUtils.getTabOutlineColor(outlineColorTokens)
 
     val scope = rememberCoroutineScope()
     val scrollAmount = 12.dp.value * density.density

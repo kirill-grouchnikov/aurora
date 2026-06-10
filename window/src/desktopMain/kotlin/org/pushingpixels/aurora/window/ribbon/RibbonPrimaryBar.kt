@@ -49,7 +49,6 @@ import org.pushingpixels.aurora.component.ribbon.Ribbon
 import org.pushingpixels.aurora.component.ribbon.RibbonContextualTaskGroup
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackBounds
 import org.pushingpixels.aurora.component.ribbon.impl.LocalRibbonTrackKeyTips
-import org.pushingpixels.aurora.component.utils.TabUtils
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.ephemeral.chroma.dynamiccolor.ContainerConfiguration
@@ -329,7 +328,9 @@ internal fun RibbonPrimaryBar(
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
-    val outlineColorTokens = TabUtils.getTabOutlineColorTokens(null)
+    val tabDecorator = AuroraSkin.decorators.tabDecorator
+    val outlineColor = tabDecorator.getTabOutlineColor(currState = ComponentState.Enabled,
+        tokensOverlayProvider = null)
 
     val taskButtonRowScrollState: ScrollState = rememberScrollState(0)
     Box(
@@ -340,7 +341,7 @@ internal fun RibbonPrimaryBar(
         Canvas(modifier = Modifier.fillMaxSize()) {
             // Horizontal line across the entire bottom edge
             drawLine(
-                color = TabUtils.getTabOutlineColor(outlineColorTokens),
+                color = outlineColor,
                 start = Offset(0.0f, size.height - 0.5f),
                 end = Offset(size.width, size.height - 0.5f)
             )

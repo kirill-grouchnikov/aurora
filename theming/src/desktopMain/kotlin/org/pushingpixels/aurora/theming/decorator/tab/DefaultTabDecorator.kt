@@ -1,20 +1,6 @@
-/*
- * Copyright 2020-2026 Aurora, Kirill Grouchnikov
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.pushingpixels.aurora.component.utils
+package org.pushingpixels.aurora.theming.decorator.tab
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -28,54 +14,55 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.Density
 import org.pushingpixels.aurora.common.AuroraInternalApi
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.theming.AuroraSkin
-import org.pushingpixels.aurora.theming.AuroraSkinColors
-import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
-import org.pushingpixels.aurora.theming.ComponentState
-import org.pushingpixels.aurora.theming.ContainerColorTokens
-import org.pushingpixels.aurora.theming.ContainerColorTokensAssociationKind
-import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
-import org.pushingpixels.aurora.theming.DecorationAreaType
-import org.pushingpixels.aurora.theming.OutlineKind
+import org.pushingpixels.aurora.common.byAlpha
+import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.painter.decoration.AuroraDecorationPainter
 import org.pushingpixels.aurora.theming.shaper.OutlineSupplier
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.getContainerTokens
 
-@OptIn(AuroraInternalApi::class)
-object TabUtils {
-    fun getTabOutlineColor(colorTokens: ContainerColorTokens): Color {
-        return colorTokens.markerOnContainer
+class DefaultTabDecorator: AuroraTabDecorator {
+    override fun getTabExtraPadding(): PaddingValues {
+        return PaddingValues.Zero
     }
 
+    @OptIn(AuroraInternalApi::class)
     @Composable
-    fun getTabContentColorTokens(presentationModel: CommandButtonPresentationModel,
-        modelStateInfo: ModelStateInfo, currState: ComponentState) : Color {
-
+    override fun getTabContentColor(currState: ComponentState,
+        tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
+        backgroundAppearanceStrategy: BackgroundAppearanceStrategy): Color {
         val skinColors = AuroraSkin.colors
         val decorationAreaType = AuroraSkin.decorationAreaType
-        return getTextColor(
-            modelStateInfo = modelStateInfo,
-            currState = currState,
+
+        val colorTokens = getContainerTokens(
             colors = skinColors,
-            tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
+            tokensOverlayProvider = tokensOverlayProvider,
             decorationAreaType = decorationAreaType,
             associationKind = ContainerColorTokensAssociationKind.Tab,
-            backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
-            skipFlatCheck = false,
+            componentState = currState,
+            backgroundAppearanceStrategy = backgroundAppearanceStrategy,
             inactiveContainerType = ContainerType.Muted,
-            isTextInFilledArea = true)
+            skipFlatCheck = false
+        )
+        val alpha = if (currState.isDisabled) colorTokens.onContainerDisabledAlpha
+            else colorTokens.onContainerEnabledAlpha
+        return colorTokens.onContainer.byAlpha(alpha)
     }
 
     @Composable
-    fun getTabOutlineColorTokens(tokensOverlayProvider: ContainerColorTokensOverlay.Provider?) : ContainerColorTokens {
+    override fun getTabOutlineColor(currState: ComponentState,
+        tokensOverlayProvider: ContainerColorTokensOverlay.Provider?): Color {
+
         val tokensOverlay = tokensOverlayProvider?.getOverlay(AuroraSkin.colors, AuroraSkin.decorationAreaType)
-        return tokensOverlay?.neutralContainerTokens
+        val tokens =  tokensOverlay?.neutralContainerTokens
             ?: AuroraSkin.colors.getNeutralContainerTokens(AuroraSkin.decorationAreaType)
+
+        val alpha = if (currState.isDisabled) tokens.containerOutlineDisabledAlpha
+            else tokens.containerOutlineEnabledAlpha
+        return tokens.markerOnContainer.byAlpha(alpha)
     }
 
-    fun paintTabSurface(
+    override fun paintTabSurface(
         drawScope: DrawScope,
         skinColors: AuroraSkinColors,
         decorationAreaType: DecorationAreaType,
@@ -86,8 +73,8 @@ object TabUtils {
         offsetFromRoot: Offset,
         size: Size,
         surfaceColorTokens: ContainerColorTokens,
-        alpha: Float) {
-
+        alpha: Float
+    ) {
         with (drawScope) {
             withTransform({
                 clipRect(
@@ -133,10 +120,14 @@ object TabUtils {
         }
     }
 
-    fun paintTabSurfaceHighlight(
-        drawScope: DrawScope, outlineSupplier: OutlineSupplier,
-        density: Density, size: Size,
-        surfaceHighlightColorTokens: ContainerColorTokens, alpha: Float) {
+    override fun paintTabSurfaceHighlight(
+        drawScope: DrawScope,
+        outlineSupplier: OutlineSupplier,
+        density: Density,
+        size: Size,
+        surfaceHighlightColorTokens: ContainerColorTokens,
+        alpha: Float
+    ) {
         with(drawScope) {
             withTransform({
                 clipRect(
@@ -179,11 +170,14 @@ object TabUtils {
         }
     }
 
-    fun paintTabOutline(
-        drawScope: DrawScope, outlineSupplier: OutlineSupplier,
-        density: Density, size: Size,
-        outlineColorTokens: ContainerColorTokens, alpha: Float) {
-
+    override fun paintTabOutline(
+        drawScope: DrawScope,
+        outlineSupplier: OutlineSupplier,
+        density: Density,
+        size: Size,
+        outlineColor: Color,
+        alpha: Float
+    ) {
         with (drawScope) {
             withTransform({
                 clipRect(
@@ -204,11 +198,10 @@ object TabUtils {
                         outlineKind = OutlineKind.Outline
                     ),
                     style = Stroke(width = 1.0f),
-                    color = getTabOutlineColor(outlineColorTokens),
+                    color = outlineColor,
                     alpha = alpha
                 )
             }
-
         }
     }
 }

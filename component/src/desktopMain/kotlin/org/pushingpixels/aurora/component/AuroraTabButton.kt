@@ -41,7 +41,6 @@ import org.pushingpixels.aurora.component.utils.*
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.utils.ContainerType
 import org.pushingpixels.aurora.theming.utils.MutableContainerColorTokens
-import org.pushingpixels.aurora.theming.utils.getContainerTokens
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -76,6 +75,7 @@ internal fun AuroraTabButton(
     }
 
     val decorationAreaType = AuroraSkin.decorationAreaType
+    val tabDecorator = AuroraSkin.decorators.tabDecorator
 
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -223,7 +223,8 @@ internal fun AuroraTabButton(
                         skipFlatCheck = false,
                         inactiveContainerType = ContainerType.Muted)
 
-                    val outlineColorTokens = TabUtils.getTabOutlineColorTokens(
+                    val outlineColor = tabDecorator.getTabOutlineColor(
+                        currState = currentActionState.value,
                         tokensOverlayProvider = presentationModel.colorTokensOverlayProvider)
 
                     val actionAlpha = max(actionRolloverFraction,
@@ -239,7 +240,7 @@ internal fun AuroraTabButton(
                     val outlineSupplier = AuroraSkin.componentShaper.getTabOutlineSupplier(presentationModel.sides)
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        TabUtils.paintTabSurfaceHighlight(
+                        tabDecorator.paintTabSurfaceHighlight(
                             drawScope = this,
                             outlineSupplier = outlineSupplier,
                             density = density,
@@ -250,20 +251,13 @@ internal fun AuroraTabButton(
                     }
 
                     Canvas(modifier = Modifier.matchParentSize()) {
-                        var alpha = actionAlpha
-                        if (currentActionState.value.isDisabled) {
-                            alpha *= outlineColorTokens.containerOutlineDisabledAlpha
-                        } else {
-                            alpha *= outlineColorTokens.containerOutlineEnabledAlpha
-                        }
-
-                        TabUtils.paintTabOutline(
+                        tabDecorator.paintTabOutline(
                             drawScope = this,
                             outlineSupplier = outlineSupplier,
                             density = density,
                             size = size,
-                            outlineColorTokens = outlineColorTokens,
-                            alpha = alpha
+                            outlineColor = outlineColor,
+                            alpha = actionAlpha
                         )
                     }
                 }
@@ -362,10 +356,10 @@ private fun TabButtonTextContent(
     style: TextStyle
 ) {
     // Compute the text color based on the passed model state
-    val textColor = TabUtils.getTabContentColorTokens(
-        presentationModel = presentationModel,
-        modelStateInfo = modelStateInfo,
-        currState = currState)
+    val textColor = AuroraSkin.decorators.tabDecorator.getTabContentColor(
+        currState = currState,
+        tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
+        backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy)
 
     // Pass our text color to the children
     CompositionLocalProvider(
@@ -397,10 +391,10 @@ private fun TabButtonIconContent(
                 command.icon
 
             // Compute the text color based on the passed model state
-            val textColor = TabUtils.getTabContentColorTokens(
-                presentationModel = presentationModel,
-                modelStateInfo = modelStateInfo,
-                currState = currState)
+            val textColor = AuroraSkin.decorators.tabDecorator.getTabContentColor(
+                currState = currState,
+                tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
+                backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy)
 
             // Pass our text color and model state snapshot to the children
             CompositionLocalProvider(

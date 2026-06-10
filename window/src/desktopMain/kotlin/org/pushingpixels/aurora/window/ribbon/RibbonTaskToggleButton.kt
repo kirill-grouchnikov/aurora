@@ -96,6 +96,7 @@ internal fun RibbonTaskToggleButton(
 
     val decorationAreaType = AuroraSkin.decorationAreaType
     val skinColors = AuroraSkin.colors
+    val tabDecorator = AuroraSkin.decorators.tabDecorator
     val componentShaper = AuroraSkin.componentShaper
 
     val density = LocalDensity.current
@@ -292,12 +293,13 @@ internal fun RibbonTaskToggleButton(
                     val neutralSurfaceTokens = getContainerTokens(
                         colors = skinColors,
                         tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
-                        decorationAreaType = AuroraSkin.decorationAreaType,
+                        decorationAreaType = decorationAreaType,
                         componentState = ComponentState.Enabled,
                         backgroundAppearanceStrategy = presentationModel.backgroundAppearanceStrategy,
                         inactiveContainerType = ContainerType.Neutral
                     )
-                    val outlineColorTokens = TabUtils.getTabOutlineColorTokens(
+                    val outlineColor = tabDecorator.getTabOutlineColor(
+                        currState = currentActionState.value,
                         tokensOverlayProvider = presentationModel.colorTokensOverlayProvider)
 
                     val outlineSupplier = componentShaper.getTabOutlineSupplier(presentationModel.sides)
@@ -313,7 +315,7 @@ internal fun RibbonTaskToggleButton(
                             radiusAdjustment = 0.0f,
                             outlineKind = OutlineKind.Surface)
 
-                        TabUtils.paintTabSurface(
+                        tabDecorator.paintTabSurface(
                             drawScope = this,
                             skinColors = skinColors,
                             decorationAreaType = decorationAreaType,
@@ -327,30 +329,22 @@ internal fun RibbonTaskToggleButton(
                             alpha = 1.0f
                         )
 
-                        TabUtils.paintTabSurfaceHighlight(
+                        tabDecorator.paintTabSurfaceHighlight(
                             drawScope = this,
                             outlineSupplier = outlineSupplier,
                             density = density,
                             size = size,
                             surfaceHighlightColorTokens = drawingCache.colorTokens,
-                            alpha = if (currentActionState.value.isDisabled) {
-                                outlineColorTokens.containerSurfaceDisabledAlpha
-                            } else {
-                                outlineColorTokens.containerSurfaceEnabledAlpha
-                            }
+                            alpha = 1.0f
                         )
 
-                        TabUtils.paintTabOutline(
+                        tabDecorator.paintTabOutline(
                             drawScope = this,
                             outlineSupplier = outlineSupplier,
                             density = density,
                             size = size,
-                            outlineColorTokens = outlineColorTokens,
-                            alpha = if (currentActionState.value.isDisabled) {
-                                outlineColorTokens.containerOutlineDisabledAlpha
-                            } else {
-                                outlineColorTokens.containerOutlineEnabledAlpha
-                            }
+                            outlineColor = outlineColor,
+                            alpha = 1.0f
                         )
                     }
                 }
