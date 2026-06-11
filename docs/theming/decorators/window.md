@@ -31,5 +31,5 @@ The core Blueprint skin is an example of a custom window decorator that paints g
 If you wish to use the window decorator of the current skin to provide additional custom painting in your application, call:
 
 * `AuroraSkin.decorators` to retrieve the decorators associated with the current skin.
-* `AuroraDecorators.windowDecorator` to retrieve the surface painter of the current skin.
+* `AuroraDecorators.windowDecorator` to retrieve the window decorator of the current skin.
 * Call the relevant method(s) on the `AuroraWindowDecorator`.
