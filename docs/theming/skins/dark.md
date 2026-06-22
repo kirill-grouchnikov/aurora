@@ -24,6 +24,14 @@ Available in the `magellanSkin()` API to be passed to `AuroraWindow`:
 <img alt="Magellan" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/magellan.png" width="350" height="280">
 </p>
 
+### Blueprint
+
+Available in the `blueprintSkin()` API to be passed to `AuroraWindow`:
+
+<p align="left">
+<img alt="Blueprint" src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/theming/skins/blueprint.png" width="350" height="280">
+</p>
+
 ### Graphite
 
 Available in the `graphiteSkin()` API to be passed to `AuroraWindow`:
