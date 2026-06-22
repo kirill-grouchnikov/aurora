@@ -7,7 +7,7 @@ batik = "1.19"
 ephemeral_chroma = "1.6-SNAPSHOT"
 
 versionchecker = "0.54.0"
-mavenpublish = "0.36.0"
+mavenpublish = "0.37.0"
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose" }
