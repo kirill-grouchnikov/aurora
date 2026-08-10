@@ -30,11 +30,13 @@ interface TokenPaletteColorResolver {
 
     fun getContainerShadow(tokenPalette: TokenPalette): Color
 
+    fun getOnContainerLow(tokenPalette: TokenPalette): Color
     fun getOnContainer(tokenPalette: TokenPalette): Color
-    fun getOnContainerVariant(tokenPalette: TokenPalette): Color
+    fun getOnContainerHigh(tokenPalette: TokenPalette): Color
 
+    fun getContainerOutlineLow(tokenPalette: TokenPalette): Color
     fun getContainerOutline(tokenPalette: TokenPalette): Color
-    fun getContainerOutlineVariant(tokenPalette: TokenPalette): Color
+    fun getContainerOutlineHigh(tokenPalette: TokenPalette): Color
 
     fun getContainerSurfaceEnabledAlpha(tokenPalette: TokenPalette): Float
     fun getOnContainerEnabledAlpha(tokenPalette: TokenPalette): Float

@@ -64,10 +64,12 @@ private fun ContainerColorTokens.overlay(overlay: Color, overlayAmount: Float): 
     val containerShadow: Color = original.containerShadow
 
     // Leave on container and container outline tokens as they are
+    val onContainerLow: Color = original.onContainerLow
     val onContainer: Color = original.onContainer
-    val onContainerVariant: Color = original.onContainerVariant
+    val onContainerHigh: Color = original.onContainerHigh
+    val containerOutlineLow: Color = original.containerOutlineLow
     val containerOutline: Color = original.containerOutline
-    val containerOutlineVariant: Color = original.containerOutlineVariant
+    val containerOutlineHigh: Color = original.containerOutlineHigh
 
     val inverseOnContainer: Color = original.inverseOnContainer
     val inverseContainerOutline: Color = original.inverseContainerOutline
@@ -105,17 +107,23 @@ private fun ContainerColorTokens.overlay(overlay: Color, overlayAmount: Float): 
         override val containerShadow: Color
             get() = containerShadow
 
+        override val onContainerLow: Color
+            get() = onContainerLow
+
         override val onContainer: Color
             get() = onContainer
 
-        override val onContainerVariant: Color
-            get() = onContainerVariant
+        override val onContainerHigh: Color
+            get() = onContainerHigh
+
+        override val containerOutlineLow: Color
+            get() = containerOutlineLow
 
         override val containerOutline: Color
             get() = containerOutline
 
-        override val containerOutlineVariant: Color
-            get() = containerOutlineVariant
+        override val containerOutlineHigh: Color
+            get() = containerOutlineHigh
 
         override val containerSurfaceEnabledAlpha: Float
             get() = original.containerSurfaceEnabledAlpha

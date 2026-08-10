@@ -100,7 +100,8 @@ private fun sentinelSkinColors(): AuroraSkinColors {
             colorResolver = DefaultPaletteColorResolver.overlayWith(
                 TokenPaletteColorResolverOverlay(
                     containerOutline = { it.onContainer and 0xC0FFFFFFu.toInt() },
-                    containerOutlineVariant = { it.containerOutlineVariant and 0xC0FFFFFFu.toInt() },
+                    containerOutlineLow = { it.containerOutlineLow and 0xC0FFFFFFu.toInt() },
+                    containerOutlineHigh = { it.containerOutlineHigh and 0xC0FFFFFFu.toInt() },
                 )
             )
         ),
@@ -114,7 +115,8 @@ private fun sentinelSkinColors(): AuroraSkinColors {
             colorResolver = DefaultPaletteColorResolver.overlayWith(
                 TokenPaletteColorResolverOverlay(
                     containerOutline = { it.onContainer and 0xC0FFFFFFu.toInt() },
-                    containerOutlineVariant = { it.containerOutlineVariant and 0xC0FFFFFFu.toInt() },
+                    containerOutlineLow = { it.containerOutlineLow and 0xC0FFFFFFu.toInt() },
+                    containerOutlineHigh = { it.containerOutlineHigh and 0xC0FFFFFFu.toInt() },
                 )
             )
         ),

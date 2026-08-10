@@ -85,13 +85,17 @@ private fun getInterpolatedColors(colorTokens: ContainerColorTokens, filterRange
 
     if (filterRange == FilterRange.FullSpan) {
         // Step 1B - more color tokens
-        val containerOutlineVariant = getColor(colorTokens.containerOutlineVariant,
+        val containerOutlineLow = getColor(colorTokens.containerOutlineLow,
             colorTokens.containerOutlineEnabledAlpha, container)
         val containerOutline = getColor(colorTokens.containerOutline,
             colorTokens.containerOutlineEnabledAlpha, container)
-        val onContainerVariant = getColor(colorTokens.onContainerVariant,
+        val containerOutlineHigh = getColor(colorTokens.containerOutlineHigh,
+            colorTokens.containerOutlineEnabledAlpha, container)
+        val onContainerLow = getColor(colorTokens.onContainerLow,
             colorTokens.onContainerEnabledAlpha, container)
         val onContainer = getColor(colorTokens.onContainer,
+            colorTokens.onContainerEnabledAlpha, container)
+        val onContainerHigh = getColor(colorTokens.onContainerHigh,
             colorTokens.onContainerEnabledAlpha, container)
         val inverseContainerSurface = colorTokens.inverseContainerSurface
         val inverseOnContainer = getColor(colorTokens.inverseOnContainer,
@@ -103,10 +107,12 @@ private fun getInterpolatedColors(colorTokens: ContainerColorTokens, filterRange
         val complementaryContainerOutline = getColor(colorTokens.complementaryContainerOutline,
             colorTokens.containerOutlineEnabledAlpha, container)
 
-        tokenColorMapping[(containerOutlineVariant.colorBrightness * 255.0f).toInt()] = containerOutlineVariant
+        tokenColorMapping[(containerOutlineLow.colorBrightness * 255.0f).toInt()] = containerOutlineLow
         tokenColorMapping[(containerOutline.colorBrightness * 255.0f).toInt()] = containerOutline
-        tokenColorMapping[(onContainerVariant.colorBrightness * 255.0f).toInt()] = onContainerVariant
+        tokenColorMapping[(containerOutlineHigh.colorBrightness * 255.0f).toInt()] = containerOutlineHigh
+        tokenColorMapping[(onContainerLow.colorBrightness * 255.0f).toInt()] = onContainerLow
         tokenColorMapping[(onContainer.colorBrightness * 255.0f).toInt()] = onContainer
+        tokenColorMapping[(onContainerHigh.colorBrightness * 255.0f).toInt()] = onContainerHigh
         tokenColorMapping[(inverseContainerSurface.colorBrightness * 255.0f).toInt()] = inverseContainerSurface
         tokenColorMapping[(inverseOnContainer.colorBrightness * 255.0f).toInt()] = inverseOnContainer
         tokenColorMapping[(inverseContainerOutline.colorBrightness * 255.0f).toInt()] = inverseContainerOutline

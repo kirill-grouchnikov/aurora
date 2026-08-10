@@ -93,17 +93,23 @@ class ContainerColorTokensOverlay(
                     override val containerShadow: Color
                         get() = systemContainerTokens.containerShadow
 
+                    override val onContainerLow: Color
+                        get() = systemContainerTokens.accentOnContainer.withAlpha(0.95f)
+
                     override val onContainer: Color
                         get() = systemContainerTokens.accentOnContainer
 
-                    override val onContainerVariant: Color
-                        get() = systemContainerTokens.accentOnContainer.withAlpha(0.95f)
+                    override val onContainerHigh: Color
+                        get() = systemContainerTokens.accentOnContainer
+
+                    override val containerOutlineLow: Color
+                        get() = systemContainerTokens.containerOutlineLow
 
                     override val containerOutline: Color
                         get() = systemContainerTokens.containerOutline
 
-                    override val containerOutlineVariant: Color
-                        get() = systemContainerTokens.containerOutlineVariant
+                    override val containerOutlineHigh: Color
+                        get() = systemContainerTokens.containerOutlineHigh
 
                     override val containerSurfaceEnabledAlpha: Float
                         get() = systemContainerTokens.containerSurfaceEnabledAlpha
@@ -205,17 +211,23 @@ class ContainerColorTokensOverlay(
                     override val containerShadow: Color
                         get() = systemContainerTokens.containerShadow
 
+                    override val onContainerLow: Color
+                        get() = systemContainerTokens.accentOnContainer.withAlpha(0.95f)
+
                     override val onContainer: Color
                         get() = systemContainerTokens.accentOnContainer
 
-                    override val onContainerVariant: Color
-                        get() = systemContainerTokens.accentOnContainer.withAlpha(0.95f)
+                    override val onContainerHigh: Color
+                        get() = systemContainerTokens.accentOnContainer
+
+                    override val containerOutlineLow: Color
+                        get() = systemContainerTokens.containerOutlineLow
 
                     override val containerOutline: Color
                         get() = systemContainerTokens.containerOutline
 
-                    override val containerOutlineVariant: Color
-                        get() = systemContainerTokens.containerOutlineVariant
+                    override val containerOutlineHigh: Color
+                        get() = systemContainerTokens.containerOutlineHigh
 
                     override val containerSurfaceEnabledAlpha: Float
                         get() = systemContainerTokens.containerSurfaceEnabledAlpha

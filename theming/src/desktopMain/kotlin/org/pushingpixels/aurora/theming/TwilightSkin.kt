@@ -60,7 +60,8 @@ private fun twilightSkinColors(): AuroraSkinColors {
     val activeResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
             containerOutline = { twilightDefaultMutedTokens.containerOutline.toArgb() },
-            containerOutlineVariant = { twilightDefaultMutedTokens.containerOutlineVariant.toArgb() },
+            containerOutlineLow = { twilightDefaultMutedTokens.containerOutlineLow.toArgb() },
+            containerOutlineHigh = { twilightDefaultMutedTokens.containerOutlineHigh.toArgb() },
             containerSurfaceDisabledAlpha = { 0.4f },
             onContainerDisabledAlpha = { 0.6f },
             containerOutlineDisabledAlpha = { 0.55f },
@@ -83,7 +84,8 @@ private fun twilightSkinColors(): AuroraSkinColors {
     val twilightPaletteContainerColorResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
             containerOutline = { it.onContainer },
-            containerOutlineVariant = { it.onContainerVariant },
+            containerOutlineLow = { it.containerOutlineLow },
+            containerOutlineHigh = { it.containerOutlineHigh },
         )
     )
 
@@ -181,7 +183,7 @@ fun twilightSkin(): AuroraSkinDefinition {
     // add an overlay painter to paint a dark line along the bottom
     // edge of toolbars
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter( { it.containerOutlineVariant } ),
+        BottomLineOverlayPainter( { it.containerOutlineLow } ),
         DecorationAreaType.Toolbar
     )
 

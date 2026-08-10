@@ -117,7 +117,7 @@ fun AuroraWindowScope.DestinationsPanel(modifier: Modifier) {
                                             Modifier
                                                 .border(
                                                     width = 0.dp,
-                                                    color = colorTokens.containerOutlineVariant,
+                                                    color = colorTokens.containerOutlineLow,
                                                     shape = CircleShape)
                                                 .background(color = colorTokens.containerSurfaceLow,
                                                     shape = CircleShape)

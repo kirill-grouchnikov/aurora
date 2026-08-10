@@ -56,9 +56,10 @@ private fun blueprintSkinColors(): AuroraSkinColors {
     val activeResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
             containerOutline = { it.complementaryContainerOutline },
-            containerOutlineVariant = { Blend.harmonize(
+            containerOutlineLow = { Blend.harmonize(
                 it.complementaryContainerOutline, it.containerSurface, 0.2
             ) },
+            containerOutlineHigh = { it.complementaryContainerOutline },
             complementaryContainerOutline = { darkPrimaryBlue.toInt() },
             inverseContainerSurface = { primaryBlue.toInt() },
             inverseContainerOutline = { darkPrimaryBlue.toInt() },
@@ -71,12 +72,13 @@ private fun blueprintSkinColors(): AuroraSkinColors {
     val mutedResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
             containerOutline = { it.complementaryContainerOutline },
-            containerOutlineVariant = { Blend.harmonize(
+            containerOutlineLow = { Blend.harmonize(
                 it.complementaryContainerOutline, it.containerSurface, 0.2
             ) },
+            containerOutlineHigh = { it.complementaryContainerOutline },
             complementaryContainerOutline = { it.containerOutline },
             markerOnContainer = { it.complementaryContainerOutline and 0xC0FFFFFFu.toInt() },
-            complementaryMarkerOnContainer = { it.containerOutlineVariant },
+            complementaryMarkerOnContainer = { it.containerOutlineLow },
             containerSurfaceEnabledAlpha = { 0.0f },
             containerSurfaceDisabledAlpha = { 0.0f },
             containerOutlineDisabledAlpha = { 0.55f },
@@ -168,7 +170,7 @@ private class BlueprintDecorationInlayPainter: AuroraDecorationPainter.InlayPain
             var gridX = startGridX
             while (gridX <= endGridX) {
                 drawLine(
-                    color = colorTokens.containerOutlineVariant,
+                    color = colorTokens.containerOutlineLow,
                     start = Offset(gridX, 0.0f),
                     end = Offset(gridX, height),
                     strokeWidth = Stroke.HairlineWidth,
@@ -181,7 +183,7 @@ private class BlueprintDecorationInlayPainter: AuroraDecorationPainter.InlayPain
             var gridY = startGridY
             while (gridY <= endGridY) {
                 drawLine(
-                    color = colorTokens.containerOutlineVariant,
+                    color = colorTokens.containerOutlineLow,
                     start = Offset(0.0f, gridY),
                     end = Offset(width, gridY),
                     strokeWidth = Stroke.HairlineWidth,
@@ -559,14 +561,14 @@ private class BlueprintWindowDecorator: DefaultWindowDecorator() {
 
                     if (!isFullDash) {
                         drawLine(
-                            color = colorTokens.containerOutlineVariant,
+                            color = colorTokens.containerOutlineLow,
                             start = Offset(dashX, 0.0f),
                             end = Offset(dashX, thickness),
                             strokeWidth = Stroke.HairlineWidth,
                             alpha = GridAlpha
                         )
                         drawLine(
-                            color = colorTokens.containerOutlineVariant,
+                            color = colorTokens.containerOutlineLow,
                             start = Offset(dashX, height - thickness - 1.0f),
                             end = Offset(dashX, height - 1.0f),
                             strokeWidth = Stroke.HairlineWidth,
@@ -600,14 +602,14 @@ private class BlueprintWindowDecorator: DefaultWindowDecorator() {
 
                     if (!isFullDash) {
                         drawLine(
-                            color = colorTokens.containerOutlineVariant,
+                            color = colorTokens.containerOutlineLow,
                             start = Offset(0.0f, dashY),
                             end = Offset(thickness, dashY),
                             strokeWidth = Stroke.HairlineWidth,
                             alpha = GridAlpha
                         )
                         drawLine(
-                            color = colorTokens.containerOutlineVariant,
+                            color = colorTokens.containerOutlineLow,
                             start = Offset(width - thickness - 1, dashY),
                             end = Offset(width - 1, dashY),
                             strokeWidth = Stroke.HairlineWidth,
@@ -672,12 +674,12 @@ fun blueprintSkin(): AuroraSkinDefinition {
     decorationPainter.inlayPainter = BlueprintDecorationInlayPainter()
 
     decorationPainter.addOverlayPainter(
-        BlueprintDecorationOverlayPainter({ it.containerOutlineVariant }, 1.5f,
+        BlueprintDecorationOverlayPainter({ it.containerOutlineLow }, 1.5f,
             BlueprintDecorationOverlayPainter.Alignment.Bottom),
         DecorationAreaType.Toolbar
     )
     decorationPainter.addOverlayPainter(
-        BlueprintDecorationOverlayPainter({ it.containerOutlineVariant }, 1.5f,
+        BlueprintDecorationOverlayPainter({ it.containerOutlineLow }, 1.5f,
             BlueprintDecorationOverlayPainter.Alignment.Top),
         DecorationAreaType.Toolbar, DecorationAreaType.Footer
     )

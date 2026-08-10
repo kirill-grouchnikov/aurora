@@ -523,7 +523,7 @@ private fun AnimatedArrowsSurfacePainterOverlay(
                         colorTokens.containerSurfaceLowest
                     }
                     val offBottom = colorTokens.containerSurface
-                    val on = colorTokens.onContainerVariant
+                    val on = colorTokens.onContainerLow
 
                     for (row in 0..<Rows) {
                         val rowFactor = row.toFloat() / Rows.toFloat()

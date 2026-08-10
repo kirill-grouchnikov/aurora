@@ -45,7 +45,7 @@ import org.pushingpixels.aurora.window.AuroraWindowScope
 fun AuroraWindowScope.ThreadPanel(modifier: Modifier) {
     Column(modifier = modifier.fillMaxHeight().auroraBackground()) {
         val fillTokens = AuroraSkin.colors.getMutedContainerTokens(AuroraSkin.decorationAreaType)
-        val iconColorFilter = ColorFilter.tint(color = fillTokens.onContainerVariant)
+        val iconColorFilter = ColorFilter.tint(color = fillTokens.onContainerLow)
 
         // Resolve the default text style
         val resolvedTextStyle = resolveAuroraDefaults()
@@ -179,7 +179,7 @@ private fun CollapsedMessagePanel(from: String, title: String, timestamp: String
                     color = colorTokens.containerSurfaceHighest,
                     shape = RoundedCornerShape(4.dp)
                 )
-                .border(width = 0.dp, color = colorTokens.containerOutlineVariant)
+                .border(width = 0.dp, color = colorTokens.containerOutlineLow)
                 .padding(vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -234,7 +234,7 @@ private fun ExpandedMessagePanel(
                     color = colorTokens.containerSurfaceHighest,
                     shape = RoundedCornerShape(4.dp)
                 )
-                .border(width = 0.dp, color = colorTokens.containerOutlineVariant)
+                .border(width = 0.dp, color = colorTokens.containerOutlineLow)
                 .padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 16.dp)
         ) {
             Row(

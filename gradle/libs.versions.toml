@@ -4,7 +4,7 @@ compose = "1.12.0-beta03"
 dokka = "2.2.0"
 batik = "1.19"
 
-ephemeral_chroma = "2.0.0"
+ephemeral_chroma = "2.5-SNAPSHOT"
 
 versionchecker = "0.54.0"
 mavenpublish = "0.37.0"

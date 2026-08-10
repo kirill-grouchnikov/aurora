@@ -87,7 +87,7 @@ private fun marinerSkinColors(): AuroraSkinColors {
                 /* contrastLevel */ 1.0),
             colorResolver = DefaultPaletteColorResolver.overlayWith(
                 TokenPaletteColorResolverOverlay(
-                    containerOutline = { it.containerOutlineVariant }
+                    containerOutline = { it.containerOutlineLow }
                 )
             )
         ),

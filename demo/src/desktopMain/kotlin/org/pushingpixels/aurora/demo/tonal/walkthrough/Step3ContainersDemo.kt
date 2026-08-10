@@ -47,7 +47,7 @@ fun main() = auroraApplication {
     val state = rememberWindowState(
             placement = WindowPlacement.Floating,
             position = WindowPosition.Aligned(Alignment.Center),
-            size = DpSize(860.dp, 540.dp)
+            size = DpSize(940.dp, 540.dp)
     )
     AuroraWindow(
             skin = businessSkin(),

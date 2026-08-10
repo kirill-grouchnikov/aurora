@@ -35,7 +35,7 @@ private val SquareSize = 24.dp
 
 @Composable
 fun ContainerPalettePreview(colorTokens: ContainerColorTokens, showLegend: Boolean = true) {
-    Row(modifier = Modifier.width(340.dp).padding(horizontal = 10.dp),
+    Row(modifier = Modifier.width(390.dp).padding(horizontal = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(MediumGap)) {
         Column(modifier = Modifier.wrapContentSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             if (showLegend) {
@@ -78,13 +78,15 @@ fun ContainerPalettePreview(colorTokens: ContainerColorTokens, showLegend: Boole
                             horizontalAlignment = HorizontalAlignment.Center,
                             textMaxLines = 1,
                         )
-                    ).project()
+                    ).project(Modifier.padding(vertical = 2.dp))
                 }
             }
             Row {
+                ColorTokenSquare(colorTokens.onContainerLow)
+                Spacer(modifier = Modifier.width(SmallGap))
                 ColorTokenSquare(colorTokens.onContainer)
                 Spacer(modifier = Modifier.width(SmallGap))
-                ColorTokenSquare(colorTokens.onContainerVariant)
+                ColorTokenSquare(colorTokens.onContainerHigh)
             }
         }
         Column(modifier = Modifier.wrapContentSize(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -97,13 +99,15 @@ fun ContainerPalettePreview(colorTokens: ContainerColorTokens, showLegend: Boole
                             horizontalAlignment = HorizontalAlignment.Center,
                             textMaxLines = 1,
                         )
-                    ).project()
+                    ).project(Modifier.padding(vertical = 2.dp))
                 }
             }
             Row {
+                ColorTokenSquare(colorTokens.containerOutlineLow)
+                Spacer(modifier = Modifier.width(SmallGap))
                 ColorTokenSquare(colorTokens.containerOutline)
                 Spacer(modifier = Modifier.width(SmallGap))
-                ColorTokenSquare(colorTokens.containerOutlineVariant)
+                ColorTokenSquare(colorTokens.containerOutlineHigh)
             }
         }
     }

@@ -66,17 +66,29 @@ internal fun getSystemTokens(seed: Hct, containerConfiguration: ContainerConfigu
         override val containerShadow: Color
             get() = Color(palette.getHct(0.0).toInt())
 
+        override val onContainerLow: Color
+            get() = if (containerConfiguration.isDark)
+                getColor(ContrastCurve(70.0, 80.0, 85.0, 90.0))
+            else
+                getColor(ContrastCurve(45.0, 40.0, 30.0, 20.0))
+
         override val onContainer: Color
             get() = if (containerConfiguration.isDark)
                 getColor(ContrastCurve(80.0, 90.0, 95.0, 100.0))
             else
                 getColor(ContrastCurve(40.0, 30.0, 20.0, 10.0))
 
-        override val onContainerVariant: Color
+        override val onContainerHigh: Color
             get() = if (containerConfiguration.isDark)
-                getColor(ContrastCurve(70.0, 80.0, 85.0, 90.0))
+                getColor(ContrastCurve(85.0, 92.0, 97.0, 100.0))
             else
-                getColor(ContrastCurve(45.0, 40.0, 30.0, 20.0))
+                getColor(ContrastCurve(35.0, 25.0, 15.0, 5.0))
+
+        override val containerOutlineLow: Color
+            get() = if (containerConfiguration.isDark)
+                getColor(ContrastCurve(35.0, 30.0, 20.0, 10.0))
+            else
+                getColor(ContrastCurve(85.0, 80.0, 70.0, 50.0))
 
         override val containerOutline: Color
             get() = if (containerConfiguration.isDark)
@@ -84,11 +96,11 @@ internal fun getSystemTokens(seed: Hct, containerConfiguration: ContainerConfigu
             else
                 getColor(ContrastCurve(55.0, 50.0, 40.0, 30.0))
 
-        override val containerOutlineVariant: Color
+        override val containerOutlineHigh: Color
             get() = if (containerConfiguration.isDark)
-                getColor(ContrastCurve(35.0, 30.0, 20.0, 10.0))
+                getColor(ContrastCurve(10.0, 5.0, 2.0, 0.0))
             else
-                getColor(ContrastCurve(85.0, 80.0, 70.0, 50.0))
+                getColor(ContrastCurve(40.0, 35.0, 30.0, 20.0))
 
         override val containerSurfaceEnabledAlpha: Float
             get() = 1.0f

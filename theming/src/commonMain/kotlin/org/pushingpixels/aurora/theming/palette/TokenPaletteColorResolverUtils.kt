@@ -52,20 +52,28 @@ val DefaultPaletteColorResolver: TokenPaletteColorResolver
             return Color(tokenPalette.containerShadow)
         }
 
+        override fun getOnContainerLow(tokenPalette: TokenPalette): Color {
+            return Color(tokenPalette.onContainerLow)
+        }
+
         override fun getOnContainer(tokenPalette: TokenPalette): Color {
             return Color(tokenPalette.onContainer)
         }
 
-        override fun getOnContainerVariant(tokenPalette: TokenPalette): Color {
-            return Color(tokenPalette.onContainerVariant)
+        override fun getOnContainerHigh(tokenPalette: TokenPalette): Color {
+            return Color(tokenPalette.onContainerHigh)
+        }
+
+        override fun getContainerOutlineLow(tokenPalette: TokenPalette): Color {
+            return Color(tokenPalette.containerOutlineLow)
         }
 
         override fun getContainerOutline(tokenPalette: TokenPalette): Color {
             return Color(tokenPalette.containerOutline)
         }
 
-        override fun getContainerOutlineVariant(tokenPalette: TokenPalette): Color {
-            return Color(tokenPalette.containerOutlineVariant)
+        override fun getContainerOutlineHigh(tokenPalette: TokenPalette): Color {
+            return Color(tokenPalette.containerOutlineHigh)
         }
 
         override fun getContainerSurfaceEnabledAlpha(tokenPalette: TokenPalette): Float {
@@ -200,6 +208,15 @@ fun TokenPaletteColorResolver.overlayWith(overlay: TokenPaletteColorResolverOver
             }
         }
 
+        override fun getOnContainerLow(tokenPalette: TokenPalette): Color {
+            val spec = overlay.onContainerLow
+            return if (spec == null) {
+                original.getOnContainerLow(tokenPalette)
+            } else {
+                Color(spec.invoke(tokenPalette))
+            }
+        }
+
         override fun getOnContainer(tokenPalette: TokenPalette): Color {
             val spec = overlay.onContainer
             return if (spec == null) {
@@ -209,10 +226,19 @@ fun TokenPaletteColorResolver.overlayWith(overlay: TokenPaletteColorResolverOver
             }
         }
 
-        override fun getOnContainerVariant(tokenPalette: TokenPalette): Color {
-            val spec = overlay.onContainerVariant
+        override fun getOnContainerHigh(tokenPalette: TokenPalette): Color {
+            val spec = overlay.onContainerHigh
             return if (spec == null) {
-                original.getOnContainerVariant(tokenPalette)
+                original.getOnContainerHigh(tokenPalette)
+            } else {
+                Color(spec.invoke(tokenPalette))
+            }
+        }
+
+        override fun getContainerOutlineLow(tokenPalette: TokenPalette): Color {
+            val spec = overlay.containerOutlineLow
+            return if (spec == null) {
+                original.getContainerOutlineLow(tokenPalette)
             } else {
                 Color(spec.invoke(tokenPalette))
             }
@@ -227,10 +253,10 @@ fun TokenPaletteColorResolver.overlayWith(overlay: TokenPaletteColorResolverOver
             }
         }
 
-        override fun getContainerOutlineVariant(tokenPalette: TokenPalette): Color {
-            val spec = overlay.containerOutlineVariant
+        override fun getContainerOutlineHigh(tokenPalette: TokenPalette): Color {
+            val spec = overlay.containerOutlineHigh
             return if (spec == null) {
-                original.getContainerOutlineVariant(tokenPalette)
+                original.getContainerOutlineHigh(tokenPalette)
             } else {
                 Color(spec.invoke(tokenPalette))
             }

@@ -204,18 +204,18 @@ class LuminousOutlinePainter : AuroraOutlinePainter {
         private val OuterVerticalColorStops = arrayOf(
             ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerOutline),
             ColorStop(fraction = 0.5f, colorQuery = ContainerColorTokens::containerOutline),
-            ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerOutlineVariant),
+            ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerOutlineLow),
         )
 
         private const val InnerStrokeWidth = 2.0f
         private val InnerHorizontalLightQuery: (ContainerColorTokens) -> Color =
-            { it.containerSurface.interpolateTowards(it.containerOutlineVariant, 0.4f)}
+            { it.containerSurface.interpolateTowards(it.containerOutlineLow, 0.4f)}
         private val InnerHorizontalDarkQuery: (ContainerColorTokens) -> Color =
             { it.containerSurface.interpolateTowards(it.complementaryContainerOutline, 0.85f)}
         private val InnerHorizontalColorQueries = arrayOf<(ContainerColorTokens) -> Color>(
             { tokens ->
                 if (tokens.isDark) {
-                    tokens.containerOutlineVariant
+                    tokens.containerOutlineLow
                 } else {
                     InnerHorizontalLightQuery.invoke(tokens)
                 }
@@ -236,7 +236,7 @@ class LuminousOutlinePainter : AuroraOutlinePainter {
             },
             { tokens ->
                 if (tokens.isDark) {
-                    tokens.containerOutlineVariant
+                    tokens.containerOutlineLow
                 } else {
                     InnerHorizontalLightQuery.invoke(tokens)
                 }

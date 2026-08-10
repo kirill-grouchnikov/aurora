@@ -173,7 +173,8 @@ fun graphiteChalkSkin(): AuroraSkinDefinition {
     val paletteColorResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
             containerOutline = { it.complementaryContainerOutline and 0xA0FFFFFFu.toInt() },
-            containerOutlineVariant = { it.complementaryContainerOutline and 0x80FFFFFFu.toInt() },
+            containerOutlineLow = { it.complementaryContainerOutline and 0x80FFFFFFu.toInt() },
+            containerOutlineHigh = { it.complementaryContainerOutline and 0xC0FFFFFFu.toInt() },
             complementaryContainerOutline = { it.containerOutline },
             markerOnContainer = { it.complementaryContainerOutline and 0xA0FFFFFFu.toInt() },
             complementaryMarkerOnContainer = { it.containerOutline }

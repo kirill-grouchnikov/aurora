@@ -56,7 +56,7 @@ fun ContainerPreview(colorTokens: ContainerColorTokens, text: String, variant: V
             LabelProjection(
                 contentModel = LabelContentModel(text = "$text variant"),
                 presentationModel = LabelPresentationModel(
-                    textStyle = TextStyle(color = colorTokens.onContainerVariant),
+                    textStyle = TextStyle(color = colorTokens.onContainerLow),
                     contentPadding = PaddingValues(0.dp),
                     horizontalAlignment = HorizontalAlignment.Center,
                     textMaxLines = 1,

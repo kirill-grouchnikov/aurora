@@ -61,17 +61,23 @@ fun getContainerTokens(
         override val containerShadow: Color
             get() = colorResolver.getContainerShadow(dynamicPalette)
 
+        override val onContainerLow: Color
+            get() = colorResolver.getOnContainerLow(dynamicPalette)
+
         override val onContainer: Color
             get() = colorResolver.getOnContainer(dynamicPalette)
 
-        override val onContainerVariant: Color
-            get() = colorResolver.getOnContainerVariant(dynamicPalette)
+        override val onContainerHigh: Color
+            get() = colorResolver.getOnContainerHigh(dynamicPalette)
+
+        override val containerOutlineLow: Color
+            get() = colorResolver.getContainerOutlineLow(dynamicPalette)
 
         override val containerOutline: Color
             get() = colorResolver.getContainerOutline(dynamicPalette)
 
-        override val containerOutlineVariant: Color
-            get() = colorResolver.getContainerOutlineVariant(dynamicPalette)
+        override val containerOutlineHigh: Color
+            get() = colorResolver.getContainerOutlineHigh(dynamicPalette)
 
         override val containerSurfaceEnabledAlpha: Float
             get() = colorResolver.getContainerSurfaceEnabledAlpha(dynamicPalette)
@@ -161,17 +167,23 @@ fun getBimodalContainerTokens(
         override val containerShadow: Color
             get() = colorResolver.getContainerShadow(bimodalPalette)
 
+        override val onContainerLow: Color
+            get() = colorResolver.getOnContainerLow(bimodalPalette)
+
         override val onContainer: Color
             get() = colorResolver.getOnContainer(bimodalPalette)
 
-        override val onContainerVariant: Color
-            get() = colorResolver.getOnContainerVariant(bimodalPalette)
+        override val onContainerHigh: Color
+            get() = colorResolver.getOnContainerHigh(bimodalPalette)
+
+        override val containerOutlineLow: Color
+            get() = colorResolver.getContainerOutlineLow(bimodalPalette)
 
         override val containerOutline: Color
             get() = colorResolver.getContainerOutline(bimodalPalette)
 
-        override val containerOutlineVariant: Color
-            get() = colorResolver.getContainerOutlineVariant(bimodalPalette)
+        override val containerOutlineHigh: Color
+            get() = colorResolver.getContainerOutlineHigh(bimodalPalette)
 
         override val containerSurfaceEnabledAlpha: Float
             get() = colorResolver.getContainerSurfaceEnabledAlpha(bimodalPalette)
@@ -257,17 +269,23 @@ fun getDuotoneContainerTokens(
         override val containerShadow: Color
             get() = colorResolver.getContainerShadow(duotonePalette)
 
+        override val onContainerLow: Color
+            get() = colorResolver.getOnContainerLow(duotonePalette)
+
         override val onContainer: Color
             get() = colorResolver.getOnContainer(duotonePalette)
 
-        override val onContainerVariant: Color
-            get() = colorResolver.getOnContainerVariant(duotonePalette)
+        override val onContainerHigh: Color
+            get() = colorResolver.getOnContainerHigh(duotonePalette)
+
+        override val containerOutlineLow: Color
+            get() = colorResolver.getContainerOutlineLow(duotonePalette)
 
         override val containerOutline: Color
             get() = colorResolver.getContainerOutline(duotonePalette)
 
-        override val containerOutlineVariant: Color
-            get() = colorResolver.getContainerOutlineVariant(duotonePalette)
+        override val containerOutlineHigh: Color
+            get() = colorResolver.getContainerOutlineHigh(duotonePalette)
 
         override val containerSurfaceEnabledAlpha: Float
             get() = colorResolver.getContainerSurfaceEnabledAlpha(duotonePalette)

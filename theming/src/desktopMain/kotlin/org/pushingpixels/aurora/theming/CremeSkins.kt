@@ -121,7 +121,8 @@ fun cremeSkin(): AuroraSkinDefinition {
             colorResolver = DefaultPaletteColorResolver.overlayWith(
                 TokenPaletteColorResolverOverlay(
                     containerOutline = { it.containerSurfaceHighest },
-                    containerOutlineVariant = { it.containerSurfaceHigh }
+                    containerOutlineLow = { it.containerSurfaceHigh },
+                    containerOutlineHigh = { it.containerSurfaceBright }
                 )
             )
         ),
@@ -133,7 +134,8 @@ fun cremeSkin(): AuroraSkinDefinition {
             colorResolver = DefaultPaletteColorResolver.overlayWith(
                 TokenPaletteColorResolverOverlay(
                     containerOutline = { it.containerSurfaceHighest },
-                    containerOutlineVariant = { it.containerSurfaceHigh }
+                    containerOutlineLow = { it.containerSurfaceHigh },
+                    containerOutlineHigh = { it.containerSurfaceBright }
                 )
             )
         ),

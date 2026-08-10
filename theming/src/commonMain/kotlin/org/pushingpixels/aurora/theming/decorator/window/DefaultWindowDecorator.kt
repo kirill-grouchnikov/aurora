@@ -45,8 +45,8 @@ open class DefaultWindowDecorator: AuroraWindowDecorator {
                 )
 
                 val quarterThickness = thickness / 4.0f
-                // top and left as 40% mix of outline variant and outline
-                val colorOutlineMixed = colorTokens.containerOutlineVariant.interpolateTowards(
+                // top and left as 40% mix of outline low and outline
+                val colorOutlineMixed = colorTokens.containerOutlineLow.interpolateTowards(
                     colorTokens.containerOutline, 0.4f
                 )
                 drawLine(

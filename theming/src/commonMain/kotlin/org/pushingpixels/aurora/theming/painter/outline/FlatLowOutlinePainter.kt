@@ -19,12 +19,12 @@ import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.painter.ColorStop
 
 /**
- * Outline painter that draws visuals with flat appearance using the container outline variant token.
+ * Outline painter that draws visuals with flat appearance using the container outline low token.
  *
  * @author Kirill Grouchnikov
  */
-class FlatVariantOutlinePainter : FractionBasedOutlinePainter(
-    ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerOutlineVariant),
-    ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerOutlineVariant),
+class FlatLowOutlinePainter : FractionBasedOutlinePainter(
+    ColorStop(fraction = 0.0f, colorQuery = ContainerColorTokens::containerOutlineLow),
+    ColorStop(fraction = 1.0f, colorQuery = ContainerColorTokens::containerOutlineLow),
     displayName = "Flat"
 )

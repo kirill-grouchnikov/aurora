@@ -80,8 +80,9 @@ private fun geminiSkinColors(): AuroraSkinColors {
         containerConfiguration = ContainerConfiguration.defaultLight(),
         colorResolver = DefaultPaletteColorResolver.overlayWith(
             TokenPaletteColorResolverOverlay(
-                containerOutline = { geminiHighlightOutlineContainerTokens.containerOutlineVariant.toArgb() },
-                containerOutlineVariant = { geminiHighlightOutlineContainerTokens.containerOutlineVariant.toArgb() },
+                containerOutline = { geminiHighlightOutlineContainerTokens.containerOutlineLow.toArgb() },
+                containerOutlineLow = { geminiHighlightOutlineContainerTokens.containerOutlineLow.toArgb() },
+                containerOutlineHigh = { geminiHighlightOutlineContainerTokens.containerOutline.toArgb() },
             )
         )
     )

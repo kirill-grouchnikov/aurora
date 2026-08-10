@@ -120,8 +120,9 @@ private fun officeSkin(): AuroraSkinDefinition {
                 /* contrastLevel */ 0.6),
             colorResolver = DefaultPaletteColorResolver.overlayWith(
                 TokenPaletteColorResolverOverlay(
-                    containerOutline = { it.containerOutlineVariant },
-                    containerOutlineVariant = { it.containerOutlineVariant },
+                    containerOutline = { it.containerOutlineLow },
+                    containerOutlineLow = { it.containerOutlineLow },
+                    containerOutlineHigh = { it.containerOutlineHigh },
                 )
             ))
     val selectedContainerTokens = getBimodalContainerTokens(

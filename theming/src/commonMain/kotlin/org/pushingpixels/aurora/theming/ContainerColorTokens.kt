@@ -31,11 +31,13 @@ interface ContainerColorTokens {
 
     val containerShadow: Color
 
+    val onContainerLow: Color
     val onContainer: Color
-    val onContainerVariant: Color
+    val onContainerHigh: Color
 
+    val containerOutlineLow: Color
     val containerOutline: Color
-    val containerOutlineVariant: Color
+    val containerOutlineHigh: Color
 
     val containerSurfaceEnabledAlpha: Float
     val onContainerEnabledAlpha: Float

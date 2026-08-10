@@ -186,7 +186,7 @@ fun magellanSkin(): AuroraSkinDefinition {
     // add overlay painter to paint a dark line along the bottom
     // edge of toolbars
     decorationPainter.addOverlayPainter(
-        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutlineVariant }),
+        BottomLineOverlayPainter(colorTokensQuery = { it.containerOutlineLow }),
         DecorationAreaType.Toolbar
     )
 

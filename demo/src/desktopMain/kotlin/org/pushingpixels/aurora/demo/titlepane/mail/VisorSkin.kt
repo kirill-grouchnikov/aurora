@@ -52,7 +52,8 @@ private fun visorSkinColors(): AuroraSkinColors {
     val threadsHighlightsPaletteResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
             containerOutline = { it.containerSurface },
-            containerOutlineVariant = { it.containerSurfaceHigh },
+            containerOutlineLow = { it.containerSurfaceHigh },
+            containerOutlineHigh = { it.containerSurfaceLow },
         )
     )
     val visorThreadsBundle = ContainerColorTokensBundle(
@@ -87,8 +88,9 @@ private fun visorSkinColors(): AuroraSkinColors {
     // visuals of the outlines)
     val destinationsHighlightsPaletteResolver = DefaultPaletteColorResolver.overlayWith(
         TokenPaletteColorResolverOverlay(
-            containerOutline = { it.containerOutlineVariant },
-            containerOutlineVariant = { it.containerOutlineVariant },
+            containerOutline = { it.containerOutlineLow },
+            containerOutlineLow = { it.containerOutlineLow },
+            containerOutlineHigh = { it.containerOutline },
         )
     )
     val visorDestinationsBundle = ContainerColorTokensBundle(

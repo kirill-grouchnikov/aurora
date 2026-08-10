@@ -30,10 +30,12 @@ data class MutableContainerColorTokens(
     var containerSurfaceDimAttr: Color = Color.Unspecified,
     var containerSurfaceBrightAttr: Color = Color.Unspecified,
     var containerShadowAttr: Color = Color.Unspecified,
+    var onContainerLowAttr: Color = Color.Unspecified,
     var onContainerAttr: Color = Color.Unspecified,
-    var onContainerVariantAttr: Color = Color.Unspecified,
+    var onContainerHighAttr: Color = Color.Unspecified,
+    var containerOutlineLowAttr: Color = Color.Unspecified,
     var containerOutlineAttr: Color = Color.Unspecified,
-    var containerOutlineVariantAttr: Color = Color.Unspecified,
+    var containerOutlineHighAttr: Color = Color.Unspecified,
     var containerSurfaceEnabledAlphaAttr: Float = 0.0f,
     var onContainerEnabledAlphaAttr: Float = 0.0f,
     var containerOutlineEnabledAlphaAttr: Float = 0.0f,
@@ -71,15 +73,19 @@ data class MutableContainerColorTokens(
     override val containerShadow: Color
         get() = containerShadowAttr
 
+    override val onContainerLow: Color
+        get() = onContainerLowAttr
     override val onContainer: Color
         get() = onContainerAttr
-    override val onContainerVariant: Color
-        get() = onContainerVariantAttr
+    override val onContainerHigh: Color
+        get() = onContainerHighAttr
 
+    override val containerOutlineLow: Color
+        get() = containerOutlineLowAttr
     override val containerOutline: Color
         get() = containerOutlineAttr
-    override val containerOutlineVariant: Color
-        get() = containerOutlineVariantAttr
+    override val containerOutlineHigh: Color
+        get() = containerOutlineHighAttr
 
     override val containerSurfaceEnabledAlpha: Float
         get() = containerSurfaceEnabledAlphaAttr
