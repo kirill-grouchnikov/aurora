@@ -79,7 +79,7 @@ alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)).asComposeShader())
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, startRadius = 0.0f, x1 = 65.55786f, y1 = 71.30969f, endRadius = 64.48364f, gradient = org.jetbrains.skia.Gradient(colors = org.jetbrains.skia.Gradient.Colors(colors = arrayOf(org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.5137255f, g = 0.29411766f, b = 0.7764706f), org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.23921569f, g = 0.827451f, b = 0.23529412f), ), positions = floatArrayOf(0.6f, 1.0f, ), tileMode = org.jetbrains.skia.FilterTileMode.CLAMP)), localMatrix = null).asComposeShader())
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -220,7 +220,7 @@ shapeText = Outline.Generic(generalPathText!!)
 drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)).asComposeShader())
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, startRadius = 0.0f, x1 = 65.55786f, y1 = 71.30969f, endRadius = 64.48364f, gradient = org.jetbrains.skia.Gradient(colors = org.jetbrains.skia.Gradient.Colors(colors = arrayOf(org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.5137255f, g = 0.29411766f, b = 0.7764706f), org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.23921569f, g = 0.827451f, b = 0.23529412f), ), positions = floatArrayOf(0.6f, 1.0f, ), tileMode = org.jetbrains.skia.FilterTileMode.CLAMP)), localMatrix = null).asComposeShader())
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -232,7 +232,7 @@ shapeText = Outline.Generic(generalPathText!!)
 drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)).asComposeShader())
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, startRadius = 0.0f, x1 = 65.55786f, y1 = 71.30969f, endRadius = 64.48364f, gradient = org.jetbrains.skia.Gradient(colors = org.jetbrains.skia.Gradient.Colors(colors = arrayOf(org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.5137255f, g = 0.29411766f, b = 0.7764706f), org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.23921569f, g = 0.827451f, b = 0.23529412f), ), positions = floatArrayOf(0.6f, 1.0f, ), tileMode = org.jetbrains.skia.FilterTileMode.CLAMP)), localMatrix = null).asComposeShader())
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -288,7 +288,7 @@ shapeText = Outline.Generic(generalPathText!!)
 drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)).asComposeShader())
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, startRadius = 0.0f, x1 = 65.55786f, y1 = 71.30969f, endRadius = 64.48364f, gradient = org.jetbrains.skia.Gradient(colors = org.jetbrains.skia.Gradient.Colors(colors = arrayOf(org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.5137255f, g = 0.29411766f, b = 0.7764706f), org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.23921569f, g = 0.827451f, b = 0.23529412f), ), positions = floatArrayOf(0.6f, 1.0f, ), tileMode = org.jetbrains.skia.FilterTileMode.CLAMP)), localMatrix = null).asComposeShader())
 if (generalPathText == null) {
    generalPathText = Path()
 } else {
@@ -300,7 +300,7 @@ shapeText = Outline.Generic(generalPathText!!)
 drawOutline(outline = shapeText!!, style = Fill, brush=brush!!, alpha = alphaText, blendMode = blendModeText)
 alphaText = alpha * 1.0f
 blendModeText = BlendMode.SrcOver
-brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, r0 = 0.0f, x1 = 65.55786f, y1 = 71.30969f, r1 = 64.48364f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 131, g = 75, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 61, g = 211, b = 60), ), positions = floatArrayOf(0.6f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)).asComposeShader())
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 26.867676f, y0 = 49.669556f, startRadius = 0.0f, x1 = 65.55786f, y1 = 71.30969f, endRadius = 64.48364f, gradient = org.jetbrains.skia.Gradient(colors = org.jetbrains.skia.Gradient.Colors(colors = arrayOf(org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.5137255f, g = 0.29411766f, b = 0.7764706f), org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.23921569f, g = 0.827451f, b = 0.23529412f), ), positions = floatArrayOf(0.6f, 1.0f, ), tileMode = org.jetbrains.skia.FilterTileMode.CLAMP)), localMatrix = null).asComposeShader())
 if (generalPathText == null) {
    generalPathText = Path()
 } else {

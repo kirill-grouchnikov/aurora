@@ -729,14 +729,16 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             printWriterManager!!.print("brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(")
 
             printWriterManager!!.print("x0 = ${transformedFocus.x}f, y0 = ${transformedFocus.y}f, ")
-            printWriterManager!!.print("r0 = 0.0f, ")
+            printWriterManager!!.print("startRadius = 0.0f, ")
             printWriterManager!!.print("x1 = ${transformedCenter.x}f, y1 = ${transformedCenter.y}f, ")
-            printWriterManager!!.print("r1 = ${transformedRadius}f, ")
+            printWriterManager!!.print("endRadius = ${transformedRadius}f, ")
 
             val stopCount = correctedFractions.size
-            printWriterManager!!.print("colors = intArrayOf(")
+            printWriterManager!!.print("gradient = org.jetbrains.skia.Gradient(")
+            printWriterManager!!.print("colors = org.jetbrains.skia.Gradient.Colors(")
+            printWriterManager!!.print("colors = arrayOf(")
             for (stop in 0 until stopCount) {
-                printWriterManager!!.print("org.jetbrains.skia.Color.makeARGB(a = ${colors[stop].alpha}, r = ${colors[stop].red}, g = ${colors[stop].green}, b = ${colors[stop].blue}), ")
+                printWriterManager!!.print("org.jetbrains.skia.Color4f(a = ${colors[stop].alpha / 255.0f}f, r = ${colors[stop].red / 255.0f}f, g = ${colors[stop].green / 255.0f}f, b = ${colors[stop].blue / 255.0f}f), ")
             }
             printWriterManager!!.print("), ")
 
@@ -746,9 +748,9 @@ abstract class SvgBaseTranscoder(private val classname: String) {
             }
             printWriterManager!!.print("), ")
 
-            printWriterManager!!.print("style = org.jetbrains.skia.GradientStyle(tileMode = $tileMode, isPremul = true, localMatrix = null)")
+            printWriterManager!!.print("tileMode = $tileMode)), localMatrix = null)")
 
-            printWriterManager!!.println(").asComposeShader())")
+            printWriterManager!!.println(".asComposeShader())")
         }
     }
 

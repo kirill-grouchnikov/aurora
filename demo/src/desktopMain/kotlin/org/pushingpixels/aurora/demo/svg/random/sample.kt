@@ -60,7 +60,7 @@ generalPath?.run {
 shape = Outline.Generic(generalPath!!)
 brush = SolidColor(Color(0, 0, 0, 0))
 drawOutline(outline = shape!!, style=Fill, brush=brush!!, alpha=alpha, blendMode = blendMode)
-brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 66.0f, y0 = 74.0f, r0 = 0.0f, x1 = 50.0f, y1 = 54.0f, r1 = 40.0f, colors = intArrayOf(org.jetbrains.skia.Color.makeARGB(a = 128, r = 31, g = 175, b = 198), org.jetbrains.skia.Color.makeARGB(a = 128, r = 161, g = 211, b = 60), ), positions = floatArrayOf(0.9f, 1.0f, ), style = org.jetbrains.skia.GradientStyle(tileMode = org.jetbrains.skia.FilterTileMode.CLAMP, isPremul = true, localMatrix = null)).asComposeShader())
+brush = ShaderBrush(org.jetbrains.skia.Shader.makeTwoPointConicalGradient(x0 = 66.0f, y0 = 74.0f, startRadius = 0.0f, x1 = 50.0f, y1 = 54.0f, endRadius = 40.0f, gradient = org.jetbrains.skia.Gradient(colors = org.jetbrains.skia.Gradient.Colors(colors = arrayOf(org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.12156863f, g = 0.6862745f, b = 0.7764706f), org.jetbrains.skia.Color4f(a = 0.5019608f, r = 0.6313726f, g = 0.827451f, b = 0.23529412f), ), positions = floatArrayOf(0.9f, 1.0f, ), tileMode = org.jetbrains.skia.FilterTileMode.CLAMP)), localMatrix = null).asComposeShader())
 stroke = Stroke(width=10.0f, cap=StrokeCap.Butt, join=StrokeJoin.Miter, miter=4.0f)
 if (generalPath == null) {
    generalPath = Path()
