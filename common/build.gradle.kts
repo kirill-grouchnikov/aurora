@@ -10,16 +10,12 @@ plugins {
 kotlin {
     jvm("desktop")
     sourceSets {
-        named("commonMain") {
-            dependencies {
-                api(libs.compose.runtime)
-                api(libs.compose.foundation)
-                implementation(libs.ephemeral.chroma)
-            }
-        }
         named("desktopMain") {
             dependencies {
                 api(libs.compose.desktop)
+                api(libs.compose.runtime)
+                api(libs.compose.foundation)
+                implementation(libs.ephemeral.chroma)
             }
         }
     }
