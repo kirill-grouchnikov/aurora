@@ -36,7 +36,6 @@ import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.common.AuroraInternalApi
 import org.pushingpixels.aurora.common.AuroraPopupManager
 import org.pushingpixels.aurora.common.AuroraSwingPopupMenu
-import org.pushingpixels.aurora.common.Platform
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -100,6 +99,29 @@ private val TitlePaneButtonPresentationModel = CommandButtonPresentationModel(
     verticalGapScaleFactor = 1.0f,
     iconEnabledFilterStrategy = IconFilterStrategy.Original
 )
+
+private enum class Platform {
+    MacOS, Gnome, KDE, Windows, Unknown;
+
+    companion object {
+        val Current: Platform by lazy {
+            val name = System.getProperty("os.name")
+            if (name?.startsWith("Windows") == true) {
+                return@lazy Windows
+            }
+            if (name?.startsWith("Mac") == true) {
+                return@lazy MacOS
+            }
+            if ("true".equals(System.getenv("KDE_FULL_SESSION"))) {
+                return@lazy KDE
+            }
+            if ("gnome".equals(System.getProperty("sun.desktop"))) {
+                return@lazy Gnome
+            }
+            return@lazy Unknown
+        }
+    }
+}
 
 @Composable
 fun AuroraWindowScope.AuroraWindowTitlePaneButton(titlePaneCommand: Command,
