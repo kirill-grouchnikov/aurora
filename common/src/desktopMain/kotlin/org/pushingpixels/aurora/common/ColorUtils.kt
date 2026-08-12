@@ -18,9 +18,6 @@ package org.pushingpixels.aurora.common
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import org.pushingpixels.ephemeral.chroma.hct.Hct
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.pow
 
 /**
@@ -172,7 +169,7 @@ val Color.tone: Double
     get() = Hct.fromInt(this.toArgb()).tone
 
 private fun encodeChannel(number: Float): String {
-    require(!(number < 0 || number > 1.0f)) { "" + number }
+    require(number in 0.0f..1.0f) { "" + number }
     val hex = "0123456789ABCDEF"
     val asInt = (255.0f * number + 0.5f).toInt()
     val hexaDigit1 = hex[asInt / 16]
