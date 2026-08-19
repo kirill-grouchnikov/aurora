@@ -293,7 +293,7 @@ internal fun AuroraTextField(
     val textFieldTopLeftOffset = AuroraOffset(0.0f, 0.0f)
     val textFieldSize = remember { mutableStateOf(IntSize(0, 0)) }
 
-    Box (modifier = Modifier.textFieldLocator(textFieldTopLeftOffset, textFieldSize)) {
+    Box (modifier = modifier.textFieldLocator(textFieldTopLeftOffset, textFieldSize)) {
         Canvas(modifier = Modifier.matchParentSize()) {
             val borderStrokeWidth = 1.0f
             if ((size.width <= borderStrokeWidth) || (size.height <= borderStrokeWidth)) {
