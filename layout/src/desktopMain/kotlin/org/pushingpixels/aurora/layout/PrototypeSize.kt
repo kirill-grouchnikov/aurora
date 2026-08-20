@@ -26,8 +26,6 @@ import androidx.compose.ui.text.TextMeasurer
  * A [Size] implementation that computes its width and height
  * by a prototype String.
  *
- *
- * 
  * **Examples:**<pre>
  * new PrototypeSize("123-456-789");
  * new FormLayout("p, 2dlu, 'MMMM'");
@@ -59,9 +57,7 @@ class PrototypeSize
 ) : Size {
     // Instance Creation ****************************************************
 
-
     // Accessors ************************************************************
-
 
     // Implementing the Size Interface **************************************
     /**
@@ -94,14 +90,11 @@ class PrototypeSize
         return this.textMeasurer.measure(this.prototype).size.width
     }
 
-
     /**
      * Describes if this Size can be compressed, if container space gets scarce.
      * Used by the FormLayout size computations in `#compressedSizes`
      * to check whether a column or row can be compressed or not.
      *
-     *
-     * 
      * PrototypeSizes are incompressible.
      * 
      * @return `false`
@@ -109,7 +102,6 @@ class PrototypeSize
     override fun compressible(): Boolean {
         return false
     }
-
 
     /**
      * Returns a parseable string representation of this prototype size.
@@ -119,7 +111,6 @@ class PrototypeSize
     override fun encode(): String {
         return "'$prototype'"
     }
-
 
     // Overriding Object Behavior *******************************************
     /**
@@ -142,7 +133,6 @@ class PrototypeSize
         return prototype == other.prototype
     }
 
-
     /**
      * Returns a hash code value for the object. This method is supported
      * for the benefit of hashtables such as those provided by
@@ -156,7 +146,6 @@ class PrototypeSize
     override fun hashCode(): Int {
         return prototype.hashCode()
     }
-
 
     /**
      * Returns a string representation of this size object.

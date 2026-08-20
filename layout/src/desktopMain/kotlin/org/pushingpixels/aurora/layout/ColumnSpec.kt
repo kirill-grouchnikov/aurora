@@ -51,11 +51,9 @@ class ColumnSpec : FormSpec {
     /**
      * Constructs a ColumnSpec for the given default alignment,
      * size and resize weight.
-     *
-     *
      * 
      * The resize weight must be a non-negative double; you can use
-     * `NO_GROW` as a convenience value for no resize.
+     * [NoGrow] as a convenience value for no resize.
      * 
      * @param defaultAlignment the column's default alignment
      * @param size             constant, component size or bounded size
@@ -78,7 +76,7 @@ class ColumnSpec : FormSpec {
      * @param size             constant size, component size, or bounded size
      * @throws IllegalArgumentException if the size is invalid
      */
-    constructor(size: Size) : super(DEFAULT, size, NO_GROW)
+    constructor(size: Size) : super(Default, size, NoGrow)
 
     /**
      * Constructs a ColumnSpec from the specified encoded description.
@@ -92,7 +90,7 @@ class ColumnSpec : FormSpec {
      * @param encodedDescription    the encoded description
      */
     private constructor(encodedDescription: String,
-        textMeasurer: TextMeasurer) : super(DEFAULT, encodedDescription, textMeasurer)
+        textMeasurer: TextMeasurer) : super(Default, encodedDescription, textMeasurer)
 
     // Implementing Abstract Behavior ***************************************
     override val isHorizontal: Boolean
@@ -105,28 +103,27 @@ class ColumnSpec : FormSpec {
          */
         get() = true
 
-
     companion object {
         // Horizontal Orientations *********************************************
         /**
          * By default put components in the left.
          */
-        val LEFT: DefaultAlignment = DefaultAlignment.LeftAlign
+        val Left: DefaultAlignment = DefaultAlignment.LeftAlign
 
         /**
          * By default put the components in the center.
          */
-        val CENTER: DefaultAlignment = DefaultAlignment.CenterAlign
+        val Center: DefaultAlignment = DefaultAlignment.CenterAlign
 
         /**
          * By default put components in the right.
          */
-        val RIGHT: DefaultAlignment = DefaultAlignment.RightAlign
+        val Right: DefaultAlignment = DefaultAlignment.RightAlign
 
         /**
          * By default fill the component into the column.
          */
-        val FILL: DefaultAlignment = DefaultAlignment.FillAlign
+        val Fill: DefaultAlignment = DefaultAlignment.FillAlign
 
         /**
          * A special alignment value for table column alignment specifications.
@@ -135,20 +132,18 @@ class ColumnSpec : FormSpec {
          * 
          * @since 1.8
          */
-        val NONE: DefaultAlignment = DefaultAlignment.NoAlign
+        val None: DefaultAlignment = DefaultAlignment.NoAlign
 
         /**
          * Unless overridden the default alignment for a column is FILL.
          */
-        val DEFAULT: DefaultAlignment = FILL
-
+        val Default: DefaultAlignment = Fill
 
         // Cache ******************************************************************
         /**
          * Maps encoded column specifications to ColumnSpec instances.
          */
         private val CACHE: MutableMap<String?, ColumnSpec?> = HashMap()
-
 
         // Factory Methods ********************************************************
         /**
@@ -163,9 +158,8 @@ class ColumnSpec : FormSpec {
          * @since 1.2
          */
         fun createGap(gapWidth: ConstantSize): ColumnSpec {
-            return ColumnSpec(DEFAULT, gapWidth, NO_GROW)
+            return ColumnSpec(Default, gapWidth, NoGrow)
         }
-
 
         /**
          * Parses the encoded column specifications and returns a ColumnSpec object
@@ -184,20 +178,6 @@ class ColumnSpec : FormSpec {
          * @see .decodeSpecs
          * @since 1.2
          */
-        /**
-         * Parses the encoded column specification and returns a ColumnSpec object
-         * that represents the string. Variables are expanded using the default
-         * LayoutMap.
-         * 
-         * @param encodedColumnSpec    the encoded column specification
-         * 
-         * @return a ColumnSpec instance for the given specification
-         * @throws NullPointerException if `encodedColumnSpec` is `null`
-         * 
-         * @see .decode
-         * @see LayoutMap.getRoot
-         * @since 1.2
-         */
         @JvmOverloads
         @Composable
         fun decode(encodedColumnSpec: String, layoutMap: LayoutMap = LayoutMap.getRoot()): ColumnSpec {
@@ -209,7 +189,6 @@ class ColumnSpec : FormSpec {
             val lower = trimmed.lowercase()
             return decodeExpanded(layoutMap.expand(lower, true))
         }
-
 
         /**
          * Decodes an expanded, trimmed, lower case column spec.
@@ -230,7 +209,6 @@ class ColumnSpec : FormSpec {
             return spec
         }
 
-
         /**
          * Splits and parses the encoded column specifications using the given
          * [LayoutMap] and returns an array of ColumnSpec objects.
@@ -244,18 +222,6 @@ class ColumnSpec : FormSpec {
          * @see .decodeSpecs
          * @see .decode
          * @since 1.2
-         */
-        /**
-         * Parses and splits encoded column specifications using the default
-         * [LayoutMap] and returns an array of ColumnSpec objects.
-         * 
-         * @param encodedColumnSpecs  comma separated encoded column specifications
-         * @return an array of decoded column specifications
-         * @throws NullPointerException if `encodedColumnSpecs` is `null`
-         * 
-         * @see .decodeSpecs
-         * @see .decode
-         * @see LayoutMap.getRoot
          */
         @JvmOverloads
         @Composable

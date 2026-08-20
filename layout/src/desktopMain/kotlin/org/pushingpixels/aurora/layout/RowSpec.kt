@@ -52,10 +52,8 @@ class RowSpec : FormSpec {
      * Constructs a RowSpec from the given default orientation,
      * size, and resize weight.
      *
-     *
-     * 
      * The resize weight must be a non-negative double; you can use
-     * `NO_FILL` as a convenience value for no resize.
+     * [NoFill] as a convenience value for no resize.
      * 
      * @param defaultAlignment  the row's default alignment
      * @param size              constant size, component size, or bounded size
@@ -76,22 +74,19 @@ class RowSpec : FormSpec {
      * @param size             constant size, component size, or bounded size
      * @throws IllegalArgumentException if the size is invalid
      */
-    constructor(size: Size) : super(DEFAULT, size, NO_GROW)
+    constructor(size: Size) : super(Default, size, NoGrow)
 
     /**
      * Constructs a RowSpec from the specified encoded description.
      * The description will be parsed to set initial values.
      *
-     *
-     * 
      * Unlike the factory method [.decode], this constructor
      * does not expand layout variables, and it cannot vend cached objects.
      * 
      * @param encodedDescription    the encoded description
      */
     private constructor(encodedDescription: String,
-        textMeasurer: TextMeasurer) : super(DEFAULT, encodedDescription, textMeasurer)
-
+        textMeasurer: TextMeasurer) : super(Default, encodedDescription, textMeasurer)
 
     // Implementing Abstract Behavior ***************************************
     override val isHorizontal: Boolean
@@ -104,41 +99,38 @@ class RowSpec : FormSpec {
          */
         get() = false
 
-
     companion object {
         // Vertical Orientations ************************************************
         /**
          * By default put the components in the top.
          */
-        val TOP: DefaultAlignment = DefaultAlignment.TopAlign
+        val Top: DefaultAlignment = DefaultAlignment.TopAlign
 
         /**
          * By default put the components in the center.
          */
-        val CENTER: DefaultAlignment = DefaultAlignment.CenterAlign
+        val Center: DefaultAlignment = DefaultAlignment.CenterAlign
 
         /**
          * By default put the components in the bottom.
          */
-        val BOTTOM: DefaultAlignment = DefaultAlignment.BottomAlign
+        val Bottom: DefaultAlignment = DefaultAlignment.BottomAlign
 
         /**
          * By default fill the component into the row.
          */
-        val FILL: DefaultAlignment = DefaultAlignment.FillAlign
+        val Fill: DefaultAlignment = DefaultAlignment.FillAlign
 
         /**
          * Unless overridden the default alignment for a row is CENTER.
          */
-        val DEFAULT: DefaultAlignment = CENTER
-
+        val Default: DefaultAlignment = Center
 
         // Cache ******************************************************************
         /**
          * Maps encoded row specifications to RowSpec instances.
          */
         private val CACHE: MutableMap<String?, RowSpec?> = HashMap()
-
 
         // Factory Methods ********************************************************
         /**
@@ -153,9 +145,8 @@ class RowSpec : FormSpec {
          * @since 1.2
          */
         fun createGap(gapHeight: ConstantSize): RowSpec {
-            return RowSpec(DEFAULT, gapHeight, FormSpec.NO_GROW)
+            return RowSpec(Default, gapHeight, NoGrow)
         }
-
 
         /**
          * Parses the encoded row specifications and returns a RowSpec object
@@ -170,20 +161,6 @@ class RowSpec : FormSpec {
          * `layoutMap` is `null`
          * 
          * @see .decodeSpecs
-         * @since 1.2
-         */
-        /**
-         * Parses the encoded row specification and returns a RowSpec object
-         * that represents the string. Variables are expanded using the default
-         * LayoutMap.
-         * 
-         * @param encodedRowSpec    the encoded row specification
-         * 
-         * @return a RowSpec instance for the given specification
-         * @throws NullPointerException if `encodedRowSpec` is `null`
-         * 
-         * @see .decode
-         * @see LayoutMap.getRoot
          * @since 1.2
          */
         @JvmOverloads
@@ -216,7 +193,6 @@ class RowSpec : FormSpec {
             return spec
         }
 
-
         /**
          * Parses and splits encoded row specifications using the given
          * [LayoutMap] and returns an array of RowSpec objects.
@@ -230,18 +206,6 @@ class RowSpec : FormSpec {
          * 
          * @see RowSpec.RowSpec
          * @since 1.2
-         */
-        /**
-         * Parses and splits encoded row specifications using the default
-         * [LayoutMap] and returns an array of RowSpec objects.
-         * 
-         * @param encodedRowSpecs     comma separated encoded row specifications
-         * @return an array of decoded row specifications
-         * @throws NullPointerException if `encodedRowSpecs` is `null`
-         * 
-         * @see .decodeSpecs
-         * @see .decode
-         * @see LayoutMap.getRoot
          */
         @JvmOverloads
         @Composable

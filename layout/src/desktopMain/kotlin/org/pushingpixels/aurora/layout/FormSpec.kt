@@ -28,14 +28,10 @@ import java.util.regex.Pattern
  * by their default alignment, start size and resizing behavior.
  * API users will use the subclasses [ColumnSpec] and [RowSpec].
  *
- *
- * 
  * Also implements the parser for encoded column and row specifications
  * and provides parser convenience behavior for its subclasses ColumnSpec
  * and RowSpec.
  *
- *
- * 
  * TODO: Consider extracting the parser role to a separate class.
  * 
  * @see ColumnSpec
@@ -58,13 +54,6 @@ abstract class FormSpec protected constructor(
     private lateinit var textMeasurer: TextMeasurer
 
     /**
-     * Returns whether the default alignment has been explicitly set or not.
-     * 
-     * @return `true` if the default alignment has been provided
-     * during the parse process, `false` if the default alignment
-     * has been set by the constructor at the instance creation time
-     */
-    /**
      * Describes whether the default alignment has been explictly set.
      * 
      * @see .getDefaultAlignmentExplictlySet
@@ -73,25 +62,14 @@ abstract class FormSpec protected constructor(
         private set
 
     /**
-     * Returns the size.
-     * 
-     * @return the size
-     */
-    /**
      * Holds the size that describes how to size this column or row.
      */
     var size: Size
 
     /**
-     * Returns the current resize weight.
-     * 
-     * @return the resize weight.
-     */
-    /**
      * Holds the resize weight; is 0 if not used.
      */
     var resizeWeight: Double
-
 
     // Instance Creation ****************************************************
     /**
@@ -125,12 +103,11 @@ abstract class FormSpec protected constructor(
         this(
             defaultAlignment,
             Sizes.ComponentSize.Default,
-            NO_GROW,
+            NoGrow,
         ) {
             this.textMeasurer = textMeasurer
             parseAndInitValues(encodedDescription.lowercase())
         }
-
 
     // Public API ***********************************************************
     /**
@@ -142,7 +119,6 @@ abstract class FormSpec protected constructor(
         return defaultAlignment
     }
 
-
     /**
      * Checks and answers whether this spec can grow or not.
      * That is the case if and only if the resize weight is
@@ -151,9 +127,8 @@ abstract class FormSpec protected constructor(
      * @return true if it can grow, false if it can't grow
      */
     fun canGrow(): Boolean {
-        return this.resizeWeight != NO_GROW
+        return this.resizeWeight != NoGrow
     }
-
 
     // Abstract Behavior ****************************************************
     /**
@@ -164,13 +139,11 @@ abstract class FormSpec protected constructor(
      */
     abstract val isHorizontal: Boolean
 
-
     // Setting Values *********************************************************
     fun setDefaultAlignment(defaultAlignment: DefaultAlignment) {
         this.defaultAlignment = defaultAlignment
         this.defaultAlignmentExplictlySet = true
     }
-
 
     // Parsing **************************************************************
     /**
@@ -202,7 +175,6 @@ abstract class FormSpec protected constructor(
         }
     }
 
-
     /**
      * Parses an encoded size spec and returns the size.
      * 
@@ -221,7 +193,6 @@ abstract class FormSpec protected constructor(
         }
         return parseAtomicSize(token)
     }
-
 
     private fun parseBoundedSize(token: String): Size {
         val content = token.substring(1, token.length - 1)
@@ -266,7 +237,6 @@ abstract class FormSpec protected constructor(
                 + "\n[50dlu,pref,200dlu]                              // lower and upper bound.")
         )
     }
-
 
     /**
      * Parses an encoded compound size and sets the size fields.
@@ -332,7 +302,6 @@ abstract class FormSpec protected constructor(
         return ConstantSize.valueOf(trimmedToken, this.isHorizontal)
     }
 
-
     // Misc *****************************************************************
     /**
      * Returns a string representation of this form specification.
@@ -361,10 +330,10 @@ abstract class FormSpec protected constructor(
         buffer.append(size.toString())
         buffer.append(':')
         when (resizeWeight) {
-            NO_GROW -> {
+            NoGrow -> {
                 buffer.append("noGrow")
             }
-            DEFAULT_GROW -> {
+            DefaultGrow -> {
                 buffer.append("grow")
             }
             else -> {
@@ -375,7 +344,6 @@ abstract class FormSpec protected constructor(
         }
         return buffer.toString()
     }
-
 
     /**
      * Returns a string representation of this form specification.
@@ -404,10 +372,10 @@ abstract class FormSpec protected constructor(
         buffer.append(size.toString())
         buffer.append(':')
         when (resizeWeight) {
-            NO_GROW -> {
+            NoGrow -> {
                 buffer.append("n")
             }
-            DEFAULT_GROW -> {
+            DefaultGrow -> {
                 buffer.append("g")
             }
             else -> {
@@ -419,14 +387,11 @@ abstract class FormSpec protected constructor(
         return buffer.toString()
     }
 
-
     /**
      * Returns a short and parseable string representation of this
      * form specification. The string will omit the alignment and resize
      * specifications if these are the default values.
      *
-     *
-     * 
      * @return  a string representation of the form specification.
      * 
      * @see .toShortString
@@ -435,19 +400,19 @@ abstract class FormSpec protected constructor(
     fun encode(): String {
         val buffer = StringBuffer()
         val alignmentDefault: DefaultAlignment = (if (this.isHorizontal)
-            ColumnSpec.DEFAULT
+            ColumnSpec.Default
         else
-            RowSpec.DEFAULT)
+            RowSpec.Default)
         if (alignmentDefault != defaultAlignment) {
             buffer.append(defaultAlignment.abbreviation())
             buffer.append(":")
         }
         buffer.append(size.encode())
         when (resizeWeight) {
-            NO_GROW -> {
+            NoGrow -> {
                 // Omit the resize part
             }
-            DEFAULT_GROW -> {
+            DefaultGrow -> {
                 buffer.append(':')
                 buffer.append("g")
             }
@@ -461,14 +426,11 @@ abstract class FormSpec protected constructor(
         return buffer.toString()
     }
 
-
     // Helper Code **********************************************************
     /**
      * Computes the maximum size for the given list of components, using
      * this form spec and the specified measure.
      *
-     *
-     * 
      * Invoked by FormLayout to determine the size of one of my elements
      * 
      * @param container       the layout container
@@ -492,10 +454,8 @@ abstract class FormSpec protected constructor(
         )
     }
 
-
     /**
-     * An ordinal-based serializable typesafe enumeration for the
-     * column and row default alignment types.
+     * Enumeration for the column and row default alignment types.
      */
     enum class DefaultAlignment {
         /**
@@ -593,25 +553,22 @@ abstract class FormSpec protected constructor(
         }
     }
 
-
     companion object {
         // Resizing Weights *****************************************************
         /**
          * Gives a column or row a fixed size.
          */
-        const val NO_GROW: Double = 0.0
+        const val NoGrow: Double = 0.0
 
         /**
          * The default resize weight.
          */
-        const val DEFAULT_GROW: Double = 1.0
-
+        const val DefaultGrow: Double = 1.0
 
         // Parser Patterns ******************************************************
         private val TOKEN_SEPARATOR_PATTERN: Pattern = Pattern.compile(":")
 
         private val BOUNDS_SEPARATOR_PATTERN: Pattern = Pattern.compile("\\s*,\\s*")
-
 
         /**
          * Decodes an encoded resize mode and resize weight and answers
@@ -624,10 +581,10 @@ abstract class FormSpec protected constructor(
          */
         private fun parseResizeWeight(token: String): Double {
             if (token == "g" || token == "grow") {
-                return DEFAULT_GROW
+                return DefaultGrow
             }
             if (token == "n" || token == "nogrow" || token == "none") {
-                return NO_GROW
+                return NoGrow
             }
             // Must have format: grow(<double>)
             if ((token.startsWith("grow(") || token.startsWith("g("))
@@ -643,7 +600,6 @@ abstract class FormSpec protected constructor(
                     " Must be one of: grow, g, none, n, grow(<double>), g(<double>)"
             )
         }
-
 
         private fun isConstant(aSize: Size?): Boolean {
             return aSize is ConstantSize

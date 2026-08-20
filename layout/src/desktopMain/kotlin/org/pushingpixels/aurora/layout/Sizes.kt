@@ -78,7 +78,6 @@ object Sizes {
      */
     val DLUY21: ConstantSize = dluY(21)
 
-
     // Static Component Sizes ***********************************************
 
     // Singleton State *******************************************************
@@ -127,7 +126,6 @@ object Sizes {
             }
             field = unit
         }
-
 
     // Creation of Size Instances *********************************************
     /**
@@ -195,20 +193,19 @@ object Sizes {
         return BoundedSize(basis, lowerBound, upperBound)
     }
 
-
     // Unit Conversion ******************************************************
     /**
      * Converts Inches and returns pixels using the specified resolution.
      * 
-     * @param in           the Inches
+     * @param inch           the Inches
      * @param component    the component that provides the graphics object
      * @return the given Inches as pixels
      */
-    fun inchAsPixel(`in`: Double): Int {
-        return if (`in` == 0.0)
+    fun inchAsPixel(inch: Double): Int {
+        return if (inch == 0.0)
             0
         else
-            getUnitConverter().inchAsPixel(`in`)
+            getUnitConverter().inchAsPixel(inch)
     }
 
     /**
@@ -286,7 +283,6 @@ object Sizes {
             getUnitConverter().dialogUnitYAsPixel(dluY)
     }
 
-
     // Accessing the Unit Converter *******************************************
     /**
      * Returns the current [UnitConverter]. If it has not been initialized
@@ -311,14 +307,11 @@ object Sizes {
         unitConverter = newUnitConverter
     }
 
-
     // Default Unit ***********************************************************
-
 
     // Helper Class *********************************************************
     /**
-     * An ordinal-based serializable typesafe enumeration that implements
-     * the [Size] interface for the component sizes:
+     * Enumeration that implements the [Size] interface for the component sizes:
      * *min, pref, default*.
      */
     enum class ComponentSize : Size {
@@ -343,10 +336,8 @@ object Sizes {
          * Computes the maximum size for the given list of components, using
          * this form spec and the specified measure.
          * 
-         * 
          * Invoked by FormLayout to determine the size of one of my elements
          * 
-         * @param container       the layout container
          * @param components      the list of components to measure
          * @param minMeasure      the measure used to determine the minimum size
          * @param prefMeasure     the measure used to determine the preferred size
@@ -377,8 +368,6 @@ object Sizes {
          * Used by the FormLayout size computations in `#compressedSizes`
          * to check whether a column or row can be compressed or not.
          *
-         *
-         * 
          * The DEFAULT ComponentSize is compressible, MINIMUM and PREFERRED
          * are incompressible.
          * 
@@ -391,11 +380,9 @@ object Sizes {
             return this == Default
         }
 
-
         override fun toString(): String {
             return encode()
         }
-
 
         /**
          * Returns a parseable string representation of this ComponentSize.
@@ -427,9 +414,6 @@ object Sizes {
                 }
                 return null
             }
-
-            // Serialization *****************************************************
-            private var nextOrdinal = 0
         }
     }
 }

@@ -35,47 +35,40 @@ abstract class AbstractUnitConverter : UnitConverter {
     /**
      * Converts Inches and returns pixels using the specified resolution.
      * 
-     * @param in         the Inches
-     * @param component  the component that provides the graphics object
+     * @param inch         the Inches
      * @return the given Inches as pixels
      */
-    public override fun inchAsPixel(`in`: Double): Int {
-        return inchAsPixel(`in`, getScreenResolution())
+    public override fun inchAsPixel(inch: Double): Int {
+        return inchAsPixel(inch, getScreenResolution())
     }
-
 
     /**
      * Converts Millimeters and returns pixels using the resolution of the
      * given component's graphics object.
      * 
      * @param mm            Millimeters
-     * @param component    the component that provides the graphics object
      * @return the given Millimeters as pixels
      */
     public override fun millimeterAsPixel(mm: Double): Int {
         return millimeterAsPixel(mm, getScreenResolution())
     }
 
-
     /**
      * Converts Centimeters and returns pixels using the resolution of the
      * given component's graphics object.
      * 
      * @param cm            Centimeters
-     * @param component    the component that provides the graphics object
      * @return the given Centimeters as pixels
      */
     public override fun centimeterAsPixel(cm: Double): Int {
         return centimeterAsPixel(cm, getScreenResolution())
     }
 
-
     /**
      * Converts DTP Points and returns pixels using the resolution of the
      * given component's graphics object.
      * 
      * @param pt            DTP Points
-     * @param component    the component that provides the graphics object
      * @return the given Points as pixels
      */
     public override fun pointAsPixel(pt: Int): Int {
@@ -87,26 +80,22 @@ abstract class AbstractUnitConverter : UnitConverter {
      * Honors the resolution, dialog font size, platform, and l&amp;f.
      * 
      * @param dluX  the horizontal dialog units
-     * @param c    a Component that provides the font and graphics
      * @return the given horizontal dialog units as pixels
      */
     public override fun dialogUnitXAsPixel(dluX: Int): Int {
         return dialogUnitXAsPixel(dluX, getDialogBaseUnitsX())
     }
 
-
     /**
      * Converts vertical dialog units and returns pixels.
      * Honors the resolution, dialog font size, platform, and l&amp;f.
      * 
      * @param dluY  the vertical dialog units
-     * @param c     a Component that provides the font and graphics
      * @return the given vertical dialog units as pixels
      */
     public override fun dialogUnitYAsPixel(dluY: Int): Int {
         return dialogUnitYAsPixel(dluY, getDialogBaseUnitsY())
     }
-
 
     // Abstract Behavior *****************************************************
     /**
@@ -114,22 +103,18 @@ abstract class AbstractUnitConverter : UnitConverter {
      * Implementations are encouraged to cache previously computed
      * dialog base units.
      * 
-     * @param component   a Component that provides the font and graphics
      * @return the horizontal dialog base units
      */
     protected abstract fun getDialogBaseUnitsX(): Double
-
 
     /**
      * Gets and returns the vertical dialog base units.
      * Implementations are encouraged to cache previously computed
      * dialog base units.
      * 
-     * @param component   a Component that provides the font and graphics
      * @return the vertical dialog base units
      */
     protected abstract fun getDialogBaseUnitsY(): Double
-
 
     /**
      * Converts horizontal dialog units and returns pixels.
@@ -142,7 +127,6 @@ abstract class AbstractUnitConverter : UnitConverter {
         return (dluX * dialogBaseUnitsX / 4).roundToInt()
     }
 
-
     /**
      * Converts vertical dialog units and returns pixels.
      * 
@@ -154,18 +138,15 @@ abstract class AbstractUnitConverter : UnitConverter {
         return (dluY * dialogBaseUnitsY / 8).roundToInt()
     }
 
-
     /**
      * Returns the components screen resolution or the default screen
      * resolution if the component is null or has no toolkit assigned yet.
      * 
-     * @param c the component to ask for a toolkit
      * @return the component's screen resolution
      */
     protected fun getScreenResolution(): Int {
-            return this.defaultScreenResolution
+        return this.defaultScreenResolution
     }
-
 
     protected val defaultScreenResolution: Int
         /**
@@ -181,10 +162,8 @@ abstract class AbstractUnitConverter : UnitConverter {
             return Companion.defaultScreenResolution
         }
 
-
     companion object {
         private const val DTP_RESOLUTION = 72
-
 
         // Convenience Methods ***************************************************
         /**
@@ -198,7 +177,6 @@ abstract class AbstractUnitConverter : UnitConverter {
             return (dpi * inch).roundToInt()
         }
 
-
         /**
          * Converts Millimeters and returns pixels using the specified resolution.
          * 
@@ -209,7 +187,6 @@ abstract class AbstractUnitConverter : UnitConverter {
         protected fun millimeterAsPixel(mm: Double, dpi: Int): Int {
             return (dpi * mm * 10 / 254).roundToInt()
         }
-
 
         /**
          * Converts Centimeters and returns pixels using the specified resolution.
@@ -222,7 +199,6 @@ abstract class AbstractUnitConverter : UnitConverter {
             return (dpi * cm * 100 / 254).roundToInt()
         }
 
-
         /**
          * Converts DTP Points and returns pixels using the specified resolution.
          * 
@@ -233,7 +209,6 @@ abstract class AbstractUnitConverter : UnitConverter {
         protected fun pointAsPixel(pt: Double, dpi: Int): Int {
             return (dpi * pt / DTP_RESOLUTION).roundToInt()
         }
-
 
         private var defaultScreenResolution = -1
     }

@@ -77,7 +77,7 @@ object FormSpecs {
      *
      * @see .GLUE_ROWSPEC
      */
-    val GLUE_COLSPEC: ColumnSpec by lazy {ColumnSpec(ColumnSpec.DEFAULT, Sizes.ZERO, FormSpec.DEFAULT_GROW) }
+    val GLUE_COLSPEC: ColumnSpec by lazy {ColumnSpec(ColumnSpec.Default, Sizes.ZERO, FormSpec.DefaultGrow) }
 
 
     // Layout Style Dependent Column Specs ***********************************
@@ -161,9 +161,9 @@ object FormSpecs {
      */
     val GROWING_BUTTON_COLSPEC: ColumnSpec by lazy {
         ColumnSpec(
-            ColumnSpec.DEFAULT,
+            ColumnSpec.Default,
             BUTTON_COLSPEC.size,
-            FormSpec.DEFAULT_GROW
+            FormSpec.DefaultGrow
         )
     }
 
@@ -215,7 +215,7 @@ object FormSpecs {
      *
      * @see .GLUE_COLSPEC
      */
-    val GLUE_ROWSPEC: RowSpec by lazy {RowSpec(RowSpec.DEFAULT, Sizes.ZERO, FormSpec.DEFAULT_GROW) }
+    val GLUE_ROWSPEC: RowSpec by lazy {RowSpec(RowSpec.Default, Sizes.ZERO, FormSpec.DefaultGrow) }
 
 
     // Layout Style Dependent Row Specs *************************************

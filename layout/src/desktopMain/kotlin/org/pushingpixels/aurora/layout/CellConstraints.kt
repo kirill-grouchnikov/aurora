@@ -48,15 +48,15 @@ import java.util.*
  * bottom.
  * <pre>
  * CellConstraints.xy(3, 5)
- * CellConstraints.xy(3, 5, CellConstraints.RIGHT, CellConstraints.BOTTOM)
+ * CellConstraints.xy(3, 5, CellConstraints.Right, CellConstraints.Bottom)
  * CellConstraints.xy(3, 5, "right, bottom")
  * 
  * CellConstraints.xyw (3, 5, 1)
- * CellConstraints.xyw (3, 5, 1, CellConstraints.RIGHT, CellConstraints.BOTTOM)
+ * CellConstraints.xyw (3, 5, 1, CellConstraints.Right, CellConstraints.Bottom)
  * CellConstraints.xyw (3, 5, 1, "right, bottom")
  * 
  * CellConstraints.xywh(3, 5, 1, 1)
- * CellConstraints.xywh(3, 5, 1, 1, CellConstraints.RIGHT, CellConstraints.BOTTOM)
+ * CellConstraints.xywh(3, 5, 1, 1, CellConstraints.Right, CellConstraints.Bottom)
  * CellConstraints.xywh(3, 5, 1, 1, "right, bottom")
  * </pre>
  * See also the examples in the [FormLayout] class comment.
@@ -218,7 +218,6 @@ class CellConstraints @JvmOverloads constructor(
         Companion.ensureValidOrientations(hAlign!!, vAlign!!)
     }
 
-
     /**
      * Decodes a string description for the horizontal and vertical alignment
      * and sets this CellConstraints' alignment values. If the boolean is
@@ -295,7 +294,6 @@ class CellConstraints @JvmOverloads constructor(
             )
         }
     }
-
 
     // Settings Component Bounds ********************************************
     /**
@@ -385,12 +383,9 @@ class CellConstraints @JvmOverloads constructor(
 
     // Helper Class *********************************************************
     /**
-     * An ordinal-based serializable typesafe enumeration for component
-     * alignment types as used by the [FormLayout].
+     * Enumeration for component alignment types as used by the [FormLayout].
      */
-    enum class Alignment constructor(
-        private val orientation: Orientation
-    ) {
+    enum class Alignment(private val orientation: Orientation) {
         /**
          * Use the column's or row's default alignment.
          */
@@ -491,7 +486,6 @@ class CellConstraints @JvmOverloads constructor(
         }
     }
 
-
     companion object {
         // Alignment Constants *************************************************
 
@@ -510,7 +504,6 @@ class CellConstraints @JvmOverloads constructor(
             }
         }
 
-
         /**
          * Parses an alignment string description and
          * returns the corresponding alignment value.
@@ -521,7 +514,6 @@ class CellConstraints @JvmOverloads constructor(
         private fun decodeAlignment(encodedAlignment: String): Alignment {
             return Alignment.Companion.valueOf(encodedAlignment)
         }
-
 
         /**
          * Checks and verifies that the horizontal alignment is a horizontal
@@ -539,7 +531,6 @@ class CellConstraints @JvmOverloads constructor(
                 "The vertical alignment must be one of: top, center, bottom, fill, default."
             }
         }
-
 
         /**
          * Computes and returns the concrete alignment. Takes into account
@@ -569,7 +560,6 @@ class CellConstraints @JvmOverloads constructor(
                 usedAlignment(cellAlignment, formSpec)
         }
 
-
         /**
          * Returns the alignment used for a given form constraints object.
          * The cell alignment overrides the column or row default, unless
@@ -590,16 +580,16 @@ class CellConstraints @JvmOverloads constructor(
                 return Alignment.Fill
             }
             return when (defaultAlignment) {
-                ColumnSpec.LEFT -> {
+                ColumnSpec.Left -> {
                     Alignment.Left
                 }
                 DefaultAlignment.CenterAlign -> {
                     Alignment.Center
                 }
-                ColumnSpec.RIGHT -> {
+                ColumnSpec.Right -> {
                     Alignment.Right
                 }
-                RowSpec.TOP -> {
+                RowSpec.Top -> {
                     Alignment.Top
                 }
                 else -> {
@@ -607,7 +597,6 @@ class CellConstraints @JvmOverloads constructor(
                 }
             }
         }
-
 
         /**
          * Computes and returns the pixel size of the given component using the
@@ -638,7 +627,6 @@ class CellConstraints @JvmOverloads constructor(
             }
         }
 
-
         /**
          * Computes and returns the component's pixel origin.
          * 
@@ -667,7 +655,6 @@ class CellConstraints @JvmOverloads constructor(
             }
         }
 
-
         /**
          * Returns the component's pixel extent.
          * 
@@ -682,7 +669,6 @@ class CellConstraints @JvmOverloads constructor(
             else
                 componentSize
         }
-
 
         /**
          * Returns an integer that has a minimum of two characters.
@@ -700,8 +686,8 @@ class CellConstraints @JvmOverloads constructor(
          * and vertical alignment using the specified alignment objects.
          *
          * **Examples:**
-         * CellConstraints.xywh(1, 3, 2, 1, CellConstraints.LEFT,   CellConstraints.BOTTOM)
-         * CellConstraints.xywh(1, 3, 7, 3, CellConstraints.CENTER, CellConstraints.FILL)
+         * CellConstraints.xywh(1, 3, 2, 1, CellConstraints.Left,   CellConstraints.Bottom)
+         * CellConstraints.xywh(1, 3, 7, 3, CellConstraints.Center, CellConstraints.Fill)
          *
          * @param col       the new column index
          * @param row       the new row index
@@ -750,8 +736,8 @@ class CellConstraints @JvmOverloads constructor(
          * horizontal alignment using the specified alignment objects.
          *
          * **Examples:**
-         * CellConstraints.rchw(3, 1, 1, 2, CellConstraints.BOTTOM, CellConstraints.LEFT)
-         * CellConstraints.rchw(3, 1, 3, 7, CellConstraints.FILL,   CellConstraints.CENTER)
+         * CellConstraints.rchw(3, 1, 1, 2, CellConstraints.Bottom, CellConstraints.Left)
+         * CellConstraints.rchw(3, 1, 3, 7, CellConstraints.Fill,   CellConstraints.Center)
          *
          *
          * @param row       the new row index

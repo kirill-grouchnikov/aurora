@@ -30,7 +30,6 @@ import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.debugInspectorInfo
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
@@ -770,7 +769,7 @@ private class FormLayoutMeasurePolicy(
         for (i in 0..<count) {
             val formSpec = formSpecs[i]
             val weight = formSpec.resizeWeight
-            if (weight == FormSpec.NO_GROW) {
+            if (weight == FormSpec.NoGrow) {
                 sizes[i] = inputSizes[i]
             } else {
                 val roundingCorrection = restSpace - roundedRestSpace

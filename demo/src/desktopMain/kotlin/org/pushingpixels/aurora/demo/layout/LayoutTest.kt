@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -65,8 +64,8 @@ fun main() = auroraApplication {
             rowSpecs = listOf(rowSpec1, rowSpec2)
         ) {
             val rowSpec1 = RowSpec(dluX(14))
-            val rowSpec2 = RowSpec(RowSpec.CENTER, dluX(14), 0.0)
-            val rowSpec3 = RowSpec(RowSpec.CENTER, dluX(14), FormSpec.NO_GROW)
+            val rowSpec2 = RowSpec(RowSpec.Center, dluX(14), 0.0)
+            val rowSpec3 = RowSpec(RowSpec.Center, dluX(14), FormSpec.NoGrow)
             val rowSpec4 = RowSpec.decode("pref")
             val rowSpec5 = RowSpec.decode("top:31dlu")
             val rowSpec6 = RowSpec.decode("center:max(20dlu;pref):grow")

@@ -34,63 +34,52 @@ interface UnitConverter {
     /**
      * Converts Inches and returns pixels using the specified resolution.
      * 
-     * @param in         the Inches
-     * @param component  the component that provides the graphics object
+     * @param inch         the Inches
      * @return the given Inches as pixels
      */
-    fun inchAsPixel(`in`: Double): Int
-
+    fun inchAsPixel(inch: Double): Int
 
     /**
      * Converts Millimeters and returns pixels using the resolution of the
      * given component's graphics object.
      * 
      * @param mm         Millimeters
-     * @param component  the component that provides the graphics object
      * @return the given Millimeters as pixels
      */
     fun millimeterAsPixel(mm: Double): Int
-
 
     /**
      * Converts Centimeters and returns pixels using the resolution of the
      * given component's graphics object.
      * 
      * @param cm         Centimeters
-     * @param component  the component that provides the graphics object
      * @return the given Centimeters as pixels
      */
     fun centimeterAsPixel(cm: Double): Int
-
 
     /**
      * Converts DTP Points and returns pixels using the resolution of the
      * given component's graphics object.
      * 
      * @param pt          DTP Points
-     * @param component   the component that provides the graphics object
      * @return the given Points as pixels
      */
     fun pointAsPixel(pt: Int): Int
-
 
     /**
      * Converts horizontal dialog units and returns pixels.
      * Honors the resolution, dialog font size, platform and look&amp;feel.
      * 
      * @param dluX       the horizontal dialog units
-     * @param component  a component that provides the font and graphics
      * @return the given horizontal dialog units as pixels
      */
     fun dialogUnitXAsPixel(dluX: Int): Int
-
 
     /**
      * Converts vertical dialog units and returns pixels.
      * Honors the resolution, dialog font size, platform and look&amp;feel.
      * 
      * @param dluY       the vertical dialog units
-     * @param component  a component that provides the font and graphics
      * @return the given vertical dialog units as pixels
      */
     fun dialogUnitYAsPixel(dluY: Int): Int

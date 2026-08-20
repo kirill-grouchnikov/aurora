@@ -30,7 +30,7 @@ import androidx.compose.ui.layout.Placeable
  */
 interface Measure {
     /**
-     * Computes and returns the size of the given [Measurable].
+     * Computes and returns the size of the given [IntrinsicMeasurable].
      *
      * @param measurable  the measurable to measure
      * @return the measurable's size

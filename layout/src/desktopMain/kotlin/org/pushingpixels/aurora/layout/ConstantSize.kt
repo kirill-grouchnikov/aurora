@@ -254,8 +254,7 @@ class ConstantSize : Size {
 
     // Helper Class *********************************************************
     /**
-     * An ordinal-based serializable typesafe enumeration for units
-     * as used in instances of [ConstantSize].
+     * Enumeration for units as used in instances of [ConstantSize].
      */
     enum class MeasurementUnit(
         private val abbreviation: String,
