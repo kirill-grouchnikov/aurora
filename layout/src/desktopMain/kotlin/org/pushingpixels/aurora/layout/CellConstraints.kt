@@ -67,85 +67,26 @@ import java.util.*
  *
  * TODO: Rename the inset to offsets.
  */
-class CellConstraints @JvmOverloads constructor(
-    gridX: Int = 1, gridY: Int = 1, gridWidth: Int = 1, gridHeight: Int = 1,
-    hAlign: Alignment = Alignment.Default, vAlign: Alignment = Alignment.Default,
-    padding: PaddingValues = PaddingValues.Zero
+public data class CellConstraints(
+    public val gridX: Int = 1, public val gridY: Int = 1,
+    public val gridWidth: Int = 1, public val gridHeight: Int = 1,
+    public val hAlign: Alignment = Alignment.Default, public val vAlign: Alignment = Alignment.Default,
+    public val padding: PaddingValues = PaddingValues.Zero
 ) {
-    // Fields ***************************************************************
-    /**
-     * Describes the component's horizontal grid origin (starts at 1).
-     */
-    var gridX: Int = 0
-
-    /**
-     * Describes the component's vertical grid origin (starts at 1).
-     */
-    var gridY: Int = 0
-
-    /**
-     * Describes the component's horizontal grid extend (number of cells).
-     */
-    var gridWidth: Int = 0
-
-    /**
-     * Describes the component's vertical grid extent (number of cells).
-     */
-    var gridHeight: Int = 0
-
-    /**
-     * Describes the component's horizontal alignment.
-     */
-    var hAlign: Alignment? = null
-
-    /**
-     * Describes the component's vertical alignment.
-     */
-    var vAlign: Alignment? = null
-
-    /**
-     * Describes the component's `Insets` in it's display area.
-     */
-    var padding: PaddingValues
-
     init {
-        this.gridX = gridX
-        this.gridY = gridY
-        this.gridWidth = gridWidth
-        this.gridHeight = gridHeight
-        this.hAlign = hAlign
-        this.vAlign = vAlign
-        this.padding = padding
-        if (gridX <= 0) {
-            throw IndexOutOfBoundsException("The grid x must be a positive number.")
+        require (gridX > 0) {
+            "The grid x must be a positive number."
         }
-        if (gridY <= 0) {
-            throw IndexOutOfBoundsException("The grid y must be a positive number.")
+        require (gridY > 0) {
+            "The grid y must be a positive number."
         }
-        if (gridWidth <= 0) {
-            throw IndexOutOfBoundsException("The grid width must be a positive number.")
+        require (gridWidth > 0) {
+            "The grid width must be a positive number."
         }
-        if (gridHeight <= 0) {
-            throw IndexOutOfBoundsException("The grid height must be a positive number.")
+        require (gridHeight > 0) {
+            "The grid height must be a positive number."
         }
         ensureValidOrientations(hAlign, vAlign)
-    }
-
-    /**
-     * Constructs an instance of [CellConstraints] from
-     * the given encoded string properties.<p>
-     *
-     * <strong>Examples:</strong><pre>
-     * CellConstraints("1, 3")
-     * CellConstraints("1, 3, left, bottom")
-     * CellConstraints("1, 3, 2, 1, left, bottom")
-     * CellConstraints("1, 3, 2, 1, l, b")
-     * </pre>
-     *
-     * @param encodedConstraints	the constraints encoded as string
-     */
-    constructor(encodedConstraints: String): this(1, 1) {
-        initFromConstraints(encodedConstraints)
     }
 
     // Parsing and Decoding String Descriptions *****************************
@@ -165,93 +106,6 @@ class CellConstraints @JvmOverloads constructor(
      * @throws IllegalArgumentException if the encoded constraints do not
      * follow the constraint syntax
      */
-    private fun initFromConstraints(encodedConstraints: String) {
-        val tokenizer = StringTokenizer(encodedConstraints, " ,")
-        val argCount = tokenizer.countTokens()
-        require(argCount == 2 || argCount == 4 || argCount == 6) {
-            "You must provide 2, 4 or 6 arguments."
-        }
-        var nextInt: Int? = decodeInt(tokenizer.nextToken())
-        require(nextInt != null) {
-            "First cell constraint element must be a number."
-        }
-        gridX = nextInt
-        require(gridX > 0) { "The grid x must be a positive number." }
-        nextInt = decodeInt(tokenizer.nextToken())
-        require(nextInt != null) {
-            "Second cell constraint element must be a number."
-        }
-        gridY = nextInt
-        require(gridY > 0) { "The grid y must be a positive number." }
-        if (!tokenizer.hasMoreTokens()) {
-            return
-        }
-
-        var token = tokenizer.nextToken()
-        nextInt = decodeInt(token)
-        if (nextInt != null) {
-            // Case: "x, y, w, h" or
-            //       "x, y, w, h, hAlign, vAlign"
-            gridWidth = nextInt
-            if (gridWidth <= 0) {
-                throw IndexOutOfBoundsException(
-                    "The grid width must be a positive number."
-                )
-            }
-            nextInt = decodeInt(tokenizer.nextToken())
-            requireNotNull(nextInt) { "Fourth cell constraint element must be like third." }
-            gridHeight = nextInt
-            if (gridHeight <= 0) {
-                throw IndexOutOfBoundsException(
-                    "The grid height must be a positive number."
-                )
-            }
-
-            if (!tokenizer.hasMoreTokens()) {
-                return
-            }
-            token = tokenizer.nextToken()
-        }
-
-        hAlign = decodeAlignment(token)
-        vAlign = decodeAlignment(tokenizer.nextToken())
-        Companion.ensureValidOrientations(hAlign!!, vAlign!!)
-    }
-
-    /**
-     * Decodes a string description for the horizontal and vertical alignment
-     * and sets this CellConstraints' alignment values. If the boolean is
-     * `true` the horizontal alignment is the first token,
-     * and the vertical alignment is the second token. if the boolean is
-     * `false` the vertical alignment comes first. 
-     *
-     *
-     * 
-     * Valid horizontal alignments are: left, center, right, default, and fill.
-     * Valid vertical alignments are: top, center, bottom, default, and fill.
-     * The anchor's string representation abbreviates the alignment:
-     * l, c, r, d, f, t, and b.
-     *
-     *
-     * 
-     * Anchor examples:
-     * "c, c" is centered, "l, t" is northwest, "c, t" is north, "r, c" east.
-     * "c, d" is horizontally centered and uses the row's default alignment.
-     * "d, t" is on top of the cell and uses the column's default alignment.
-     *
-     *
-     * 
-     * @param encodedAlignments represents horizontal and vertical alignment
-     * @throws IllegalArgumentException if an alignment orientation is invalid
-     */
-    private fun setAlignments(encodedAlignments: String, horizontalThenVertical: Boolean) {
-        val tokenizer = StringTokenizer(encodedAlignments, " ,")
-        val first: Alignment = decodeAlignment(tokenizer.nextToken())
-        val second: Alignment = decodeAlignment(tokenizer.nextToken())
-        hAlign = if (horizontalThenVertical) first else second
-        vAlign = if (horizontalThenVertical) second else first
-        ensureValidOrientations(hAlign!!, vAlign!!)
-    }
 
     /**
      * Checks and verifies that this constraints object has valid grid
@@ -682,6 +536,36 @@ class CellConstraints @JvmOverloads constructor(
         }
 
         /**
+         * Decodes a string description for the horizontal and vertical alignment
+         * and sets this CellConstraints' alignment values. If the boolean is
+         * `true` the horizontal alignment is the first token,
+         * and the vertical alignment is the second token. if the boolean is
+         * `false` the vertical alignment comes first.
+         *
+         * Valid horizontal alignments are: left, center, right, default, and fill.
+         * Valid vertical alignments are: top, center, bottom, default, and fill.
+         * The anchor's string representation abbreviates the alignment:
+         * l, c, r, d, f, t, and b.
+         *
+         * Anchor examples:
+         * "c, c" is centered, "l, t" is northwest, "c, t" is north, "r, c" east.
+         * "c, d" is horizontally centered and uses the row's default alignment.
+         * "d, t" is on top of the cell and uses the column's default alignment.
+         *
+         * @param encodedAlignments represents horizontal and vertical alignment
+         * @throws IllegalArgumentException if an alignment orientation is invalid
+         */
+        private fun parseAlignments(encodedAlignments: String, horizontalThenVertical: Boolean): Pair<Alignment, Alignment> {
+            val tokenizer = StringTokenizer(encodedAlignments, " ,")
+            val first: Alignment = decodeAlignment(tokenizer.nextToken())
+            val second: Alignment = decodeAlignment(tokenizer.nextToken())
+            val hAlign = if (horizontalThenVertical) first else second
+            val vAlign = if (horizontalThenVertical) second else first
+            ensureValidOrientations(hAlign, vAlign)
+            return Pair(hAlign, vAlign)
+        }
+
+        /**
          * Creates a [CellConstraints] from the column, row, width, and height; sets the horizontal
          * and vertical alignment using the specified alignment objects.
          *
@@ -726,9 +610,8 @@ class CellConstraints @JvmOverloads constructor(
          * @throws IllegalArgumentException if an alignment orientation is invalid
          */
         fun xywh(col: Int, row: Int, colSpan: Int, rowSpan: Int, encodedAlignments: String): CellConstraints {
-            val result = xywh(col, row, colSpan, rowSpan)
-            result.setAlignments(encodedAlignments, true)
-            return result
+            val alignments = parseAlignments(encodedAlignments, true)
+            return xywh(col, row, colSpan, rowSpan, alignments.first, alignments.second)
         }
 
         /**
@@ -774,11 +657,78 @@ class CellConstraints @JvmOverloads constructor(
          *
          * @throws IllegalArgumentException if an alignment orientation is invalid
          */
-        fun rchw(
-            row: Int, col: Int, rowSpan: Int, colSpan: Int, encodedAlignments: String): CellConstraints {
-            val result = rchw(row, col, rowSpan, colSpan)
-            result.setAlignments(encodedAlignments, true)
-            return result
+        fun rchw(row: Int, col: Int, rowSpan: Int, colSpan: Int, encodedAlignments: String): CellConstraints {
+            val alignments = parseAlignments(encodedAlignments, true)
+            return rchw(row, col, rowSpan, colSpan, alignments.first, alignments.second)
+        }
+
+        /**
+         * Constructs an instance of [CellConstraints] from
+         * the given encoded string properties.<p>
+         *
+         * <strong>Examples:</strong><pre>
+         * CellConstraints("1, 3")
+         * CellConstraints("1, 3, left, bottom")
+         * CellConstraints("1, 3, 2, 1, left, bottom")
+         * CellConstraints("1, 3, 2, 1, l, b")
+         * </pre>
+         *
+         * @param encodedConstraints	the constraints encoded as string
+         */
+        fun fromConstraints(encodedConstraints: String): CellConstraints {
+            val tokenizer = StringTokenizer(encodedConstraints, " ,")
+            val argCount = tokenizer.countTokens()
+            require(argCount == 2 || argCount == 4 || argCount == 6) {
+                "You must provide 2, 4 or 6 arguments."
+            }
+            var nextInt: Int? = decodeInt(tokenizer.nextToken())
+            require(nextInt != null) {
+                "First cell constraint element must be a number."
+            }
+            val gridX = nextInt
+            require(gridX > 0) { "The grid x must be a positive number." }
+            nextInt = decodeInt(tokenizer.nextToken())
+            require(nextInt != null) {
+                "Second cell constraint element must be a number."
+            }
+            val gridY = nextInt
+            require(gridY > 0) { "The grid y must be a positive number." }
+            if (!tokenizer.hasMoreTokens()) {
+                return CellConstraints(gridX, gridY)
+            }
+
+            var token = tokenizer.nextToken()
+            nextInt = decodeInt(token)
+            var gridWidth: Int = 0
+            var gridHeight: Int = 0
+            if (nextInt != null) {
+                // Case: "x, y, w, h" or
+                //       "x, y, w, h, hAlign, vAlign"
+                gridWidth = nextInt
+                if (gridWidth <= 0) {
+                    throw IndexOutOfBoundsException(
+                        "The grid width must be a positive number."
+                    )
+                }
+                nextInt = decodeInt(tokenizer.nextToken())
+                requireNotNull(nextInt) { "Fourth cell constraint element must be like third." }
+                gridHeight = nextInt
+                if (gridHeight <= 0) {
+                    throw IndexOutOfBoundsException(
+                        "The grid height must be a positive number."
+                    )
+                }
+
+                if (!tokenizer.hasMoreTokens()) {
+                    return CellConstraints(gridX, gridY, gridWidth, gridHeight)
+                }
+                token = tokenizer.nextToken()
+            }
+
+            val hAlign = decodeAlignment(token)
+            val vAlign = decodeAlignment(tokenizer.nextToken())
+            ensureValidOrientations(hAlign, vAlign)
+            return CellConstraints(gridX, gridY, gridWidth, gridHeight, hAlign, vAlign)
         }
     }
 }
