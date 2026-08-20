@@ -2,6 +2,7 @@ include(
     ":common",
     ":theming",
     ":component",
+    ":layout",
     ":window",
     ":tools:svg-transcoder",
     ":tools:svg-transcoder-gradle-plugin",

@@ -1,0 +1,464 @@
+/*
+ * Copyright 2020-2026 Aurora, Kirill Grouchnikov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.pushingpixels.aurora.layout
+
+import androidx.compose.ui.layout.IntrinsicMeasurable
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.Placeable
+
+// This is a modified version of the original source code by Karsten Lentzsch
+// and JGoodies Software GmbH available under the BSD license. See the full
+// license under resources/Forms.license.
+
+/**
+ * An implementation of the [Size] interface that represents constant
+ * sizes described by a value and unit, for example:
+ * 10&nbsp;pixel, 15&nbsp;point or 4&nbsp;dialog units.
+ * You can get instances of `ConstantSize` using
+ * the factory methods and constants in the [Sizes] class.
+ * Logical constant sizes that vary with the current layout style
+ * are delivered by the [LayoutStyle] class.
+ *
+ *
+ * 
+ * This class supports different size units:
+ * <table>
+ * <tr><td>**Unit**&nbsp;
+</td> * <td>&nbsp;**Abbreviation**&nbsp;</td><td>&nbsp;
+ * **Size**</td></tr>
+ * <tr><td>Millimeter</td><td>mm</td><td>0.1 cm</td></tr>
+ * <tr><td>Centimeter</td><td>cm</td><td>10.0 mm</td></tr>
+ * <tr><td>Inch</td><td>in</td><td>25.4 mm</td></tr>
+ * <tr><td>DTP Point</td><td>pt</td><td>1/72 in</td></tr>
+ * <tr><td>Pixel</td><td>px</td><td>1/(resolution in dpi) in</td></tr>
+ * <tr><td>Dialog Unit</td><td>dlu</td><td>honors l&amp;f, resolution, and
+ * dialog font size</td></tr>
+</table> * 
+ * 
+ * 
+ * **Examples:**<pre>
+ * Sizes.ZERO;
+ * Sizes.DLUX9;
+ * Sizes.dluX(42);
+ * Sizes.pixel(99);
+</pre> * 
+ * 
+ * @see Size
+ * @see Sizes
+ */
+class ConstantSize : Size {
+    /**
+     * Returns this size's value.
+     * 
+     * @return the size value
+     * 
+     * @since 1.1
+     */
+    // Fields ***************************************************************
+    val value: Double
+
+    /**
+     * Returns this size's unit.
+     * 
+     * @return the size unit
+     * 
+     * @since 1.1
+     */
+    val unit: MeasurementUnit
+
+
+    // Instance Creation ****************************************************
+    /**
+     * Constructs a ConstantSize for the given size and unit.
+     * 
+     * @param value     the size value interpreted in the given units
+     * @param unit        the size's unit
+     * 
+     * @since 1.1
+     */
+    constructor(value: Int, unit: MeasurementUnit) {
+        this.value = value.toDouble()
+        this.unit = unit
+    }
+
+
+    /**
+     * Constructs a ConstantSize for the given size and unit.
+     * 
+     * @param value     the size value interpreted in the given units
+     * @param unit      the size's unit
+     * 
+     * @since 1.1
+     */
+    constructor(value: Double, unit: MeasurementUnit) {
+        this.value = value
+        this.unit = unit
+    }
+
+
+    // Accessors ************************************************************
+
+
+    // Accessing the Value **************************************************
+    /**
+     * Converts the size if necessary and returns the value in pixels.
+     * 
+     * @param component  the associated component
+     * @return the size in pixels
+     */
+    fun getPixelSize(): Int {
+        if (unit == PIXEL) {
+            return intValue()
+        } else if (unit == POINT) {
+            return Sizes.pointAsPixel(intValue())
+        } else if (unit == INCH) {
+            return Sizes.inchAsPixel(value)
+        } else if (unit == MILLIMETER) {
+            return Sizes.millimeterAsPixel(value)
+        } else if (unit == CENTIMETER) {
+            return Sizes.centimeterAsPixel(value)
+        } else if (unit == DIALOG_UNITS_X) {
+            return Sizes.dialogUnitXAsPixel(intValue())
+        } else if (unit == DIALOG_UNITS_Y) {
+            return Sizes.dialogUnitYAsPixel(intValue())
+        } else {
+            throw IllegalStateException("Invalid unit " + unit)
+        }
+    }
+
+
+    // Implementing the Size Interface **************************************
+    /**
+     * Returns this size as pixel size. Neither requires the component
+     * list nor the specified measures.
+     *
+     *
+     *
+     * Invoked by [FormSpec] to determine
+     * the size of a column or row.
+     *
+     * @param container       the layout container
+     * @param components      the list of components used to compute the size
+     * @param minMeasure      the measure that determines the minimum sizes
+     * @param prefMeasure     the measure that determines the preferred sizes
+     * @param defaultMeasure  the measure that determines the default sizes
+     * @return the computed maximum size in pixel
+     */
+    override fun maximumSize(
+        components: List<IntrinsicMeasurable>,
+        minMeasure: Measure,
+        prefMeasure: Measure,
+        defaultMeasure: Measure
+    ): Int {
+        return getPixelSize()
+    }
+
+
+    /**
+     * Describes if this Size can be compressed, if container space gets scarce.
+     * Used by the FormLayout size computations in `#compressedSizes`
+     * to check whether a column or row can be compressed or not.
+     *
+     *
+     * 
+     * ConstantSizes are incompressible.
+     * 
+     * @return `false`
+     * 
+     * @since 1.1
+     */
+    override fun compressible(): Boolean {
+        return false
+    }
+
+
+    // Overriding Object Behavior *******************************************
+    /**
+     * Indicates whether some other ConstantSize is "equal to" this one.
+     * 
+     * @param o   the Object with which to compare
+     * @return `true` if this object is the same as the obj
+     * argument; `false` otherwise.
+     * 
+     * @see Object.hashCode
+     * @see java.util.Hashtable
+     */
+    override fun equals(o: Any?): Boolean {
+        if (this === o) {
+            return true
+        }
+        if (o !is ConstantSize) {
+            return false
+        }
+        val size = o
+        return this.value == size.value
+            && this.unit == size.unit
+    }
+
+
+    /**
+     * Returns a hash code value for the object. This method is
+     * supported for the benefit of hashtables such as those provided by
+     * `java.util.Hashtable`.
+     * 
+     * @return  a hash code value for this object.
+     * 
+     * @see Object.equals
+     * @see java.util.Hashtable
+     */
+    override fun hashCode(): Int {
+        return value.hashCode() + 37 * unit.hashCode()
+    }
+
+
+    /**
+     * Returns a string representation of this size object.
+     * 
+     * **Note:** This string representation may change
+     * at any time. It is intended for debugging purposes. For parsing,
+     * use [.encode] instead.
+     * 
+     * @return  a string representation of the constant size
+     */
+    override fun toString(): String {
+        return if (value == intValue().toDouble())
+            intValue().toString() + unit.abbreviation()
+        else
+            value.toString() + unit.abbreviation()
+    }
+
+
+    /**
+     * Returns a parseable string representation of this constant size.
+     * 
+     * @return a String that can be parsed by the Forms parser
+     * 
+     * @since 1.2
+     */
+    override fun encode(): String {
+        return if (value == intValue().toDouble())
+            intValue().toString() + unit.encode()
+        else
+            value.toString() + unit.encode()
+    }
+
+
+    // Helper Code **********************************************************
+    private fun intValue(): Int {
+        return Math.round(value).toInt()
+    }
+
+
+    // Helper Class *********************************************************
+    /**
+     * An ordinal-based serializable typesafe enumeration for units
+     * as used in instances of [ConstantSize].
+     */
+    class MeasurementUnit internal constructor(
+        @field:Transient private val name: String?,
+        @field:Transient private val abbreviation: String,
+        @field:Transient private val parseAbbreviation: String?,
+        @field:Transient val requiresIntegers: Boolean
+    ) {
+        /**
+         * Returns a string representation of this unit object.
+         * 
+         * **Note:** This implementation may change at any time.
+         * It is intended for debugging purposes. For parsing, use
+         * [.encode] instead.
+         * 
+         * @return  a string representation of the constant size
+         */
+        override fun toString(): String {
+            return name!!
+        }
+
+
+        /**
+         * Returns a parseable string representation of this unit.
+         * 
+         * @return a String that can be parsed by the Forms parser
+         * 
+         * @since 1.2
+         */
+        fun encode(): String {
+            return if (parseAbbreviation != null)
+                parseAbbreviation
+            else
+                abbreviation
+        }
+
+
+        /**
+         * Returns the first character of this Unit's name.
+         * Used to identify it in short format strings.
+         * 
+         * @return the first character of this Unit's name.
+         */
+        fun abbreviation(): String {
+            return abbreviation
+        }
+
+
+        private val ordinal: Int = nextOrdinal++
+
+
+        private fun readResolve(): Any? {
+            return VALUES[ordinal] // Canonicalize
+        }
+
+        companion object {
+            /**
+             * Returns a Unit that corresponds to the specified string.
+             * 
+             * @param name   the encoded unit, trimmed and in lower case
+             * @param horizontal  true for a horizontal unit, false for vertical
+             * @return the corresponding Unit
+             * @throws IllegalArgumentException if no Unit exists for the string
+             */
+            fun valueOf(name: String, horizontal: Boolean): MeasurementUnit {
+                if (name.length == 0) {
+                    val defaultUnit: MeasurementUnit = Sizes.defaultUnit
+                    if (defaultUnit != null) {
+                        return defaultUnit
+                    }
+                    return if (horizontal) DIALOG_UNITS_X else DIALOG_UNITS_Y
+                } else if (name == "px") {
+                    return PIXEL
+                } else if (name == "dlu") {
+                    return if (horizontal) DIALOG_UNITS_X else DIALOG_UNITS_Y
+                } else if (name == "pt") {
+                    return POINT
+                } else if (name == "in") {
+                    return INCH
+                } else if (name == "mm") {
+                    return MILLIMETER
+                } else if (name == "cm") {
+                    return CENTIMETER
+                } else {
+                    throw IllegalArgumentException(
+                        "Invalid unit name '" + name + "'. Must be one of: " +
+                            "px, dlu, pt, mm, cm, in"
+                    )
+                }
+            }
+
+
+            // Serialization *****************************************************
+            private var nextOrdinal = 0
+        }
+    }
+
+
+    companion object {
+        // Public Units *********************************************************
+        val PIXEL: MeasurementUnit = MeasurementUnit("Pixel", "px", null, true)
+        val POINT: MeasurementUnit = MeasurementUnit("Point", "pt", null, true)
+        val DIALOG_UNITS_X: MeasurementUnit = MeasurementUnit("Dialog units X", "dluX", "dlu", true)
+        val DIALOG_UNITS_Y: MeasurementUnit = MeasurementUnit("Dialog units Y", "dluY", "dlu", true)
+        val MILLIMETER: MeasurementUnit = MeasurementUnit("Millimeter", "mm", null, false)
+        val CENTIMETER: MeasurementUnit = MeasurementUnit("Centimeter", "cm", null, false)
+        val INCH: MeasurementUnit = MeasurementUnit("Inch", "in", null, false)
+
+        val PX: MeasurementUnit = PIXEL
+        val PT: MeasurementUnit = POINT
+        val DLUX: MeasurementUnit = DIALOG_UNITS_X
+        val DLUY: MeasurementUnit = DIALOG_UNITS_Y
+        val MM: MeasurementUnit = MILLIMETER
+        val CM: MeasurementUnit = CENTIMETER
+        val IN: MeasurementUnit = INCH
+
+        /**
+         * An array of all enumeration values used to canonicalize
+         * deserialized units.
+         */
+        private val VALUES = arrayOf(PIXEL, POINT, DIALOG_UNITS_X, DIALOG_UNITS_Y, MILLIMETER, CENTIMETER, INCH)
+
+
+        /**
+         * Creates and returns a ConstantSize from the given encoded size
+         * and unit description.
+         * 
+         * @param encodedValueAndUnit  the size's value and unit as string,
+         * trimmed and in lower case
+         * @param horizontal           true for horizontal, false for vertical
+         * @return a constant size for the given encoding and unit description
+         * 
+         * @throws IllegalArgumentException   if the unit requires integer
+         * but the value is not an integer
+         */
+        fun valueOf(encodedValueAndUnit: String, horizontal: Boolean): ConstantSize {
+            val split: Array<String> = splitValueAndUnit(encodedValueAndUnit)
+            val encodedValue = split[0]
+            val encodedUnit = split[1]
+            val unit: MeasurementUnit = MeasurementUnit.valueOf(encodedUnit, horizontal)
+            val value = encodedValue.toDouble()
+            if (unit.requiresIntegers) {
+                require(
+                    value == value.toInt().toDouble()) {
+                    "$unit value $encodedValue must be an integer."
+                }
+            }
+            return ConstantSize(value, unit)
+        }
+
+
+        /**
+         * Creates and returns a ConstantSize for the specified size value
+         * in horizontal dialog units.
+         * 
+         * @param value    size value in horizontal dialog units
+         * @return the associated Size instance
+         */
+        fun dluX(value: Int): ConstantSize {
+            return ConstantSize(value, DLUX)
+        }
+
+
+        /**
+         * Creates and returns a ConstantSize for the specified size value
+         * in vertical dialog units.
+         * 
+         * @param value    size value in vertical dialog units
+         * @return the associated Size instance
+         */
+        fun dluY(value: Int): ConstantSize {
+            return ConstantSize(value, DLUY)
+        }
+
+
+        /**
+         * Splits a string that encodes size with unit into the size and unit
+         * substrings. Returns an array of two strings.
+         * 
+         * @param encodedValueAndUnit  a strings that represents a size with unit,
+         * trimmed and in lower case
+         * @return the first element is size, the second is unit
+         */
+        private fun splitValueAndUnit(encodedValueAndUnit: String): Array<String> {
+            val len = encodedValueAndUnit.length
+            var firstLetterIndex = len
+            while (firstLetterIndex > 0
+                && Character.isLetter(encodedValueAndUnit.get(firstLetterIndex - 1))
+            ) {
+                firstLetterIndex--
+            }
+            val res0 = encodedValueAndUnit.substring(0, firstLetterIndex)
+            val res1 = encodedValueAndUnit.substring(firstLetterIndex)
+            return arrayOf(res0, res1)
+        }
+    }
+}

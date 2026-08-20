@@ -13,6 +13,7 @@ kotlin {
                 implementation(libs.compose.components.resources)
                 implementation(project(":common"))
                 implementation(project(":component"))
+                implementation(project(":layout"))
                 implementation(project(":theming"))
                 implementation(project(":window"))
                 implementation(libs.ephemeral.chroma)
