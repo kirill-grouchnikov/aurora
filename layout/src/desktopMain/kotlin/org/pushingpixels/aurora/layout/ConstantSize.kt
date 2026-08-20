@@ -180,23 +180,22 @@ class ConstantSize : Size {
     /**
      * Indicates whether some other ConstantSize is "equal to" this one.
      * 
-     * @param o   the Object with which to compare
+     * @param other   the Object with which to compare
      * @return `true` if this object is the same as the obj
      * argument; `false` otherwise.
      * 
      * @see Object.hashCode
      * @see java.util.Hashtable
      */
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
-        if (o !is ConstantSize) {
+        if (other !is ConstantSize) {
             return false
         }
-        val size = o
-        return this.value == size.value
-            && this.unit == size.unit
+        return this.value == other.value
+            && this.unit == other.unit
     }
 
 
@@ -328,10 +327,6 @@ class ConstantSize : Size {
                     )
                 }
             }
-
-
-            // Serialization *****************************************************
-            private var nextOrdinal = 0
         }
     }
 

@@ -195,7 +195,7 @@ abstract class FormSpec protected constructor(
             require(token.size > 1) { "The form spec must provide a size." }
             next = token[nextIndex++]
         }
-        this.size = parseSize(next)!!
+        this.size = parseSize(next)
         if (nextIndex < token.size) {
             this.resizeWeight = parseResizeWeight(token[nextIndex])
         }
@@ -208,7 +208,7 @@ abstract class FormSpec protected constructor(
      * @param token    a token that represents a size, either bounded or plain
      * @return the decoded Size
      */
-    private fun parseSize(token: String): Size? {
+    private fun parseSize(token: String): Size {
         if (token.startsWith("[") && token.endsWith("]")) {
             return parseBoundedSize(token)
         }
@@ -316,7 +316,7 @@ abstract class FormSpec protected constructor(
      * @param token    the encoded size
      * @return the decoded size either a constant or component size
      */
-    private fun parseAtomicSize(token: String): Size? {
+    private fun parseAtomicSize(token: String): Size {
         val trimmedToken = token.trim { it <= ' ' }
         if (trimmedToken.startsWith("'") && trimmedToken.endsWith("'")) {
             val length = trimmedToken.length
@@ -435,7 +435,7 @@ abstract class FormSpec protected constructor(
         val alignmentDefault: DefaultAlignment = (if (this.isHorizontal)
             ColumnSpec.DEFAULT
         else
-            RowSpec.DEFAULT)!!
+            RowSpec.DEFAULT)
         if (alignmentDefault != defaultAlignment) {
             buffer.append(defaultAlignment.abbreviation())
             buffer.append(":")

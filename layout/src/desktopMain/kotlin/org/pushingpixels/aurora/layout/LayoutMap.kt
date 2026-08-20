@@ -432,7 +432,7 @@ class LayoutMap @JvmOverloads constructor(
         val expansion = if (horizontal) columnGet(key) else rowGet(key)
         if (expansion == null) {
             val orientation = if (horizontal) "column" else "row"
-            throw IllegalArgumentException("Unknown " + orientation + " layout variable \"" + key + "\"")
+            throw IllegalArgumentException("Unknown $orientation layout variable \"$key\"")
         }
         return expansion
     }

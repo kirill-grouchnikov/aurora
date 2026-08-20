@@ -266,36 +266,32 @@ class CellConstraints @JvmOverloads constructor(
     fun ensureValidGridBounds(colCount: Int, rowCount: Int) {
         if (gridX <= 0) {
             throw IndexOutOfBoundsException(
-                "The column index " + gridX + " must be positive."
+                "The column index $gridX must be positive."
             )
         }
         if (gridX > colCount) {
             throw IndexOutOfBoundsException(
-                ("The column index " + gridX + " must be less than or equal to "
-                    + colCount + ".")
+                ("The column index $gridX must be less than or equal to $colCount.")
             )
         }
         if (gridX + gridWidth - 1 > colCount) {
             throw IndexOutOfBoundsException(
-                ("The grid width " + gridWidth + " must be less than or equal to "
-                    + (colCount - gridX + 1) + ".")
+                ("The grid width $gridWidth must be less than or equal to ${colCount - gridX + 1}.")
             )
         }
         if (gridY <= 0) {
             throw IndexOutOfBoundsException(
-                "The row index " + gridY + " must be positive."
+                "The row index $gridY must be positive."
             )
         }
         if (gridY > rowCount) {
             throw IndexOutOfBoundsException(
-                ("The row index " + gridY + " must be less than or equal to "
-                    + rowCount + ".")
+                ("The row index $gridY must be less than or equal to $rowCount.")
             )
         }
         if (gridY + gridHeight - 1 > rowCount) {
             throw IndexOutOfBoundsException(
-                ("The grid height " + gridHeight + " must be less than or equal to "
-                    + (rowCount - gridY + 1) + ".")
+                ("The grid height $gridHeight must be less than or equal to ${rowCount - gridY + 1}.")
             )
         }
     }
@@ -696,7 +692,7 @@ class CellConstraints @JvmOverloads constructor(
          */
         private fun formatInt(number: Int): String {
             val str = number.toString()
-            return if (number < 10) " " + str else str
+            return if (number < 10) " $str" else str
         }
 
         /**
