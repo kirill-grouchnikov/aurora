@@ -54,20 +54,19 @@ fun main() = auroraApplication {
         menuCommands = null
 
     ) {
-        val textMeasurer = rememberTextMeasurer()
-        val rowSpec1 = RowSpec(dluX(14), textMeasurer)
-        val rowSpec2 = RowSpec(Sizes.ComponentSize.Preferred, textMeasurer)
-        val colSpec1 = ColumnSpec(dluX(40), textMeasurer)
-        val colSpec2 = ColumnSpec(Sizes.ComponentSize.Preferred, textMeasurer)
+        val rowSpec1 = RowSpec(dluX(14))
+        val rowSpec2 = RowSpec(Sizes.ComponentSize.Preferred)
+        val colSpec1 = ColumnSpec(dluX(40))
+        val colSpec2 = ColumnSpec(Sizes.ComponentSize.Preferred)
 
         FormLayout(
             modifier = Modifier.fillMaxSize(),
             colSpecs = listOf(colSpec1, colSpec2),
             rowSpecs = listOf(rowSpec1, rowSpec2)
         ) {
-            val rowSpec1 = RowSpec(dluX(14), textMeasurer)
-            val rowSpec2 = RowSpec(RowSpec.CENTER, dluX(14), 0.0, textMeasurer)
-            val rowSpec3 = RowSpec(RowSpec.CENTER, dluX(14), FormSpec.NO_GROW, textMeasurer)
+            val rowSpec1 = RowSpec(dluX(14))
+            val rowSpec2 = RowSpec(RowSpec.CENTER, dluX(14), 0.0)
+            val rowSpec3 = RowSpec(RowSpec.CENTER, dluX(14), FormSpec.NO_GROW)
             val rowSpec4 = RowSpec.decode("pref")
             val rowSpec5 = RowSpec.decode("top:31dlu")
             val rowSpec6 = RowSpec.decode("center:max(20dlu;pref):grow")

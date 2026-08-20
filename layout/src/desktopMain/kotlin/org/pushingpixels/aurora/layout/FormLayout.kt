@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.layout
 
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.ParentDataModifierNode
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
@@ -138,10 +140,16 @@ public fun FormLayout(modifier: Modifier,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>,
     content: @Composable FormLayoutScope.() -> Unit) {
-    Layout(
-        content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
-        measurePolicy = FormLayoutMeasurePolicy(colSpecs, rowSpecs),
-        modifier = modifier)
+
+    val textMeasurer = rememberTextMeasurer()
+    CompositionLocalProvider(
+        LocalTextMeasurer provides textMeasurer
+    ) {
+        Layout(
+            content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
+            measurePolicy = FormLayoutMeasurePolicy(colSpecs, rowSpecs),
+            modifier = modifier)
+    }
 }
 
 @Composable
@@ -150,13 +158,20 @@ public fun FormLayout(modifier: Modifier,
     layoutMap: LayoutMap,
     content: @Composable FormLayoutScope.() -> Unit) {
 
-    val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)
-    Layout(
-        content = { FormLayoutScopeImpl(colSpecs.size, 0).content() },
-        measurePolicy = FormLayoutMeasurePolicy(
-            colSpecs = colSpecs,
-            rowSpecs = listOf()),
-        modifier = modifier)
+    val textMeasurer = rememberTextMeasurer()
+    CompositionLocalProvider(
+        LocalTextMeasurer provides textMeasurer
+    ) {
+        val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)
+        Layout(
+            content = { FormLayoutScopeImpl(colSpecs.size, 0).content() },
+            measurePolicy = FormLayoutMeasurePolicy(
+                colSpecs = colSpecs,
+                rowSpecs = listOf()
+            ),
+            modifier = modifier
+        )
+    }
 }
 
 @Composable
@@ -165,15 +180,22 @@ public fun FormLayout(modifier: Modifier,
     encodedRowSpecs: String,
     content: @Composable FormLayoutScope.() -> Unit) {
 
-    val layoutMap: LayoutMap = LayoutMap.getRoot()
-    val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)
-    val rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs, layoutMap)
-    Layout(
-        content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
-        measurePolicy = FormLayoutMeasurePolicy(
-            colSpecs = colSpecs,
-            rowSpecs = rowSpecs),
-        modifier = modifier)
+    val textMeasurer = rememberTextMeasurer()
+    CompositionLocalProvider(
+        LocalTextMeasurer provides textMeasurer
+    ) {
+        val layoutMap: LayoutMap = LayoutMap.getRoot()
+        val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)
+        val rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs, layoutMap)
+        Layout(
+            content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
+            measurePolicy = FormLayoutMeasurePolicy(
+                colSpecs = colSpecs,
+                rowSpecs = rowSpecs
+            ),
+            modifier = modifier
+        )
+    }
 }
 
 /** A FormLayoutScope provides a scope for the children of [FormLayout]. */

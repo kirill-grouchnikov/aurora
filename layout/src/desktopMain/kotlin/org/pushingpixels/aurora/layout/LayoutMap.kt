@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.layout
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.rememberTextMeasurer
 import org.pushingpixels.aurora.layout.util.LayoutStyle
 
 // This is a modified version of the original source code by Karsten Lentzsch
@@ -558,9 +557,6 @@ class LayoutMap @JvmOverloads constructor(
 
         @Composable
         private fun createRoot(): LayoutMap {
-            val textMeasurer = rememberTextMeasurer()
-            FormSpecs.textMeasurer = textMeasurer
-
             val map = LayoutMap(null)
 
             // Column variables
@@ -592,12 +588,12 @@ class LayoutMap @JvmOverloads constructor(
             map.columnPut(
                 "dialog-margin",
                 arrayOf<String>("dm", "dmargin"),
-                ColumnSpec.createGap(LayoutStyle.current.dialogMarginX, textMeasurer)
+                ColumnSpec.createGap(LayoutStyle.current.dialogMarginX)
             )
             map.columnPut(
                 "tabbed-dialog-margin",
                 arrayOf<String>("tdm", "tdmargin"),
-                ColumnSpec.createGap(LayoutStyle.current.tabbedDialogMarginX, textMeasurer)
+                ColumnSpec.createGap(LayoutStyle.current.tabbedDialogMarginX)
             )
             map.columnPut(
                 "glue",
@@ -638,12 +634,12 @@ class LayoutMap @JvmOverloads constructor(
             map.rowPut(
                 "dialog-margin",
                 arrayOf<String>("dm", "dmargin"),
-                RowSpec.createGap(LayoutStyle.current.dialogMarginY, rememberTextMeasurer())
+                RowSpec.createGap(LayoutStyle.current.dialogMarginY)
             )
             map.rowPut(
                 "tabbed-dialog-margin",
                 arrayOf<String>("tdm", "tdmargin"),
-                RowSpec.createGap(LayoutStyle.current.tabbedDialogMarginY, rememberTextMeasurer())
+                RowSpec.createGap(LayoutStyle.current.tabbedDialogMarginY)
             )
             map.rowPut(
                 "button",

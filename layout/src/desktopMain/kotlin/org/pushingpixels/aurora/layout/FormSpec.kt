@@ -47,7 +47,6 @@ abstract class FormSpec protected constructor(
     defaultAlignment: DefaultAlignment,
     size: Size,
     resizeWeight: Double,
-    private val textMeasurer: TextMeasurer
 ) {
     // Fields ***************************************************************
     /**
@@ -55,6 +54,8 @@ abstract class FormSpec protected constructor(
      * override this default.
      */
     private var defaultAlignment: DefaultAlignment
+
+    private lateinit var textMeasurer: TextMeasurer
 
     /**
      * Returns whether the default alignment has been explicitly set or not.
@@ -125,8 +126,8 @@ abstract class FormSpec protected constructor(
             defaultAlignment,
             Sizes.ComponentSize.Default,
             NO_GROW,
-            textMeasurer
         ) {
+            this.textMeasurer = textMeasurer
             parseAndInitValues(encodedDescription.lowercase())
         }
 
@@ -321,6 +322,7 @@ abstract class FormSpec protected constructor(
         if (trimmedToken.startsWith("'") && trimmedToken.endsWith("'")) {
             val length = trimmedToken.length
             require(length >= 2) { "Missing closing \"'\" for prototype." }
+            require(::textMeasurer.isInitialized) { "Text measurer has not been initialized internally" }
             return PrototypeSize(textMeasurer, trimmedToken.substring(1, length - 1))
         }
         val componentSize: Sizes.ComponentSize? = Sizes.ComponentSize.parseValueOf(trimmedToken)

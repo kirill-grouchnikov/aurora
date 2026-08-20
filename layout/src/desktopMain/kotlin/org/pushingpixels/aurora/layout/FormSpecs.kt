@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.layout
 
-import androidx.compose.ui.text.TextMeasurer
 import org.pushingpixels.aurora.layout.util.LayoutStyle
 
 // This is a modified version of the original source code by Karsten Lentzsch
@@ -31,8 +30,6 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * @since 1.6  This class was the FormFactory before.
  */
 object FormSpecs {
-    lateinit var textMeasurer: TextMeasurer
-
     // Frequently used Column Specifications ********************************
     /**
      * An unmodifiable `ColumnSpec` that determines its width by
@@ -42,7 +39,7 @@ object FormSpecs {
      *
      * @see .DEFAULT_COLSPEC
      */
-    val MIN_COLSPEC: ColumnSpec by lazy { ColumnSpec(Sizes.ComponentSize.Minimum, textMeasurer) }
+    val MIN_COLSPEC: ColumnSpec by lazy { ColumnSpec(Sizes.ComponentSize.Minimum) }
 
 
     /**
@@ -53,7 +50,7 @@ object FormSpecs {
      *
      * @see .DEFAULT_COLSPEC
      */
-    val PREF_COLSPEC: ColumnSpec by lazy {ColumnSpec(Sizes.ComponentSize.Preferred, textMeasurer) }
+    val PREF_COLSPEC: ColumnSpec by lazy {ColumnSpec(Sizes.ComponentSize.Preferred) }
 
 
     /**
@@ -70,7 +67,7 @@ object FormSpecs {
      *
      * @see .PREF_COLSPEC
      */
-    val DEFAULT_COLSPEC: ColumnSpec by lazy { ColumnSpec(Sizes.ComponentSize.Default, textMeasurer) }
+    val DEFAULT_COLSPEC: ColumnSpec by lazy { ColumnSpec(Sizes.ComponentSize.Default) }
 
 
     /**
@@ -80,7 +77,7 @@ object FormSpecs {
      *
      * @see .GLUE_ROWSPEC
      */
-    val GLUE_COLSPEC: ColumnSpec by lazy {ColumnSpec(ColumnSpec.DEFAULT, Sizes.ZERO, FormSpec.DEFAULT_GROW, textMeasurer) }
+    val GLUE_COLSPEC: ColumnSpec by lazy {ColumnSpec(ColumnSpec.DEFAULT, Sizes.ZERO, FormSpec.DEFAULT_GROW) }
 
 
     // Layout Style Dependent Column Specs ***********************************
@@ -97,7 +94,7 @@ object FormSpecs {
      * @since 1.0.3
      */
     val LABEL_COMPONENT_GAP_COLSPEC: ColumnSpec by lazy {
-        ColumnSpec.createGap(LayoutStyle.current.labelComponentPadX, textMeasurer)
+        ColumnSpec.createGap(LayoutStyle.current.labelComponentPadX)
     }
 
 
@@ -113,7 +110,7 @@ object FormSpecs {
      *
      * @see .UNRELATED_GAP_COLSPEC
      */
-    val RELATED_GAP_COLSPEC: ColumnSpec by lazy {ColumnSpec.createGap(LayoutStyle.current.relatedComponentsPadX, textMeasurer) }
+    val RELATED_GAP_COLSPEC: ColumnSpec by lazy {ColumnSpec.createGap(LayoutStyle.current.relatedComponentsPadX) }
 
 
     /**
@@ -126,7 +123,7 @@ object FormSpecs {
      *
      * @see .RELATED_GAP_COLSPEC
      */
-    val UNRELATED_GAP_COLSPEC: ColumnSpec by lazy {ColumnSpec.createGap(LayoutStyle.current.unrelatedComponentsPadX, textMeasurer) }
+    val UNRELATED_GAP_COLSPEC: ColumnSpec by lazy {ColumnSpec.createGap(LayoutStyle.current.unrelatedComponentsPadX) }
 
 
     /**
@@ -146,7 +143,7 @@ object FormSpecs {
                 Sizes.ComponentSize.Preferred,
                 LayoutStyle.current.defaultButtonWidth,
                 null
-            ), textMeasurer
+            )
         )
     }
 
@@ -166,7 +163,7 @@ object FormSpecs {
         ColumnSpec(
             ColumnSpec.DEFAULT,
             BUTTON_COLSPEC.size,
-            FormSpec.DEFAULT_GROW, textMeasurer
+            FormSpec.DEFAULT_GROW
         )
     }
 
@@ -180,7 +177,7 @@ object FormSpecs {
      *
      * @see .DEFAULT_ROWSPEC
      */
-    val MIN_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Minimum, textMeasurer) }
+    val MIN_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Minimum) }
 
 
     /**
@@ -191,7 +188,7 @@ object FormSpecs {
      *
      * @see .DEFAULT_ROWSPEC
      */
-    val PREF_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Preferred, textMeasurer) }
+    val PREF_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Preferred) }
 
 
     /**
@@ -208,7 +205,7 @@ object FormSpecs {
      *
      * @see .PREF_COLSPEC
      */
-    val DEFAULT_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Default, textMeasurer) }
+    val DEFAULT_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Default) }
 
 
     /**
@@ -218,7 +215,7 @@ object FormSpecs {
      *
      * @see .GLUE_COLSPEC
      */
-    val GLUE_ROWSPEC: RowSpec by lazy {RowSpec(RowSpec.DEFAULT, Sizes.ZERO, FormSpec.DEFAULT_GROW, textMeasurer) }
+    val GLUE_ROWSPEC: RowSpec by lazy {RowSpec(RowSpec.DEFAULT, Sizes.ZERO, FormSpec.DEFAULT_GROW) }
 
 
     // Layout Style Dependent Row Specs *************************************
@@ -234,7 +231,7 @@ object FormSpecs {
      *
      * @since 1.4
      */
-    val LABEL_COMPONENT_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.labelComponentPadY, textMeasurer) }
+    val LABEL_COMPONENT_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.labelComponentPadY) }
 
 
     /**
@@ -249,7 +246,7 @@ object FormSpecs {
      *
      * @see .UNRELATED_GAP_ROWSPEC
      */
-    val RELATED_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.relatedComponentsPadY, textMeasurer) }
+    val RELATED_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.relatedComponentsPadY) }
 
 
     /**
@@ -262,7 +259,7 @@ object FormSpecs {
      *
      * @see .RELATED_GAP_ROWSPEC
      */
-    val UNRELATED_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.unrelatedComponentsPadY, textMeasurer) }
+    val UNRELATED_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.unrelatedComponentsPadY) }
 
 
     /**
@@ -279,7 +276,7 @@ object FormSpecs {
      *
      * @see .PARAGRAPH_GAP_ROWSPEC
      */
-    val NARROW_LINE_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.narrowLinePad, textMeasurer) }
+    val NARROW_LINE_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.narrowLinePad) }
 
 
     /**
@@ -295,7 +292,7 @@ object FormSpecs {
      *
      * @see .PARAGRAPH_GAP_ROWSPEC
      */
-    val LINE_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.linePad, textMeasurer) }
+    val LINE_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.linePad) }
 
 
     /**
@@ -311,7 +308,7 @@ object FormSpecs {
      *
      * @see .LINE_GAP_ROWSPEC
      */
-    val PARAGRAPH_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.paragraphPad, textMeasurer) }
+    val PARAGRAPH_GAP_ROWSPEC: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.paragraphPad) }
 
 
     /**
@@ -331,7 +328,7 @@ object FormSpecs {
                 Sizes.ComponentSize.Preferred,
                 LayoutStyle.current.defaultButtonHeight,
                 null
-            ), textMeasurer
+            )
         )
     }
 }

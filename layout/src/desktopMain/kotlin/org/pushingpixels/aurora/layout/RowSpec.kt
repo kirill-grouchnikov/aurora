@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.layout
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextMeasurer
-import androidx.compose.ui.text.rememberTextMeasurer
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
@@ -68,8 +67,7 @@ class RowSpec : FormSpec {
         defaultAlignment: DefaultAlignment,
         size: Size,
         resizeWeight: Double,
-        textMeasurer: TextMeasurer
-    ) : super(defaultAlignment, size, resizeWeight, textMeasurer)
+    ) : super(defaultAlignment, size, resizeWeight)
 
     /**
      * Constructs a RowSpec for the given size using the
@@ -78,8 +76,7 @@ class RowSpec : FormSpec {
      * @param size             constant size, component size, or bounded size
      * @throws IllegalArgumentException if the size is invalid
      */
-    constructor(size: Size,
-        textMeasurer: TextMeasurer) : super(DEFAULT, size, NO_GROW, textMeasurer)
+    constructor(size: Size) : super(DEFAULT, size, NO_GROW)
 
     /**
      * Constructs a RowSpec from the specified encoded description.
@@ -155,9 +152,8 @@ class RowSpec : FormSpec {
          * 
          * @since 1.2
          */
-        fun createGap(gapHeight: ConstantSize,
-            textMeasurer: TextMeasurer): RowSpec {
-            return RowSpec(DEFAULT, gapHeight, FormSpec.NO_GROW, textMeasurer)
+        fun createGap(gapHeight: ConstantSize): RowSpec {
+            return RowSpec(DEFAULT, gapHeight, FormSpec.NO_GROW)
         }
 
 
@@ -214,7 +210,7 @@ class RowSpec : FormSpec {
         fun decodeExpanded(expandedTrimmedLowerCaseSpec: String): RowSpec {
             var spec: RowSpec? = CACHE[expandedTrimmedLowerCaseSpec]
             if (spec == null) {
-                spec = RowSpec(expandedTrimmedLowerCaseSpec, rememberTextMeasurer())
+                spec = RowSpec(expandedTrimmedLowerCaseSpec, LocalTextMeasurer.current)
                 CACHE[expandedTrimmedLowerCaseSpec] = spec
             }
             return spec

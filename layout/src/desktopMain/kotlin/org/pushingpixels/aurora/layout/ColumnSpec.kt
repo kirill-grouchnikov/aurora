@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.layout
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextMeasurer
-import androidx.compose.ui.text.rememberTextMeasurer
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
@@ -69,10 +68,8 @@ class ColumnSpec : FormSpec {
     constructor(
         defaultAlignment: DefaultAlignment,
         size: Size,
-        resizeWeight: Double,
-        textMeasurer: TextMeasurer
-    ) : super(defaultAlignment, size, resizeWeight, textMeasurer)
-
+        resizeWeight: Double
+    ) : super(defaultAlignment, size, resizeWeight)
 
     /**
      * Constructs a ColumnSpec for the given size using the
@@ -81,9 +78,7 @@ class ColumnSpec : FormSpec {
      * @param size             constant size, component size, or bounded size
      * @throws IllegalArgumentException if the size is invalid
      */
-    constructor(size: Size,
-        textMeasurer: TextMeasurer) : super(DEFAULT, size, NO_GROW, textMeasurer)
-
+    constructor(size: Size) : super(DEFAULT, size, NO_GROW)
 
     /**
      * Constructs a ColumnSpec from the specified encoded description.
@@ -98,7 +93,6 @@ class ColumnSpec : FormSpec {
      */
     private constructor(encodedDescription: String,
         textMeasurer: TextMeasurer) : super(DEFAULT, encodedDescription, textMeasurer)
-
 
     // Implementing Abstract Behavior ***************************************
     override val isHorizontal: Boolean
@@ -168,9 +162,8 @@ class ColumnSpec : FormSpec {
          * 
          * @since 1.2
          */
-        fun createGap(gapWidth: ConstantSize,
-            textMeasurer: TextMeasurer): ColumnSpec {
-            return ColumnSpec(DEFAULT, gapWidth, NO_GROW, textMeasurer)
+        fun createGap(gapWidth: ConstantSize): ColumnSpec {
+            return ColumnSpec(DEFAULT, gapWidth, NO_GROW)
         }
 
 
@@ -231,7 +224,7 @@ class ColumnSpec : FormSpec {
         fun decodeExpanded(expandedTrimmedLowerCaseSpec: String): ColumnSpec {
             var spec: ColumnSpec? = CACHE[expandedTrimmedLowerCaseSpec]
             if (spec == null) {
-                spec = ColumnSpec(expandedTrimmedLowerCaseSpec, rememberTextMeasurer())
+                spec = ColumnSpec(expandedTrimmedLowerCaseSpec, LocalTextMeasurer.current)
                 CACHE[expandedTrimmedLowerCaseSpec] = spec
             }
             return spec
