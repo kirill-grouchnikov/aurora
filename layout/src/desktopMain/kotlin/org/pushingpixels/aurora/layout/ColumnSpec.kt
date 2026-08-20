@@ -117,22 +117,22 @@ class ColumnSpec : FormSpec {
         /**
          * By default put components in the left.
          */
-        val LEFT: DefaultAlignment = LEFT_ALIGN
+        val LEFT: DefaultAlignment = DefaultAlignment.LeftAlign
 
         /**
          * By default put the components in the center.
          */
-        val CENTER: DefaultAlignment = CENTER_ALIGN
+        val CENTER: DefaultAlignment = DefaultAlignment.CenterAlign
 
         /**
          * By default put components in the right.
          */
-        val RIGHT: DefaultAlignment = RIGHT_ALIGN
+        val RIGHT: DefaultAlignment = DefaultAlignment.RightAlign
 
         /**
          * By default fill the component into the column.
          */
-        val FILL: DefaultAlignment = FILL_ALIGN
+        val FILL: DefaultAlignment = DefaultAlignment.FillAlign
 
         /**
          * A special alignment value for table column alignment specifications.
@@ -141,7 +141,7 @@ class ColumnSpec : FormSpec {
          * 
          * @since 1.8
          */
-        val NONE: DefaultAlignment = NO_ALIGN
+        val NONE: DefaultAlignment = DefaultAlignment.NoAlign
 
         /**
          * Unless overridden the default alignment for a column is FILL.

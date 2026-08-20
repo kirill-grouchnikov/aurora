@@ -123,7 +123,7 @@ abstract class FormSpec protected constructor(
     protected constructor(defaultAlignment: DefaultAlignment, encodedDescription: String, textMeasurer: TextMeasurer) :
         this(
             defaultAlignment,
-            Sizes.DEFAULT,
+            Sizes.ComponentSize.Default,
             NO_GROW,
             textMeasurer
         ) {
@@ -309,7 +309,6 @@ abstract class FormSpec protected constructor(
         )
     }
 
-
     /**
      * Decodes and returns an atomic size that is either a constant size or a
      * component size.
@@ -324,7 +323,7 @@ abstract class FormSpec protected constructor(
             require(length >= 2) { "Missing closing \"'\" for prototype." }
             return PrototypeSize(textMeasurer, trimmedToken.substring(1, length - 1))
         }
-        val componentSize: Sizes.ComponentSize? = Sizes.ComponentSize.valueOf(trimmedToken)
+        val componentSize: Sizes.ComponentSize? = Sizes.ComponentSize.parseValueOf(trimmedToken)
         if (componentSize != null) {
             return componentSize
         }
@@ -496,15 +495,42 @@ abstract class FormSpec protected constructor(
      * An ordinal-based serializable typesafe enumeration for the
      * column and row default alignment types.
      */
-    class DefaultAlignment internal constructor(@field:Transient private val name: String) {
+    enum class DefaultAlignment {
         /**
-         * Returns this Alignment's name.
-         * 
-         * @return this alignment's name.
+         * By default put components in the left.
          */
-        override fun toString(): String {
-            return name
-        }
+        LeftAlign,
+
+        /**
+         * By default put components in the right.
+         */
+        RightAlign,
+
+        /**
+         * By default put the components in the top.
+         */
+        TopAlign,
+
+        /**
+         * By default put the components in the bottom.
+         */
+        BottomAlign,
+
+        /**
+         * By default put the components in the center.
+         */
+        CenterAlign,
+
+        /**
+         * By default fill the column or row.
+         */
+        FillAlign,
+
+        /**
+         * A special alignment intended for table columns only,
+         * where some cell renderers are not aligned.
+         */
+        NoAlign;
 
         /**
          * Returns the first character of this Alignment's name.
@@ -514,13 +540,6 @@ abstract class FormSpec protected constructor(
          */
         fun abbreviation(): Char {
             return name[0]
-        }
-
-
-        private val ordinal = nextOrdinal++
-
-        private fun readResolve(): Any? {
-            return VALUES[ordinal] // Canonicalize
         }
 
         companion object {
@@ -534,19 +553,19 @@ abstract class FormSpec protected constructor(
              */
             internal fun valueOf(str: String, isHorizontal: Boolean): DefaultAlignment? {
                 if (str == "f" || str == "fill") {
-                    return FILL_ALIGN
+                    return FillAlign
                 } else if (str == "c" || str == "center") {
-                    return CENTER_ALIGN
+                    return CenterAlign
                 } else if (isHorizontal) {
                     return when (str) {
                         "r", "right" -> {
-                            RIGHT_ALIGN
+                            RightAlign
                         }
                         "l", "left" -> {
-                            LEFT_ALIGN
+                            LeftAlign
                         }
                         "none" -> {
-                            NO_ALIGN
+                            NoAlign
                         }
                         else -> {
                             null
@@ -555,10 +574,10 @@ abstract class FormSpec protected constructor(
                 } else {
                     return when (str) {
                         "t", "top" -> {
-                            TOP_ALIGN
+                            TopAlign
                         }
                         "b", "bottom" -> {
-                            BOTTOM_ALIGN
+                            BottomAlign
                         }
                         else -> {
                             null
@@ -574,58 +593,6 @@ abstract class FormSpec protected constructor(
 
 
     companion object {
-        // Horizontal and Vertical Default Alignments ***************************
-        /**
-         * By default put components in the left.
-         */
-        val LEFT_ALIGN: DefaultAlignment = DefaultAlignment("left")
-
-        /**
-         * By default put components in the right.
-         */
-        val RIGHT_ALIGN: DefaultAlignment = DefaultAlignment("right")
-
-        /**
-         * By default put the components in the top.
-         */
-        val TOP_ALIGN: DefaultAlignment = DefaultAlignment("top")
-
-        /**
-         * By default put the components in the bottom.
-         */
-        val BOTTOM_ALIGN: DefaultAlignment = DefaultAlignment("bottom")
-
-        /**
-         * By default put the components in the center.
-         */
-        val CENTER_ALIGN: DefaultAlignment = DefaultAlignment("center")
-
-        /**
-         * By default fill the column or row.
-         */
-        val FILL_ALIGN: DefaultAlignment = DefaultAlignment("fill")
-
-        /**
-         * A special alignment intended for table columns only,
-         * where some cell renderers are not aligned.
-         */
-        val NO_ALIGN: DefaultAlignment = DefaultAlignment("none")
-
-        /**
-         * An array of all enumeration values used to canonicalize
-         * deserialized default alignments.
-         */
-        private val VALUES = arrayOf<DefaultAlignment?>(
-            LEFT_ALIGN,
-            RIGHT_ALIGN,
-            TOP_ALIGN,
-            BOTTOM_ALIGN,
-            CENTER_ALIGN,
-            FILL_ALIGN,
-            NO_ALIGN
-        )
-
-
         // Resizing Weights *****************************************************
         /**
          * Gives a column or row a fixed size.

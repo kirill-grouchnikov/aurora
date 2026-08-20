@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
+import org.pushingpixels.aurora.layout.CellConstraints.Alignment
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -47,15 +48,11 @@ import kotlin.math.roundToInt
  * about the FormLayout ships with the product documentation and is available
  * [online](http://www.jgoodies.com/articles/forms.pdf).
  *
- *
- * 
  * To use FormLayout you first define the grid by specifying the
  * columns and rows. In a second step you add components to the grid. You can
  * specify columns and rows via human-readable String descriptions or via
  * arrays of [ColumnSpec] and [RowSpec] instances.
  *
- *
- * 
  * Each component managed by a FormLayout is associated with an instance of
  * [CellConstraints]. The constraints object specifies where a component
  * should be located on the form's grid and how the component should be
@@ -63,8 +60,6 @@ import kotlin.math.roundToInt
  * `FormLayout` also considers each component's minimum and
  * preferred sizes in order to determine a component's size.
  *
- *
- * 
  * FormLayout has been designed to work with non-visual builders that help you
  * specify the layout and fill the grid. For example, the
  * [ButtonBarBuilder] assists you in building button
@@ -73,13 +68,9 @@ import kotlin.math.roundToInt
  * frequently used panel design, for example a form that consists of rows of
  * label-component pairs.
  *
- *
- * 
  * FormLayout has been prepared to work with different types of sizes as
  * defined by the [Size] interface.
  *
- *
- * 
  * **Example 1** (Plain FormLayout):<br></br>
  * The following example creates a panel with 3 data columns and 3 data rows;
  * the columns and rows are specified before components are added
@@ -88,7 +79,7 @@ import kotlin.math.roundToInt
  * FormLayout layout = new FormLayout(
  * "right:pref, 6dlu, 50dlu, 4dlu, default",  // columns
  * "pref, 3dlu, pref, 3dlu, pref");           // rows
- * 
+ *
  * JPanel panel = new JPanel(layout);
  * panel.add(new JLabel("Label1"),   CC.xy  (1, 1));
  * panel.add(new JTextField(),       CC.xywh(3, 1, 3, 1));
@@ -98,9 +89,8 @@ import kotlin.math.roundToInt
  * panel.add(new JTextField(),       CC.xy  (3, 5));
  * panel.add(new JButton("/u2026"),  CC.xy  (5, 5));
  * return panel;
-</pre> * 
- * 
- * 
+</pre> *
+ *
  * **Example 2** (Using PanelBuilder):<br></br>
  * This example creates the same panel as above using the
  * [PanelBuilder] to add components to the form.
@@ -108,7 +98,7 @@ import kotlin.math.roundToInt
  * FormLayout layout = new FormLayout(
  * "right:pref, 6dlu, 50dlu, 4dlu, default",  // columns
  * "pref, 3dlu, pref, 3dlu, pref");           // rows
- * 
+ *
  * PanelBuilder builder = new PanelBuilder(layout);
  * builder.addLabel("Label1",         CC.xy  (1, 1));
  * builder.add(new JTextField(),      CC.xywh(3, 1, 3, 1));
@@ -118,9 +108,8 @@ import kotlin.math.roundToInt
  * builder.add(new JTextField(),      CC.xy  (3, 5));
  * builder.add(new JButton("/u2026"), CC.xy  (5, 5));
  * return builder.getPanel();
-</pre> * 
- * 
- * 
+</pre> *
+ *
  * **Example 3** (Using DefaultFormBuilder):<br></br>
  * This example utilizes the
  * [DefaultFormBuilder] that
@@ -128,15 +117,15 @@ import kotlin.math.roundToInt
  * <pre>
  * FormLayout layout = new FormLayout(
  * "right:pref, 6dlu, 50dlu, 4dlu, default"); // 5 columns; add rows later
- * 
+ *
  * DefaultFormBuilder builder = new DefaultFormBuilder(layout);
  * builder.append("Label1", new JTextField(), 3);
  * builder.append("Label2", new JTextField());
  * builder.append("Label3", new JTextField());
  * builder.append(new JButton("/u2026"));
  * return builder.getPanel();
-</pre> * 
- * 
+</pre> *
+ *
  * @see ColumnSpec
  * @see RowSpec
  * @see CellConstraints
@@ -187,33 +176,33 @@ public fun FormLayout(modifier: Modifier,
         modifier = modifier)
 }
 
-/** A FormLayoutScope provides a scope for the children of [Box] and [BoxWithConstraints]. */
+/** A FormLayoutScope provides a scope for the children of [FormLayout]. */
 @LayoutScopeMarker
 @Immutable
 public interface FormLayoutScope {
     public fun Modifier.xy(col: Int, row: Int,
-        colAlign: CellConstraints.Alignment = CellConstraints.DEFAULT,
-        rowAlign: CellConstraints.Alignment = CellConstraints.DEFAULT): Modifier
+        colAlign: Alignment = Alignment.Default,
+        rowAlign: Alignment = Alignment.Default): Modifier
 
     public fun Modifier.xyw(col: Int, row: Int, colSpan: Int = 1,
-        colAlign: CellConstraints.Alignment = CellConstraints.DEFAULT,
-        rowAlign: CellConstraints.Alignment = CellConstraints.DEFAULT): Modifier
+        colAlign: Alignment = Alignment.Default,
+        rowAlign: Alignment = Alignment.Default): Modifier
 
     public fun Modifier.xywh(col: Int, row: Int, colSpan: Int = 1, rowSpan: Int = 1,
-        colAlign: CellConstraints.Alignment = CellConstraints.DEFAULT,
-        rowAlign: CellConstraints.Alignment = CellConstraints.DEFAULT): Modifier
+        colAlign: Alignment = Alignment.Default,
+        rowAlign: Alignment = Alignment.Default): Modifier
 
     public fun Modifier.rc(row: Int, col: Int,
-        rowAlign: CellConstraints.Alignment = CellConstraints.DEFAULT,
-        colAlign: CellConstraints.Alignment = CellConstraints.DEFAULT): Modifier
+        rowAlign: Alignment = Alignment.Default,
+        colAlign: Alignment = Alignment.Default): Modifier
 
     public fun Modifier.rcw(row: Int, col: Int, colSpan: Int = 1,
-        rowAlign: CellConstraints.Alignment = CellConstraints.DEFAULT,
-        colAlign: CellConstraints.Alignment = CellConstraints.DEFAULT): Modifier
+        rowAlign: Alignment = Alignment.Default,
+        colAlign: Alignment = Alignment.Default): Modifier
 
     public fun Modifier.rchw(row: Int, col: Int, rowSpan: Int = 1, colSpan: Int = 1,
-        rowAlign: CellConstraints.Alignment = CellConstraints.DEFAULT,
-        colAlign: CellConstraints.Alignment = CellConstraints.DEFAULT): Modifier
+        rowAlign: Alignment = Alignment.Default,
+        colAlign: Alignment = Alignment.Default): Modifier
 }
 
 private class FormLayoutScopeImpl(private val colCount: Int, private val rowCount: Int) : FormLayoutScope {
@@ -222,8 +211,8 @@ private class FormLayoutScopeImpl(private val colCount: Int, private val rowCoun
         row: Int,
         colSpan: Int,
         rowSpan: Int,
-        colAlign: CellConstraints.Alignment,
-        rowAlign: CellConstraints.Alignment
+        colAlign: Alignment,
+        rowAlign: Alignment
     ): Modifier =
         this.then(
             this.then(
@@ -239,8 +228,8 @@ private class FormLayoutScopeImpl(private val colCount: Int, private val rowCoun
     override fun Modifier.xy(
         col: Int,
         row: Int,
-        colAlign: CellConstraints.Alignment,
-        rowAlign: CellConstraints.Alignment
+        colAlign: Alignment,
+        rowAlign: Alignment
     ): Modifier =
         this.then(
             this.then(
@@ -257,8 +246,8 @@ private class FormLayoutScopeImpl(private val colCount: Int, private val rowCoun
         col: Int,
         row: Int,
         colSpan: Int,
-        colAlign: CellConstraints.Alignment,
-        rowAlign: CellConstraints.Alignment
+        colAlign: Alignment,
+        rowAlign: Alignment
     ): Modifier =
         this.then(
             this.then(
@@ -274,8 +263,8 @@ private class FormLayoutScopeImpl(private val colCount: Int, private val rowCoun
     override fun Modifier.rc(
         row: Int,
         col: Int,
-        rowAlign: CellConstraints.Alignment,
-        colAlign: CellConstraints.Alignment
+        rowAlign: Alignment,
+        colAlign: Alignment
     ): Modifier =
         this.then(
             FormLayoutChildDataElement(
@@ -290,8 +279,8 @@ private class FormLayoutScopeImpl(private val colCount: Int, private val rowCoun
         row: Int,
         col: Int,
         colSpan: Int,
-        rowAlign: CellConstraints.Alignment,
-        colAlign: CellConstraints.Alignment
+        rowAlign: Alignment,
+        colAlign: Alignment
     ): Modifier =
         this.then(
             FormLayoutChildDataElement(
@@ -307,8 +296,8 @@ private class FormLayoutScopeImpl(private val colCount: Int, private val rowCoun
         col: Int,
         rowSpan: Int,
         colSpan: Int,
-        rowAlign: CellConstraints.Alignment,
-        colAlign: CellConstraints.Alignment
+        rowAlign: Alignment,
+        colAlign: Alignment
     ): Modifier =
         this.then(
             FormLayoutChildDataElement(
@@ -343,8 +332,7 @@ private class FormLayoutChildDataElement(
     }
 
     override fun hashCode(): Int {
-        var result = cellConstraints.hashCode()
-        return result
+        return cellConstraints.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -359,8 +347,6 @@ private class FormLayoutChildDataNode(var cellConstraints: CellConstraints) :
     override fun Density.modifyParentData(parentData: Any?) = this@FormLayoutChildDataNode
 }
 
-
-@PublishedApi
 @Composable
 internal fun rememberFormLayoutMeasurePolicy(colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>): MeasurePolicy =
@@ -392,7 +378,6 @@ private class FormLayoutMeasurePolicy(
         }
     }
 
-
     /**
      * Measures a component by computing its minimum height.
      */
@@ -402,7 +387,6 @@ private class FormLayoutMeasurePolicy(
         }
     }
 
-
     /**
      * Measures a component by computing its preferred width.
      */
@@ -411,7 +395,6 @@ private class FormLayoutMeasurePolicy(
             return measurable.maxIntrinsicWidth(Constraints.Infinity)
         }
     }
-
 
     /**
      * Measures a component by computing its preferred height.

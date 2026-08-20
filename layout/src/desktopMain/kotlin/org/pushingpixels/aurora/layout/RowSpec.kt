@@ -113,22 +113,22 @@ class RowSpec : FormSpec {
         /**
          * By default put the components in the top.
          */
-        val TOP: DefaultAlignment = FormSpec.TOP_ALIGN
+        val TOP: DefaultAlignment = DefaultAlignment.TopAlign
 
         /**
          * By default put the components in the center.
          */
-        val CENTER: DefaultAlignment = FormSpec.CENTER_ALIGN
+        val CENTER: DefaultAlignment = DefaultAlignment.CenterAlign
 
         /**
          * By default put the components in the bottom.
          */
-        val BOTTOM: DefaultAlignment = FormSpec.BOTTOM_ALIGN
+        val BOTTOM: DefaultAlignment = DefaultAlignment.BottomAlign
 
         /**
          * By default fill the component into the row.
          */
-        val FILL: DefaultAlignment = FormSpec.FILL_ALIGN
+        val FILL: DefaultAlignment = DefaultAlignment.FillAlign
 
         /**
          * Unless overridden the default alignment for a row is CENTER.

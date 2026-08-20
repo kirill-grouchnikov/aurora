@@ -21,6 +21,7 @@ import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.LayoutDirection
+import org.pushingpixels.aurora.layout.FormSpec.DefaultAlignment
 import java.util.*
 
 // This is a modified version of the original source code by Karsten Lentzsch
@@ -68,7 +69,8 @@ import java.util.*
  */
 class CellConstraints @JvmOverloads constructor(
     gridX: Int = 1, gridY: Int = 1, gridWidth: Int = 1, gridHeight: Int = 1,
-    hAlign: Alignment = DEFAULT, vAlign: Alignment = DEFAULT, padding: PaddingValues = PaddingValues.Zero
+    hAlign: Alignment = Alignment.Default, vAlign: Alignment = Alignment.Default,
+    padding: PaddingValues = PaddingValues.Zero
 ) {
     // Fields ***************************************************************
     /**
@@ -381,16 +383,53 @@ class CellConstraints @JvmOverloads constructor(
         return buffer.toString()
     }
 
+    internal enum class Orientation {
+        Horizontal, Vertical, Both
+    }
 
     // Helper Class *********************************************************
     /**
      * An ordinal-based serializable typesafe enumeration for component
      * alignment types as used by the [FormLayout].
      */
-    class Alignment internal constructor(
-        @field:Transient private val name: String,
-        @field:Transient private val orientation: Int
+    enum class Alignment constructor(
+        private val orientation: Orientation
     ) {
+        /**
+         * Use the column's or row's default alignment.
+         */
+        Default(Orientation.Both),
+
+        /**
+         * Fill the cell either horizontally or vertically.
+         */
+        Fill(Orientation.Both),
+
+        /**
+         * Put the component in the left.
+         */
+        Left(Orientation.Horizontal),
+
+        /**
+         * Put the component in the right.
+         */
+        Right(Orientation.Horizontal),
+
+        /**
+         * Put the component in the center.
+         */
+        Center(Orientation.Both),
+
+        /**
+         * Put the component in the top.
+         */
+        Top(Orientation.Vertical),
+
+        /**
+         * Put the component in the bottom.
+         */
+        Bottom(Orientation.Vertical);
+
         /**
          * Returns this Alignment's name.
          * 
@@ -411,46 +450,35 @@ class CellConstraints @JvmOverloads constructor(
         }
 
         internal val isHorizontal: Boolean
-            get() = orientation != VERTICAL
+            get() = orientation != Orientation.Vertical
 
         internal val isVertical: Boolean
-            get() = orientation != HORIZONTAL
-
-
-        private val ordinal: Int = nextOrdinal++
-
-        private fun readResolve(): Any? {
-            return VALUES[ordinal] // Canonicalize
-        }
+            get() = orientation != Orientation.Horizontal
 
         companion object {
-            internal const val HORIZONTAL = 0
-            internal const val VERTICAL = 1
-            internal const val BOTH = 2
-
             fun valueOf(nameOrAbbreviation: String): Alignment {
                 val str = nameOrAbbreviation.lowercase()
                 when (str) {
                     "d", "default" -> {
-                        return DEFAULT
+                        return Default
                     }
                     "f", "fill" -> {
-                        return FILL
+                        return Fill
                     }
                     "c", "center" -> {
-                        return CENTER
+                        return Center
                     }
                     "l", "left" -> {
-                        return LEFT
+                        return Left
                     }
                     "r", "right" -> {
-                        return RIGHT
+                        return Right
                     }
                     "t", "top" -> {
-                        return TOP
+                        return Top
                     }
                     "b", "bottom" -> {
-                        return BOTTOM
+                        return Bottom
                     }
                     else -> {
                         throw IllegalArgumentException(
@@ -470,50 +498,6 @@ class CellConstraints @JvmOverloads constructor(
 
     companion object {
         // Alignment Constants *************************************************
-        /*
-         * Implementation Note: Do not change the order of the following constants.
-         * The serialization of class Alignment is ordinal-based and relies on it.
-         */
-        /**
-         * Use the column's or row's default alignment.
-         */
-        val DEFAULT: Alignment = CellConstraints.Alignment("default", Alignment.Companion.BOTH)
-
-        /**
-         * Fill the cell either horizontally or vertically.
-         */
-        val FILL: Alignment = CellConstraints.Alignment("fill", Alignment.Companion.BOTH)
-
-        /**
-         * Put the component in the left.
-         */
-        val LEFT: Alignment = CellConstraints.Alignment("left", Alignment.Companion.HORIZONTAL)
-
-        /**
-         * Put the component in the right.
-         */
-        val RIGHT: Alignment = CellConstraints.Alignment("right", Alignment.Companion.HORIZONTAL)
-
-        /**
-         * Put the component in the center.
-         */
-        val CENTER: Alignment = CellConstraints.Alignment("center", Alignment.Companion.BOTH)
-
-        /**
-         * Put the component in the top.
-         */
-        val TOP: Alignment = CellConstraints.Alignment("top", Alignment.Companion.VERTICAL)
-
-        /**
-         * Put the component in the bottom.
-         */
-        val BOTTOM: Alignment = CellConstraints.Alignment("bottom", Alignment.Companion.VERTICAL)
-
-        /**
-         * An array of all enumeration values used to canonicalize
-         * deserialized alignments.
-         */
-        private val VALUES = arrayOf<Alignment?>(DEFAULT, FILL, LEFT, RIGHT, CENTER, TOP, BOTTOM)
 
         /**
          * Decodes an integer string representation and returns the
@@ -584,7 +568,7 @@ class CellConstraints @JvmOverloads constructor(
          */
         private fun concreteAlignment(cellAlignment: Alignment?, formSpec: FormSpec?): Alignment? {
             return if (formSpec == null)
-                if (cellAlignment == DEFAULT) FILL else cellAlignment
+                if (cellAlignment == Alignment.Default) Alignment.Fill else cellAlignment
             else
                 usedAlignment(cellAlignment, formSpec)
         }
@@ -601,29 +585,29 @@ class CellConstraints @JvmOverloads constructor(
          * @return the alignment used
          */
         private fun usedAlignment(cellAlignment: Alignment?, formSpec: FormSpec): Alignment? {
-            if (cellAlignment != DEFAULT) {
+            if (cellAlignment != Alignment.Default) {
                 // Cell alignments other than DEFAULT override col/row alignments
                 return cellAlignment
             }
-            val defaultAlignment: FormSpec.DefaultAlignment = formSpec.getDefaultAlignment()
-            if (defaultAlignment == FormSpec.FILL_ALIGN) {
-                return FILL
+            val defaultAlignment: DefaultAlignment = formSpec.getDefaultAlignment()
+            if (defaultAlignment == DefaultAlignment.FillAlign) {
+                return Alignment.Fill
             }
             return when (defaultAlignment) {
                 ColumnSpec.LEFT -> {
-                    LEFT
+                    Alignment.Left
                 }
-                FormSpec.CENTER_ALIGN -> {
-                    CENTER
+                DefaultAlignment.CenterAlign -> {
+                    Alignment.Center
                 }
                 ColumnSpec.RIGHT -> {
-                    RIGHT
+                    Alignment.Right
                 }
                 RowSpec.TOP -> {
-                    TOP
+                    Alignment.Top
                 }
                 else -> {
-                    BOTTOM
+                    Alignment.Bottom
                 }
             }
         }
@@ -649,9 +633,9 @@ class CellConstraints @JvmOverloads constructor(
         ): Int {
             return if (formSpec == null) {
                 prefMeasure.sizeOf(component)
-            } else if (formSpec.size === Sizes.MINIMUM) {
+            } else if (formSpec.size === Sizes.ComponentSize.Minimum) {
                 minMeasure.sizeOf(component)
-            } else if (formSpec.size === Sizes.PREFERRED) {
+            } else if (formSpec.size === Sizes.ComponentSize.Preferred) {
                 prefMeasure.sizeOf(component)
             } else {  // default mode
                 cellSize.coerceAtMost(prefMeasure.sizeOf(component))
@@ -675,10 +659,10 @@ class CellConstraints @JvmOverloads constructor(
             componentSize: Int
         ): Int {
             return when (alignment) {
-                RIGHT, BOTTOM -> {
+                Alignment.Right, Alignment.Bottom -> {
                     cellOrigin + cellSize - componentSize
                 }
-                CENTER -> {
+                Alignment.Center -> {
                     cellOrigin + (cellSize - componentSize) / 2
                 }
                 else -> {  // left, top, fill
@@ -697,7 +681,7 @@ class CellConstraints @JvmOverloads constructor(
          * @return the component's pixel extent
          */
         private fun extent(alignment: Alignment?, cellSize: Int, componentSize: Int): Int {
-            return if (alignment == FILL)
+            return if (alignment == Alignment.Fill)
                 cellSize
             else
                 componentSize
@@ -734,7 +718,7 @@ class CellConstraints @JvmOverloads constructor(
          */
         fun xywh(
             col: Int, row: Int, colSpan: Int, rowSpan: Int,
-            colAlign: Alignment = DEFAULT, rowAlign: Alignment = DEFAULT
+            colAlign: Alignment = Alignment.Default, rowAlign: Alignment = Alignment.Default
         ): CellConstraints {
             ensureValidOrientations(horizontalAlignment = colAlign, verticalAlignment = rowAlign)
             return CellConstraints(gridX = col, gridY = row, gridWidth = colSpan, gridHeight = rowSpan,
@@ -785,7 +769,7 @@ class CellConstraints @JvmOverloads constructor(
          */
         fun rchw(
             row: Int, col: Int, rowSpan: Int, colSpan: Int,
-            rowAlign: Alignment = DEFAULT, colAlign: Alignment = DEFAULT
+            rowAlign: Alignment = Alignment.Default, colAlign: Alignment = Alignment.Default
         ): CellConstraints {
             return xywh(col, row, colSpan, rowSpan, colAlign, rowAlign)
         }

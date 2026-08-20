@@ -38,7 +38,6 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.demo.svg.tango.edit_cut
 import org.pushingpixels.aurora.layout.CellConstraints
 import org.pushingpixels.aurora.layout.FormLayout
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
@@ -118,7 +117,7 @@ fun main() = auroraApplication {
                     iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
                     presentationState = CommandButtonPresentationState.MediumFitToIcon,
                 )
-            ).project(Modifier.xy(3, 5, CellConstraints.RIGHT, CellConstraints.CENTER))
+            ).project(Modifier.xy(3, 5, CellConstraints.Alignment.Right, CellConstraints.Alignment.Center))
         }
     }
 }

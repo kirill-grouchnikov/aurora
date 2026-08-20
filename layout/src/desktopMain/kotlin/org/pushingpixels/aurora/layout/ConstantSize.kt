@@ -16,8 +16,6 @@
 package org.pushingpixels.aurora.layout
 
 import androidx.compose.ui.layout.IntrinsicMeasurable
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.Placeable
 import kotlin.math.roundToInt
 
 // This is a modified version of the original source code by Karsten Lentzsch
@@ -121,31 +119,14 @@ class ConstantSize : Size {
      * @return the size in pixels
      */
     fun getPixelSize(): Int {
-        when (unit) {
-            PIXEL -> {
-                return intValue()
-            }
-            POINT -> {
-                return Sizes.pointAsPixel(intValue())
-            }
-            INCH -> {
-                return Sizes.inchAsPixel(value)
-            }
-            MILLIMETER -> {
-                return Sizes.millimeterAsPixel(value)
-            }
-            CENTIMETER -> {
-                return Sizes.centimeterAsPixel(value)
-            }
-            DIALOG_UNITS_X -> {
-                return Sizes.dialogUnitXAsPixel(intValue())
-            }
-            DIALOG_UNITS_Y -> {
-                return Sizes.dialogUnitYAsPixel(intValue())
-            }
-            else -> {
-                throw IllegalStateException("Invalid unit " + unit)
-            }
+        return when (unit) {
+            MeasurementUnit.Pixel -> intValue()
+            MeasurementUnit.Point -> Sizes.pointAsPixel(intValue())
+            MeasurementUnit.Inch -> Sizes.inchAsPixel(value)
+            MeasurementUnit.Millimeter -> Sizes.millimeterAsPixel(value)
+            MeasurementUnit.Centimeter -> Sizes.centimeterAsPixel(value)
+            MeasurementUnit.DialogUnitsX -> Sizes.dialogUnitXAsPixel(intValue())
+            MeasurementUnit.DialogUnitsY -> Sizes.dialogUnitYAsPixel(intValue())
         }
     }
 
@@ -277,25 +258,18 @@ class ConstantSize : Size {
      * An ordinal-based serializable typesafe enumeration for units
      * as used in instances of [ConstantSize].
      */
-    class MeasurementUnit internal constructor(
-        @field:Transient private val name: String?,
-        @field:Transient private val abbreviation: String,
-        @field:Transient private val parseAbbreviation: String?,
-        @field:Transient val requiresIntegers: Boolean
+    enum class MeasurementUnit(
+        private val abbreviation: String,
+        private val parseAbbreviation: String?,
+        val requiresIntegers: Boolean
     ) {
-        /**
-         * Returns a string representation of this unit object.
-         * 
-         * **Note:** This implementation may change at any time.
-         * It is intended for debugging purposes. For parsing, use
-         * [.encode] instead.
-         * 
-         * @return  a string representation of the constant size
-         */
-        override fun toString(): String {
-            return name!!
-        }
-
+        Pixel("px", null, true),
+        Point("pt", null, true),
+        DialogUnitsX("dluX", "dlu", true),
+        DialogUnitsY("dluY", "dlu", true),
+        Millimeter("mm", null, false),
+        Centimeter("cm", null, false),
+        Inch("in", null, false);
 
         /**
          * Returns a parseable string representation of this unit.
@@ -319,14 +293,6 @@ class ConstantSize : Size {
             return abbreviation
         }
 
-
-        private val ordinal: Int = nextOrdinal++
-
-
-        private fun readResolve(): Any? {
-            return VALUES[ordinal] // Canonicalize
-        }
-
         companion object {
             /**
              * Returns a Unit that corresponds to the specified string.
@@ -342,19 +308,19 @@ class ConstantSize : Size {
                     if (defaultUnit != null) {
                         return defaultUnit
                     }
-                    return if (horizontal) DIALOG_UNITS_X else DIALOG_UNITS_Y
+                    return if (horizontal) DialogUnitsX else DialogUnitsY
                 } else if (name == "px") {
-                    return PIXEL
+                    return Pixel
                 } else if (name == "dlu") {
-                    return if (horizontal) DIALOG_UNITS_X else DIALOG_UNITS_Y
+                    return if (horizontal) DialogUnitsX else DialogUnitsY
                 } else if (name == "pt") {
-                    return POINT
+                    return Point
                 } else if (name == "in") {
-                    return INCH
+                    return Inch
                 } else if (name == "mm") {
-                    return MILLIMETER
+                    return Millimeter
                 } else if (name == "cm") {
-                    return CENTIMETER
+                    return Centimeter
                 } else {
                     throw IllegalArgumentException(
                         "Invalid unit name '" + name + "'. Must be one of: " +
@@ -371,30 +337,6 @@ class ConstantSize : Size {
 
 
     companion object {
-        // Public Units *********************************************************
-        val PIXEL: MeasurementUnit = MeasurementUnit("Pixel", "px", null, true)
-        val POINT: MeasurementUnit = MeasurementUnit("Point", "pt", null, true)
-        val DIALOG_UNITS_X: MeasurementUnit = MeasurementUnit("Dialog units X", "dluX", "dlu", true)
-        val DIALOG_UNITS_Y: MeasurementUnit = MeasurementUnit("Dialog units Y", "dluY", "dlu", true)
-        val MILLIMETER: MeasurementUnit = MeasurementUnit("Millimeter", "mm", null, false)
-        val CENTIMETER: MeasurementUnit = MeasurementUnit("Centimeter", "cm", null, false)
-        val INCH: MeasurementUnit = MeasurementUnit("Inch", "in", null, false)
-
-        val PX: MeasurementUnit = PIXEL
-        val PT: MeasurementUnit = POINT
-        val DLUX: MeasurementUnit = DIALOG_UNITS_X
-        val DLUY: MeasurementUnit = DIALOG_UNITS_Y
-        val MM: MeasurementUnit = MILLIMETER
-        val CM: MeasurementUnit = CENTIMETER
-        val IN: MeasurementUnit = INCH
-
-        /**
-         * An array of all enumeration values used to canonicalize
-         * deserialized units.
-         */
-        private val VALUES = arrayOf(PIXEL, POINT, DIALOG_UNITS_X, DIALOG_UNITS_Y, MILLIMETER, CENTIMETER, INCH)
-
-
         /**
          * Creates and returns a ConstantSize from the given encoded size
          * and unit description.
@@ -431,7 +373,7 @@ class ConstantSize : Size {
          * @return the associated Size instance
          */
         fun dluX(value: Int): ConstantSize {
-            return ConstantSize(value, DLUX)
+            return ConstantSize(value, MeasurementUnit.DialogUnitsX)
         }
 
 
@@ -443,7 +385,7 @@ class ConstantSize : Size {
          * @return the associated Size instance
          */
         fun dluY(value: Int): ConstantSize {
-            return ConstantSize(value, DLUY)
+            return ConstantSize(value, MeasurementUnit.DialogUnitsY)
         }
 
 

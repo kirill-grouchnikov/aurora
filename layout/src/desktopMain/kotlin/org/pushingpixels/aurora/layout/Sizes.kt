@@ -77,29 +77,6 @@ object Sizes {
 
 
     // Static Component Sizes ***********************************************
-    /**
-     * Use the maximum of all component minimum sizes as column or row size.
-     */
-    val MINIMUM: ComponentSize = ComponentSize("minimum")
-
-    /**
-     * Use the maximum of all component preferred sizes as column or row size.
-     */
-    val PREFERRED: ComponentSize = ComponentSize("preferred")
-
-    /**
-     * Use the maximum of all component sizes as column or row size;
-     * measures preferred sizes when asked for the preferred size
-     * and minimum sizes when asked for the minimum size.
-     */
-    val DEFAULT: ComponentSize = ComponentSize("default")
-
-    /**
-     * An array of all enumeration values used to canonicalize
-     * deserialized component sizes.
-     */
-    private val VALUES = arrayOf<ComponentSize?>(MINIMUM, PREFERRED, DEFAULT)
-
 
     // Singleton State *******************************************************
     /**
@@ -108,7 +85,6 @@ object Sizes {
      * @see .setUnitConverter
      */
     private lateinit var unitConverter: UnitConverter
-
 
     /**
      * Returns the Unit that is used if an encoded ConstantSize contains
@@ -124,7 +100,7 @@ object Sizes {
      * 
      * @see .setDefaultUnit
      */
-    var defaultUnit: MeasurementUnit = ConstantSize.PIXEL
+    var defaultUnit: MeasurementUnit = MeasurementUnit.Pixel
         /**
          * Sets the Unit that shall be used if an encoded ConstantSize
          * provides no unit string.
@@ -132,13 +108,13 @@ object Sizes {
          * @param unit    the new default Unit, `null` for dialog units
          * 
          * @throws IllegalArgumentException if `unit` is
-         * [ConstantSize.DLUX] or [ConstantSize.DLUY].
+         * [MeasurementUnit.DialogUnitsX] or [MeasurementUnit.DialogUnitsY].
          * 
          * @since 1.2
          */
         set(unit) {
-            require(!((unit === ConstantSize.DLUX) || (unit === ConstantSize.DLUY))) {
-                ("The unit must not be DLUX or DLUY. "
+            require(!((unit === MeasurementUnit.DialogUnitsX) || (unit === MeasurementUnit.DialogUnitsY))) {
+                ("The unit must not be DialogUnitsX or DialogUnitsY. "
                     + "To use DLU as default unit, invoke this method with null.")
             }
             field = unit
@@ -193,7 +169,7 @@ object Sizes {
      * @return the associated `ConstantSize`
      */
     fun pixel(value: Int): ConstantSize {
-        return ConstantSize(value, ConstantSize.PIXEL)
+        return ConstantSize(value, MeasurementUnit.Pixel)
     }
 
     /**
@@ -337,7 +313,24 @@ object Sizes {
      * the [Size] interface for the component sizes:
      * *min, pref, default*.
      */
-    class ComponentSize internal constructor(@field:Transient private val name: String) : Size {
+    enum class ComponentSize : Size {
+        /**
+         * Use the maximum of all component minimum sizes as column or row size.
+         */
+        Minimum,
+
+        /**
+         * Use the maximum of all component preferred sizes as column or row size.
+         */
+        Preferred,
+
+        /**
+         * Use the maximum of all component sizes as column or row size;
+         * measures preferred sizes when asked for the preferred size
+         * and minimum sizes when asked for the minimum size.
+         */
+        Default;
+
         /**
          * Computes the maximum size for the given list of components, using
          * this form spec and the specified measure.
@@ -358,10 +351,10 @@ object Sizes {
             prefMeasure: Measure,
             defaultMeasure: Measure
         ): Int {
-            val measure: Measure = if (this == MINIMUM)
+            val measure: Measure = if (this == Minimum)
                 minMeasure
             else
-                (if (this == PREFERRED) prefMeasure else defaultMeasure)
+                (if (this == Preferred) prefMeasure else defaultMeasure)
             var maximum = 0
             val i: Iterator<IntrinsicMeasurable> = components.iterator()
             while (i.hasNext()) {
@@ -387,7 +380,7 @@ object Sizes {
          * @since 1.1
          */
         override fun compressible(): Boolean {
-            return this == DEFAULT
+            return this == Default
         }
 
 
@@ -407,13 +400,6 @@ object Sizes {
             return name.substring(0, 1)
         }
 
-
-        private val ordinal = nextOrdinal++
-
-        private fun readResolve(): Any? {
-            return VALUES[ordinal] // Canonicalize
-        }
-
         companion object {
             /**
              * Returns an instance of `ComponentSize` that corresponds
@@ -421,15 +407,15 @@ object Sizes {
              * @param str        the encoded component size
              * @return the corresponding ComponentSize or null if none matches
              */
-            fun valueOf(str: String): ComponentSize? {
+            fun parseValueOf(str: String): ComponentSize? {
                 if (str == "m" || str == "min") {
-                    return MINIMUM
+                    return Minimum
                 }
                 if (str == "p" || str == "pref") {
-                    return PREFERRED
+                    return Preferred
                 }
                 if (str == "d" || str == "default") {
-                    return DEFAULT
+                    return Default
                 }
                 return null
             }

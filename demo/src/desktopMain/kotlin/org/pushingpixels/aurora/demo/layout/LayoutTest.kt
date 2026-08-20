@@ -56,9 +56,9 @@ fun main() = auroraApplication {
     ) {
         val textMeasurer = rememberTextMeasurer()
         val rowSpec1 = RowSpec(dluX(14), textMeasurer)
-        val rowSpec2 = RowSpec(Sizes.PREFERRED, textMeasurer)
+        val rowSpec2 = RowSpec(Sizes.ComponentSize.Preferred, textMeasurer)
         val colSpec1 = ColumnSpec(dluX(40), textMeasurer)
-        val colSpec2 = ColumnSpec(Sizes.PREFERRED, textMeasurer)
+        val colSpec2 = ColumnSpec(Sizes.ComponentSize.Preferred, textMeasurer)
 
         FormLayout(
             modifier = Modifier.fillMaxSize(),

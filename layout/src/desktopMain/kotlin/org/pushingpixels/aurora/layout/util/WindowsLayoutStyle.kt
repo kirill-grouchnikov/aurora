@@ -27,7 +27,7 @@ import org.pushingpixels.aurora.layout.Sizes
  * A [LayoutStyle] that aims to provide layout constants as defined by
  * Microsoft's *User Experience Guidelines*.
  */
-internal class WindowsLayoutStyle private constructor() : LayoutStyle() {
+internal object WindowsLayoutStyle : LayoutStyle() {
     override val defaultButtonWidth: Size
         // Layout Sizes *********************************************************
         get() = BUTTON_WIDTH
@@ -93,31 +93,27 @@ internal class WindowsLayoutStyle private constructor() : LayoutStyle() {
         get() = BUTTON_BAR_PAD
 
 
-    companion object {
-        val INSTANCE: WindowsLayoutStyle = WindowsLayoutStyle()
-
-        // Component Sizes ******************************************************
-        private val BUTTON_WIDTH: Size = Sizes.dluX(50)
-        private val BUTTON_HEIGHT: Size = Sizes.dluY(14)
+    // Component Sizes ******************************************************
+    private val BUTTON_WIDTH: Size = Sizes.dluX(50)
+    private val BUTTON_HEIGHT: Size = Sizes.dluY(14)
 
 
-        // Gaps ******************************************************************
-        private val DIALOG_MARGIN_X: ConstantSize = Sizes.DLUX7
-        private val DIALOG_MARGIN_Y: ConstantSize = Sizes.DLUY7
+    // Gaps ******************************************************************
+    private val DIALOG_MARGIN_X: ConstantSize = Sizes.DLUX7
+    private val DIALOG_MARGIN_Y: ConstantSize = Sizes.DLUY7
 
-        private val TABBED_DIALOG_MARGIN_X: ConstantSize = Sizes.DLUX4
-        private val TABBED_DIALOG_MARGIN_Y: ConstantSize = Sizes.DLUY4
+    private val TABBED_DIALOG_MARGIN_X: ConstantSize = Sizes.DLUX4
+    private val TABBED_DIALOG_MARGIN_Y: ConstantSize = Sizes.DLUY4
 
-        private val LABEL_COMPONENT_PADX: ConstantSize = Sizes.DLUX3
-        private val RELATED_COMPONENTS_PADX: ConstantSize = Sizes.DLUX4
-        private val UNRELATED_COMPONENTS_PADX: ConstantSize = Sizes.DLUX7
+    private val LABEL_COMPONENT_PADX: ConstantSize = Sizes.DLUX3
+    private val RELATED_COMPONENTS_PADX: ConstantSize = Sizes.DLUX4
+    private val UNRELATED_COMPONENTS_PADX: ConstantSize = Sizes.DLUX7
 
-        private val LABEL_COMPONENT_PADY: ConstantSize = Sizes.DLUY2
-        private val RELATED_COMPONENTS_PADY: ConstantSize = Sizes.DLUY4
-        private val UNRELATED_COMPONENTS_PADY: ConstantSize = Sizes.DLUY7
-        private val NARROW_LINE_PAD: ConstantSize = Sizes.DLUY2
-        private val LINE_PAD: ConstantSize = Sizes.DLUY3
-        private val PARAGRAPH_PAD: ConstantSize = Sizes.DLUY9
-        private val BUTTON_BAR_PAD: ConstantSize = Sizes.DLUY5
-    }
+    private val LABEL_COMPONENT_PADY: ConstantSize = Sizes.DLUY2
+    private val RELATED_COMPONENTS_PADY: ConstantSize = Sizes.DLUY4
+    private val UNRELATED_COMPONENTS_PADY: ConstantSize = Sizes.DLUY7
+    private val NARROW_LINE_PAD: ConstantSize = Sizes.DLUY2
+    private val LINE_PAD: ConstantSize = Sizes.DLUY3
+    private val PARAGRAPH_PAD: ConstantSize = Sizes.DLUY9
+    private val BUTTON_BAR_PAD: ConstantSize = Sizes.DLUY5
 }

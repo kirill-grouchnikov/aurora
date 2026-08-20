@@ -42,7 +42,7 @@ object FormSpecs {
      *
      * @see .DEFAULT_COLSPEC
      */
-    val MIN_COLSPEC: ColumnSpec by lazy { ColumnSpec(Sizes.MINIMUM, textMeasurer) }
+    val MIN_COLSPEC: ColumnSpec by lazy { ColumnSpec(Sizes.ComponentSize.Minimum, textMeasurer) }
 
 
     /**
@@ -53,7 +53,7 @@ object FormSpecs {
      *
      * @see .DEFAULT_COLSPEC
      */
-    val PREF_COLSPEC: ColumnSpec by lazy {ColumnSpec(Sizes.PREFERRED, textMeasurer) }
+    val PREF_COLSPEC: ColumnSpec by lazy {ColumnSpec(Sizes.ComponentSize.Preferred, textMeasurer) }
 
 
     /**
@@ -70,7 +70,7 @@ object FormSpecs {
      *
      * @see .PREF_COLSPEC
      */
-    val DEFAULT_COLSPEC: ColumnSpec by lazy { ColumnSpec(Sizes.DEFAULT, textMeasurer) }
+    val DEFAULT_COLSPEC: ColumnSpec by lazy { ColumnSpec(Sizes.ComponentSize.Default, textMeasurer) }
 
 
     /**
@@ -143,7 +143,7 @@ object FormSpecs {
     val BUTTON_COLSPEC: ColumnSpec by lazy {
         ColumnSpec(
             Sizes.bounded(
-                Sizes.PREFERRED,
+                Sizes.ComponentSize.Preferred,
                 LayoutStyle.current.defaultButtonWidth,
                 null
             ), textMeasurer
@@ -180,7 +180,7 @@ object FormSpecs {
      *
      * @see .DEFAULT_ROWSPEC
      */
-    val MIN_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.MINIMUM, textMeasurer) }
+    val MIN_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Minimum, textMeasurer) }
 
 
     /**
@@ -191,7 +191,7 @@ object FormSpecs {
      *
      * @see .DEFAULT_ROWSPEC
      */
-    val PREF_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.PREFERRED, textMeasurer) }
+    val PREF_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Preferred, textMeasurer) }
 
 
     /**
@@ -208,7 +208,7 @@ object FormSpecs {
      *
      * @see .PREF_COLSPEC
      */
-    val DEFAULT_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.DEFAULT, textMeasurer) }
+    val DEFAULT_ROWSPEC: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Default, textMeasurer) }
 
 
     /**
@@ -328,7 +328,7 @@ object FormSpecs {
     val BUTTON_ROWSPEC: RowSpec by lazy {
         RowSpec(
             Sizes.bounded(
-                Sizes.PREFERRED,
+                Sizes.ComponentSize.Preferred,
                 LayoutStyle.current.defaultButtonHeight,
                 null
             ), textMeasurer
