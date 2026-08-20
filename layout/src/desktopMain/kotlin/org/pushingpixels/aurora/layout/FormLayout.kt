@@ -27,8 +27,12 @@ import androidx.compose.ui.layout.*
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.ParentDataModifierNode
 import androidx.compose.ui.platform.InspectorInfo
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.resolveDefaults
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
@@ -142,8 +146,14 @@ public fun FormLayout(modifier: Modifier,
     content: @Composable FormLayoutScope.() -> Unit) {
 
     val textMeasurer = rememberTextMeasurer()
+    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
+    Sizes.textStyle = resolvedTextStyle
+    Sizes.textMeasurer = textMeasurer
+    Sizes.density = LocalDensity.current
+
     CompositionLocalProvider(
-        LocalTextMeasurer provides textMeasurer
+        LocalTextMeasurer provides textMeasurer,
+        LocalResolvedTextStyle provides resolvedTextStyle,
     ) {
         Layout(
             content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
@@ -159,8 +169,14 @@ public fun FormLayout(modifier: Modifier,
     content: @Composable FormLayoutScope.() -> Unit) {
 
     val textMeasurer = rememberTextMeasurer()
+    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
+    Sizes.textStyle = resolvedTextStyle
+    Sizes.textMeasurer = textMeasurer
+    Sizes.density = LocalDensity.current
+
     CompositionLocalProvider(
-        LocalTextMeasurer provides textMeasurer
+        LocalTextMeasurer provides textMeasurer,
+        LocalResolvedTextStyle provides resolvedTextStyle,
     ) {
         val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)
         Layout(
@@ -181,8 +197,14 @@ public fun FormLayout(modifier: Modifier,
     content: @Composable FormLayoutScope.() -> Unit) {
 
     val textMeasurer = rememberTextMeasurer()
+    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
+    Sizes.textStyle = resolvedTextStyle
+    Sizes.textMeasurer = textMeasurer
+    Sizes.density = LocalDensity.current
+
     CompositionLocalProvider(
-        LocalTextMeasurer provides textMeasurer
+        LocalTextMeasurer provides textMeasurer,
+        LocalResolvedTextStyle provides resolvedTextStyle,
     ) {
         val layoutMap: LayoutMap = LayoutMap.getRoot()
         val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)

@@ -66,7 +66,7 @@ fun main() = auroraApplication {
         FormLayout(
             modifier = Modifier.fillMaxSize().padding(all = 8.dp),
             encodedColumnSpecs = "right:pref, 2dlu, 60dlu:grow",
-            encodedRowSpecs = "p, 6dlu, p, 8dlu, p",
+            encodedRowSpecs = "p, 6dlu, p, 10dlu, p",
         ) {
             LabelProjection(
                 contentModel = LabelContentModel(

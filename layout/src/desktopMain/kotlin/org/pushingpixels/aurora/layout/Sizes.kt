@@ -16,6 +16,9 @@
 package org.pushingpixels.aurora.layout
 
 import androidx.compose.ui.layout.IntrinsicMeasurable
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Density
 import org.pushingpixels.aurora.layout.ConstantSize.MeasurementUnit
 import org.pushingpixels.aurora.layout.util.DefaultUnitConverter
 import org.pushingpixels.aurora.layout.util.UnitConverter
@@ -85,6 +88,11 @@ object Sizes {
      * @see .setUnitConverter
      */
     private lateinit var unitConverter: UnitConverter
+
+    // TODO: figure out how to push these in a cleaner way
+    internal lateinit var textStyle: TextStyle
+    internal lateinit var textMeasurer: TextMeasurer
+    internal lateinit var density: Density
 
     /**
      * Returns the Unit that is used if an encoded ConstantSize contains
@@ -288,7 +296,7 @@ object Sizes {
      */
     fun getUnitConverter(): UnitConverter {
         if (!::unitConverter.isInitialized) {
-            unitConverter = DefaultUnitConverter()
+            unitConverter = DefaultUnitConverter(textMeasurer, textStyle, density)
         }
         return unitConverter
     }

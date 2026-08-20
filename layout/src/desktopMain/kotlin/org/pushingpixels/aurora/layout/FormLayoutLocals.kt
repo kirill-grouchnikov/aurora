@@ -15,9 +15,18 @@
  */
 package org.pushingpixels.aurora.layout
 
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 
 internal val LocalTextMeasurer = staticCompositionLocalOf<TextMeasurer> {
     error("LocalTextMeasurer not provided")
+}
+
+internal val LocalTextStyle = compositionLocalOf(structuralEqualityPolicy()) { TextStyle() }
+
+internal val LocalResolvedTextStyle = staticCompositionLocalOf<TextStyle> {
+    error("LocalResolvedTextStyle not provided")
 }

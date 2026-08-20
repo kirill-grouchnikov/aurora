@@ -15,6 +15,10 @@
  */
 package org.pushingpixels.aurora.layout.util
 
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Density
+
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
 // license under resources/Forms.license.
@@ -53,12 +57,16 @@ package org.pushingpixels.aurora.layout.util
  * @see Size
  * @see Sizes
  */
-class DefaultUnitConverter  // Instance Creation and Access *******************************************
+class DefaultUnitConverter(
+    private val textMeasurer: TextMeasurer,
+    private val textStyle: TextStyle,
+    private val density: Density)
 /**
  * Constructs a DefaultUnitConverter and registers
  * a listener that handles changes in the look&amp;feel.
  */
     : AbstractUnitConverter() {
+
     // Cached *****************************************************************
     /**
      * Holds the lazily created cached global dialog base units that are used
@@ -126,15 +134,11 @@ class DefaultUnitConverter  // Instance Creation and Access ********************
      * Computes and returns the horizontal dialog base units.
      * Honors the font, font size and resolution.
      *
-     *
-     * 
      * Implementation Note: 14dluY map to 22 pixel for 8pt Tahoma on 96 dpi.
      * I could not yet manage to compute the Microsoft compliant font height.
      * Therefore this method adds a correction value that seems to work
      * well with the vast majority of desktops.
      *
-     *
-     * 
      * TODO: Revise the computation of vertical base units as soon as
      * there are more information about the original computation
      * in Microsoft environments.
@@ -143,8 +147,18 @@ class DefaultUnitConverter  // Instance Creation and Access ********************
      * @return the horizontal and vertical dialog base units
      */
     private fun computeDialogBaseUnits(): DialogBaseUnits {
-        val dialogBaseUnits =
-            DialogBaseUnits(14.0, 14.0)
+        val balancedString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        val textLayoutResult = textMeasurer.measure(
+            text = balancedString,
+            style = textStyle,
+            maxLines = 1
+        )
+
+        val averageCharWidth = (textLayoutResult.size.width / balancedString.length) / density.density.toDouble()
+        val ascent = (textLayoutResult.getLineBaseline(0) - textLayoutResult.getLineTop(0)) / density.density.toDouble()
+        val height = if (ascent > 14.0) ascent else ascent + (15.0 - ascent) / 3.0
+
+        val dialogBaseUnits = DialogBaseUnits(x = averageCharWidth, y = height)
         return dialogBaseUnits
     }
 
@@ -154,8 +168,6 @@ class DefaultUnitConverter  // Instance Creation and Access ********************
      * should ask for the main dialog font and should honor the current
      * screen resolution.
      *
-     *
-     * 
      * Should be re-computed if the l&amp;f, platform, or screen changes.
      * 
      * @return a DialogBaseUnits object used globally if no container is available
