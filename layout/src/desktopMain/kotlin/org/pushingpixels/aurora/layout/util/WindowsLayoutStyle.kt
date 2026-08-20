@@ -32,71 +32,54 @@ internal object WindowsLayoutStyle : LayoutStyle() {
         // Layout Sizes *********************************************************
         get() = BUTTON_WIDTH
 
-
     override val defaultButtonHeight: Size
         get() = BUTTON_HEIGHT
-
 
     override val dialogMarginX: ConstantSize
         get() = DIALOG_MARGIN_X
 
-
     override val dialogMarginY: ConstantSize
         get() = DIALOG_MARGIN_Y
-
 
     override val tabbedDialogMarginX: ConstantSize
         get() = TABBED_DIALOG_MARGIN_X
 
-
     override val tabbedDialogMarginY: ConstantSize
         get() = TABBED_DIALOG_MARGIN_Y
-
 
     override val labelComponentPadX: ConstantSize
         get() = LABEL_COMPONENT_PADX
 
-
     override val labelComponentPadY: ConstantSize
         get() = LABEL_COMPONENT_PADY
-
 
     override val relatedComponentsPadX: ConstantSize
         get() = RELATED_COMPONENTS_PADX
 
-
     override val relatedComponentsPadY: ConstantSize
         get() = RELATED_COMPONENTS_PADY
-
 
     override val unrelatedComponentsPadX: ConstantSize
         get() = UNRELATED_COMPONENTS_PADX
 
-
     override val unrelatedComponentsPadY: ConstantSize
         get() = UNRELATED_COMPONENTS_PADY
-
 
     override val narrowLinePad: ConstantSize
         get() = NARROW_LINE_PAD
 
-
     override val linePad: ConstantSize
         get() = LINE_PAD
-
 
     override val paragraphPad: ConstantSize
         get() = PARAGRAPH_PAD
 
-
     override val buttonBarPad: ConstantSize
         get() = BUTTON_BAR_PAD
-
 
     // Component Sizes ******************************************************
     private val BUTTON_WIDTH: Size = Sizes.dluX(50)
     private val BUTTON_HEIGHT: Size = Sizes.dluY(14)
-
 
     // Gaps ******************************************************************
     private val DIALOG_MARGIN_X: ConstantSize = Sizes.DLUX7

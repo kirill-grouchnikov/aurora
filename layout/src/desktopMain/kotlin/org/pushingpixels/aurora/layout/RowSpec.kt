@@ -46,7 +46,7 @@ import androidx.compose.ui.text.TextMeasurer
  * 
  * @see FormSpecs
  */
-class RowSpec : FormSpec {
+public class RowSpec : FormSpec {
     // Instance Creation ****************************************************
     /**
      * Constructs a RowSpec from the given default orientation,
@@ -61,7 +61,7 @@ class RowSpec : FormSpec {
      * @throws IllegalArgumentException if the size is invalid or
      * the resize weight is negative
      */
-    constructor(
+    public constructor(
         defaultAlignment: DefaultAlignment,
         size: Size,
         resizeWeight: Double,
@@ -74,7 +74,7 @@ class RowSpec : FormSpec {
      * @param size             constant size, component size, or bounded size
      * @throws IllegalArgumentException if the size is invalid
      */
-    constructor(size: Size) : super(Default, size, NoGrow)
+    public constructor(size: Size) : super(Default, size, NoGrow)
 
     /**
      * Constructs a RowSpec from the specified encoded description.
@@ -99,32 +99,32 @@ class RowSpec : FormSpec {
          */
         get() = false
 
-    companion object {
+    public companion object {
         // Vertical Orientations ************************************************
         /**
          * By default put the components in the top.
          */
-        val Top: DefaultAlignment = DefaultAlignment.TopAlign
+        public val Top: DefaultAlignment = DefaultAlignment.TopAlign
 
         /**
          * By default put the components in the center.
          */
-        val Center: DefaultAlignment = DefaultAlignment.CenterAlign
+        public val Center: DefaultAlignment = DefaultAlignment.CenterAlign
 
         /**
          * By default put the components in the bottom.
          */
-        val Bottom: DefaultAlignment = DefaultAlignment.BottomAlign
+        public val Bottom: DefaultAlignment = DefaultAlignment.BottomAlign
 
         /**
          * By default fill the component into the row.
          */
-        val Fill: DefaultAlignment = DefaultAlignment.FillAlign
+        public val Fill: DefaultAlignment = DefaultAlignment.FillAlign
 
         /**
          * Unless overridden the default alignment for a row is CENTER.
          */
-        val Default: DefaultAlignment = Center
+        public val Default: DefaultAlignment = Center
 
         // Cache ******************************************************************
         /**
@@ -144,7 +144,7 @@ class RowSpec : FormSpec {
          * 
          * @since 1.2
          */
-        fun createGap(gapHeight: ConstantSize): RowSpec {
+        public fun createGap(gapHeight: ConstantSize): RowSpec {
             return RowSpec(Default, gapHeight, NoGrow)
         }
 
@@ -163,9 +163,8 @@ class RowSpec : FormSpec {
          * @see .decodeSpecs
          * @since 1.2
          */
-        @JvmOverloads
         @Composable
-        fun decode(encodedRowSpec: String, layoutMap: LayoutMap = LayoutMap.getRoot()): RowSpec {
+        public fun decode(encodedRowSpec: String, layoutMap: LayoutMap = LayoutMap.getRoot()): RowSpec {
             require (encodedRowSpec.isNotBlank()) {
                 "The encoded row specification must not be null, empty or whitespace."
             }
@@ -184,7 +183,7 @@ class RowSpec : FormSpec {
          * @return a RowSpec for the given encoded row spec
          */
         @Composable
-        fun decodeExpanded(expandedTrimmedLowerCaseSpec: String): RowSpec {
+        public fun decodeExpanded(expandedTrimmedLowerCaseSpec: String): RowSpec {
             var spec: RowSpec? = CACHE[expandedTrimmedLowerCaseSpec]
             if (spec == null) {
                 spec = RowSpec(expandedTrimmedLowerCaseSpec, LocalTextMeasurer.current)
@@ -207,9 +206,8 @@ class RowSpec : FormSpec {
          * @see RowSpec.RowSpec
          * @since 1.2
          */
-        @JvmOverloads
         @Composable
-        fun decodeSpecs(encodedRowSpecs: String, layoutMap: LayoutMap = LayoutMap.getRoot()): List<RowSpec> {
+        public fun decodeSpecs(encodedRowSpecs: String, layoutMap: LayoutMap = LayoutMap.getRoot()): List<RowSpec> {
             return FormSpecParser.parseRowSpecs(encodedRowSpecs, layoutMap)
         }
     }

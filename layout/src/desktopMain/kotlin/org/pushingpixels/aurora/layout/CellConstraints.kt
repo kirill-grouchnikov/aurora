@@ -116,7 +116,7 @@ public data class CellConstraints(
      * @throws IndexOutOfBoundsException if the display area described
      * by this constraints object is not inside the grid
      */
-    fun ensureValidGridBounds(colCount: Int, rowCount: Int) {
+    public fun ensureValidGridBounds(colCount: Int, rowCount: Int) {
         if (gridX <= 0) {
             throw IndexOutOfBoundsException(
                 "The column index $gridX must be positive."
@@ -161,7 +161,7 @@ public data class CellConstraints(
      * @param prefWidthMeasure      measures the preferred width
      * @param prefHeightMeasure  measures the preferred height
      */
-    fun getBounds(
+    public fun getBounds(
         measureScope: MeasureScope,
         c: IntrinsicMeasurable,
         colSpecs: List<ColumnSpec>,
@@ -239,7 +239,7 @@ public data class CellConstraints(
     /**
      * Enumeration for component alignment types as used by the [FormLayout].
      */
-    enum class Alignment(private val orientation: Orientation) {
+    public enum class Alignment(private val orientation: Orientation) {
         /**
          * Use the column's or row's default alignment.
          */
@@ -290,7 +290,7 @@ public data class CellConstraints(
          * 
          * @return the name's first character.
          */
-        fun abbreviation(): Char {
+        public fun abbreviation(): Char {
             return name[0]
         }
 
@@ -300,8 +300,8 @@ public data class CellConstraints(
         internal val isVertical: Boolean
             get() = orientation != Orientation.Horizontal
 
-        companion object {
-            fun valueOf(nameOrAbbreviation: String): Alignment {
+        public companion object {
+            public fun valueOf(nameOrAbbreviation: String): Alignment {
                 val str = nameOrAbbreviation.lowercase()
                 when (str) {
                     "d", "default" -> {
@@ -340,7 +340,7 @@ public data class CellConstraints(
         }
     }
 
-    companion object {
+    public companion object {
         // Alignment Constants *************************************************
 
         /**
@@ -582,7 +582,7 @@ public data class CellConstraints(
          *
          * @throws IllegalArgumentException if an alignment orientation is invalid
          */
-        fun xywh(
+        public fun xywh(
             col: Int, row: Int, colSpan: Int, rowSpan: Int,
             colAlign: Alignment = Alignment.Default, rowAlign: Alignment = Alignment.Default
         ): CellConstraints {
@@ -609,7 +609,7 @@ public data class CellConstraints(
          *
          * @throws IllegalArgumentException if an alignment orientation is invalid
          */
-        fun xywh(col: Int, row: Int, colSpan: Int, rowSpan: Int, encodedAlignments: String): CellConstraints {
+        public fun xywh(col: Int, row: Int, colSpan: Int, rowSpan: Int, encodedAlignments: String): CellConstraints {
             val alignments = parseAlignments(encodedAlignments, true)
             return xywh(col, row, colSpan, rowSpan, alignments.first, alignments.second)
         }
@@ -632,7 +632,7 @@ public data class CellConstraints(
          *
          * @throws IllegalArgumentException if an alignment orientation is invalid
          */
-        fun rchw(
+        public fun rchw(
             row: Int, col: Int, rowSpan: Int, colSpan: Int,
             rowAlign: Alignment = Alignment.Default, colAlign: Alignment = Alignment.Default
         ): CellConstraints {
@@ -657,7 +657,7 @@ public data class CellConstraints(
          *
          * @throws IllegalArgumentException if an alignment orientation is invalid
          */
-        fun rchw(row: Int, col: Int, rowSpan: Int, colSpan: Int, encodedAlignments: String): CellConstraints {
+        public fun rchw(row: Int, col: Int, rowSpan: Int, colSpan: Int, encodedAlignments: String): CellConstraints {
             val alignments = parseAlignments(encodedAlignments, true)
             return rchw(row, col, rowSpan, colSpan, alignments.first, alignments.second)
         }
@@ -675,7 +675,7 @@ public data class CellConstraints(
          *
          * @param encodedConstraints	the constraints encoded as string
          */
-        fun fromConstraints(encodedConstraints: String): CellConstraints {
+        public fun fromConstraints(encodedConstraints: String): CellConstraints {
             val tokenizer = StringTokenizer(encodedConstraints, " ,")
             val argCount = tokenizer.countTokens()
             require(argCount == 2 || argCount == 4 || argCount == 6) {

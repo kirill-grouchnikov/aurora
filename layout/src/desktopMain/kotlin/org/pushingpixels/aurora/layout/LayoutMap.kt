@@ -103,7 +103,7 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  *
  * @since 1.2
  */
-class LayoutMap @JvmOverloads constructor(
+public class LayoutMap constructor(
     /**
      * Refers to the parent map that is used to look up values
      * if this map contains no association for a given key.
@@ -137,7 +137,6 @@ class LayoutMap @JvmOverloads constructor(
      */
     private val rowMapCache: MutableMap<String?, String?> = HashMap()
 
-
     // Column Mapping *********************************************************
     /**
      * Returns `true` if this map or a parent map - if any - contains
@@ -151,12 +150,11 @@ class LayoutMap @JvmOverloads constructor(
      * 
      * @see Map.containsKey
      */
-    fun columnContainsKey(key: String): Boolean {
+    public fun columnContainsKey(key: String): Boolean {
         val resolvedKey: String = resolveColumnKey(key)
         return columnMap.containsKey(resolvedKey)
             || parent != null && parent.columnContainsKey(resolvedKey)
     }
-
 
     /**
      * Looks up and returns the String associated with the given key.
@@ -172,7 +170,7 @@ class LayoutMap @JvmOverloads constructor(
      * 
      * @see Map.get
      */
-    fun columnGet(key: String): String? {
+    public fun columnGet(key: String): String? {
         val resolvedKey: String = resolveColumnKey(key)
         val cachedValue = columnMapCache[resolvedKey]
         if (cachedValue != null) {
@@ -189,7 +187,6 @@ class LayoutMap @JvmOverloads constructor(
         columnMapCache[resolvedKey] = expandedString
         return expandedString
     }
-
 
     /**
      * Associates the specified column String with the specified key
@@ -213,7 +210,7 @@ class LayoutMap @JvmOverloads constructor(
      * 
      * @see Map.put
      */
-    fun columnPut(key: String, value: String): String? {
+    public fun columnPut(key: String, value: String): String? {
         val resolvedKey: String = resolveColumnKey(key)
         columnMapCache.clear()
         return columnMap.put(
@@ -222,16 +219,13 @@ class LayoutMap @JvmOverloads constructor(
         )
     }
 
-
-    fun columnPut(key: String, value: ColumnSpec): String? {
+    public fun columnPut(key: String, value: ColumnSpec): String? {
         return columnPut(key, value.encode())
     }
 
-
-    fun columnPut(key: String, value: Size): String? {
+    public fun columnPut(key: String, value: Size): String? {
         return columnPut(key, value.encode())
     }
-
 
     /**
      * Removes the column value mapping for this key from this map if it is
@@ -252,12 +246,11 @@ class LayoutMap @JvmOverloads constructor(
      * 
      * @see Map.remove
      */
-    fun columnRemove(key: String): String? {
+    public fun columnRemove(key: String): String? {
         val resolvedKey: String = resolveColumnKey(key)
         columnMapCache.clear()
         return columnMap.remove(resolvedKey)
     }
-
 
     // Row Mapping ************************************************************
     /**
@@ -272,12 +265,11 @@ class LayoutMap @JvmOverloads constructor(
      * 
      * @see Map.containsKey
      */
-    fun rowContainsKey(key: String): Boolean {
+    public fun rowContainsKey(key: String): Boolean {
         val resolvedKey: String = resolveRowKey(key)
         return rowMap.containsKey(resolvedKey)
             || parent != null && parent.rowContainsKey(resolvedKey)
     }
-
 
     /**
      * Looks up and returns the RowSpec associated with the given key.
@@ -293,7 +285,7 @@ class LayoutMap @JvmOverloads constructor(
      * 
      * @see Map.get
      */
-    fun rowGet(key: String): String? {
+    public fun rowGet(key: String): String? {
         val resolvedKey: String = resolveRowKey(key)
         val cachedValue = rowMapCache[resolvedKey]
         if (cachedValue != null) {
@@ -311,8 +303,7 @@ class LayoutMap @JvmOverloads constructor(
         return expandedString
     }
 
-
-    fun rowPut(key: String, value: String): String? {
+    public fun rowPut(key: String, value: String): String? {
         val resolvedKey: String = resolveRowKey(key)
         rowMapCache.clear()
         return rowMap.put(
@@ -320,7 +311,6 @@ class LayoutMap @JvmOverloads constructor(
             value.lowercase()
         )
     }
-
 
     /**
      * Associates the specified ColumnSpec with the specified key in this map.
@@ -343,15 +333,13 @@ class LayoutMap @JvmOverloads constructor(
      * 
      * @see Map.put
      */
-    fun rowPut(key: String, value: RowSpec): String? {
+    public fun rowPut(key: String, value: RowSpec): String? {
         return rowPut(key, value.encode())
     }
 
-
-    fun rowPut(key: String, value: Size): String? {
+    public fun rowPut(key: String, value: Size): String? {
         return rowPut(key, value.encode())
     }
-
 
     /**
      * Removes the row value mapping for this key from this map if it is
@@ -372,12 +360,11 @@ class LayoutMap @JvmOverloads constructor(
      * 
      * @see Map.remove
      */
-    fun rowRemove(key: String): String? {
+    public fun rowRemove(key: String): String? {
         val resolvedKey: String = resolveRowKey(key)
         rowMapCache.clear()
         return rowMap.remove(resolvedKey)
     }
-
 
     // Overriding Object Behavior *********************************************
     /**
@@ -405,9 +392,8 @@ class LayoutMap @JvmOverloads constructor(
         return buffer.toString()
     }
 
-
     // String Expansion *******************************************************
-    fun expand(expression: String, horizontal: Boolean): String {
+    public fun expand(expression: String, horizontal: Boolean): String {
         var cursor = 0
         var start: Int = expression.indexOf(VARIABLE_PREFIX_CHAR, cursor)
         if (start == -1) { // No variables
@@ -425,7 +411,6 @@ class LayoutMap @JvmOverloads constructor(
         return buffer.toString()
     }
 
-
     private fun expansion(variableName: String, horizontal: Boolean): String {
         val key: String = stripBraces(variableName)
         val expansion = if (horizontal) columnGet(key) else rowGet(key)
@@ -436,7 +421,6 @@ class LayoutMap @JvmOverloads constructor(
         return expansion
     }
 
-
     private fun columnPut(key: String, aliases: Array<String>, value: ColumnSpec) {
         ensureLowerCase(key)
         columnPut(key, value)
@@ -445,7 +429,6 @@ class LayoutMap @JvmOverloads constructor(
             COLUMN_ALIASES[alias] = key
         }
     }
-
 
     private fun rowPut(key: String, aliases: Array<String>, value: RowSpec) {
         ensureLowerCase(key)
@@ -456,20 +439,17 @@ class LayoutMap @JvmOverloads constructor(
         }
     }
 
-
-    companion object {
+    public companion object {
         /**
          * Marks a layout variable; used by the Forms parsers.
          */
         private const val VARIABLE_PREFIX_CHAR = '$'
-
 
         /**
          * Maps column aliases to their default name, for example
          * `"rgap"` -> `"related-gap"`.
          */
         private val COLUMN_ALIASES: MutableMap<String?, String?> = HashMap()
-
 
         /**
          * Maps row aliases to their default name, for example
@@ -482,32 +462,14 @@ class LayoutMap @JvmOverloads constructor(
          * Holds the lazily initialized root map.
          */
         @Composable
-        fun getRoot(): LayoutMap {
+        public fun getRoot(): LayoutMap {
             if (!::root.isInitialized) {
                 root = createRoot()
             }
             return root
         }
-//        @get:Synchronized
-//        var root: LayoutMap? = null
-//            /**
-//             * Lazily initializes and returns the LayoutMap that is used
-//             * for variable expansion, if no custom LayoutMap is provided.
-//             *
-//             * @return the LayoutMap that is used, if no custom LayoutMap is provided
-//             */
-//            @Composable
-//            get() {
-//                if (field == null) {
-//                    field = createRoot()
-//                }
-//                return field
-//            }
-//            private set
-
 
         // Default ****************************************************************
-
 
         private fun nextVariableName(expression: String, start: Int): String {
             val length = expression.length
@@ -530,14 +492,12 @@ class LayoutMap @JvmOverloads constructor(
             return expression.substring(start + 1, end)
         }
 
-
         private fun stripBraces(variableName: String): String {
             return if (variableName[0] == '{')
                 variableName.substring(1, variableName.length - 1)
             else
                 variableName
         }
-
 
         // Helper Code ************************************************************
         private fun resolveColumnKey(key: String): String {
@@ -546,7 +506,6 @@ class LayoutMap @JvmOverloads constructor(
             val defaultKey: String? = COLUMN_ALIASES[lowercaseKey]
             return defaultKey ?: lowercaseKey
         }
-
 
         private fun resolveRowKey(key: String): String {
             //checkNotNull(key, "The row key must not be null.")
@@ -653,7 +612,6 @@ class LayoutMap @JvmOverloads constructor(
 
             return map
         }
-
 
         private fun ensureLowerCase(str: String) {
             val lowerCase = str.lowercase()

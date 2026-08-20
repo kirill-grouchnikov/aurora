@@ -30,44 +30,7 @@ import kotlin.math.min
  * @see Sizes
  * @see ConstantSize
  */
-class BoundedSize(basis: Size?, lowerBound: Size?, upperBound: Size?) : Size {
-    /**
-     * Returns the base size, which is not-`null`.
-     * 
-     * @return the base size
-     * 
-     * @since 1.1
-     */
-    /**
-     * Holds the base size.
-     */
-    val basis: Size
-
-    /**
-     * Returns the optional lower bound.
-     * 
-     * @return the optional lower bound
-     * 
-     * @since 1.1
-     */
-    /**
-     * Holds an optional lower bound.
-     */
-    val lowerBound: Size?
-
-    /**
-     * Returns the optional upper bound.
-     * 
-     * @return the optional upper bound
-     * 
-     * @since 1.1
-     */
-    /**
-     * Holds an optional upper bound.
-     */
-    val upperBound: Size?
-
-
+public class BoundedSize(public val basis: Size, public val lowerBound: Size?, public val upperBound: Size?) : Size {
     // Instance Creation ****************************************************
     /**
      * Constructs a BoundedSize for the given basis using the
@@ -79,24 +42,14 @@ class BoundedSize(basis: Size?, lowerBound: Size?, upperBound: Size?) : Size {
      * 
      * @throws NullPointerException if `basis`, `lowerBound`,
      * or `upperBound` is `null`
-     * 
-     * @since 1.1
      */
     init {
-        require(basis != null) {
-            "The basis must not be null."
-        }
-        this.basis = basis
-        this.lowerBound = lowerBound
-        this.upperBound = upperBound
         require(!(lowerBound == null && upperBound == null)) {
             "A bounded size must have a non-null lower or upper bound."
         }
     }
 
-
     // Accessors ************************************************************
-
 
     // Implementation of the Size Interface *********************************
     /**
@@ -108,7 +61,6 @@ class BoundedSize(basis: Size?, lowerBound: Size?, upperBound: Size?) : Size {
      * Invoked by `FormSpec` to determine the size of a column or
      * row.
      *
-     * @param container       the layout container
      * @param components      the list of components to measure
      * @param minMeasure      the measure used to determine the minimum size
      * @param prefMeasure     the measure used to determine the preferred size
@@ -151,14 +103,11 @@ class BoundedSize(basis: Size?, lowerBound: Size?, upperBound: Size?) : Size {
         return size
     }
 
-
     /**
      * Describes if this Size can be compressed, if container space gets scarce.
      * Used by the FormLayout size computations in `#compressedSizes`
      * to check whether a column or row can be compressed or not.
      *
-     *
-     * 
      * BoundedSizes are compressible if the base Size is compressible.
      * 
      * @return `true` if and only if the basis is compressible
@@ -168,7 +117,6 @@ class BoundedSize(basis: Size?, lowerBound: Size?, upperBound: Size?) : Size {
     override fun compressible(): Boolean {
         return this.basis.compressible()
     }
-
 
     // Overriding Object Behavior *******************************************
     /**
@@ -228,7 +176,6 @@ class BoundedSize(basis: Size?, lowerBound: Size?, upperBound: Size?) : Size {
     override fun toString(): String {
         return encode()
     }
-
 
     /**
      * Returns a parseable string representation of this bounded size.

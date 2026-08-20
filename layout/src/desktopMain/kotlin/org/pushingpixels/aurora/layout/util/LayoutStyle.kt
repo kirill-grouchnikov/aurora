@@ -39,7 +39,7 @@ import org.pushingpixels.aurora.layout.Size
  * @see FormSpecs
  * @see Borders
  */
-abstract class LayoutStyle {
+public abstract class LayoutStyle {
     // Layout Sizes *********************************************************
     /**
      * Returns this style's default button width.
@@ -48,7 +48,7 @@ abstract class LayoutStyle {
      * 
      * @see .getDefaultButtonHeight
      */
-    abstract val defaultButtonWidth: Size
+    public abstract val defaultButtonWidth: Size
 
     /**
      * Returns this style's default button height.
@@ -57,7 +57,7 @@ abstract class LayoutStyle {
      * 
      * @see .getDefaultButtonWidth
      */
-    abstract val defaultButtonHeight: Size
+    public abstract val defaultButtonHeight: Size
 
     /**
      * Returns this style's horizontal margin for general dialogs.
@@ -67,7 +67,7 @@ abstract class LayoutStyle {
      * @see .getDialogMarginY
      * @see .getTabbedDialogMarginX
      */
-    abstract val dialogMarginX: ConstantSize
+    public abstract val dialogMarginX: ConstantSize
 
     /**
      * Returns this style's vertical margin for general dialogs.
@@ -77,7 +77,7 @@ abstract class LayoutStyle {
      * @see .getDialogMarginX
      * @see .getTabbedDialogMarginY
      */
-    abstract val dialogMarginY: ConstantSize
+    public abstract val dialogMarginY: ConstantSize
 
     /**
      * Returns this style's horizontal margin for dialogs that consist of
@@ -89,7 +89,7 @@ abstract class LayoutStyle {
      * @see .getDialogMarginX
      * @since 1.0.3
      */
-    abstract val tabbedDialogMarginX: ConstantSize
+    public abstract val tabbedDialogMarginX: ConstantSize
 
     /**
      * Returns this style's vertical margin for dialogs that consist of
@@ -101,7 +101,7 @@ abstract class LayoutStyle {
      * @see .getDialogMarginY
      * @since 1.0.3
      */
-    abstract val tabbedDialogMarginY: ConstantSize
+    public abstract val tabbedDialogMarginY: ConstantSize
 
     /**
      * Returns a gap used to separate a label and associated control.
@@ -111,7 +111,7 @@ abstract class LayoutStyle {
      * @see .getRelatedComponentsPadX
      * @see .getUnrelatedComponentsPadX
      */
-    abstract val labelComponentPadX: ConstantSize
+    public abstract val labelComponentPadX: ConstantSize
 
     /**
      * Returns a gap used to separate a label and associated control.
@@ -122,7 +122,7 @@ abstract class LayoutStyle {
      * @see .getUnrelatedComponentsPadY
      * @since 1.4
      */
-    abstract val labelComponentPadY: ConstantSize
+    public abstract val labelComponentPadY: ConstantSize
 
     /**
      * Returns a horizontal gap used to separate related controls.
@@ -133,7 +133,7 @@ abstract class LayoutStyle {
      * @see .getRelatedComponentsPadY
      * @see .getUnrelatedComponentsPadX
      */
-    abstract val relatedComponentsPadX: ConstantSize
+    public abstract val relatedComponentsPadX: ConstantSize
 
     /**
      * Returns a vertical gap used to separate related controls.
@@ -143,7 +143,7 @@ abstract class LayoutStyle {
      * @see .getRelatedComponentsPadX
      * @see .getUnrelatedComponentsPadY
      */
-    abstract val relatedComponentsPadY: ConstantSize
+    public abstract val relatedComponentsPadY: ConstantSize
 
     /**
      * Returns a horizontal gap used to separate unrelated controls.
@@ -154,7 +154,7 @@ abstract class LayoutStyle {
      * @see .getUnrelatedComponentsPadY
      * @see .getRelatedComponentsPadX
      */
-    abstract val unrelatedComponentsPadX: ConstantSize
+    public abstract val unrelatedComponentsPadX: ConstantSize
 
     /**
      * Returns a vertical gap used to separate unrelated controls.
@@ -164,7 +164,7 @@ abstract class LayoutStyle {
      * @see .getUnrelatedComponentsPadX
      * @see .getRelatedComponentsPadY
      */
-    abstract val unrelatedComponentsPadY: ConstantSize
+    public abstract val unrelatedComponentsPadY: ConstantSize
 
     /**
      * Returns a narrow vertical pad used to separate lines.
@@ -174,7 +174,7 @@ abstract class LayoutStyle {
      * @see .getLinePad
      * @see .getParagraphPad
      */
-    abstract val narrowLinePad: ConstantSize
+    public abstract val narrowLinePad: ConstantSize
 
     /**
      * Returns a narrow vertical pad used to separate lines.
@@ -184,7 +184,7 @@ abstract class LayoutStyle {
      * @see .getNarrowLinePad
      * @see .getParagraphPad
      */
-    abstract val linePad: ConstantSize
+    public abstract val linePad: ConstantSize
 
     /**
      * Returns a pad used to separate paragraphs.
@@ -194,7 +194,7 @@ abstract class LayoutStyle {
      * @see .getNarrowLinePad
      * @see .getLinePad
      */
-    abstract val paragraphPad: ConstantSize
+    public abstract val paragraphPad: ConstantSize
 
     /**
      * Returns a pad used to separate a button bar from a component.
@@ -205,9 +205,9 @@ abstract class LayoutStyle {
      * @see .getUnrelatedComponentsPadY
      * @since 1.0.3
      */
-    abstract val buttonBarPad: ConstantSize
+    public abstract val buttonBarPad: ConstantSize
 
-    companion object {
+    internal companion object {
         /**
          * Returns the current `LayoutStyle`.
          * 

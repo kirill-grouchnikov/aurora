@@ -58,27 +58,7 @@ import kotlin.math.roundToInt
  * @see Size
  * @see Sizes
  */
-class ConstantSize : Size {
-    /**
-     * Returns this size's value.
-     * 
-     * @return the size value
-     * 
-     * @since 1.1
-     */
-    // Fields ***************************************************************
-    val value: Double
-
-    /**
-     * Returns this size's unit.
-     * 
-     * @return the size unit
-     * 
-     * @since 1.1
-     */
-    val unit: MeasurementUnit
-
-
+public data class ConstantSize(public val value: Double, public val unit: MeasurementUnit) : Size {
     // Instance Creation ****************************************************
     /**
      * Constructs a ConstantSize for the given size and unit.
@@ -88,28 +68,8 @@ class ConstantSize : Size {
      * 
      * @since 1.1
      */
-    constructor(value: Int, unit: MeasurementUnit) {
-        this.value = value.toDouble()
-        this.unit = unit
-    }
-
-
-    /**
-     * Constructs a ConstantSize for the given size and unit.
-     * 
-     * @param value     the size value interpreted in the given units
-     * @param unit      the size's unit
-     * 
-     * @since 1.1
-     */
-    constructor(value: Double, unit: MeasurementUnit) {
-        this.value = value
-        this.unit = unit
-    }
-
-
+    public constructor(value: Int, unit: MeasurementUnit) : this(value.toDouble(), unit)
     // Accessors ************************************************************
-
 
     // Accessing the Value **************************************************
     /**
@@ -118,7 +78,7 @@ class ConstantSize : Size {
      * @param component  the associated component
      * @return the size in pixels
      */
-    fun getPixelSize(): Int {
+    public fun getPixelSize(): Int {
         return when (unit) {
             MeasurementUnit.Pixel -> intValue()
             MeasurementUnit.Point -> Sizes.pointAsPixel(intValue())
@@ -129,7 +89,6 @@ class ConstantSize : Size {
             MeasurementUnit.DialogUnitsY -> Sizes.dialogUnitYAsPixel(intValue())
         }
     }
-
 
     // Implementing the Size Interface **************************************
     /**
@@ -157,7 +116,6 @@ class ConstantSize : Size {
         return getPixelSize()
     }
 
-
     /**
      * Describes if this Size can be compressed, if container space gets scarce.
      * Used by the FormLayout size computations in `#compressedSizes`
@@ -174,7 +132,6 @@ class ConstantSize : Size {
     override fun compressible(): Boolean {
         return false
     }
-
 
     // Overriding Object Behavior *******************************************
     /**
@@ -198,7 +155,6 @@ class ConstantSize : Size {
             && this.unit == other.unit
     }
 
-
     /**
      * Returns a hash code value for the object. This method is
      * supported for the benefit of hashtables such as those provided by
@@ -212,7 +168,6 @@ class ConstantSize : Size {
     override fun hashCode(): Int {
         return value.hashCode() + 37 * unit.hashCode()
     }
-
 
     /**
      * Returns a string representation of this size object.
@@ -230,7 +185,6 @@ class ConstantSize : Size {
             value.toString() + unit.abbreviation()
     }
 
-
     /**
      * Returns a parseable string representation of this constant size.
      * 
@@ -245,21 +199,19 @@ class ConstantSize : Size {
             value.toString() + unit.encode()
     }
 
-
     // Helper Code **********************************************************
     private fun intValue(): Int {
         return value.roundToInt()
     }
 
-
     // Helper Class *********************************************************
     /**
      * Enumeration for units as used in instances of [ConstantSize].
      */
-    enum class MeasurementUnit(
+    public enum class MeasurementUnit(
         private val abbreviation: String,
         private val parseAbbreviation: String?,
-        val requiresIntegers: Boolean
+        internal val requiresIntegers: Boolean
     ) {
         Pixel("px", null, true),
         Point("pt", null, true),
@@ -276,10 +228,9 @@ class ConstantSize : Size {
          * 
          * @since 1.2
          */
-        fun encode(): String {
+        public fun encode(): String {
             return parseAbbreviation ?: abbreviation
         }
-
 
         /**
          * Returns the first character of this Unit's name.
@@ -287,11 +238,11 @@ class ConstantSize : Size {
          * 
          * @return the first character of this Unit's name.
          */
-        fun abbreviation(): String {
+        public fun abbreviation(): String {
             return abbreviation
         }
 
-        companion object {
+        public companion object {
             /**
              * Returns a Unit that corresponds to the specified string.
              * 
@@ -300,13 +251,9 @@ class ConstantSize : Size {
              * @return the corresponding Unit
              * @throws IllegalArgumentException if no Unit exists for the string
              */
-            fun valueOf(name: String, horizontal: Boolean): MeasurementUnit {
+            public fun valueOf(name: String, horizontal: Boolean): MeasurementUnit {
                 if (name.isEmpty()) {
-                    val defaultUnit: MeasurementUnit = Sizes.defaultUnit
-                    if (defaultUnit != null) {
-                        return defaultUnit
-                    }
-                    return if (horizontal) DialogUnitsX else DialogUnitsY
+                    return Sizes.defaultUnit
                 } else if (name == "px") {
                     return Pixel
                 } else if (name == "dlu") {
@@ -329,8 +276,7 @@ class ConstantSize : Size {
         }
     }
 
-
-    companion object {
+    public companion object {
         /**
          * Creates and returns a ConstantSize from the given encoded size
          * and unit description.
@@ -343,7 +289,7 @@ class ConstantSize : Size {
          * @throws IllegalArgumentException   if the unit requires integer
          * but the value is not an integer
          */
-        fun valueOf(encodedValueAndUnit: String, horizontal: Boolean): ConstantSize {
+        public fun valueOf(encodedValueAndUnit: String, horizontal: Boolean): ConstantSize {
             val split: Array<String> = splitValueAndUnit(encodedValueAndUnit)
             val encodedValue = split[0]
             val encodedUnit = split[1]
@@ -358,7 +304,6 @@ class ConstantSize : Size {
             return ConstantSize(value, unit)
         }
 
-
         /**
          * Creates and returns a ConstantSize for the specified size value
          * in horizontal dialog units.
@@ -366,10 +311,9 @@ class ConstantSize : Size {
          * @param value    size value in horizontal dialog units
          * @return the associated Size instance
          */
-        fun dluX(value: Int): ConstantSize {
+        public fun dluX(value: Int): ConstantSize {
             return ConstantSize(value, MeasurementUnit.DialogUnitsX)
         }
-
 
         /**
          * Creates and returns a ConstantSize for the specified size value
@@ -378,10 +322,9 @@ class ConstantSize : Size {
          * @param value    size value in vertical dialog units
          * @return the associated Size instance
          */
-        fun dluY(value: Int): ConstantSize {
+        public fun dluY(value: Int): ConstantSize {
             return ConstantSize(value, MeasurementUnit.DialogUnitsY)
         }
-
 
         /**
          * Splits a string that encodes size with unit into the size and unit

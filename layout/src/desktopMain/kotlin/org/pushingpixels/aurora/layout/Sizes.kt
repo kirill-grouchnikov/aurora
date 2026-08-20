@@ -38,35 +38,35 @@ import org.pushingpixels.aurora.layout.util.UnitConverter
  * @see UnitConverter
  * @see DefaultUnitConverter
  */
-object Sizes {
+public object Sizes {
     // Common Constant Sizes ************************************************
-    val ZERO: ConstantSize = pixel(0)
+    public val ZERO: ConstantSize = pixel(0)
 
-    val DLUX1: ConstantSize = dluX(1)
-    val DLUX2: ConstantSize = dluX(2)
-    val DLUX3: ConstantSize = dluX(3)
-    val DLUX4: ConstantSize = dluX(4)
-    val DLUX5: ConstantSize = dluX(5)
-    val DLUX6: ConstantSize = dluX(6)
-    val DLUX7: ConstantSize = dluX(7)
-    val DLUX8: ConstantSize = dluX(8)
-    val DLUX9: ConstantSize = dluX(9)
-    val DLUX11: ConstantSize = dluX(11)
-    val DLUX14: ConstantSize = dluX(14)
-    val DLUX21: ConstantSize = dluX(21)
+    public val DLUX1: ConstantSize = dluX(1)
+    public val DLUX2: ConstantSize = dluX(2)
+    public val DLUX3: ConstantSize = dluX(3)
+    public val DLUX4: ConstantSize = dluX(4)
+    public val DLUX5: ConstantSize = dluX(5)
+    public val DLUX6: ConstantSize = dluX(6)
+    public val DLUX7: ConstantSize = dluX(7)
+    public val DLUX8: ConstantSize = dluX(8)
+    public val DLUX9: ConstantSize = dluX(9)
+    public val DLUX11: ConstantSize = dluX(11)
+    public val DLUX14: ConstantSize = dluX(14)
+    public val DLUX21: ConstantSize = dluX(21)
 
-    val DLUY1: ConstantSize = dluY(1)
-    val DLUY2: ConstantSize = dluY(2)
-    val DLUY3: ConstantSize = dluY(3)
-    val DLUY4: ConstantSize = dluY(4)
-    val DLUY5: ConstantSize = dluY(5)
-    val DLUY6: ConstantSize = dluY(6)
-    val DLUY7: ConstantSize = dluY(7)
-    val DLUY8: ConstantSize = dluY(8)
-    val DLUY9: ConstantSize = dluY(9)
-    val DLUY11: ConstantSize = dluY(11)
-    val DLUY14: ConstantSize = dluY(14)
-    val DLUY21: ConstantSize = dluY(21)
+    public val DLUY1: ConstantSize = dluY(1)
+    public val DLUY2: ConstantSize = dluY(2)
+    public val DLUY3: ConstantSize = dluY(3)
+    public val DLUY4: ConstantSize = dluY(4)
+    public val DLUY5: ConstantSize = dluY(5)
+    public val DLUY6: ConstantSize = dluY(6)
+    public val DLUY7: ConstantSize = dluY(7)
+    public val DLUY8: ConstantSize = dluY(8)
+    public val DLUY9: ConstantSize = dluY(9)
+    public val DLUY11: ConstantSize = dluY(11)
+    public val DLUY14: ConstantSize = dluY(14)
+    public val DLUY21: ConstantSize = dluY(21)
 
     // Static Component Sizes ***********************************************
 
@@ -97,7 +97,7 @@ object Sizes {
      * 
      * @see .setDefaultUnit
      */
-    var defaultUnit: MeasurementUnit = MeasurementUnit.Pixel
+    public var defaultUnit: MeasurementUnit = MeasurementUnit.Pixel
         /**
          * Sets the Unit that shall be used if an encoded ConstantSize
          * provides no unit string.
@@ -126,7 +126,7 @@ object Sizes {
      * @param horizontal            true for horizontal, false for vertical
      * @return a `ConstantSize` for the given value and unit
      */
-    fun constant(
+    public fun constant(
         encodedValueAndUnit: String,
         horizontal: Boolean
     ): ConstantSize {
@@ -142,7 +142,7 @@ object Sizes {
      * @param value    size value in horizontal dialog units
      * @return the associated `ConstantSize`
      */
-    fun dluX(value: Int): ConstantSize {
+    public fun dluX(value: Int): ConstantSize {
         return ConstantSize.dluX(value)
     }
 
@@ -153,7 +153,7 @@ object Sizes {
      * @param value    size value in vertical dialog units
      * @return the associated `ConstantSize`
      */
-    fun dluY(value: Int): ConstantSize {
+    public fun dluY(value: Int): ConstantSize {
         return ConstantSize.dluY(value)
     }
 
@@ -164,7 +164,7 @@ object Sizes {
      * @param value  value in pixel
      * @return the associated `ConstantSize`
      */
-    fun pixel(value: Int): ConstantSize {
+    public fun pixel(value: Int): ConstantSize {
         return ConstantSize(value, MeasurementUnit.Pixel)
     }
 
@@ -179,7 +179,7 @@ object Sizes {
      * @throws NullPointerException if `basis` is `null`,
      * or if both `lowerBound` and `upperBound` are `null`.
      */
-    fun bounded(basis: Size, lowerBound: Size?, upperBound: Size?): Size {
+    public fun bounded(basis: Size, lowerBound: Size?, upperBound: Size?): Size {
         return BoundedSize(basis, lowerBound, upperBound)
     }
 
@@ -191,7 +191,7 @@ object Sizes {
      * @param component    the component that provides the graphics object
      * @return the given Inches as pixels
      */
-    fun inchAsPixel(inch: Double): Int {
+    public fun inchAsPixel(inch: Double): Int {
         return if (inch == 0.0)
             0
         else
@@ -206,7 +206,7 @@ object Sizes {
      * @param component    the component that provides the graphics object
      * @return the given Millimeters as pixels
      */
-    fun millimeterAsPixel(mm: Double): Int {
+    public fun millimeterAsPixel(mm: Double): Int {
         return if (mm == 0.0)
             0
         else
@@ -221,7 +221,7 @@ object Sizes {
      * @param component    the component that provides the graphics object
      * @return the given Centimeters as pixels
      */
-    fun centimeterAsPixel(cm: Double): Int {
+    public fun centimeterAsPixel(cm: Double): Int {
         return if (cm == 0.0)
             0
         else
@@ -236,7 +236,7 @@ object Sizes {
      * @param component    the component that provides the graphics object
      * @return the given Points as pixels
      */
-    fun pointAsPixel(pt: Int): Int {
+    public fun pointAsPixel(pt: Int): Int {
         return if (pt == 0)
             0
         else
@@ -251,7 +251,7 @@ object Sizes {
      * @param component    the component that provides the graphics object
      * @return the given horizontal dialog units as pixels
      */
-    fun dialogUnitXAsPixel(dluX: Int): Int {
+    public fun dialogUnitXAsPixel(dluX: Int): Int {
         return if (dluX == 0)
             0
         else
@@ -266,7 +266,7 @@ object Sizes {
      * @param component    the component that provides the graphics object
      * @return the given vertical dialog units as pixels
      */
-    fun dialogUnitYAsPixel(dluY: Int): Int {
+    public fun dialogUnitYAsPixel(dluY: Int): Int {
         return if (dluY == 0)
             0
         else
@@ -280,7 +280,7 @@ object Sizes {
      * 
      * @return the current `UnitConverter`
      */
-    fun getUnitConverter(): UnitConverter {
+    public fun getUnitConverter(): UnitConverter {
         if (!::unitConverter.isInitialized) {
             unitConverter = DefaultUnitConverter(textMeasurer, textStyle, density)
         }
@@ -293,7 +293,7 @@ object Sizes {
      * 
      * @param newUnitConverter  the unit converter to be set
      */
-    fun setUnitConverter(newUnitConverter: UnitConverter) {
+    public fun setUnitConverter(newUnitConverter: UnitConverter) {
         unitConverter = newUnitConverter
     }
 
@@ -304,7 +304,7 @@ object Sizes {
      * Enumeration that implements the [Size] interface for the component sizes:
      * *min, pref, default*.
      */
-    enum class ComponentSize : Size {
+    public enum class ComponentSize : Size {
         /**
          * Use the maximum of all component minimum sizes as column or row size.
          */
@@ -385,14 +385,14 @@ object Sizes {
             return name.substring(0, 1)
         }
 
-        companion object {
+        public companion object {
             /**
              * Returns an instance of `ComponentSize` that corresponds
              * to the specified string.
              * @param str        the encoded component size
              * @return the corresponding ComponentSize or null if none matches
              */
-            fun parseValueOf(str: String): ComponentSize? {
+            internal fun parseValueOf(str: String): ComponentSize? {
                 if (str == "m" || str == "min") {
                     return Minimum
                 }

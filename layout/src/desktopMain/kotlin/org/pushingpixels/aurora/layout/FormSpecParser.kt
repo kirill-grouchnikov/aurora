@@ -31,7 +31,7 @@ import java.util.regex.Pattern
  * @see ColumnSpec
  * @see RowSpec
  */
-class FormSpecParser private constructor(
+public class FormSpecParser private constructor(
     source: String,
     description: String?,
     private val layoutMap: LayoutMap,
@@ -42,9 +42,7 @@ class FormSpecParser private constructor(
     //checkNotNull(source, "The %S must not be null.", description)
     //checkNotNull(layoutMap, "The LayoutMap must not be null.")
 
-
     // Instance Creation ******************************************************
-
 
     // Parser Implementation **************************************************
     @Composable
@@ -70,7 +68,6 @@ class FormSpecParser private constructor(
         }
         return rowSpecs
     }
-
 
     // Parser Implementation **************************************************
     private fun split(expression: String, offset: Int): MutableList<String> {
@@ -138,7 +135,6 @@ class FormSpecParser private constructor(
         return encodedSpecs
     }
 
-
     private fun addSpec(encodedSpecs: MutableList<String>, expression: String, offset: Int) {
         val trimmedExpression = expression.trim { it <= ' ' }
         val multiplier = multiplier(trimmedExpression, offset)
@@ -151,7 +147,6 @@ class FormSpecParser private constructor(
             encodedSpecs.addAll(subTokenList)
         }
     }
-
 
     private fun multiplier(expression: String, offset: Int): Multiplier? {
         val matcher: Matcher = MULTIPLIER_PREFIX_PATTERN.matcher(expression)
@@ -182,13 +177,11 @@ class FormSpecParser private constructor(
         return Multiplier(number, subexpression, matcher.end())
     }
 
-
     private fun fail(index: Int, description: String?) {
         throw FormLayoutParseException(
             message(source, index, description)
         )
     }
-
 
     private fun fail(index: Int, cause: NumberFormatException?) {
         throw FormLayoutParseException(
@@ -197,16 +190,14 @@ class FormSpecParser private constructor(
         )
     }
 
-
     /**
      * Used by the parser for encoded column and row specifications.
      */
-    class FormLayoutParseException : RuntimeException {
+    public class FormLayoutParseException : RuntimeException {
         internal constructor(message: String?) : super(message)
 
         internal constructor(message: String?, cause: Throwable?) : super(message, cause)
     }
-
 
     // Helper Class ***********************************************************
     /**
@@ -215,17 +206,15 @@ class FormSpecParser private constructor(
      */
     internal class Multiplier(val multiplier: Int, val expression: String, val offset: Int)
 
-
-    companion object {
+    internal companion object {
         // Parser Patterns ******************************************************
         private val MULTIPLIER_PREFIX_PATTERN: Pattern = Pattern.compile("-?\\d+\\s*\\*\\s*\\(")
 
         private val DIGIT_PATTERN: Pattern = Pattern.compile("-?\\d+")
 
-
         // Parser API *************************************************************
         @Composable
-        fun parseColumnSpecs(
+        internal fun parseColumnSpecs(
             encodedColumnSpecs: String,
             layoutMap: LayoutMap
         ): List<ColumnSpec> {
@@ -239,7 +228,7 @@ class FormSpecParser private constructor(
         }
 
         @Composable
-        fun parseRowSpecs(
+        internal fun parseRowSpecs(
             encodedRowSpecs: String,
             layoutMap: LayoutMap
         ): List<RowSpec> {
@@ -252,12 +241,10 @@ class FormSpecParser private constructor(
             return parser.parseRowSpecs()
         }
 
-
         // Exceptions *************************************************************
-        fun fail(source: String?, index: Int, description: String?) {
+        internal fun fail(source: String?, index: Int, description: String?) {
             throw FormLayoutParseException(message(source, index, description))
         }
-
 
         private fun message(source: String?, index: Int, description: String?): String? {
             val buffer = StringBuffer('\n'.code)

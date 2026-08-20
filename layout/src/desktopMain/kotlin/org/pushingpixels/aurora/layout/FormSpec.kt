@@ -39,18 +39,12 @@ import java.util.regex.Pattern
  * @see FormLayout
  * @see CellConstraints
  */
-abstract class FormSpec protected constructor(
-    defaultAlignment: DefaultAlignment,
-    size: Size,
-    resizeWeight: Double,
+public abstract class FormSpec protected constructor(
+    private var defaultAlignment: DefaultAlignment,
+    internal var size: Size,
+    internal var resizeWeight: Double,
 ) {
     // Fields ***************************************************************
-    /**
-     * Holds the default alignment that will be used if a cell does not
-     * override this default.
-     */
-    private var defaultAlignment: DefaultAlignment
-
     private lateinit var textMeasurer: TextMeasurer
 
     /**
@@ -58,18 +52,8 @@ abstract class FormSpec protected constructor(
      * 
      * @see .getDefaultAlignmentExplictlySet
      */
-    var defaultAlignmentExplictlySet: Boolean = false
+    private var defaultAlignmentExplictlySet: Boolean = false
         private set
-
-    /**
-     * Holds the size that describes how to size this column or row.
-     */
-    var size: Size
-
-    /**
-     * Holds the resize weight; is 0 if not used.
-     */
-    var resizeWeight: Double
 
     // Instance Creation ****************************************************
     /**
@@ -111,22 +95,13 @@ abstract class FormSpec protected constructor(
 
     // Public API ***********************************************************
     /**
-     * Returns the default alignment.
-     * 
-     * @return the default alignment
-     */
-    fun getDefaultAlignment(): DefaultAlignment {
-        return defaultAlignment
-    }
-
-    /**
      * Checks and answers whether this spec can grow or not.
      * That is the case if and only if the resize weight is
      * != [NoGrow].
      * 
      * @return true if it can grow, false if it can't grow
      */
-    fun canGrow(): Boolean {
+    internal fun canGrow(): Boolean {
         return this.resizeWeight != NoGrow
     }
 
@@ -137,10 +112,12 @@ abstract class FormSpec protected constructor(
      * which have different conversion factors.
      * @return true for horizontal, false for vertical
      */
-    abstract val isHorizontal: Boolean
+    internal abstract val isHorizontal: Boolean
+
+    public fun getDefaultAlignment(): DefaultAlignment = this.defaultAlignment
 
     // Setting Values *********************************************************
-    fun setDefaultAlignment(defaultAlignment: DefaultAlignment) {
+    public fun setDefaultAlignment(defaultAlignment: DefaultAlignment) {
         this.defaultAlignment = defaultAlignment
         this.defaultAlignmentExplictlySet = true
     }
@@ -224,7 +201,7 @@ abstract class FormSpec protected constructor(
         if ((lower == null || isConstant(lower))
             && (upper == null || isConstant(upper))
         ) {
-            return BoundedSize(basis, lower, upper)
+            return BoundedSize(basis!!, lower, upper)
         }
         throw IllegalArgumentException(
             ("Illegal bounded size '" + token + "'. Must be one of:"
@@ -360,7 +337,7 @@ abstract class FormSpec protected constructor(
      * 
      * @return  a string representation of the form specification.
      */
-    fun toShortString(): String {
+    public fun toShortString(): String {
         val buffer = StringBuffer()
         buffer.append(defaultAlignment.abbreviation())
 
@@ -393,7 +370,7 @@ abstract class FormSpec protected constructor(
      * @see .toShortString
      * @since 1.2
      */
-    fun encode(): String {
+    public fun encode(): String {
         val buffer = StringBuffer()
         val alignmentDefault: DefaultAlignment = (if (this.isHorizontal)
             ColumnSpec.Default
@@ -436,7 +413,7 @@ abstract class FormSpec protected constructor(
      * @param defaultMeasure  the measure used to determine the default size
      * @return the maximum size in pixels
      */
-    fun maximumSize(
+    public fun maximumSize(
         components: List<IntrinsicMeasurable>,
         minMeasure: Measure,
         prefMeasure: Measure,
@@ -453,7 +430,7 @@ abstract class FormSpec protected constructor(
     /**
      * Enumeration for the column and row default alignment types.
      */
-    enum class DefaultAlignment {
+    public enum class DefaultAlignment {
         /**
          * By default put components in the left.
          */
@@ -496,11 +473,11 @@ abstract class FormSpec protected constructor(
          * 
          * @return the name's first character.
          */
-        fun abbreviation(): Char {
+        public fun abbreviation(): Char {
             return name[0]
         }
 
-        companion object {
+        public companion object {
             /**
              * Returns a DefaultAlignment that corresponds to the specified
              * string, null if no such alignment exists.
@@ -549,17 +526,17 @@ abstract class FormSpec protected constructor(
         }
     }
 
-    companion object {
+    public companion object {
         // Resizing Weights *****************************************************
         /**
          * Gives a column or row a fixed size.
          */
-        const val NoGrow: Double = 0.0
+        public const val NoGrow: Double = 0.0
 
         /**
          * The default resize weight.
          */
-        const val DefaultGrow: Double = 1.0
+        public const val DefaultGrow: Double = 1.0
 
         // Parser Patterns ******************************************************
         private val TOKEN_SEPARATOR_PATTERN: Pattern = Pattern.compile(":")

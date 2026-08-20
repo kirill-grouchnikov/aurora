@@ -57,7 +57,7 @@ import androidx.compose.ui.unit.Density
  * @see Size
  * @see Sizes
  */
-class DefaultUnitConverter(
+public class DefaultUnitConverter(
     private val textMeasurer: TextMeasurer,
     private val textStyle: TextStyle,
     private val density: Density)
@@ -183,7 +183,7 @@ class DefaultUnitConverter(
      * and resets the fallback for the default dialog font.
      * This is invoked after a change of the look&amp;feel.
      */
-    fun clearCache() {
+    public fun clearCache() {
         cachedGlobalDialogBaseUnits = null
     }
 

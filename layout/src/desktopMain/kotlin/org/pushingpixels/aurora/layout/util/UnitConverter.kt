@@ -30,14 +30,14 @@ package org.pushingpixels.aurora.layout.util
  * @see AbstractUnitConverter
  * @see DefaultUnitConverter
  */
-interface UnitConverter {
+public interface UnitConverter {
     /**
      * Converts Inches and returns pixels using the specified resolution.
      * 
      * @param inch         the Inches
      * @return the given Inches as pixels
      */
-    fun inchAsPixel(inch: Double): Int
+    public fun inchAsPixel(inch: Double): Int
 
     /**
      * Converts Millimeters and returns pixels using the resolution of the
@@ -46,7 +46,7 @@ interface UnitConverter {
      * @param mm         Millimeters
      * @return the given Millimeters as pixels
      */
-    fun millimeterAsPixel(mm: Double): Int
+    public fun millimeterAsPixel(mm: Double): Int
 
     /**
      * Converts Centimeters and returns pixels using the resolution of the
@@ -55,7 +55,7 @@ interface UnitConverter {
      * @param cm         Centimeters
      * @return the given Centimeters as pixels
      */
-    fun centimeterAsPixel(cm: Double): Int
+    public fun centimeterAsPixel(cm: Double): Int
 
     /**
      * Converts DTP Points and returns pixels using the resolution of the
@@ -64,7 +64,7 @@ interface UnitConverter {
      * @param pt          DTP Points
      * @return the given Points as pixels
      */
-    fun pointAsPixel(pt: Int): Int
+    public fun pointAsPixel(pt: Int): Int
 
     /**
      * Converts horizontal dialog units and returns pixels.
@@ -73,7 +73,7 @@ interface UnitConverter {
      * @param dluX       the horizontal dialog units
      * @return the given horizontal dialog units as pixels
      */
-    fun dialogUnitXAsPixel(dluX: Int): Int
+    public fun dialogUnitXAsPixel(dluX: Int): Int
 
     /**
      * Converts vertical dialog units and returns pixels.
@@ -82,5 +82,5 @@ interface UnitConverter {
      * @param dluY       the vertical dialog units
      * @return the given vertical dialog units as pixels
      */
-    fun dialogUnitYAsPixel(dluY: Int): Int
+    public fun dialogUnitYAsPixel(dluY: Int): Int
 }

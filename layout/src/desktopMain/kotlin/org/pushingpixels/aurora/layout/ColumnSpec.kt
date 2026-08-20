@@ -46,7 +46,7 @@ import androidx.compose.ui.text.TextMeasurer
  * 
  * @see FormSpecs
  */
-class ColumnSpec : FormSpec {
+public class ColumnSpec : FormSpec {
     // Instance Creation ****************************************************
     /**
      * Constructs a ColumnSpec for the given default alignment,
@@ -63,7 +63,7 @@ class ColumnSpec : FormSpec {
      * @throws IllegalArgumentException if the size is invalid or
      * the `resizeWeight` is negative
      */
-    constructor(
+    public constructor(
         defaultAlignment: DefaultAlignment,
         size: Size,
         resizeWeight: Double
@@ -76,7 +76,7 @@ class ColumnSpec : FormSpec {
      * @param size             constant size, component size, or bounded size
      * @throws IllegalArgumentException if the size is invalid
      */
-    constructor(size: Size) : super(Default, size, NoGrow)
+    public constructor(size: Size) : super(Default, size, NoGrow)
 
     /**
      * Constructs a ColumnSpec from the specified encoded description.
@@ -103,27 +103,27 @@ class ColumnSpec : FormSpec {
          */
         get() = true
 
-    companion object {
+    public companion object {
         // Horizontal Orientations *********************************************
         /**
          * By default put components in the left.
          */
-        val Left: DefaultAlignment = DefaultAlignment.LeftAlign
+        public val Left: DefaultAlignment = DefaultAlignment.LeftAlign
 
         /**
          * By default put the components in the center.
          */
-        val Center: DefaultAlignment = DefaultAlignment.CenterAlign
+        public val Center: DefaultAlignment = DefaultAlignment.CenterAlign
 
         /**
          * By default put components in the right.
          */
-        val Right: DefaultAlignment = DefaultAlignment.RightAlign
+        public val Right: DefaultAlignment = DefaultAlignment.RightAlign
 
         /**
          * By default fill the component into the column.
          */
-        val Fill: DefaultAlignment = DefaultAlignment.FillAlign
+        public val Fill: DefaultAlignment = DefaultAlignment.FillAlign
 
         /**
          * A special alignment value for table column alignment specifications.
@@ -132,12 +132,12 @@ class ColumnSpec : FormSpec {
          * 
          * @since 1.8
          */
-        val None: DefaultAlignment = DefaultAlignment.NoAlign
+        public val None: DefaultAlignment = DefaultAlignment.NoAlign
 
         /**
          * Unless overridden the default alignment for a column is FILL.
          */
-        val Default: DefaultAlignment = Fill
+        public val Default: DefaultAlignment = Fill
 
         // Cache ******************************************************************
         /**
@@ -157,7 +157,7 @@ class ColumnSpec : FormSpec {
          * 
          * @since 1.2
          */
-        fun createGap(gapWidth: ConstantSize): ColumnSpec {
+        public fun createGap(gapWidth: ConstantSize): ColumnSpec {
             return ColumnSpec(Default, gapWidth, NoGrow)
         }
 
@@ -178,9 +178,8 @@ class ColumnSpec : FormSpec {
          * @see .decodeSpecs
          * @since 1.2
          */
-        @JvmOverloads
         @Composable
-        fun decode(encodedColumnSpec: String, layoutMap: LayoutMap = LayoutMap.getRoot()): ColumnSpec {
+        public fun decode(encodedColumnSpec: String, layoutMap: LayoutMap = LayoutMap.getRoot()): ColumnSpec {
             require(encodedColumnSpec.isNotBlank()) {
                 "The encoded column specification must not be null, empty or whitespace."
             }
@@ -200,7 +199,7 @@ class ColumnSpec : FormSpec {
          * @return a ColumnSpec for the given encoded column spec
          */
         @Composable
-        fun decodeExpanded(expandedTrimmedLowerCaseSpec: String): ColumnSpec {
+        public fun decodeExpanded(expandedTrimmedLowerCaseSpec: String): ColumnSpec {
             var spec: ColumnSpec? = CACHE[expandedTrimmedLowerCaseSpec]
             if (spec == null) {
                 spec = ColumnSpec(expandedTrimmedLowerCaseSpec, LocalTextMeasurer.current)
@@ -223,9 +222,8 @@ class ColumnSpec : FormSpec {
          * @see .decode
          * @since 1.2
          */
-        @JvmOverloads
         @Composable
-        fun decodeSpecs(encodedColumnSpecs: String, layoutMap: LayoutMap = LayoutMap.getRoot()): List<ColumnSpec> {
+        public fun decodeSpecs(encodedColumnSpecs: String, layoutMap: LayoutMap = LayoutMap.getRoot()): List<ColumnSpec> {
             return FormSpecParser.parseColumnSpecs(encodedColumnSpecs, layoutMap)
         }
     }

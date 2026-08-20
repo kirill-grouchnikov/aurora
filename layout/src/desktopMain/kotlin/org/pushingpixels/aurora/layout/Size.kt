@@ -37,7 +37,7 @@ import androidx.compose.ui.layout.IntrinsicMeasurable
  * @see Sizes
  * @see ConstantSize
  */
-interface Size {
+public interface Size {
     /**
      * Computes and returns this Size's maximum pixel size applied to
      * the given list of components using the specified measures.
@@ -53,7 +53,7 @@ interface Size {
      * @param defaultMeasure  the measure that determines the default sizes
      * @return the maximum size in pixels for the given list of components
      */
-    fun maximumSize(
+    public fun maximumSize(
         components: List<IntrinsicMeasurable>,
         minMeasure: Measure,
         prefMeasure: Measure,
@@ -74,7 +74,7 @@ interface Size {
      * 
      * @since 1.1
      */
-    fun compressible(): Boolean
+    public fun compressible(): Boolean
 
     /**
      * Returns a String representation of this Size object that can
@@ -84,5 +84,5 @@ interface Size {
      * 
      * @return a parseable String representation of this object.
      */
-    fun encode(): String
+    public fun encode(): String
 }

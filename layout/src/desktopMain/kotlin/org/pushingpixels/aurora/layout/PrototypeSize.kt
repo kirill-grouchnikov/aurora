@@ -36,7 +36,7 @@ import androidx.compose.ui.text.TextMeasurer
  *
  * @since 1.2
  */
-class PrototypeSize
+public class PrototypeSize
 /**
  * Constructs a PrototypeSize for the given String.
  * 
@@ -46,14 +46,14 @@ class PrototypeSize
  * 
  * @since 1.2
  */(
-    val textMeasurer: TextMeasurer,
+    private val textMeasurer: TextMeasurer,
     /**
      * Returns this size's prototype string.
      * 
      * @return the prototype string
      */
     // Fields ***************************************************************
-    val prototype: String
+    private val prototype: String
 ) : Size {
     // Instance Creation ****************************************************
 

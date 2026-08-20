@@ -8,6 +8,7 @@ plugins {
 }
 
 kotlin {
+    explicitApi()
     jvm("desktop")
     sourceSets {
         named("desktopMain") {

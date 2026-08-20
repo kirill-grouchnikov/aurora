@@ -30,7 +30,7 @@ import kotlin.math.roundToInt
  * @see Size
  * @see Sizes
  */
-abstract class AbstractUnitConverter : UnitConverter {
+public abstract class AbstractUnitConverter : UnitConverter {
     // Unit Converter Implementation *********************************************
     /**
      * Converts Inches and returns pixels using the specified resolution.
@@ -162,7 +162,7 @@ abstract class AbstractUnitConverter : UnitConverter {
             return Companion.defaultScreenResolution
         }
 
-    companion object {
+    protected companion object {
         private const val DTP_RESOLUTION = 72
 
         // Convenience Methods ***************************************************

@@ -28,12 +28,12 @@ import androidx.compose.ui.layout.Placeable
  * Used to abstract from horizontal and vertical dimensions as well as
  * minimum and preferred sizes.
  */
-interface Measure {
+public interface Measure {
     /**
      * Computes and returns the size of the given [IntrinsicMeasurable].
      *
      * @param measurable  the measurable to measure
      * @return the measurable's size
      */
-    fun sizeOf(measurable: IntrinsicMeasurable): Int
+    public fun sizeOf(measurable: IntrinsicMeasurable): Int
 }
