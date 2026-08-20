@@ -122,7 +122,7 @@ abstract class FormSpec protected constructor(
     /**
      * Checks and answers whether this spec can grow or not.
      * That is the case if and only if the resize weight is
-     * != `NO_GROW`.
+     * != [NoGrow].
      * 
      * @return true if it can grow, false if it can't grow
      */
@@ -351,14 +351,10 @@ abstract class FormSpec protected constructor(
      * a colon (<tt>":"</tt>), first the alignment, second the size,
      * and third the resize spec.
      *
-     *
-     * 
      * This method does *not* return an encoded version
      * of this object; the contrary is the case. Many instances
      * will return a string that cannot be parsed.
      *
-     *
-     * 
      * **Note:** The string representation may change at any time.
      * For parsing use [.encode] instead.
      * 

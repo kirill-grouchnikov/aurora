@@ -53,11 +53,6 @@ object Sizes {
     val DLUX9: ConstantSize = dluX(9)
     val DLUX11: ConstantSize = dluX(11)
     val DLUX14: ConstantSize = dluX(14)
-
-    /**
-     * 21 horizontal dialog units.
-     * @since 1.2
-     */
     val DLUX21: ConstantSize = dluX(21)
 
     val DLUY1: ConstantSize = dluY(1)
@@ -71,11 +66,6 @@ object Sizes {
     val DLUY9: ConstantSize = dluY(9)
     val DLUY11: ConstantSize = dluY(11)
     val DLUY14: ConstantSize = dluY(14)
-
-    /**
-     * 21 vertical dialog units.
-     * @since 1.2
-     */
     val DLUY21: ConstantSize = dluY(21)
 
     // Static Component Sizes ***********************************************
