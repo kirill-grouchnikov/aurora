@@ -324,8 +324,8 @@ class CellConstraints @JvmOverloads constructor(
         prefHeightMeasure: Measure
     ): IntRect {
         with (measureScope) {
-            val colSpec: ColumnSpec? = if (gridWidth == 1) colSpecs.get(gridX-1) else null
-            val rowSpec: RowSpec? = if (gridHeight == 1) rowSpecs.get(gridY-1) else null
+            val colSpec: ColumnSpec? = if (gridWidth == 1) colSpecs[gridX-1] else null
+            val rowSpec: RowSpec? = if (gridHeight == 1) rowSpecs[gridY-1] else null
             val concreteHAlign: Alignment? = concreteAlignment(hAlign, colSpec)
             val concreteVAlign: Alignment? = concreteAlignment(vAlign, rowSpec)
             val cellX = cellBounds.left + padding.calculateLeftPadding(layoutDirection).toPx()
@@ -407,7 +407,7 @@ class CellConstraints @JvmOverloads constructor(
          * @return the name's first character.
          */
         fun abbreviation(): Char {
-            return name.get(0)
+            return name[0]
         }
 
         internal val isHorizontal: Boolean
@@ -430,26 +430,35 @@ class CellConstraints @JvmOverloads constructor(
 
             fun valueOf(nameOrAbbreviation: String): Alignment {
                 val str = nameOrAbbreviation.lowercase()
-                if (str == "d" || str == "default") {
-                    return DEFAULT
-                } else if (str == "f" || str == "fill") {
-                    return FILL
-                } else if (str == "c" || str == "center") {
-                    return CENTER
-                } else if (str == "l" || str == "left") {
-                    return LEFT
-                } else if (str == "r" || str == "right") {
-                    return RIGHT
-                } else if (str == "t" || str == "top") {
-                    return TOP
-                } else if (str == "b" || str == "bottom") {
-                    return BOTTOM
-                } else {
-                    throw IllegalArgumentException(
-                        ("Invalid alignment " + nameOrAbbreviation
-                            + ". Must be one of: left, center, right, top, bottom, "
-                            + "fill, default, l, c, r, t, b, f, d.")
-                    )
+                when (str) {
+                    "d", "default" -> {
+                        return DEFAULT
+                    }
+                    "f", "fill" -> {
+                        return FILL
+                    }
+                    "c", "center" -> {
+                        return CENTER
+                    }
+                    "l", "left" -> {
+                        return LEFT
+                    }
+                    "r", "right" -> {
+                        return RIGHT
+                    }
+                    "t", "top" -> {
+                        return TOP
+                    }
+                    "b", "bottom" -> {
+                        return BOTTOM
+                    }
+                    else -> {
+                        throw IllegalArgumentException(
+                            ("Invalid alignment " + nameOrAbbreviation
+                                + ". Must be one of: left, center, right, top, bottom, "
+                                + "fill, default, l, c, r, t, b, f, d.")
+                        )
+                    }
                 }
             }
 
@@ -600,16 +609,22 @@ class CellConstraints @JvmOverloads constructor(
             if (defaultAlignment == FormSpec.FILL_ALIGN) {
                 return FILL
             }
-            if (defaultAlignment == ColumnSpec.LEFT) {
-                return LEFT
-            } else if (defaultAlignment == FormSpec.CENTER_ALIGN) {
-                return CENTER
-            } else if (defaultAlignment == ColumnSpec.RIGHT) {
-                return RIGHT
-            } else if (defaultAlignment == RowSpec.TOP) {
-                return TOP
-            } else {
-                return BOTTOM
+            return when (defaultAlignment) {
+                ColumnSpec.LEFT -> {
+                    LEFT
+                }
+                FormSpec.CENTER_ALIGN -> {
+                    CENTER
+                }
+                ColumnSpec.RIGHT -> {
+                    RIGHT
+                }
+                RowSpec.TOP -> {
+                    TOP
+                }
+                else -> {
+                    BOTTOM
+                }
             }
         }
 
@@ -632,14 +647,14 @@ class CellConstraints @JvmOverloads constructor(
             minMeasure: Measure,
             prefMeasure: Measure
         ): Int {
-            if (formSpec == null) {
-                return prefMeasure.sizeOf(component)
+            return if (formSpec == null) {
+                prefMeasure.sizeOf(component)
             } else if (formSpec.size === Sizes.MINIMUM) {
-                return minMeasure.sizeOf(component)
+                minMeasure.sizeOf(component)
             } else if (formSpec.size === Sizes.PREFERRED) {
-                return prefMeasure.sizeOf(component)
+                prefMeasure.sizeOf(component)
             } else {  // default mode
-                return Math.min(cellSize, prefMeasure.sizeOf(component))
+                cellSize.coerceAtMost(prefMeasure.sizeOf(component))
             }
         }
 
@@ -659,12 +674,16 @@ class CellConstraints @JvmOverloads constructor(
             cellSize: Int,
             componentSize: Int
         ): Int {
-            if (alignment == RIGHT || alignment == BOTTOM) {
-                return cellOrigin + cellSize - componentSize
-            } else if (alignment == CENTER) {
-                return cellOrigin + (cellSize - componentSize) / 2
-            } else {  // left, top, fill
-                return cellOrigin
+            return when (alignment) {
+                RIGHT, BOTTOM -> {
+                    cellOrigin + cellSize - componentSize
+                }
+                CENTER -> {
+                    cellOrigin + (cellSize - componentSize) / 2
+                }
+                else -> {  // left, top, fill
+                    cellOrigin
+                }
             }
         }
 

@@ -16,12 +16,9 @@
 package org.pushingpixels.aurora.layout
 
 import androidx.compose.ui.layout.IntrinsicMeasurable
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.Placeable
 import org.pushingpixels.aurora.layout.ConstantSize.MeasurementUnit
 import org.pushingpixels.aurora.layout.util.DefaultUnitConverter
 import org.pushingpixels.aurora.layout.util.UnitConverter
-import java.io.Serializable
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
@@ -340,7 +337,7 @@ object Sizes {
      * the [Size] interface for the component sizes:
      * *min, pref, default*.
      */
-    class ComponentSize internal constructor(@field:Transient private val name: String) : Size, Serializable {
+    class ComponentSize internal constructor(@field:Transient private val name: String) : Size {
         /**
          * Computes the maximum size for the given list of components, using
          * this form spec and the specified measure.

@@ -118,42 +118,25 @@ class LayoutMap @JvmOverloads constructor(
      * Holds the raw associations from variable names to expressions.
      * The expression may contain variables that are not expanded.
      */
-    private val columnMap: MutableMap<String?, String?>
+    private val columnMap: MutableMap<String?, String?> = HashMap()
 
     /**
      * Holds the cached associations from variable names to expressions.
      * The expression are fully expanded and contain no variables.
      */
-    private val columnMapCache: MutableMap<String?, String?>
+    private val columnMapCache: MutableMap<String?, String?> = HashMap()
 
     /**
      * Holds the raw associations from variable names to expressions.
      * The expression may contain variables that are not expanded.
      */
-    private val rowMap: MutableMap<String?, String?>
+    private val rowMap: MutableMap<String?, String?> = HashMap()
 
     /**
      * Holds the cached associations from variable names to expressions.
      * The expression are fully expanded and contain no variables.
      */
-    private val rowMapCache: MutableMap<String?, String?>
-
-
-    /**
-     * Constructs a LayoutMap with the given optional parent.
-     * 
-     * @param parent   the parent LayoutMap, may be `null`
-     */
-    // Instance Creation ******************************************************
-    /**
-     * Constructs a LayoutMap that has the root LayoutMap as parent.
-     */
-    init {
-        columnMap = HashMap<String?, String?>()
-        rowMap = HashMap<String?, String?>()
-        columnMapCache = HashMap<String?, String?>()
-        rowMapCache = HashMap<String?, String?>()
-    }
+    private val rowMapCache: MutableMap<String?, String?> = HashMap()
 
 
     // Column Mapping *********************************************************
@@ -192,11 +175,11 @@ class LayoutMap @JvmOverloads constructor(
      */
     fun columnGet(key: String): String? {
         val resolvedKey: String = resolveColumnKey(key)
-        val cachedValue = columnMapCache.get(resolvedKey)
+        val cachedValue = columnMapCache[resolvedKey]
         if (cachedValue != null) {
             return cachedValue
         }
-        var value = columnMap.get(resolvedKey)
+        var value = columnMap[resolvedKey]
         if (value == null && parent != null) {
             value = parent.columnGet(resolvedKey)
         }
@@ -204,7 +187,7 @@ class LayoutMap @JvmOverloads constructor(
             return null
         }
         val expandedString = expand(value, true)
-        columnMapCache.put(resolvedKey, expandedString)
+        columnMapCache[resolvedKey] = expandedString
         return expandedString
     }
 
@@ -313,11 +296,11 @@ class LayoutMap @JvmOverloads constructor(
      */
     fun rowGet(key: String): String? {
         val resolvedKey: String = resolveRowKey(key)
-        val cachedValue = rowMapCache.get(resolvedKey)
+        val cachedValue = rowMapCache[resolvedKey]
         if (cachedValue != null) {
             return cachedValue
         }
-        var value = rowMap.get(resolvedKey)
+        var value = rowMap[resolvedKey]
         if (value == null && parent != null) {
             value = parent.rowGet(resolvedKey)
         }
@@ -325,7 +308,7 @@ class LayoutMap @JvmOverloads constructor(
             return null
         }
         val expandedString = expand(value, false)
-        rowMapCache.put(resolvedKey, expandedString)
+        rowMapCache[resolvedKey] = expandedString
         return expandedString
     }
 
@@ -407,18 +390,18 @@ class LayoutMap @JvmOverloads constructor(
     override fun toString(): String {
         val buffer = StringBuffer(super.toString())
         buffer.append("\n  Column associations:")
-        for (entry in columnMap.entries) {
+        for ((key, value) in columnMap) {
             buffer.append("\n    ")
-            buffer.append(entry.key)
+            buffer.append(key)
             buffer.append("->")
-            buffer.append(entry.value)
+            buffer.append(value)
         }
         buffer.append("\n  Row associations:")
-        for (entry in rowMap.entries) {
+        for ((key, value) in rowMap) {
             buffer.append("\n    ")
-            buffer.append(entry.key)
+            buffer.append(key)
             buffer.append("->")
-            buffer.append(entry.value)
+            buffer.append(value)
         }
         return buffer.toString()
     }
@@ -458,9 +441,9 @@ class LayoutMap @JvmOverloads constructor(
     private fun columnPut(key: String, aliases: Array<String>, value: ColumnSpec) {
         ensureLowerCase(key)
         columnPut(key, value)
-        for (aliase in aliases) {
-            ensureLowerCase(aliase)
-            COLUMN_ALIASES.put(aliase, key)
+        for (alias in aliases) {
+            ensureLowerCase(alias)
+            COLUMN_ALIASES[alias] = key
         }
     }
 
@@ -468,9 +451,9 @@ class LayoutMap @JvmOverloads constructor(
     private fun rowPut(key: String, aliases: Array<String>, value: RowSpec) {
         ensureLowerCase(key)
         rowPut(key, value)
-        for (aliase in aliases) {
-            ensureLowerCase(aliase)
-            ROW_ALIASES.put(aliase, key)
+        for (alias in aliases) {
+            ensureLowerCase(alias)
+            ROW_ALIASES[alias] = key
         }
     }
 
@@ -486,15 +469,14 @@ class LayoutMap @JvmOverloads constructor(
          * Maps column aliases to their default name, for example
          * `"rgap"` -> `"related-gap"`.
          */
-        private val COLUMN_ALIASES: MutableMap<String?, String?> = HashMap<String?, String?>()
+        private val COLUMN_ALIASES: MutableMap<String?, String?> = HashMap()
 
 
         /**
          * Maps row aliases to their default name, for example
          * `"rgap"` -> `"related-gap"`.
          */
-        private val ROW_ALIASES
-            : MutableMap<String?, String?> = HashMap<String?, String?>()
+        private val ROW_ALIASES: MutableMap<String?, String?> = HashMap()
 
         private lateinit var root: LayoutMap
         /**
@@ -533,7 +515,7 @@ class LayoutMap @JvmOverloads constructor(
             if (length <= start) {
                 FormSpecParser.fail(expression, start, "Missing variable name after variable char '$'.")
             }
-            if (expression.get(start + 1) == '{') {
+            if (expression[start + 1] == '{') {
                 val end = expression.indexOf('}', start + 1)
                 if (end == -1) {
                     FormSpecParser.fail(expression, start, "Missing closing brace '}' for variable.")
@@ -542,7 +524,7 @@ class LayoutMap @JvmOverloads constructor(
             }
             var end = start + 1
             while (end < length
-                && Character.isUnicodeIdentifierPart(expression.get(end))
+                && Character.isUnicodeIdentifierPart(expression[end])
             ) {
                 end++
             }
@@ -551,7 +533,7 @@ class LayoutMap @JvmOverloads constructor(
 
 
         private fun stripBraces(variableName: String): String {
-            return if (variableName.get(0) == '{')
+            return if (variableName[0] == '{')
                 variableName.substring(1, variableName.length - 1)
             else
                 variableName
@@ -562,16 +544,16 @@ class LayoutMap @JvmOverloads constructor(
         private fun resolveColumnKey(key: String): String {
             //checkNotNull(key, "The column key must not be null.")
             val lowercaseKey = key.lowercase()
-            val defaultKey: String? = COLUMN_ALIASES.get(lowercaseKey)
-            return if (defaultKey == null) lowercaseKey else defaultKey
+            val defaultKey: String? = COLUMN_ALIASES[lowercaseKey]
+            return defaultKey ?: lowercaseKey
         }
 
 
         private fun resolveRowKey(key: String): String {
             //checkNotNull(key, "The row key must not be null.")
             val lowercaseKey = key.lowercase()
-            val defaultKey: String? = ROW_ALIASES.get(lowercaseKey)
-            return if (defaultKey == null) lowercaseKey else defaultKey
+            val defaultKey: String? = ROW_ALIASES[lowercaseKey]
+            return defaultKey ?: lowercaseKey
         }
 
         @Composable
@@ -679,7 +661,7 @@ class LayoutMap @JvmOverloads constructor(
 
         private fun ensureLowerCase(str: String) {
             val lowerCase = str.lowercase()
-            require(lowerCase == str) { "The string \"" + str + "\" should be lower case." }
+            require(lowerCase == str) { "The string \"$str\" should be lower case." }
         }
     }
 }

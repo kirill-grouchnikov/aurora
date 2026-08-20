@@ -34,44 +34,26 @@ import java.util.regex.Pattern
 class FormSpecParser private constructor(
     source: String,
     description: String?,
-    layoutMap: LayoutMap,
+    private val layoutMap: LayoutMap,
     horizontal: Boolean
 ) {
     // Instance Fields ********************************************************
-    private val source: String
-    private val layoutMap: LayoutMap
+    private val source: String = this.layoutMap.expand(source, horizontal)
+    //checkNotNull(source, "The %S must not be null.", description)
+    //checkNotNull(layoutMap, "The LayoutMap must not be null.")
 
 
     // Instance Creation ******************************************************
-    /**
-     * Constructs a parser for the given encoded column/row specification,
-     * the given LayoutMap, and orientation.
-     * 
-     * @param source         the raw encoded column or row specification
-     * as provided by the user
-     * @param description    describes the source, e.g. "column specification"
-     * @param layoutMap      maps layout variable names to ColumnSpec and
-     * RowSpec objects
-     * @param horizontal    `true` for columns, `false` for rows
-     * 
-     * @throws NullPointerException if `source` or `layoutMap` is `null`
-     */
-    init {
-        //checkNotNull(source, "The %S must not be null.", description)
-        //checkNotNull(layoutMap, "The LayoutMap must not be null.")
-        this.layoutMap = layoutMap
-        this.source = this.layoutMap.expand(source, horizontal)
-    }
 
 
     // Parser Implementation **************************************************
     @Composable
     private fun parseColumnSpecs(): List<ColumnSpec> {
-        val encodedColumnSpecs: MutableList<*> = split(source, 0)
+        val encodedColumnSpecs: List<String> = split(source, 0)
         val columnCount = encodedColumnSpecs.size
         val columnSpecs = arrayListOf<ColumnSpec>()
         for (i in 0..<columnCount) {
-            val encodedSpec = encodedColumnSpecs.get(i) as String
+            val encodedSpec = encodedColumnSpecs[i]
             columnSpecs.add(ColumnSpec.decodeExpanded(encodedSpec))
         }
         return columnSpecs
@@ -79,11 +61,11 @@ class FormSpecParser private constructor(
 
     @Composable
     private fun parseRowSpecs(): List<RowSpec> {
-        val encodedRowSpecs: MutableList<*> = split(source, 0)
+        val encodedRowSpecs: List<String> = split(source, 0)
         val rowCount = encodedRowSpecs.size
         val rowSpecs = arrayListOf<RowSpec>()
         for (i in 0..<rowCount) {
-            val encodedSpec = encodedRowSpecs.get(i) as String
+            val encodedSpec = encodedRowSpecs[i]
             rowSpecs.add(RowSpec.decodeExpanded(encodedSpec))
         }
         return rowSpecs
@@ -101,7 +83,7 @@ class FormSpecParser private constructor(
         var c: Char
         var lead = true
         for (i in 0..<length) {
-            c = expression.get(i)
+            c = expression[i]
             if (lead && Character.isWhitespace(c)) {
                 specStart++
                 continue

@@ -153,7 +153,7 @@ class ColumnSpec : FormSpec {
         /**
          * Maps encoded column specifications to ColumnSpec instances.
          */
-        private val CACHE: MutableMap<String?, ColumnSpec?> = HashMap<String?, ColumnSpec?>()
+        private val CACHE: MutableMap<String?, ColumnSpec?> = HashMap()
 
 
         // Factory Methods ********************************************************
@@ -229,10 +229,10 @@ class ColumnSpec : FormSpec {
          */
         @Composable
         fun decodeExpanded(expandedTrimmedLowerCaseSpec: String): ColumnSpec {
-            var spec: ColumnSpec? = CACHE.get(expandedTrimmedLowerCaseSpec)
+            var spec: ColumnSpec? = CACHE[expandedTrimmedLowerCaseSpec]
             if (spec == null) {
                 spec = ColumnSpec(expandedTrimmedLowerCaseSpec, rememberTextMeasurer())
-                CACHE.put(expandedTrimmedLowerCaseSpec, spec)
+                CACHE[expandedTrimmedLowerCaseSpec] = spec
             }
             return spec
         }

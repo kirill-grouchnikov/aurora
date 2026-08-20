@@ -16,8 +16,6 @@
 package org.pushingpixels.aurora.layout
 
 import androidx.compose.ui.layout.IntrinsicMeasurable
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.Placeable
 import kotlin.math.max
 import kotlin.math.min
 
@@ -176,25 +174,24 @@ class BoundedSize(basis: Size?, lowerBound: Size?, upperBound: Size?) : Size {
     /**
      * Indicates whether some other BoundedSize is "equal to" this one.
      * 
-     * @param object   the object with which to compare
+     * @param other   the object with which to compare
      * @return `true` if this object is the same as the object
      * argument, `false` otherwise.
      * @see Object.hashCode
      * @see java.util.Hashtable
      */
-    override fun equals(`object`: Any?): Boolean {
-        if (this === `object`) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
-        if (`object` !is BoundedSize) {
+        if (other !is BoundedSize) {
             return false
         }
-        val size = `object`
-        return basis == size.basis
-            && (lowerBound == null && size.lowerBound == null
-            || lowerBound != null && lowerBound == size.lowerBound)
-            && (upperBound == null && size.upperBound == null
-            || upperBound != null && upperBound == size.upperBound)
+        return basis == other.basis
+            && (lowerBound == null && other.lowerBound == null
+            || lowerBound != null && lowerBound == other.lowerBound)
+            && (upperBound == null && other.upperBound == null
+            || upperBound != null && upperBound == other.upperBound)
     }
 
     /**

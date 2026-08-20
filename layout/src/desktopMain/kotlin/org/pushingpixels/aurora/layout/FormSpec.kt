@@ -16,8 +16,6 @@
 package org.pushingpixels.aurora.layout
 
 import androidx.compose.ui.layout.IntrinsicMeasurable
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.text.TextMeasurer
 import java.util.regex.Pattern
 
@@ -186,7 +184,7 @@ abstract class FormSpec protected constructor(
      */
     private fun parseAndInitValues(encodedDescription: String) {
         val token: Array<String> = TOKEN_SEPARATOR_PATTERN.split(encodedDescription)
-        require(token.size > 0) { "The form spec must not be empty." }
+        require(token.isNotEmpty()) { "The form spec must not be empty." }
         var nextIndex = 0
         var next = token[nextIndex++]
 
@@ -361,14 +359,18 @@ abstract class FormSpec protected constructor(
         buffer.append(":")
         buffer.append(size.toString())
         buffer.append(':')
-        if (resizeWeight == NO_GROW) {
-            buffer.append("noGrow")
-        } else if (resizeWeight == DEFAULT_GROW) {
-            buffer.append("grow")
-        } else {
-            buffer.append("grow(")
-            buffer.append(resizeWeight)
-            buffer.append(')')
+        when (resizeWeight) {
+            NO_GROW -> {
+                buffer.append("noGrow")
+            }
+            DEFAULT_GROW -> {
+                buffer.append("grow")
+            }
+            else -> {
+                buffer.append("grow(")
+                buffer.append(resizeWeight)
+                buffer.append(')')
+            }
         }
         return buffer.toString()
     }
@@ -400,14 +402,18 @@ abstract class FormSpec protected constructor(
         buffer.append(":")
         buffer.append(size.toString())
         buffer.append(':')
-        if (resizeWeight == NO_GROW) {
-            buffer.append("n")
-        } else if (resizeWeight == DEFAULT_GROW) {
-            buffer.append("g")
-        } else {
-            buffer.append("g(")
-            buffer.append(resizeWeight)
-            buffer.append(')')
+        when (resizeWeight) {
+            NO_GROW -> {
+                buffer.append("n")
+            }
+            DEFAULT_GROW -> {
+                buffer.append("g")
+            }
+            else -> {
+                buffer.append("g(")
+                buffer.append(resizeWeight)
+                buffer.append(')')
+            }
         }
         return buffer.toString()
     }
@@ -436,16 +442,20 @@ abstract class FormSpec protected constructor(
             buffer.append(":")
         }
         buffer.append(size.encode())
-        if (resizeWeight == NO_GROW) {
-            // Omit the resize part
-        } else if (resizeWeight == DEFAULT_GROW) {
-            buffer.append(':')
-            buffer.append("g")
-        } else {
-            buffer.append(':')
-            buffer.append("g(")
-            buffer.append(resizeWeight)
-            buffer.append(')')
+        when (resizeWeight) {
+            NO_GROW -> {
+                // Omit the resize part
+            }
+            DEFAULT_GROW -> {
+                buffer.append(':')
+                buffer.append("g")
+            }
+            else -> {
+                buffer.append(':')
+                buffer.append("g(")
+                buffer.append(resizeWeight)
+                buffer.append(')')
+            }
         }
         return buffer.toString()
     }
@@ -503,7 +513,7 @@ abstract class FormSpec protected constructor(
          * @return the name's first character.
          */
         fun abbreviation(): Char {
-            return name.get(0)
+            return name[0]
         }
 
 
@@ -528,22 +538,31 @@ abstract class FormSpec protected constructor(
                 } else if (str == "c" || str == "center") {
                     return CENTER_ALIGN
                 } else if (isHorizontal) {
-                    if (str == "r" || str == "right") {
-                        return RIGHT_ALIGN
-                    } else if (str == "l" || str == "left") {
-                        return LEFT_ALIGN
-                    } else if (str == "none") {
-                        return NO_ALIGN
-                    } else {
-                        return null
+                    return when (str) {
+                        "r", "right" -> {
+                            RIGHT_ALIGN
+                        }
+                        "l", "left" -> {
+                            LEFT_ALIGN
+                        }
+                        "none" -> {
+                            NO_ALIGN
+                        }
+                        else -> {
+                            null
+                        }
                     }
                 } else {
-                    if (str == "t" || str == "top") {
-                        return TOP_ALIGN
-                    } else if (str == "b" || str == "bottom") {
-                        return BOTTOM_ALIGN
-                    } else {
-                        return null
+                    return when (str) {
+                        "t", "top" -> {
+                            TOP_ALIGN
+                        }
+                        "b", "bottom" -> {
+                            BOTTOM_ALIGN
+                        }
+                        else -> {
+                            null
+                        }
                     }
                 }
             }

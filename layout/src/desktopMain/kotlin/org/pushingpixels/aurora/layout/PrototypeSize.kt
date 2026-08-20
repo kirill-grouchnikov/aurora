@@ -16,8 +16,6 @@
 package org.pushingpixels.aurora.layout
 
 import androidx.compose.ui.layout.IntrinsicMeasurable
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.text.TextMeasurer
 
 // This is a modified version of the original source code by Karsten Lentzsch
@@ -119,7 +117,7 @@ class PrototypeSize
      * @return a String that can be parsed by the Forms parser
      */
     override fun encode(): String {
-        return "'" + prototype + "'"
+        return "'$prototype'"
     }
 
 
@@ -127,22 +125,21 @@ class PrototypeSize
     /**
      * Indicates whether some other ConstantSize is "equal to" this one.
      * 
-     * @param o   the Object with which to compare
+     * @param other   the Object with which to compare
      * @return `true` if this object is the same as the obj
      * argument; `false` otherwise.
      * 
      * @see Object.hashCode
      * @see java.util.Hashtable
      */
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
-        if (o !is PrototypeSize) {
+        if (other !is PrototypeSize) {
             return false
         }
-        val size = o
-        return prototype == size.prototype
+        return prototype == other.prototype
     }
 
 

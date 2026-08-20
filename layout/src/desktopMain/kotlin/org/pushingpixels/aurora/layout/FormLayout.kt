@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
@@ -363,7 +364,7 @@ private class FormLayoutChildDataNode(var cellConstraints: CellConstraints) :
 @Composable
 internal fun rememberFormLayoutMeasurePolicy(colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>): MeasurePolicy =
-    remember() {
+    remember {
         FormLayoutMeasurePolicy(colSpecs, rowSpecs)
     }
 
@@ -385,7 +386,7 @@ private class FormLayoutMeasurePolicy(
     /**
      * Measures a component by computing its minimum width.
      */
-    private class MinimumWidthMeasure() : Measure {
+    private class MinimumWidthMeasure : Measure {
         override fun sizeOf(measurable: IntrinsicMeasurable): Int {
             return measurable.minIntrinsicWidth(Constraints.Infinity)
         }
@@ -395,7 +396,7 @@ private class FormLayoutMeasurePolicy(
     /**
      * Measures a component by computing its minimum height.
      */
-    private class MinimumHeightMeasure() : Measure {
+    private class MinimumHeightMeasure : Measure {
         override fun sizeOf(measurable: IntrinsicMeasurable): Int {
             return measurable.minIntrinsicHeight(Constraints.Infinity)
         }
@@ -405,7 +406,7 @@ private class FormLayoutMeasurePolicy(
     /**
      * Measures a component by computing its preferred width.
      */
-    private class PreferredWidthMeasure() : Measure {
+    private class PreferredWidthMeasure : Measure {
         override fun sizeOf(measurable: IntrinsicMeasurable): Int {
             return measurable.maxIntrinsicWidth(Constraints.Infinity)
         }
@@ -415,7 +416,7 @@ private class FormLayoutMeasurePolicy(
     /**
      * Measures a component by computing its preferred height.
      */
-    private class PreferredHeightMeasure() : Measure {
+    private class PreferredHeightMeasure : Measure {
         override fun sizeOf(measurable: IntrinsicMeasurable): Int {
             return measurable.maxIntrinsicHeight(Constraints.Infinity)
         }
@@ -507,7 +508,7 @@ private class FormLayoutMeasurePolicy(
      */
     private fun groupedSizes(groups: Array<IntArray>?, rawSizes: IntArray): IntArray {
         // Return the compressed sizes if there are no groups.
-        if (groups == null || groups.size == 0) {
+        if (groups.isNullOrEmpty()) {
             return rawSizes
         }
 
@@ -598,7 +599,7 @@ private class FormLayoutMeasurePolicy(
         val table = IntArray(size)
         var maximumFixedSpan = Int.MAX_VALUE // Could be 1
         for (i in size - 1 downTo 0) {
-            val spec = formSpecs.get(i) // ArrayList access
+            val spec = formSpecs[i] // ArrayList access
             if (spec.canGrow()) {
                 maximumFixedSpan = 0
             }
@@ -634,7 +635,7 @@ private class FormLayoutMeasurePolicy(
         val size = formSpecs.size
         val result = IntArray(size)
         for (i in 0..<size) {
-            formSpec = formSpecs.get(i)
+            formSpec = formSpecs[i]
             result[i] = formSpec.maximumSize(
                 componentLists[i],
                 minMeasure,
@@ -690,13 +691,10 @@ private class FormLayoutMeasurePolicy(
 //      System.out.println("Max compression space  =" + maxCompressionSpace);
 //      System.out.println("Compression factor     =" + compressionFactor);
         for (i in 0..<count) {
-            val formSpec = formSpecs.get(i)
+            val formSpec = formSpecs[i]
             sizes[i] = prefSizes[i]
             if (formSpec.size.compressible()) {
-                sizes[i] -= Math.round(
-                    (prefSizes[i] - minSizes[i])
-                        * compressionFactor
-                ).toInt()
+                sizes[i] -= ((prefSizes[i] - minSizes[i]) * compressionFactor).roundToInt()
             }
         }
         return sizes
@@ -729,7 +727,7 @@ private class FormLayoutMeasurePolicy(
         val count = formSpecs.size
         var totalWeight = 0.0
         for (i in 0..<count) {
-            val formSpec = formSpecs.get(i) as FormSpec
+            val formSpec = formSpecs[i]
             totalWeight += formSpec.resizeWeight
         }
 
@@ -743,7 +741,7 @@ private class FormLayoutMeasurePolicy(
         var restSpace = totalFreeSpace
         var roundedRestSpace = totalFreeSpace.toInt()
         for (i in 0..<count) {
-            val formSpec = formSpecs.get(i) as FormSpec
+            val formSpec = formSpecs[i]
             val weight = formSpec.resizeWeight
             if (weight == FormSpec.NO_GROW) {
                 sizes[i] = inputSizes[i]
@@ -751,7 +749,7 @@ private class FormLayoutMeasurePolicy(
                 val roundingCorrection = restSpace - roundedRestSpace
                 val extraSpace = totalFreeSpace * weight / totalWeight
                 val correctedExtraSpace = extraSpace - roundingCorrection
-                val roundedExtraSpace = Math.round(correctedExtraSpace).toInt()
+                val roundedExtraSpace = correctedExtraSpace.roundToInt()
                 sizes[i] = inputSizes[i] + roundedExtraSpace
                 restSpace -= extraSpace
                 roundedRestSpace -= roundedExtraSpace
@@ -850,7 +848,7 @@ private class FormLayoutMeasurePolicy(
                 )
 
                 val placeable = element.measure(Constraints.fixed(rect.width, rect.height))
-                result.put(placeable, IntOffset(rect.left, rect.top))
+                result[placeable] = IntOffset(rect.left, rect.top)
             }
         }
 

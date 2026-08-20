@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.layout.util
 
 import java.awt.Toolkit
+import kotlin.math.roundToInt
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
@@ -138,7 +139,7 @@ abstract class AbstractUnitConverter : UnitConverter {
      * @return the given dialog base units as pixels
      */
     protected fun dialogUnitXAsPixel(dluX: Int, dialogBaseUnitsX: Double): Int {
-        return Math.round(dluX * dialogBaseUnitsX / 4).toInt()
+        return (dluX * dialogBaseUnitsX / 4).roundToInt()
     }
 
 
@@ -150,7 +151,7 @@ abstract class AbstractUnitConverter : UnitConverter {
      * @return the given dialog base units as pixels
      */
     protected fun dialogUnitYAsPixel(dluY: Int, dialogBaseUnitsY: Double): Int {
-        return Math.round(dluY * dialogBaseUnitsY / 8).toInt()
+        return (dluY * dialogBaseUnitsY / 8).roundToInt()
     }
 
 
@@ -175,7 +176,7 @@ abstract class AbstractUnitConverter : UnitConverter {
         get() {
             if (Companion.defaultScreenResolution == -1) {
                 Companion.defaultScreenResolution =
-                    Toolkit.getDefaultToolkit().getScreenResolution()
+                    Toolkit.getDefaultToolkit().screenResolution
             }
             return Companion.defaultScreenResolution
         }
@@ -189,12 +190,12 @@ abstract class AbstractUnitConverter : UnitConverter {
         /**
          * Converts Inches and returns pixels using the specified resolution.
          * 
-         * @param in    the Inches
+         * @param inch    the Inches
          * @param dpi   the resolution
          * @return the given Inches as pixels
          */
-        protected fun inchAsPixel(`in`: Double, dpi: Int): Int {
-            return Math.round(dpi * `in`).toInt()
+        protected fun inchAsPixel(inch: Double, dpi: Int): Int {
+            return (dpi * inch).roundToInt()
         }
 
 
@@ -206,7 +207,7 @@ abstract class AbstractUnitConverter : UnitConverter {
          * @return the given Millimeters as pixels
          */
         protected fun millimeterAsPixel(mm: Double, dpi: Int): Int {
-            return Math.round(dpi * mm * 10 / 254).toInt()
+            return (dpi * mm * 10 / 254).roundToInt()
         }
 
 
@@ -218,7 +219,7 @@ abstract class AbstractUnitConverter : UnitConverter {
          * @return the given Centimeters as pixels
          */
         protected fun centimeterAsPixel(cm: Double, dpi: Int): Int {
-            return Math.round(dpi * cm * 100 / 254).toInt()
+            return (dpi * cm * 100 / 254).roundToInt()
         }
 
 
@@ -230,7 +231,7 @@ abstract class AbstractUnitConverter : UnitConverter {
          * @return the given Points as pixels
          */
         protected fun pointAsPixel(pt: Double, dpi: Int): Int {
-            return Math.round(dpi * pt / DTP_RESOLUTION).toInt()
+            return (dpi * pt / DTP_RESOLUTION).roundToInt()
         }
 
 

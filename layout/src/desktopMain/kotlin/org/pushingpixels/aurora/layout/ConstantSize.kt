@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.layout
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.Placeable
+import kotlin.math.roundToInt
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
@@ -120,22 +121,31 @@ class ConstantSize : Size {
      * @return the size in pixels
      */
     fun getPixelSize(): Int {
-        if (unit == PIXEL) {
-            return intValue()
-        } else if (unit == POINT) {
-            return Sizes.pointAsPixel(intValue())
-        } else if (unit == INCH) {
-            return Sizes.inchAsPixel(value)
-        } else if (unit == MILLIMETER) {
-            return Sizes.millimeterAsPixel(value)
-        } else if (unit == CENTIMETER) {
-            return Sizes.centimeterAsPixel(value)
-        } else if (unit == DIALOG_UNITS_X) {
-            return Sizes.dialogUnitXAsPixel(intValue())
-        } else if (unit == DIALOG_UNITS_Y) {
-            return Sizes.dialogUnitYAsPixel(intValue())
-        } else {
-            throw IllegalStateException("Invalid unit " + unit)
+        when (unit) {
+            PIXEL -> {
+                return intValue()
+            }
+            POINT -> {
+                return Sizes.pointAsPixel(intValue())
+            }
+            INCH -> {
+                return Sizes.inchAsPixel(value)
+            }
+            MILLIMETER -> {
+                return Sizes.millimeterAsPixel(value)
+            }
+            CENTIMETER -> {
+                return Sizes.centimeterAsPixel(value)
+            }
+            DIALOG_UNITS_X -> {
+                return Sizes.dialogUnitXAsPixel(intValue())
+            }
+            DIALOG_UNITS_Y -> {
+                return Sizes.dialogUnitYAsPixel(intValue())
+            }
+            else -> {
+                throw IllegalStateException("Invalid unit " + unit)
+            }
         }
     }
 
@@ -258,7 +268,7 @@ class ConstantSize : Size {
 
     // Helper Code **********************************************************
     private fun intValue(): Int {
-        return Math.round(value).toInt()
+        return value.roundToInt()
     }
 
 
@@ -295,10 +305,7 @@ class ConstantSize : Size {
          * @since 1.2
          */
         fun encode(): String {
-            return if (parseAbbreviation != null)
-                parseAbbreviation
-            else
-                abbreviation
+            return parseAbbreviation ?: abbreviation
         }
 
 
@@ -330,7 +337,7 @@ class ConstantSize : Size {
              * @throws IllegalArgumentException if no Unit exists for the string
              */
             fun valueOf(name: String, horizontal: Boolean): MeasurementUnit {
-                if (name.length == 0) {
+                if (name.isEmpty()) {
                     val defaultUnit: MeasurementUnit = Sizes.defaultUnit
                     if (defaultUnit != null) {
                         return defaultUnit
@@ -452,7 +459,7 @@ class ConstantSize : Size {
             val len = encodedValueAndUnit.length
             var firstLetterIndex = len
             while (firstLetterIndex > 0
-                && Character.isLetter(encodedValueAndUnit.get(firstLetterIndex - 1))
+                && Character.isLetter(encodedValueAndUnit[firstLetterIndex - 1])
             ) {
                 firstLetterIndex--
             }

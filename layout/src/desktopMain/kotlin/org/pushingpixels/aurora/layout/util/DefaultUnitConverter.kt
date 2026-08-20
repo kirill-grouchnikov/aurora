@@ -182,7 +182,7 @@ class DefaultUnitConverter  // Instance Creation and Access ********************
      */
     private class DialogBaseUnits(val x: Double, val y: Double) {
         override fun toString(): String {
-            return "DBU(x=" + x + "; y=" + y + ")"
+            return "DBU(x=$x; y=$y)"
         }
     }
 }

@@ -140,7 +140,7 @@ class RowSpec : FormSpec {
         /**
          * Maps encoded row specifications to RowSpec instances.
          */
-        private val CACHE: MutableMap<String?, RowSpec?> = HashMap<String?, RowSpec?>()
+        private val CACHE: MutableMap<String?, RowSpec?> = HashMap()
 
 
         // Factory Methods ********************************************************
@@ -193,18 +193,13 @@ class RowSpec : FormSpec {
         @JvmOverloads
         @Composable
         fun decode(encodedRowSpec: String, layoutMap: LayoutMap = LayoutMap.getRoot()): RowSpec {
-            require (!encodedRowSpec.isBlank()) {
+            require (encodedRowSpec.isNotBlank()) {
                 "The encoded row specification must not be null, empty or whitespace."
             }
-//            checkNotNull(
-//                layoutMap,
-//                "The LayoutMap must not be null."
-//            )
             val trimmed = encodedRowSpec.trim { it <= ' ' }
             val lower = trimmed.lowercase()
             return decodeExpanded(layoutMap.expand(lower, false))
         }
-
 
         /**
          * Decodes an expanded, trimmed, lower case row spec.
@@ -217,10 +212,10 @@ class RowSpec : FormSpec {
          */
         @Composable
         fun decodeExpanded(expandedTrimmedLowerCaseSpec: String): RowSpec {
-            var spec: RowSpec? = CACHE.get(expandedTrimmedLowerCaseSpec)
+            var spec: RowSpec? = CACHE[expandedTrimmedLowerCaseSpec]
             if (spec == null) {
                 spec = RowSpec(expandedTrimmedLowerCaseSpec, rememberTextMeasurer())
-                CACHE.put(expandedTrimmedLowerCaseSpec, spec)
+                CACHE[expandedTrimmedLowerCaseSpec] = spec
             }
             return spec
         }
