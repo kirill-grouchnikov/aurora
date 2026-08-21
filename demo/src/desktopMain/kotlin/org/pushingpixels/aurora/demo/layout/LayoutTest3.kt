@@ -99,7 +99,8 @@ fun main() = auroraApplication {
         FormLayout(
             modifier = Modifier.fillMaxSize().padding(Paddings.Dlu9),
             encodedColumnSpecs = "right:pref, 4dlu, pref:grow, 8dlu, right:pref, 4dlu, pref:grow",
-            encodedRowSpecs = "p, 3dlu, p, 3dlu, p, 10dlu, p, 3dlu, p, 3dlu, p, 14dlu, p"
+            encodedRowSpecs = "p, 3dlu, p, 3dlu, p, 10dlu, p, 3dlu, p, 3dlu, p, 14dlu, p",
+            colGroupIndices = arrayOf(intArrayOf(1, 5), intArrayOf(3, 7))
         ) {
             Separator(modifier = Modifier.xyw(col = 1, row = 1, colSpan = 7), label = "General")
 

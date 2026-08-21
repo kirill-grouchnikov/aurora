@@ -143,6 +143,8 @@ import kotlin.math.roundToInt
 public fun FormLayout(modifier: Modifier,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>,
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
     content: @Composable FormLayoutScope.() -> Unit) {
 
     val textMeasurer = rememberTextMeasurer()
@@ -158,7 +160,7 @@ public fun FormLayout(modifier: Modifier,
     ) {
         Layout(
             content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
-            measurePolicy = FormLayoutMeasurePolicy(colSpecs, rowSpecs),
+            measurePolicy = FormLayoutMeasurePolicy(colSpecs, rowSpecs, colGroupIndices, rowGroupIndices),
             modifier = modifier)
     }
 }
@@ -167,6 +169,8 @@ public fun FormLayout(modifier: Modifier,
 public fun FormLayout(modifier: Modifier,
     encodedColumnSpecs: String,
     layoutMap: LayoutMap,
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
     content: @Composable FormLayoutScope.() -> Unit) {
 
     val textMeasurer = rememberTextMeasurer()
@@ -185,7 +189,9 @@ public fun FormLayout(modifier: Modifier,
             content = { FormLayoutScopeImpl(colSpecs.size, 0).content() },
             measurePolicy = FormLayoutMeasurePolicy(
                 colSpecs = colSpecs,
-                rowSpecs = listOf()
+                rowSpecs = listOf(),
+                colGroupIndices = colGroupIndices,
+                rowGroupIndices = rowGroupIndices
             ),
             modifier = modifier
         )
@@ -196,6 +202,8 @@ public fun FormLayout(modifier: Modifier,
 public fun FormLayout(modifier: Modifier,
     encodedColumnSpecs: String,
     encodedRowSpecs: String,
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
     content: @Composable FormLayoutScope.() -> Unit) {
 
     val textMeasurer = rememberTextMeasurer()
@@ -216,7 +224,9 @@ public fun FormLayout(modifier: Modifier,
             content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
             measurePolicy = FormLayoutMeasurePolicy(
                 colSpecs = colSpecs,
-                rowSpecs = rowSpecs
+                rowSpecs = rowSpecs,
+                colGroupIndices = colGroupIndices,
+                rowGroupIndices = rowGroupIndices
             ),
             modifier = modifier
         )
@@ -396,21 +406,21 @@ private class FormLayoutChildDataNode(var cellConstraints: CellConstraints) :
 
 @Composable
 internal fun rememberFormLayoutMeasurePolicy(colSpecs: List<ColumnSpec>,
-    rowSpecs: List<RowSpec>): MeasurePolicy =
+    rowSpecs: List<RowSpec>, colGroupIndices: Array<IntArray>, rowGroupIndices: Array<IntArray>): MeasurePolicy =
     remember {
-        FormLayoutMeasurePolicy(colSpecs, rowSpecs)
+        FormLayoutMeasurePolicy(colSpecs, rowSpecs, colGroupIndices, rowGroupIndices)
     }
 
 private class FormLayoutMeasurePolicy(
     private val colSpecs: List<ColumnSpec>,
-    private val rowSpecs: List<RowSpec>
+    private val rowSpecs: List<RowSpec>,
+    private val colGroupIndices: Array<IntArray>,
+    private val rowGroupIndices: Array<IntArray>,
 ) : MeasurePolicy {
     private var colComponents: Array<MutableList<IntrinsicMeasurable>> = Array(colSpecs.size) { arrayListOf() }
     private var rowComponents: Array<MutableList<IntrinsicMeasurable>> = Array(rowSpecs.size) { arrayListOf() }
     private var colComponents2: Array<MutableList<Measurable>> = Array(colSpecs.size) { arrayListOf() }
     private var rowComponents2: Array<MutableList<Measurable>> = Array(rowSpecs.size) { arrayListOf() }
-    private var colGroupIndices: Array<IntArray> = arrayOf()
-    private var rowGroupIndices: Array<IntArray> = arrayOf()
     private val minimumWidthMeasure: Measure = MinimumWidthMeasure()
     private val minimumHeightMeasure: Measure = MinimumHeightMeasure()
     private val preferredWidthMeasure: Measure = PreferredWidthMeasure()
