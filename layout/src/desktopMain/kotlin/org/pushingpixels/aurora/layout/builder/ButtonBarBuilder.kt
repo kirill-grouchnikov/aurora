@@ -10,11 +10,10 @@ public object ButtonBar {
     public fun builder(): Builder = Builder()
 
     public class Builder {
-        private val colSpecs: MutableList<ColumnSpec> = arrayListOf(
-            ColumnSpec(ColumnSpec.Default, Sizes.Zero, FormSpec.DefaultGrow))
-        private val buttonLambdas: MutableList<Pair<ButtonLambdaInfo, CellConstraints>> = arrayListOf()
+        private val colSpecs: MutableList<ColumnSpec> = arrayListOf()
+        private val componentLambdas: MutableList<Pair<ButtonLambdaInfo, CellConstraints>> = arrayListOf()
 
-        private var currentCellConstraints: CellConstraints = CellConstraints(gridX = 2, gridY = 1)
+        private var currentCellConstraints: CellConstraints = CellConstraints(gridX = 1, gridY = 1)
 
         private fun nextColumn(columns: Int = 1) {
             val currGridX = currentCellConstraints.gridX
@@ -23,7 +22,7 @@ public object ButtonBar {
 
         public fun addButton(button: @Composable FormLayoutScope.(modifier: Modifier) -> Unit): Builder {
             colSpecs.add(FormSpecs.ButtonColSpec)
-            buttonLambdas.add(Pair(button, currentCellConstraints))
+            componentLambdas.add(Pair(button, currentCellConstraints))
             nextColumn()
             return this
         }
@@ -40,6 +39,32 @@ public object ButtonBar {
             return this
         }
 
+        public fun addGlue(): Builder {
+            colSpecs.add(FormSpecs.GlueColSpec)
+            nextColumn()
+            return this
+        }
+
+        public fun addStrut(width: ConstantSize): Builder {
+            colSpecs.add(ColumnSpec.createGap(width))
+            nextColumn()
+            return this
+        }
+
+        public fun addFixed(component: @Composable FormLayoutScope.(modifier: Modifier) -> Unit): Builder {
+            colSpecs.add(FormSpecs.PrefColSpec)
+            componentLambdas.add(Pair(component, currentCellConstraints))
+            nextColumn()
+            return this
+        }
+
+        public fun addGrowing(component: @Composable FormLayoutScope.(modifier: Modifier) -> Unit): Builder {
+            colSpecs.add(FormSpecs.GrowingButtonColSpec)
+            componentLambdas.add(Pair(component, currentCellConstraints))
+            nextColumn()
+            return this
+        }
+
         @Composable
         public fun build(modifier: Modifier) {
             FormLayout(
@@ -47,8 +72,8 @@ public object ButtonBar {
                 colSpecs = colSpecs,
                 rowSpecs = arrayListOf(RowSpec.decode("center:pref")),
                 content = {
-                    for ((buttonLambda, buttonExtraModifier) in buttonLambdas) {
-                        buttonLambda.invoke(this, Modifier.xy(col = buttonExtraModifier.gridX, row = 1))
+                    for ((componentLambda, buttonExtraModifier) in componentLambdas) {
+                        componentLambda.invoke(this, Modifier.xy(col = buttonExtraModifier.gridX, row = 1))
                     }
                 }
             )

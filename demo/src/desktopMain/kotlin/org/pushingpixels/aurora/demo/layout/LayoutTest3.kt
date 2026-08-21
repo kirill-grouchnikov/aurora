@@ -201,32 +201,31 @@ private fun AuroraLocaleScope.ButtonBar(
     resourceBundle: ResourceBundle,
 ) {
     ButtonBar.builder()
-        .addButton({ extraModifier -> AuroraLocaleSwitcher(extraModifier, resourceBundle) })
+        .addGlue()
+        .addFixed { extraModifier -> AuroraLocaleSwitcher(extraModifier, resourceBundle) }
         .addUnrelatedGap()
-        .addButton(
-            { extraModifier ->
-                CommandButtonProjection(
-                    contentModel = Command(
-                        text = resourceBundle.getString("FormLayout.turnOn"),
-                        action = { println("Turn on") }
-                    ),
-                    presentationModel = CommandButtonPresentationModel(
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
-                    )
-                ).project(extraModifier)
-            })
+        .addButton { extraModifier ->
+            CommandButtonProjection(
+                contentModel = Command(
+                    text = resourceBundle.getString("FormLayout.turnOn"),
+                    action = { println("Turn on") }
+                ),
+                presentationModel = CommandButtonPresentationModel(
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                )
+            ).project(extraModifier)
+        }
         .addRelatedGap()
-        .addButton(
-            { extraModifier ->
-                CommandButtonProjection(
-                    contentModel = Command(
-                        text = resourceBundle.getString("FormLayout.turnOff"),
-                        action = { println("Turn off") }
-                    ),
-                    presentationModel = CommandButtonPresentationModel(
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
-                    )
-                ).project(extraModifier)
-            })
+        .addButton { extraModifier ->
+            CommandButtonProjection(
+                contentModel = Command(
+                    text = resourceBundle.getString("FormLayout.turnOff"),
+                    action = { println("Turn off") }
+                ),
+                presentationModel = CommandButtonPresentationModel(
+                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                )
+            ).project(extraModifier)
+        }
         .build(Modifier.then(modifier))
 }
