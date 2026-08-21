@@ -4,14 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.pushingpixels.aurora.layout.*
 
-private typealias ButtonLambdaInfo = @Composable FormLayoutScope.(modifier: Modifier) -> Unit
+public typealias ButtonBarComponentLambda = @Composable FormLayoutScope.(modifier: Modifier) -> Unit
 
 public object ButtonBar {
     public fun builder(): Builder = Builder()
 
     public class Builder {
         private val colSpecs: MutableList<ColumnSpec> = arrayListOf()
-        private val componentLambdas: MutableList<Pair<ButtonLambdaInfo, CellConstraints>> = arrayListOf()
+        private val componentLambdas: MutableList<Pair<ButtonBarComponentLambda, CellConstraints>> = arrayListOf()
 
         private var currentCellConstraints: CellConstraints = CellConstraints(gridX = 1, gridY = 1)
 
@@ -20,7 +20,7 @@ public object ButtonBar {
             currentCellConstraints = CellConstraints(gridX = currGridX + columns)
         }
 
-        public fun addButton(button: @Composable FormLayoutScope.(modifier: Modifier) -> Unit): Builder {
+        public fun addButton(button: ButtonBarComponentLambda): Builder {
             colSpecs.add(FormSpecs.ButtonColSpec)
             componentLambdas.add(Pair(button, currentCellConstraints))
             nextColumn()
@@ -51,14 +51,14 @@ public object ButtonBar {
             return this
         }
 
-        public fun addFixed(component: @Composable FormLayoutScope.(modifier: Modifier) -> Unit): Builder {
+        public fun addFixed(component: ButtonBarComponentLambda): Builder {
             colSpecs.add(FormSpecs.PrefColSpec)
             componentLambdas.add(Pair(component, currentCellConstraints))
             nextColumn()
             return this
         }
 
-        public fun addGrowing(component: @Composable FormLayoutScope.(modifier: Modifier) -> Unit): Builder {
+        public fun addGrowing(component: ButtonBarComponentLambda): Builder {
             colSpecs.add(FormSpecs.GrowingButtonColSpec)
             componentLambdas.add(Pair(component, currentCellConstraints))
             nextColumn()

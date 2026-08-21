@@ -202,9 +202,9 @@ private fun AuroraLocaleScope.ButtonBar(
 ) {
     ButtonBar.builder()
         .addGlue()
-        .addFixed { extraModifier -> AuroraLocaleSwitcher(extraModifier, resourceBundle) }
+        .addFixed { builderModifier -> AuroraLocaleSwitcher(builderModifier, resourceBundle) }
         .addUnrelatedGap()
-        .addButton { extraModifier ->
+        .addButton { builderModifier ->
             CommandButtonProjection(
                 contentModel = Command(
                     text = resourceBundle.getString("FormLayout.turnOn"),
@@ -213,10 +213,10 @@ private fun AuroraLocaleScope.ButtonBar(
                 presentationModel = CommandButtonPresentationModel(
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                 )
-            ).project(extraModifier)
+            ).project(builderModifier)
         }
         .addRelatedGap()
-        .addButton { extraModifier ->
+        .addButton { builderModifier ->
             CommandButtonProjection(
                 contentModel = Command(
                     text = resourceBundle.getString("FormLayout.turnOff"),
@@ -225,7 +225,7 @@ private fun AuroraLocaleScope.ButtonBar(
                 presentationModel = CommandButtonPresentationModel(
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                 )
-            ).project(extraModifier)
+            ).project(builderModifier)
         }
         .build(Modifier.then(modifier))
 }
