@@ -72,7 +72,7 @@ public object FormSpecs {
      *
      * @see .GLUE_ROWSPEC
      */
-    public val GlueColSpec: ColumnSpec by lazy {ColumnSpec(ColumnSpec.Default, Sizes.ZERO, FormSpec.DefaultGrow) }
+    public val GlueColSpec: ColumnSpec by lazy {ColumnSpec(ColumnSpec.Default, Sizes.Zero, FormSpec.DefaultGrow) }
 
     // Layout Style Dependent Column Specs ***********************************
     /**
@@ -189,7 +189,7 @@ public object FormSpecs {
      *
      * @see .GLUE_COLSPEC
      */
-    public val GlueRowSpec: RowSpec by lazy {RowSpec(RowSpec.Default, Sizes.ZERO, FormSpec.DefaultGrow) }
+    public val GlueRowSpec: RowSpec by lazy {RowSpec(RowSpec.Default, Sizes.Zero, FormSpec.DefaultGrow) }
 
     // Layout Style Dependent Row Specs *************************************
     /**

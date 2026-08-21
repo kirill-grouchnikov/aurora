@@ -35,7 +35,7 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * **Examples:**<br></br>
  * <pre>
  * Paddings.Dlu2
- * Paddings.createPaddingValues(Sizes.DLUY4, Sizes.DLUX2, Sizes.DLUY4, Sizes.DLUX2);
+ * Paddings.createPaddingValues(Sizes.DluY4, Sizes.DluX2, Sizes.DluY4, Sizes.DluX2);
  * Paddings.createPaddingValues("4dlu, 2dlu, 4dlu, 2dlu");
 </pre> * 
  * 
@@ -55,60 +55,60 @@ public object Paddings {
      * A prepared and reusable PaddingValues with 2dlu on all sides.
      */
     public val Dlu2: PaddingValues = createPaddingValues(
-        Sizes.DLUY2,
-        Sizes.DLUX2,
-        Sizes.DLUY2,
-        Sizes.DLUX2
+        top = Sizes.DluY2,
+        start = Sizes.DluX2,
+        bottom = Sizes.DluY2,
+        end = Sizes.DluX2
     )
 
     /**
      * A prepared and reusable PaddingValues with 4dlu on all sides.
      */
     public val Dlu4: PaddingValues = createPaddingValues(
-        Sizes.DLUY4,
-        Sizes.DLUX4,
-        Sizes.DLUY4,
-        Sizes.DLUX4
+        top = Sizes.DluY4,
+        start = Sizes.DluX4,
+        bottom = Sizes.DluY4,
+        end = Sizes.DluX4
     )
 
     /**
      * A prepared and reusable PaddingValues with 7dlu on all sides.
      */
     public val Dlu7: PaddingValues = createPaddingValues(
-        Sizes.DLUY7,
-        Sizes.DLUX7,
-        Sizes.DLUY7,
-        Sizes.DLUX7
+        top = Sizes.DluY7,
+        start = Sizes.DluX7,
+        bottom = Sizes.DluY7,
+        end = Sizes.DluX7
     )
 
     /**
      * A prepared and reusable PaddingValues with 9dlu on all sides.
      */
     public val Dlu9: PaddingValues = createPaddingValues(
-        Sizes.DLUY9,
-        Sizes.DLUX9,
-        Sizes.DLUY9,
-        Sizes.DLUX9
+        top = Sizes.DluY9,
+        start = Sizes.DluX9,
+        bottom = Sizes.DluY9,
+        end = Sizes.DluX9
     )
 
     /**
      * A prepared Border with PaddingValues on all sides.
      */
     public val Dlu14: PaddingValues = createPaddingValues(
-        Sizes.DLUY14,
-        Sizes.DLUX14,
-        Sizes.DLUY14,
-        Sizes.DLUX14
+        top = Sizes.DluY14,
+        start = Sizes.DluX14,
+        bottom = Sizes.DluY14,
+        end = Sizes.DluX14
     )
 
     /**
      * A prepared Border with PaddingValues on all sides.
      */
     public val Dlu21: PaddingValues = createPaddingValues(
-        Sizes.DLUY21,
-        Sizes.DLUX21,
-        Sizes.DLUY21,
-        Sizes.DLUX21
+        top = Sizes.DluY21,
+        start = Sizes.DluX21,
+        bottom = Sizes.DluY21,
+        end = Sizes.DluX21
     )
 
     /**
@@ -116,10 +116,10 @@ public object Paddings {
      * and a button bar in its bottom.
      */
     public val ButtonBarPad: PaddingValues = createPaddingValues(
-        LayoutStyle.current.buttonBarPad,
-        Sizes.dluX(0),
-        Sizes.dluY(0),
-        Sizes.dluX(0)
+        top = LayoutStyle.current.buttonBarPad,
+        start = Sizes.dluX(0),
+        bottom = Sizes.dluY(0),
+        end = Sizes.dluX(0)
     )
 
     /**
@@ -129,10 +129,10 @@ public object Paddings {
      * @see [TabbedDialog]
      */
     public val Dialog: PaddingValues = createPaddingValues(
-        LayoutStyle.current.dialogMarginY,
-        LayoutStyle.current.dialogMarginX,
-        LayoutStyle.current.dialogMarginY,
-        LayoutStyle.current.dialogMarginX
+        top = LayoutStyle.current.dialogMarginY,
+        start = LayoutStyle.current.dialogMarginX,
+        bottom = LayoutStyle.current.dialogMarginY,
+        end = LayoutStyle.current.dialogMarginX
     )
 
     /**
@@ -142,10 +142,10 @@ public object Paddings {
      * @see [Dialog]
      */
     public val TabbedDialog: PaddingValues = createPaddingValues(
-        LayoutStyle.current.tabbedDialogMarginY,
-        LayoutStyle.current.tabbedDialogMarginX,
-        LayoutStyle.current.tabbedDialogMarginY,
-        LayoutStyle.current.tabbedDialogMarginX
+        top = LayoutStyle.current.tabbedDialogMarginY,
+        start = LayoutStyle.current.tabbedDialogMarginX,
+        bottom = LayoutStyle.current.tabbedDialogMarginY,
+        end = LayoutStyle.current.tabbedDialogMarginX
     )
 
     // Factory Methods ******************************************************
@@ -153,18 +153,18 @@ public object Paddings {
      * Creates and returns a [PaddingValues] with the specified gaps.
      * 
      * @param top        the top gap
-     * @param left        the left-hand side gap
+     * @param start        the start-hand side gap
      * @param bottom    the bottom gap
-     * @param right    the right-hand side gap
+     * @param end    the end-hand side gap
      * @return a [PaddingValues] with the specified gaps
      * 
      * @see [createPaddingValues]
      */
     public fun createPaddingValues(
-        top: ConstantSize, left: ConstantSize,
-        bottom: ConstantSize, right: ConstantSize
+        top: ConstantSize, start: ConstantSize,
+        bottom: ConstantSize, end: ConstantSize
     ): PaddingValues {
-        return FormPaddingValues(top, left, bottom, right)
+        return FormPaddingValues(top, start, bottom, end)
     }
 
     /**
@@ -172,7 +172,7 @@ public object Paddings {
      * the given string. This string is a comma-separated encoding of
      * 4 [ConstantSize]s.
      * 
-     * @param encodedSizes     top, left, bottom, right gap encoded as String
+     * @param encodedSizes     top, start, bottom, end gap encoded as String
      * @return a [PaddingValues] with the specified gaps
      * 
      * @see [createPaddingValues]
@@ -186,10 +186,10 @@ public object Paddings {
         }
 
         val top: ConstantSize = Sizes.constant(token[0], false)
-        val left: ConstantSize = Sizes.constant(token[1], true)
+        val start: ConstantSize = Sizes.constant(token[1], true)
         val bottom: ConstantSize = Sizes.constant(token[2], false)
-        val right: ConstantSize = Sizes.constant(token[3], true)
-        return createPaddingValues(top, left, bottom, right)
+        val end: ConstantSize = Sizes.constant(token[3], true)
+        return createPaddingValues(top, start, bottom, end)
     }
 
     /**

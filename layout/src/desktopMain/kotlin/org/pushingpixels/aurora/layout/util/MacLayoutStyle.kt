@@ -82,21 +82,21 @@ internal object MacLayoutStyle : LayoutStyle() {
     private val BUTTON_HEIGHT: Size = Sizes.dluY(14)
 
     // Gaps ******************************************************************
-    private val DIALOG_MARGIN_X: ConstantSize = Sizes.DLUX9
-    private val DIALOG_MARGIN_Y: ConstantSize = Sizes.DLUY9
+    private val DIALOG_MARGIN_X: ConstantSize = Sizes.DluX9
+    private val DIALOG_MARGIN_Y: ConstantSize = Sizes.DluY9
 
-    private val TABBED_DIALOG_MARGIN_X: ConstantSize = Sizes.DLUX4
-    private val TABBED_DIALOG_MARGIN_Y: ConstantSize = Sizes.DLUY4
+    private val TABBED_DIALOG_MARGIN_X: ConstantSize = Sizes.DluX4
+    private val TABBED_DIALOG_MARGIN_Y: ConstantSize = Sizes.DluY4
 
-    private val LABEL_COMPONENT_PADX: ConstantSize = Sizes.DLUX1
-    private val RELATED_COMPONENTS_PADX: ConstantSize = Sizes.DLUX2
-    private val UNRELATED_COMPONENTS_PADX: ConstantSize = Sizes.DLUX4
+    private val LABEL_COMPONENT_PADX: ConstantSize = Sizes.DluX1
+    private val RELATED_COMPONENTS_PADX: ConstantSize = Sizes.DluX2
+    private val UNRELATED_COMPONENTS_PADX: ConstantSize = Sizes.DluX4
 
-    private val LABEL_COMPONENT_PADY: ConstantSize = Sizes.DLUY2
-    private val RELATED_COMPONENTS_PADY: ConstantSize = Sizes.DLUY3
-    private val UNRELATED_COMPONENTS_PADY: ConstantSize = Sizes.DLUY6
-    private val NARROW_LINE_PAD: ConstantSize = Sizes.DLUY2
-    private val LINE_PAD: ConstantSize = Sizes.DLUY3
-    private val PARAGRAPH_PAD: ConstantSize = Sizes.DLUY9
-    private val BUTTON_BAR_PAD: ConstantSize = Sizes.DLUY4
+    private val LABEL_COMPONENT_PADY: ConstantSize = Sizes.DluY2
+    private val RELATED_COMPONENTS_PADY: ConstantSize = Sizes.DluY3
+    private val UNRELATED_COMPONENTS_PADY: ConstantSize = Sizes.DluY6
+    private val NARROW_LINE_PAD: ConstantSize = Sizes.DluY2
+    private val LINE_PAD: ConstantSize = Sizes.DluY3
+    private val PARAGRAPH_PAD: ConstantSize = Sizes.DluY9
+    private val BUTTON_BAR_PAD: ConstantSize = Sizes.DluY4
 }

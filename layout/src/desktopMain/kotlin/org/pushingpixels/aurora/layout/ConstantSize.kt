@@ -47,7 +47,7 @@ import kotlin.math.roundToInt
  *
  * **Examples:**<pre>
  * Sizes.ZERO;
- * Sizes.DLUX9;
+ * Sizes.DluX9;
  * Sizes.dluX(42);
  * Sizes.pixel(99);
 </pre> * 
