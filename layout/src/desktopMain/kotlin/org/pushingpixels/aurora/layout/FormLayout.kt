@@ -152,7 +152,6 @@ public fun FormLayout(modifier: Modifier,
     Sizes.textStyle = resolvedTextStyle
     Sizes.textMeasurer = textMeasurer
     Sizes.density = LocalDensity.current
-    Paddings.density = LocalDensity.current
 
     CompositionLocalProvider(
         LocalTextMeasurer provides textMeasurer,
@@ -178,7 +177,6 @@ public fun FormLayout(modifier: Modifier,
     Sizes.textStyle = resolvedTextStyle
     Sizes.textMeasurer = textMeasurer
     Sizes.density = LocalDensity.current
-    Paddings.density = LocalDensity.current
 
     CompositionLocalProvider(
         LocalTextMeasurer provides textMeasurer,
@@ -211,7 +209,6 @@ public fun FormLayout(modifier: Modifier,
     Sizes.textStyle = resolvedTextStyle
     Sizes.textMeasurer = textMeasurer
     Sizes.density = LocalDensity.current
-    Paddings.density = LocalDensity.current
 
     CompositionLocalProvider(
         LocalTextMeasurer provides textMeasurer,

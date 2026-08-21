@@ -16,10 +16,11 @@
 package org.pushingpixels.aurora.layout.factories
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import org.pushingpixels.aurora.layout.ConstantSize
 import org.pushingpixels.aurora.layout.Sizes
 import org.pushingpixels.aurora.layout.util.LayoutStyle
@@ -43,8 +44,6 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * @see [Sizes]
  */
 public object Paddings {
-    internal lateinit var density: Density
-
     // Constant Borders *****************************************************
     /**
      * A prepared and reusable PaddingValues without gaps.
@@ -52,75 +51,89 @@ public object Paddings {
     public val Empty: PaddingValues = PaddingValues.Zero
 
     /**
-     * A prepared and reusable PaddingValues with 2dlu on all sides.
+     * PaddingValues with 2dlu on all sides.
      */
-    public val Dlu2: PaddingValues = createPaddingValues(
-        top = Sizes.DluY2,
-        start = Sizes.DluX2,
-        bottom = Sizes.DluY2,
-        end = Sizes.DluX2
-    )
+    public val Dlu2: PaddingValues
+        @Composable
+        get() = createPaddingValues(
+            top = Sizes.DluY2,
+            start = Sizes.DluX2,
+            bottom = Sizes.DluY2,
+            end = Sizes.DluX2
+        )
 
     /**
-     * A prepared and reusable PaddingValues with 4dlu on all sides.
+     * PaddingValues with 4dlu on all sides.
      */
-    public val Dlu4: PaddingValues = createPaddingValues(
-        top = Sizes.DluY4,
-        start = Sizes.DluX4,
-        bottom = Sizes.DluY4,
-        end = Sizes.DluX4
-    )
+    public val Dlu4: PaddingValues
+        @Composable
+        get() = createPaddingValues(
+            top = Sizes.DluY4,
+            start = Sizes.DluX4,
+            bottom = Sizes.DluY4,
+            end = Sizes.DluX4
+        )
 
     /**
-     * A prepared and reusable PaddingValues with 7dlu on all sides.
+     * PaddingValues with 7dlu on all sides.
      */
-    public val Dlu7: PaddingValues = createPaddingValues(
-        top = Sizes.DluY7,
-        start = Sizes.DluX7,
-        bottom = Sizes.DluY7,
-        end = Sizes.DluX7
-    )
+    public val Dlu7: PaddingValues
+        @Composable
+        get() = createPaddingValues(
+            top = Sizes.DluY7,
+            start = Sizes.DluX7,
+            bottom = Sizes.DluY7,
+            end = Sizes.DluX7
+        )
 
     /**
-     * A prepared and reusable PaddingValues with 9dlu on all sides.
+     * PaddingValues with 9dlu on all sides.
      */
-    public val Dlu9: PaddingValues = createPaddingValues(
-        top = Sizes.DluY9,
-        start = Sizes.DluX9,
-        bottom = Sizes.DluY9,
-        end = Sizes.DluX9
-    )
+    public val Dlu9: PaddingValues
+        @Composable
+        get() = createPaddingValues(
+            top = Sizes.DluY9,
+            start = Sizes.DluX9,
+            bottom = Sizes.DluY9,
+            end = Sizes.DluX9
+        )
 
     /**
-     * A prepared Border with PaddingValues on all sides.
+     * PaddingValues with 14dlu on all sides.
      */
-    public val Dlu14: PaddingValues = createPaddingValues(
-        top = Sizes.DluY14,
-        start = Sizes.DluX14,
-        bottom = Sizes.DluY14,
-        end = Sizes.DluX14
-    )
+    public val Dlu14: PaddingValues
+        @Composable
+        get() = createPaddingValues(
+            top = Sizes.DluY14,
+            start = Sizes.DluX14,
+            bottom = Sizes.DluY14,
+            end = Sizes.DluX14
+        )
 
     /**
-     * A prepared Border with PaddingValues on all sides.
+     * PaddingValues with 21dlu on all sides.
      */
-    public val Dlu21: PaddingValues = createPaddingValues(
-        top = Sizes.DluY21,
-        start = Sizes.DluX21,
-        bottom = Sizes.DluY21,
-        end = Sizes.DluX21
-    )
+    public val Dlu21: PaddingValues
+        @Composable
+        get() = createPaddingValues(
+            top = Sizes.DluY21,
+            start = Sizes.DluX21,
+            bottom = Sizes.DluY21,
+            end = Sizes.DluX21
+        )
 
     /**
      * A standardized PaddingValues that describes the gap between a component
      * and a button bar in its bottom.
      */
-    public val ButtonBarPad: PaddingValues = createPaddingValues(
-        top = LayoutStyle.current.buttonBarPad,
-        start = Sizes.dluX(0),
-        bottom = Sizes.dluY(0),
-        end = Sizes.dluX(0)
-    )
+    public val ButtonBarPad: PaddingValues
+        @Composable
+        get() = createPaddingValues(
+            top = LayoutStyle.current.buttonBarPad,
+            start = Sizes.dluX(0),
+            bottom = Sizes.dluY(0),
+            end = Sizes.dluX(0)
+        )
 
     /**
      * A standardized PaddingValues that describes the border around
@@ -128,12 +141,14 @@ public object Paddings {
      * 
      * @see [TabbedDialog]
      */
-    public val Dialog: PaddingValues = createPaddingValues(
-        top = LayoutStyle.current.dialogMarginY,
-        start = LayoutStyle.current.dialogMarginX,
-        bottom = LayoutStyle.current.dialogMarginY,
-        end = LayoutStyle.current.dialogMarginX
-    )
+    public val Dialog: PaddingValues
+        @Composable
+        get() = createPaddingValues(
+            top = LayoutStyle.current.dialogMarginY,
+            start = LayoutStyle.current.dialogMarginX,
+            bottom = LayoutStyle.current.dialogMarginY,
+            end = LayoutStyle.current.dialogMarginX
+        )
 
     /**
      * A standardized PaddingValues that describes the border around
@@ -141,12 +156,14 @@ public object Paddings {
      * 
      * @see [Dialog]
      */
-    public val TabbedDialog: PaddingValues = createPaddingValues(
-        top = LayoutStyle.current.tabbedDialogMarginY,
-        start = LayoutStyle.current.tabbedDialogMarginX,
-        bottom = LayoutStyle.current.tabbedDialogMarginY,
-        end = LayoutStyle.current.tabbedDialogMarginX
-    )
+    public val TabbedDialog: PaddingValues
+        @Composable
+        get() = createPaddingValues(
+            top = LayoutStyle.current.tabbedDialogMarginY,
+            start = LayoutStyle.current.tabbedDialogMarginX,
+            bottom = LayoutStyle.current.tabbedDialogMarginY,
+            end = LayoutStyle.current.tabbedDialogMarginX
+        )
 
     // Factory Methods ******************************************************
     /**
@@ -160,11 +177,13 @@ public object Paddings {
      * 
      * @see [createPaddingValues]
      */
+    @Composable
     public fun createPaddingValues(
         top: ConstantSize, start: ConstantSize,
         bottom: ConstantSize, end: ConstantSize
     ): PaddingValues {
-        return FormPaddingValues(top, start, bottom, end)
+        val density = LocalDensity.current
+        return FormPaddingValues(density, top, start, bottom, end)
     }
 
     /**
@@ -177,6 +196,7 @@ public object Paddings {
      * 
      * @see [createPaddingValues]
      */
+    @Composable
     public fun createPaddingValues(encodedSizes: String): PaddingValues {
         val token: Array<String> =
             encodedSizes.split("\\s*,\\s*".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -197,6 +217,7 @@ public object Paddings {
      * to define the top, start, bottom and end gap.
      */
     public class FormPaddingValues(
+        private val density: Density,
         private val top: ConstantSize,
         private val start: ConstantSize,
         private val bottom: ConstantSize,
@@ -204,21 +225,29 @@ public object Paddings {
     ) : PaddingValues {
 
         override fun calculateTopPadding(): Dp {
-            return (top.getPixelSize() / density.density).dp
+            with(density) {
+                return top.getPixelSize().toDp()
+            }
         }
 
         override fun calculateBottomPadding(): Dp {
-            return (bottom.getPixelSize() / density.density).dp
+            with(density) {
+                return bottom.getPixelSize().toDp()
+            }
         }
 
         override fun calculateLeftPadding(layoutDirection: LayoutDirection): Dp {
             val left = if (layoutDirection == LayoutDirection.Ltr) start else end
-            return (left.getPixelSize() / density.density).dp
+            with(density) {
+                return left.getPixelSize().toDp()
+            }
         }
 
         override fun calculateRightPadding(layoutDirection: LayoutDirection): Dp {
             val right = if (layoutDirection == LayoutDirection.Ltr) end else start
-            return (right.getPixelSize() / density.density).dp
+            with(density) {
+                return right.getPixelSize().toDp()
+            }
         }
     }
 }
