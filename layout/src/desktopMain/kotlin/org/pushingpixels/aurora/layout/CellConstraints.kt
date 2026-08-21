@@ -91,23 +91,6 @@ public data class CellConstraints(
 
     // Parsing and Decoding String Descriptions *****************************
     /**
-     * Decodes and returns the grid bounds and alignments for this
-     * constraints as an array of six integers. The string representation
-     * is a comma separated sequence, one of
-     * <pre>
-     * "x, y"
-     * "x, y, w, h"
-     * "x, y, hAlign, vAlign"
-     * "x, y, w, h, hAlign, vAlign"
-    </pre> * 
-     * 
-     * @param encodedConstraints represents horizontal and vertical alignment
-     * 
-     * @throws IllegalArgumentException if the encoded constraints do not
-     * follow the constraint syntax
-     */
-
-    /**
      * Checks and verifies that this constraints object has valid grid
      * index values, i. e. the display area cells are inside the form's grid.
      * 
@@ -149,21 +132,20 @@ public data class CellConstraints(
         }
     }
 
-    // Settings Component Bounds ********************************************
+    // Getting Component Bounds ********************************************
     /**
-     * Sets the component's bounds using the given component and cell bounds.
+     * Gets the measurable's bounds using the given measurable and cell bounds.
      * 
-     * @param c                  the component to set bounds
-     * @param layout             the FormLayout instance that computes the bounds
-     * @param cellBounds          the cell's bounds
-     * @param minWidthMeasure      measures the minimum width
-     * @param minHeightMeasure      measures the minimum height
-     * @param prefWidthMeasure      measures the preferred width
+     * @param measurable         the component to get bounds for
+     * @param cellBounds         the cell's bounds
+     * @param minWidthMeasure    measures the minimum width
+     * @param minHeightMeasure   measures the minimum height
+     * @param prefWidthMeasure   measures the preferred width
      * @param prefHeightMeasure  measures the preferred height
      */
     public fun getBounds(
         measureScope: MeasureScope,
-        c: IntrinsicMeasurable,
+        measurable: IntrinsicMeasurable,
         colSpecs: List<ColumnSpec>,
         rowSpecs: List<RowSpec>,
         cellBounds: Rect,
@@ -185,11 +167,11 @@ public data class CellConstraints(
             val cellH = cellBounds.height - padding.calculateTopPadding().toPx() -
                 padding.calculateBottomPadding().toPx()
             val compW: Int = componentSize(
-                c, colSpec, cellW.toInt(), minWidthMeasure,
+                measurable, colSpec, cellW.toInt(), minWidthMeasure,
                 prefWidthMeasure
             )
             val compH: Int = componentSize(
-                c, rowSpec, cellH.toInt(), minHeightMeasure,
+                measurable, rowSpec, cellH.toInt(), minHeightMeasure,
                 prefHeightMeasure
             )
             val x: Int = origin(concreteHAlign, cellX.toInt(), cellW.toInt(), compW)
@@ -303,46 +285,25 @@ public data class CellConstraints(
         public companion object {
             public fun valueOf(nameOrAbbreviation: String): Alignment {
                 val str = nameOrAbbreviation.lowercase()
-                when (str) {
-                    "d", "default" -> {
-                        return Default
-                    }
-                    "f", "fill" -> {
-                        return Fill
-                    }
-                    "c", "center" -> {
-                        return Center
-                    }
-                    "s", "start" -> {
-                        return Start
-                    }
-                    "e", "end" -> {
-                        return End
-                    }
-                    "t", "top" -> {
-                        return Top
-                    }
-                    "b", "bottom" -> {
-                        return Bottom
-                    }
-                    else -> {
-                        throw IllegalArgumentException(
-                            ("Invalid alignment " + nameOrAbbreviation
-                                + ". Must be one of: start, center, end, top, bottom, "
-                                + "fill, default, s, c, e, t, b, f, d.")
-                        )
-                    }
+                return when (str) {
+                    "d", "default" -> Default
+                    "f", "fill" -> Fill
+                    "c", "center" -> Center
+                    "s", "start" -> Start
+                    "e", "end" -> End
+                    "t", "top" -> Top
+                    "b", "bottom" -> Bottom
+                    else -> throw IllegalArgumentException(
+                        ("Invalid alignment " + nameOrAbbreviation
+                            + ". Must be one of: start, center, end, top, bottom, "
+                            + "fill, default, s, c, e, t, b, f, d.")
+                    )
                 }
             }
-
-            // Serialization *********************************************************
-            private var nextOrdinal = 0
         }
     }
 
     public companion object {
-        // Alignment Constants *************************************************
-
         /**
          * Decodes an integer string representation and returns the
          * associated Integer or null in case of an invalid number format.
@@ -351,10 +312,10 @@ public data class CellConstraints(
          * @return the decoded Integer or null
          */
         private fun decodeInt(token: String): Int? {
-            try {
-                return Integer.decode(token)
+            return try {
+                Integer.decode(token)
             } catch (e: NumberFormatException) {
-                return null
+                null
             }
         }
 
@@ -388,19 +349,15 @@ public data class CellConstraints(
 
         /**
          * Computes and returns the concrete alignment. Takes into account
-         * the cell alignment and *the* `FormSpec` if applicable.
+         * the cell alignment and *the* [FormSpec] if applicable.
          *
-         *
-         * 
          * If this constraints object doesn't belong to a single column or row,
          * the `formSpec` parameter is `null`.
-         * In this case the cell alignment is answered, but `DEFAULT`
-         * is mapped to `FILL`.
+         * In this case the cell alignment is answered, but [Alignment.Default]
+         * is mapped to [Alignment.Fill].
          *
-         *
-         * 
          * If the cell belongs to a single column or row, we use the cell
-         * alignment, unless it is `DEFAULT`, where the alignment
+         * alignment, unless it is [Alignment.Default], where the alignment
          * is inherited from the column or row resp.
          * 
          * @param cellAlignment   this cell's alignment
@@ -417,7 +374,7 @@ public data class CellConstraints(
         /**
          * Returns the alignment used for a given form constraints object.
          * The cell alignment overrides the column or row default, unless
-         * it is `DEFAULT`. In the latter case, we use the
+         * it is [Alignment.Default]. In the latter case, we use the
          * column or row alignment.
          * 
          * @param cellAlignment   this cell constraint's alignment
@@ -434,21 +391,11 @@ public data class CellConstraints(
                 return Alignment.Fill
             }
             return when (defaultAlignment) {
-                ColumnSpec.Start -> {
-                    Alignment.Start
-                }
-                DefaultAlignment.CenterAlign -> {
-                    Alignment.Center
-                }
-                ColumnSpec.End -> {
-                    Alignment.End
-                }
-                RowSpec.Top -> {
-                    Alignment.Top
-                }
-                else -> {
-                    Alignment.Bottom
-                }
+                ColumnSpec.Start -> Alignment.Start
+                DefaultAlignment.CenterAlign -> Alignment.Center
+                ColumnSpec.End -> Alignment.End
+                RowSpec.Top -> Alignment.Top
+                else -> Alignment.Bottom
             }
         }
 
@@ -497,15 +444,9 @@ public data class CellConstraints(
             componentSize: Int
         ): Int {
             return when (alignment) {
-                Alignment.End, Alignment.Bottom -> {
-                    cellOrigin + cellSize - componentSize
-                }
-                Alignment.Center -> {
-                    cellOrigin + (cellSize - componentSize) / 2
-                }
-                else -> {  // left, top, fill
-                    cellOrigin
-                }
+                Alignment.End, Alignment.Bottom -> cellOrigin + cellSize - componentSize
+                Alignment.Center -> cellOrigin + (cellSize - componentSize) / 2
+                else -> cellOrigin // start, top, fill
             }
         }
 
@@ -622,7 +563,6 @@ public data class CellConstraints(
          * CellConstraints.rchw(3, 1, 1, 2, CellConstraints.Bottom, CellConstraints.Start)
          * CellConstraints.rchw(3, 1, 3, 7, CellConstraints.Fill,   CellConstraints.Center)
          *
-         *
          * @param row       the new row index
          * @param col       the new column index
          * @param rowSpan   the row span or grid height
@@ -699,8 +639,8 @@ public data class CellConstraints(
 
             var token = tokenizer.nextToken()
             nextInt = decodeInt(token)
-            var gridWidth: Int = 0
-            var gridHeight: Int = 0
+            var gridWidth = 0
+            var gridHeight = 0
             if (nextInt != null) {
                 // Case: "x, y, w, h" or
                 //       "x, y, w, h, hAlign, vAlign"
