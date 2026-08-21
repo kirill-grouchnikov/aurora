@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.layout.CellConstraints.Alignment
+import org.pushingpixels.aurora.layout.factories.Paddings
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -149,6 +150,7 @@ public fun FormLayout(modifier: Modifier,
     Sizes.textStyle = resolvedTextStyle
     Sizes.textMeasurer = textMeasurer
     Sizes.density = LocalDensity.current
+    Paddings.density = LocalDensity.current
 
     CompositionLocalProvider(
         LocalTextMeasurer provides textMeasurer,
@@ -172,6 +174,7 @@ public fun FormLayout(modifier: Modifier,
     Sizes.textStyle = resolvedTextStyle
     Sizes.textMeasurer = textMeasurer
     Sizes.density = LocalDensity.current
+    Paddings.density = LocalDensity.current
 
     CompositionLocalProvider(
         LocalTextMeasurer provides textMeasurer,
@@ -200,6 +203,7 @@ public fun FormLayout(modifier: Modifier,
     Sizes.textStyle = resolvedTextStyle
     Sizes.textMeasurer = textMeasurer
     Sizes.density = LocalDensity.current
+    Paddings.density = LocalDensity.current
 
     CompositionLocalProvider(
         LocalTextMeasurer provides textMeasurer,

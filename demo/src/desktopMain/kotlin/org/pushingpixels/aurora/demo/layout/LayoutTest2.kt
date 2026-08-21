@@ -28,18 +28,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
-import org.pushingpixels.aurora.component.model.LabelContentModel
-import org.pushingpixels.aurora.component.model.TextFieldPresentationModel
-import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.CellConstraints
 import org.pushingpixels.aurora.layout.FormLayout
+import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
@@ -64,7 +60,7 @@ fun main() = auroraApplication {
 
     ) {
         FormLayout(
-            modifier = Modifier.fillMaxSize().padding(all = 8.dp),
+            modifier = Modifier.fillMaxSize().padding(Paddings.Dlu9),
             encodedColumnSpecs = "right:pref, 2dlu, 60dlu:grow",
             encodedRowSpecs = "p, 6dlu, p, 10dlu, p",
         ) {
