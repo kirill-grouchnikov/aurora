@@ -87,7 +87,7 @@ fun main() = auroraApplication {
         state = rememberWindowState(
             placement = WindowPlacement.Floating,
             position = WindowPosition.Aligned(Alignment.Center),
-            size = DpSize(460.dp, 260.dp)
+            size = DpSize(500.dp, 260.dp)
         ),
         windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         icon = radiance_menu(),
@@ -98,14 +98,15 @@ fun main() = auroraApplication {
 
         FormLayout(
             modifier = Modifier.fillMaxSize().padding(Paddings.Dlu9),
-            encodedColumnSpecs = "right:pref, 4dlu, pref:grow, 8dlu, right:pref, 4dlu, pref:grow",
+            encodedColumnSpecs = "end:pref, 4dlu, pref:grow, 8dlu, end:pref, 4dlu, pref:grow",
             encodedRowSpecs = "p, 3dlu, p, 3dlu, p, 10dlu, p, 3dlu, p, 3dlu, p, 14dlu, p",
             colGroupIndices = arrayOf(intArrayOf(1, 5), intArrayOf(3, 7))
         ) {
-            Separator(modifier = Modifier.xyw(col = 1, row = 1, colSpan = 7), label = "General")
+            Separator(modifier = Modifier.xyw(col = 1, row = 1, colSpan = 7),
+                label = resourceBundle.getString("FormLayout.general"))
 
             LabelProjection(
-                contentModel = LabelContentModel(text = "Company"),
+                contentModel = LabelContentModel(text = resourceBundle.getString("FormLayout.company")),
             ).project(Modifier.xy(1, 3))
 
             var textCompany by rememberSaveable { mutableStateOf("") }
@@ -119,7 +120,7 @@ fun main() = auroraApplication {
             ).project(Modifier.xyw(3, 3, 5))
 
             LabelProjection(
-                contentModel = LabelContentModel(text = "Contact"),
+                contentModel = LabelContentModel(text = resourceBundle.getString("FormLayout.contact")),
             ).project(Modifier.xy(1, 5))
 
             var textContact by rememberSaveable { mutableStateOf("") }
@@ -132,10 +133,11 @@ fun main() = auroraApplication {
                 presentationModel = TextFieldPresentationModel(singleLine = true, defaultMinSize = textFieldMinSize)
             ).project(Modifier.xyw(3, 5, 5))
 
-            Separator(modifier = Modifier.xyw(col = 1, row = 7, colSpan = 7), label = "Propeller")
+            Separator(modifier = Modifier.xyw(col = 1, row = 7, colSpan = 7),
+                label = resourceBundle.getString("FormLayout.propeller"))
 
             LabelProjection(
-                contentModel = LabelContentModel(text = "PTI [kW]"),
+                contentModel = LabelContentModel(text = resourceBundle.getString("FormLayout.powerTakeIn")),
             ).project(Modifier.xy(1, 9))
 
             var textPTI by rememberSaveable { mutableStateOf("") }
@@ -149,7 +151,7 @@ fun main() = auroraApplication {
             ).project(Modifier.xyw(3, 9))
 
             LabelProjection(
-                contentModel = LabelContentModel(text = "Power [kW]"),
+                contentModel = LabelContentModel(text = resourceBundle.getString("FormLayout.power")),
             ).project(Modifier.xy(5, 9))
 
             var textPower by rememberSaveable { mutableStateOf("") }
@@ -163,7 +165,7 @@ fun main() = auroraApplication {
             ).project(Modifier.xyw(7, 9))
 
             LabelProjection(
-                contentModel = LabelContentModel(text = "R [mm]"),
+                contentModel = LabelContentModel(text = resourceBundle.getString("FormLayout.radius")),
             ).project(Modifier.xy(1, 11))
 
             var textR by rememberSaveable { mutableStateOf("") }
@@ -177,7 +179,7 @@ fun main() = auroraApplication {
             ).project(Modifier.xyw(3, 11))
 
             LabelProjection(
-                contentModel = LabelContentModel(text = "D [mm]"),
+                contentModel = LabelContentModel(text = resourceBundle.getString("FormLayout.diameter")),
             ).project(Modifier.xy(5, 11))
 
             var textD by rememberSaveable { mutableStateOf("") }
@@ -190,7 +192,7 @@ fun main() = auroraApplication {
                 presentationModel = TextFieldPresentationModel(singleLine = true, defaultMinSize = textFieldMinSize)
             ).project(Modifier.xyw(7, 11))
 
-            Row(modifier = Modifier.xyw(1, 13, 7, CellConstraints.Alignment.Right, CellConstraints.Alignment.Center)) {
+            Row(modifier = Modifier.xyw(1, 13, 7, CellConstraints.Alignment.End, CellConstraints.Alignment.Center)) {
                 val density = LocalDensity.current
                 val buttonGap = with (density) {
                     LayoutStyle.current.unrelatedComponentsPadX.getPixelSize().toDp()
@@ -202,8 +204,8 @@ fun main() = auroraApplication {
 
                 CommandButtonProjection(
                     contentModel = Command(
-                        text = "Ignite",
-                        action = { println("Ignite") }
+                        text = resourceBundle.getString("FormLayout.turnOn"),
+                        action = { println("Turn on") }
                     ),
                     presentationModel = CommandButtonPresentationModel(
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
@@ -215,8 +217,8 @@ fun main() = auroraApplication {
 
                 CommandButtonProjection(
                     contentModel = Command(
-                        text = "Explode",
-                        action = { println("Explode") }
+                        text = resourceBundle.getString("FormLayout.turnOff"),
+                        action = { println("Turn off") }
                     ),
                     presentationModel = CommandButtonPresentationModel(
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,

@@ -251,14 +251,14 @@ public data class CellConstraints(
         Fill(Orientation.Both),
 
         /**
-         * Put the component in the left.
+         * Put the component in the start (left under LTR, right under RTL).
          */
-        Left(Orientation.Horizontal),
+        Start(Orientation.Horizontal),
 
         /**
-         * Put the component in the right.
+         * Put the component in the end (right under LTR, left under RTL).
          */
-        Right(Orientation.Horizontal),
+        End(Orientation.Horizontal),
 
         /**
          * Put the component in the center.
@@ -313,11 +313,11 @@ public data class CellConstraints(
                     "c", "center" -> {
                         return Center
                     }
-                    "l", "left" -> {
-                        return Left
+                    "s", "start" -> {
+                        return Start
                     }
-                    "r", "right" -> {
-                        return Right
+                    "e", "end" -> {
+                        return End
                     }
                     "t", "top" -> {
                         return Top
@@ -328,8 +328,8 @@ public data class CellConstraints(
                     else -> {
                         throw IllegalArgumentException(
                             ("Invalid alignment " + nameOrAbbreviation
-                                + ". Must be one of: left, center, right, top, bottom, "
-                                + "fill, default, l, c, r, t, b, f, d.")
+                                + ". Must be one of: start, center, end, top, bottom, "
+                                + "fill, default, s, c, e, t, b, f, d.")
                         )
                     }
                 }
@@ -379,7 +379,7 @@ public data class CellConstraints(
          */
         private fun ensureValidOrientations(horizontalAlignment: Alignment, verticalAlignment: Alignment) {
             require(horizontalAlignment.isHorizontal) {
-                "The horizontal alignment must be one of: left, center, right, fill, default."
+                "The horizontal alignment must be one of: start, center, end, fill, default."
             }
             require(verticalAlignment.isVertical) {
                 "The vertical alignment must be one of: top, center, bottom, fill, default."
@@ -434,14 +434,14 @@ public data class CellConstraints(
                 return Alignment.Fill
             }
             return when (defaultAlignment) {
-                ColumnSpec.Left -> {
-                    Alignment.Left
+                ColumnSpec.Start -> {
+                    Alignment.Start
                 }
                 DefaultAlignment.CenterAlign -> {
                     Alignment.Center
                 }
-                ColumnSpec.Right -> {
-                    Alignment.Right
+                ColumnSpec.End -> {
+                    Alignment.End
                 }
                 RowSpec.Top -> {
                     Alignment.Top
@@ -497,7 +497,7 @@ public data class CellConstraints(
             componentSize: Int
         ): Int {
             return when (alignment) {
-                Alignment.Right, Alignment.Bottom -> {
+                Alignment.End, Alignment.Bottom -> {
                     cellOrigin + cellSize - componentSize
                 }
                 Alignment.Center -> {
@@ -542,7 +542,7 @@ public data class CellConstraints(
          * and the vertical alignment is the second token. if the boolean is
          * `false` the vertical alignment comes first.
          *
-         * Valid horizontal alignments are: left, center, right, default, and fill.
+         * Valid horizontal alignments are: start, center, end, default, and fill.
          * Valid vertical alignments are: top, center, bottom, default, and fill.
          * The anchor's string representation abbreviates the alignment:
          * l, c, r, d, f, t, and b.
@@ -570,7 +570,7 @@ public data class CellConstraints(
          * and vertical alignment using the specified alignment objects.
          *
          * **Examples:**
-         * CellConstraints.xywh(1, 3, 2, 1, CellConstraints.Left,   CellConstraints.Bottom)
+         * CellConstraints.xywh(1, 3, 2, 1, CellConstraints.Start,  CellConstraints.Bottom)
          * CellConstraints.xywh(1, 3, 7, 3, CellConstraints.Center, CellConstraints.Fill)
          *
          * @param col       the new column index
@@ -596,8 +596,8 @@ public data class CellConstraints(
          * and vertical alignments from the given string.
          *
          * **Examples:**
-         * CellConstraints.xywh(1, 3, 2, 1, "left, bottom")
-         * CellConstraints.xywh(1, 3, 2, 1, "l, b")
+         * CellConstraints.xywh(1, 3, 2, 1, "start, bottom")
+         * CellConstraints.xywh(1, 3, 2, 1, "s, b")
          * CellConstraints.xywh(1, 3, 7, 3, "center, fill")
          * CellConstraints.xywh(1, 3, 7, 3, "c, f")
          *
@@ -619,7 +619,7 @@ public data class CellConstraints(
          * horizontal alignment using the specified alignment objects.
          *
          * **Examples:**
-         * CellConstraints.rchw(3, 1, 1, 2, CellConstraints.Bottom, CellConstraints.Left)
+         * CellConstraints.rchw(3, 1, 1, 2, CellConstraints.Bottom, CellConstraints.Start)
          * CellConstraints.rchw(3, 1, 3, 7, CellConstraints.Fill,   CellConstraints.Center)
          *
          *
@@ -644,8 +644,8 @@ public data class CellConstraints(
          * and vertical alignments from the given string.
          *
          * **Examples:**
-         * CellConstraints.rchw(3, 1, 1, 2, "bottom, left")
-         * CellConstraints.rchw(3, 1, 1, 2, "b, l")
+         * CellConstraints.rchw(3, 1, 1, 2, "bottom, start")
+         * CellConstraints.rchw(3, 1, 1, 2, "b, s")
          * CellConstraints.rchw(3, 1, 3, 7, "fill, center")
          * CellConstraints.rchw(3, 1, 3, 7, "f, c")
          *
@@ -668,9 +668,9 @@ public data class CellConstraints(
          *
          * <strong>Examples:</strong><pre>
          * CellConstraints("1, 3")
-         * CellConstraints("1, 3, left, bottom")
-         * CellConstraints("1, 3, 2, 1, left, bottom")
-         * CellConstraints("1, 3, 2, 1, l, b")
+         * CellConstraints("1, 3, start, bottom")
+         * CellConstraints("1, 3, 2, 1, start, bottom")
+         * CellConstraints("1, 3, 2, 1, s, b")
          * </pre>
          *
          * @param encodedConstraints	the constraints encoded as string

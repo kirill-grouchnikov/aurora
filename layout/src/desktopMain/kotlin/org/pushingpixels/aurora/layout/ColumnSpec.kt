@@ -101,22 +101,22 @@ public class ColumnSpec : FormSpec {
     public companion object {
         // Horizontal Orientations *********************************************
         /**
-         * By default put components in the left.
+         * By default, put components in the start (left under LTR, right under RTL).
          */
-        public val Left: DefaultAlignment = DefaultAlignment.LeftAlign
+        public val Start: DefaultAlignment = DefaultAlignment.StartAlign
 
         /**
-         * By default put the components in the center.
+         * By default, put the components in the center.
          */
         public val Center: DefaultAlignment = DefaultAlignment.CenterAlign
 
         /**
-         * By default put components in the right.
+         * By default, put components in the end (right under LTR, left under RTL).
          */
-        public val Right: DefaultAlignment = DefaultAlignment.RightAlign
+        public val End: DefaultAlignment = DefaultAlignment.EndAlign
 
         /**
-         * By default fill the component into the column.
+         * By default, fill the component into the column.
          */
         public val Fill: DefaultAlignment = DefaultAlignment.FillAlign
 

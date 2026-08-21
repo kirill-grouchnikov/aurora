@@ -59,7 +59,7 @@ fun main() = auroraApplication {
     ) {
         FormLayout(
             modifier = Modifier.fillMaxSize().padding(Paddings.Dlu9),
-            encodedColumnSpecs = "right:pref, 2dlu, 60dlu:grow",
+            encodedColumnSpecs = "end:pref, 2dlu, 60dlu:grow",
             encodedRowSpecs = "p, 6dlu, p, 10dlu, p",
         ) {
             LabelProjection(
@@ -103,7 +103,7 @@ fun main() = auroraApplication {
                     iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
                     presentationState = CommandButtonPresentationState.MediumFitToIcon,
                 )
-            ).project(Modifier.xy(3, 5, CellConstraints.Alignment.Right, CellConstraints.Alignment.Center))
+            ).project(Modifier.xy(3, 5, CellConstraints.Alignment.End, CellConstraints.Alignment.Center))
         }
     }
 }

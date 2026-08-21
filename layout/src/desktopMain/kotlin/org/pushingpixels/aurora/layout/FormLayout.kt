@@ -924,7 +924,7 @@ private class FormLayoutMeasurePolicy(
         // Specify the size of the Box and position its children.
         return layout(boxWidth, boxHeight) {
             placeables.forEach { (placeable, offset) ->
-                placeable.place(offset.x, offset.y)
+                placeable.placeRelative(offset.x, offset.y)
             }
         }
     }

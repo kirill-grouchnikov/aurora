@@ -428,32 +428,32 @@ public abstract class FormSpec protected constructor(
      */
     public enum class DefaultAlignment {
         /**
-         * By default put components in the left.
+         * By default, put components in the start (left under LTR, right under RTL).
          */
-        LeftAlign,
+        StartAlign,
 
         /**
-         * By default put components in the right.
+         * By default, put components in the end (right under LTR, left under RTL).
          */
-        RightAlign,
+        EndAlign,
 
         /**
-         * By default put the components in the top.
+         * By default, put the components in the top.
          */
         TopAlign,
 
         /**
-         * By default put the components in the bottom.
+         * By default, put the components in the bottom.
          */
         BottomAlign,
 
         /**
-         * By default put the components in the center.
+         * By default, put the components in the center.
          */
         CenterAlign,
 
         /**
-         * By default fill the column or row.
+         * By default, fill the column or row.
          */
         FillAlign,
 
@@ -489,11 +489,11 @@ public abstract class FormSpec protected constructor(
                     return CenterAlign
                 } else if (isHorizontal) {
                     return when (str) {
-                        "r", "right" -> {
-                            RightAlign
+                        "e", "end" -> {
+                            EndAlign
                         }
-                        "l", "left" -> {
-                            LeftAlign
+                        "s", "start" -> {
+                            StartAlign
                         }
                         "none" -> {
                             NoAlign
