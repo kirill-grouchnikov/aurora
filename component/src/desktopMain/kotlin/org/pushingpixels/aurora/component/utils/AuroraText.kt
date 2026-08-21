@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import org.pushingpixels.aurora.common.AuroraInternalApi
@@ -45,7 +46,8 @@ fun AuroraText(
     fontFamily: FontFamily? = null,
     letterSpacing: TextUnit = TextUnit.Unspecified,
     textDecoration: TextDecoration? = null,
-    textAlign: TextAlign = TextAlign.Unspecified,
+    textAlign: TextAlign = TextAlign.Start,
+    textDirection: TextDirection = TextDirection.Content,
     lineHeight: TextUnit = TextUnit.Unspecified,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
@@ -63,6 +65,7 @@ fun AuroraText(
             lineHeight = lineHeight,
             fontFamily = fontFamily,
             textDecoration = textDecoration,
+            textDirection = textDirection,
             fontStyle = fontStyle,
             letterSpacing = letterSpacing
         )
