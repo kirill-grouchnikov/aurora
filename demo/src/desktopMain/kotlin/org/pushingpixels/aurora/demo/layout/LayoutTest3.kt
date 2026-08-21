@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.demo.layout
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,6 +37,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
+import org.pushingpixels.aurora.demo.AuroraLocaleSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.CellConstraints
 import org.pushingpixels.aurora.layout.FormLayout
@@ -49,6 +51,7 @@ import org.pushingpixels.aurora.theming.resolveAuroraDefaults
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
+import java.util.ResourceBundle
 
 @Composable
 private fun Separator(modifier: Modifier, label: String) {
@@ -74,6 +77,10 @@ private fun Separator(modifier: Modifier, label: String) {
 }
 
 fun main() = auroraApplication {
+    val resourceBundle by derivedStateOf {
+        ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
+    }
+
     AuroraWindow(
         skin = marinerSkin(),
         title = "Aurora FormLayout Demo",
@@ -185,6 +192,13 @@ fun main() = auroraApplication {
 
             Row(modifier = Modifier.xyw(1, 13, 7, CellConstraints.Alignment.Right, CellConstraints.Alignment.Center)) {
                 val density = LocalDensity.current
+                val buttonGap = with (density) {
+                    LayoutStyle.current.unrelatedComponentsPadX.getPixelSize().toDp()
+                }
+
+                AuroraLocaleSwitcher(resourceBundle)
+
+                Spacer(modifier = Modifier.width(buttonGap))
 
                 CommandButtonProjection(
                     contentModel = Command(
@@ -197,7 +211,7 @@ fun main() = auroraApplication {
                     )
                 ).project()
 
-                Spacer(modifier = Modifier.width((LayoutStyle.current.unrelatedComponentsPadX.getPixelSize() / density.density).dp))
+                Spacer(modifier = Modifier.width(buttonGap))
 
                 CommandButtonProjection(
                     contentModel = Command(
