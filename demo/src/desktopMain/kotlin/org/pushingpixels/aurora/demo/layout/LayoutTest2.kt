@@ -56,8 +56,6 @@ fun main() = auroraApplication {
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,
-        menuCommands = null
-
     ) {
         FormLayout(
             modifier = Modifier.fillMaxSize().padding(Paddings.Dlu9),
@@ -65,10 +63,7 @@ fun main() = auroraApplication {
             encodedRowSpecs = "p, 6dlu, p, 10dlu, p",
         ) {
             LabelProjection(
-                contentModel = LabelContentModel(
-                    text = "Name",
-                    enabled = true,
-                ),
+                contentModel = LabelContentModel(text = "Name"),
             ).project(Modifier.xy(1, 1))
 
             var textName by rememberSaveable { mutableStateOf("") }
@@ -77,16 +72,12 @@ fun main() = auroraApplication {
                     value = textName,
                     placeholder = "User name",
                     onValueChange = { textName = it },
-                    enabled = true
                 ),
                 presentationModel = TextFieldPresentationModel(singleLine = true)
             ).project(Modifier.xy(3, 1))
 
             LabelProjection(
-                contentModel = LabelContentModel(
-                    text = "Password",
-                    enabled = true,
-                ),
+                contentModel = LabelContentModel(text = "Password"),
             ).project(Modifier.xy(1, 3))
 
             var textPassword by rememberSaveable { mutableStateOf("") }
@@ -95,7 +86,6 @@ fun main() = auroraApplication {
                     value = textPassword,
                     placeholder = "Password",
                     onValueChange = { textPassword = it },
-                    enabled = true
                 ),
                 presentationModel = TextFieldPresentationModel(singleLine = true)
             ).project(Modifier.xy(3, 3))

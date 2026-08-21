@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
@@ -40,7 +39,6 @@ import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.CellConstraints
 import org.pushingpixels.aurora.layout.FormLayout
-import org.pushingpixels.aurora.layout.FormSpecs
 import org.pushingpixels.aurora.layout.Sizes
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.layout.util.LayoutStyle
@@ -54,7 +52,7 @@ import org.pushingpixels.aurora.window.auroraApplication
 
 @Composable
 private fun Separator(modifier: Modifier, label: String) {
-    Row {
+    Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         // Resolve the default text style to get the default font size
         val resolvedTextStyle = resolveAuroraDefaults()
         // Create our own text style with bold weight
@@ -64,17 +62,14 @@ private fun Separator(modifier: Modifier, label: String) {
         )
 
         LabelProjection(
-            contentModel = LabelContentModel(
-                text = "Name",
-                enabled = true,
-            ),
+            contentModel = LabelContentModel(text = label),
             presentationModel = LabelPresentationModel(textStyle = textStyle)
         ).project()
 
         val density = LocalDensity.current
         Spacer(modifier = Modifier.width((Sizes.DluX1.getPixelSize() / density.density).dp))
 
-        HorizontalSeparatorProjection().project(modifier = Modifier.weight(1.0f, fill = true))
+        HorizontalSeparatorProjection().project(modifier = Modifier.weight(1.0f, fill = true).padding(top = 2.dp))
     }
 }
 
@@ -85,14 +80,12 @@ fun main() = auroraApplication {
         state = rememberWindowState(
             placement = WindowPlacement.Floating,
             position = WindowPosition.Aligned(Alignment.Center),
-            size = DpSize(450.dp, 220.dp)
+            size = DpSize(460.dp, 260.dp)
         ),
         windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,
-        menuCommands = null
-
     ) {
         val textFieldMinSize = DpSize(width = 120.dp, height = TextFieldSizingConstants.MinHeight)
 

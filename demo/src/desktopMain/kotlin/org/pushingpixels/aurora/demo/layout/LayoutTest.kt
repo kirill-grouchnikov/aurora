@@ -50,8 +50,6 @@ fun main() = auroraApplication {
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,
-        menuCommands = null
-
     ) {
         val rowSpec1 = RowSpec(dluX(14))
         val rowSpec2 = RowSpec(Sizes.ComponentSize.Preferred)
