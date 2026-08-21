@@ -734,7 +734,7 @@ fun main() = auroraApplication {
                     ).project()
 
                     AuroraSkinSwitcher({ skin = it })
-                    AuroraLocaleSwitcher(resourceBundle)
+                    AuroraLocaleSwitcher(Modifier, resourceBundle)
                 }
             }
         }

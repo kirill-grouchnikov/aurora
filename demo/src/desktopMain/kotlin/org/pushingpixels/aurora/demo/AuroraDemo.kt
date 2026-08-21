@@ -529,7 +529,7 @@ fun AuroraApplicationScope.DemoArea(
 
                 AuroraSkinSwitcher(onSkinChange)
 
-                AuroraLocaleSwitcher(resourceBundle)
+                AuroraLocaleSwitcher(Modifier, resourceBundle)
 
                 CommandButtonProjection(
                     contentModel = Command(

@@ -140,7 +140,8 @@ import kotlin.math.roundToInt
  * @see Sizes
  */
 @Composable
-public fun FormLayout(modifier: Modifier,
+public fun FormLayout(
+    modifier: Modifier,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>,
     colGroupIndices: Array<IntArray> = arrayOf(),
@@ -165,7 +166,8 @@ public fun FormLayout(modifier: Modifier,
 }
 
 @Composable
-public fun FormLayout(modifier: Modifier,
+public fun FormLayout(
+    modifier: Modifier,
     encodedColumnSpecs: String,
     layoutMap: LayoutMap,
     colGroupIndices: Array<IntArray> = arrayOf(),
@@ -197,7 +199,8 @@ public fun FormLayout(modifier: Modifier,
 }
 
 @Composable
-public fun FormLayout(modifier: Modifier,
+public fun FormLayout(
+    modifier: Modifier,
     encodedColumnSpecs: String,
     encodedRowSpecs: String,
     colGroupIndices: Array<IntArray> = arrayOf(),

@@ -16,12 +16,8 @@
 package org.pushingpixels.aurora.demo.layout
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -39,19 +35,19 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
 import org.pushingpixels.aurora.demo.AuroraLocaleSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.layout.CellConstraints
 import org.pushingpixels.aurora.layout.FormLayout
 import org.pushingpixels.aurora.layout.Sizes
+import org.pushingpixels.aurora.layout.builder.ButtonBar
 import org.pushingpixels.aurora.layout.factories.Paddings
-import org.pushingpixels.aurora.layout.util.LayoutStyle
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.theming.resolveAuroraDefaults
+import org.pushingpixels.aurora.window.AuroraLocaleScope
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
-import java.util.ResourceBundle
+import java.util.*
 
 @Composable
 private fun Separator(modifier: Modifier, label: String) {
@@ -192,40 +188,45 @@ fun main() = auroraApplication {
                 presentationModel = TextFieldPresentationModel(singleLine = true, defaultMinSize = textFieldMinSize)
             ).project(Modifier.xyw(7, 11))
 
-            Row(modifier = Modifier.xyw(1, 13, 7, CellConstraints.Alignment.End, CellConstraints.Alignment.Center)) {
-                val density = LocalDensity.current
-                val buttonGap = with (density) {
-                    LayoutStyle.current.unrelatedComponentsPadX.getPixelSize().toDp()
-                }
+            ButtonBar(
+                modifier = Modifier.xyw(1, 13, 7),
+                resourceBundle = resourceBundle)
+        }
+    }
+}
 
-                AuroraLocaleSwitcher(resourceBundle)
-
-                Spacer(modifier = Modifier.width(buttonGap))
-
+@Composable
+private fun AuroraLocaleScope.ButtonBar(
+    modifier: Modifier,
+    resourceBundle: ResourceBundle,
+) {
+    ButtonBar.builder()
+        .addButton({ extraModifier -> AuroraLocaleSwitcher(extraModifier, resourceBundle) })
+        .addUnrelatedGap()
+        .addButton(
+            { extraModifier ->
                 CommandButtonProjection(
                     contentModel = Command(
                         text = resourceBundle.getString("FormLayout.turnOn"),
                         action = { println("Turn on") }
                     ),
                     presentationModel = CommandButtonPresentationModel(
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-                        minWidth = 72.dp,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
-                ).project()
-
-                Spacer(modifier = Modifier.width(buttonGap))
-
+                ).project(extraModifier)
+            })
+        .addRelatedGap()
+        .addButton(
+            { extraModifier ->
                 CommandButtonProjection(
                     contentModel = Command(
                         text = resourceBundle.getString("FormLayout.turnOff"),
                         action = { println("Turn off") }
                     ),
                     presentationModel = CommandButtonPresentationModel(
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-                        minWidth = 72.dp,
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
                     )
-                ).project()
-            }
-        }
-    }
+                ).project(extraModifier)
+            })
+        .build(Modifier.then(modifier))
 }

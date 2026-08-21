@@ -394,7 +394,7 @@ fun AuroraApplicationScope.DemoStyleContent(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                AuroraLocaleSwitcher(resourceBundle)
+                AuroraLocaleSwitcher(Modifier, resourceBundle)
             }
         }
 

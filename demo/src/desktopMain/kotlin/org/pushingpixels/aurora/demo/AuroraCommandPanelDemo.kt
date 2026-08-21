@@ -124,7 +124,7 @@ fun main() = auroraApplication {
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    AuroraLocaleSwitcher(resourceBundle)
+                    AuroraLocaleSwitcher(Modifier, resourceBundle)
 
                     Spacer(modifier = Modifier.width(8.dp))
 

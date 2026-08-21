@@ -948,7 +948,7 @@ fun AuroraWindowScope.DemoCommandContent(
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    AuroraLocaleSwitcher(resourceBundle)
+                    AuroraLocaleSwitcher(Modifier, resourceBundle)
 
                     Spacer(modifier = Modifier.weight(1.0f))
 

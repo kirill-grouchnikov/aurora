@@ -183,7 +183,7 @@ fun AuroraWindowScope.DemoAlternateTabsContent(
                 decorationAreaType = DecorationAreaType.None,
                 componentShaper = ClassicComponentShaper.Instance
             ) {
-                AuroraLocaleSwitcher(resourceBundle)
+                AuroraLocaleSwitcher(Modifier, resourceBundle)
             }
         }
         TabsProjection(contentModel = TabsContentModel(

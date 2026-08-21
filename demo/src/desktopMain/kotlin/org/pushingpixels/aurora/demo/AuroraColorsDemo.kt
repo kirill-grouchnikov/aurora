@@ -220,7 +220,7 @@ fun AuroraApplicationScope.DemoColorsArea(
 
                 AuroraSkinSwitcher(onSkinChange)
 
-                AuroraLocaleSwitcher(resourceBundle)
+                AuroraLocaleSwitcher(Modifier, resourceBundle)
             }
         }
 

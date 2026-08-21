@@ -29,6 +29,7 @@ import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
+import org.pushingpixels.aurora.demo.AuroraLocaleSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.edit_paste
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -43,7 +44,7 @@ fun main() = auroraApplication {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(460.dp, 224.dp)
+        size = DpSize(460.dp, 250.dp)
     )
     val resourceBundle = derivedStateOf {
         ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
@@ -134,6 +135,10 @@ fun AuroraApplicationScope.ButtonContentAlignmentContent(
             command,
             HorizontalAlignment.Trailing
         )
+
+        Row {
+            AuroraLocaleSwitcher(Modifier, resourceBundle.value)
+        }
     }
 }
 
