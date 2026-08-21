@@ -66,8 +66,6 @@ public class PrototypeSize
      * from the given layout `container` for the default dialog font
      * provided by [DefaultUnitConverter.getDefaultDialogFont].
      *
-     *
-     *
      * Invoked by [FormSpec] to determine
      * the size of a column or row.
      *

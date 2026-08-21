@@ -26,8 +26,6 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * Provides a hierarchical variable expansion useful to improve layout
  * consistency, style guide compliance, and layout readability.
  *
- *
- * 
  * A LayoutMap maps variable names to layout expression Strings. The FormLayout,
  * ColumnSpec, and RowSpec parsers expand variables before an encoded layout
  * specification is parsed and converted into ColumnSpec and RowSpec values.
@@ -36,16 +34,13 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * `new FormLayout("pref, $lcg, pref")` or
  * `new FormLayout("pref, ${lcg}, pref")`.
  *
- *
- * 
  * LayoutMaps build a chain; each LayoutMap has an optional parent map.
  * The root is defined by [LayoutMap.getRoot]. Application-wide
  * variables should be defined in the root LayoutMap. If you want to override
- * application-wide variables locally, obtain a LayoutMap using `new LayoutMap()`, configure it, and provide it as argument to the
+ * application-wide variables locally, obtain a LayoutMap using `new LayoutMap()`,
+ * configure it, and provide it as argument to the
  * FormLayout, ColumnSpec, and RowSpec constructors/factory methods.
  *
- *
- * 
  * By default the root LayoutMap provides the following associations:
  * <table border="1">
  * <tr><td>**Variable Name**</td><td>**Abbreviations**</td><td>**Orientation**</td><td>**Description**</td></tr>
@@ -88,15 +83,12 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * LayoutMap holds two internal Maps that associate key Strings with expression
  * Strings for the columns and rows respectively. Null values are not allowed.
  *
- *
- * 
  * **Tips:**
  *  * You should carefully override predefined variables,
  * because variable users may expect that these don't change.
  *  * Set custom variables in the root LayoutMap.
  *  * Avoid aliases for custom variables.
- * 
- * 
+ *
  * @see FormLayout
  * @see ColumnSpec
  * @see RowSpec
@@ -195,8 +187,6 @@ public class LayoutMap constructor(
      * is replaced by the specified value. The value set in this map
      * overrides an association - if any - in the chain of parent LayoutMaps.
      *
-     *
-     * 
      * The `value` must not be `null`. To remove
      * an association from this map use [.columnRemove].
      * 
@@ -231,8 +221,6 @@ public class LayoutMap constructor(
      * Removes the column value mapping for this key from this map if it is
      * present.
      *
-     *
-     * 
      * Returns the value to which the map previously associated the key,
      * or `null` if the map contained no mapping for this key.
      * The map will not contain a String mapping for the specified key
@@ -318,8 +306,6 @@ public class LayoutMap constructor(
      * is replaced by the specified value. The RowSpec set in this map
      * override an association - if any - in the chain of parent LayoutMaps.
      *
-     *
-     * 
      * The RowSpec must not be `null`. To remove an association
      * from this map use [.rowRemove].
      * 
@@ -345,8 +331,6 @@ public class LayoutMap constructor(
      * Removes the row value mapping for this key from this map if it is
      * present.
      *
-     *
-     * 
      * Returns the value to which the map previously associated the key,
      * or `null` if the map contained no mapping for this key.
      * The map will not contain a String mapping for the specified key
@@ -522,27 +506,27 @@ public class LayoutMap constructor(
             map.columnPut(
                 "label-component-gap",
                 arrayOf<String>("lcg", "lcgap"),
-                FormSpecs.LABEL_COMPONENT_GAP_COLSPEC
+                FormSpecs.LabelComponentGapColSpec
             )
             map.columnPut(
                 "related-gap",
                 arrayOf<String>("rg", "rgap"),
-                FormSpecs.RELATED_GAP_COLSPEC
+                FormSpecs.RelatedGapColSpec
             )
             map.columnPut(
                 "unrelated-gap",
                 arrayOf<String>("ug", "ugap"),
-                FormSpecs.UNRELATED_GAP_COLSPEC
+                FormSpecs.UnrelatedGapColSpec
             )
             map.columnPut(
                 "button",
                 arrayOf<String>("b"),
-                FormSpecs.BUTTON_COLSPEC
+                FormSpecs.ButtonColSpec
             )
             map.columnPut(
                 "growing-button",
                 arrayOf<String>("gb"),
-                FormSpecs.GROWING_BUTTON_COLSPEC
+                FormSpecs.GrowingButtonColSpec
             )
             map.columnPut(
                 "dialog-margin",
@@ -556,39 +540,39 @@ public class LayoutMap constructor(
             )
             map.columnPut(
                 "glue",
-                FormSpecs.GLUE_COLSPEC.toShortString()
+                FormSpecs.GlueColSpec.toShortString()
             )
 
             // Row variables
             map.rowPut(
                 "label-component-gap",
                 arrayOf<String>("lcg", "lcgap"),
-                FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC
+                FormSpecs.LabelComponentGapRowSpec
             )
             map.rowPut(
                 "related-gap",
                 arrayOf<String>("rg", "rgap"),
-                FormSpecs.RELATED_GAP_ROWSPEC
+                FormSpecs.RelatedGapRowSpec
             )
             map.rowPut(
                 "unrelated-gap",
                 arrayOf<String>("ug", "ugap"),
-                FormSpecs.UNRELATED_GAP_ROWSPEC
+                FormSpecs.UnrelatedGapRowSpec
             )
             map.rowPut(
                 "narrow-line-gap",
                 arrayOf<String>("nlg", "nlgap"),
-                FormSpecs.NARROW_LINE_GAP_ROWSPEC
+                FormSpecs.NarrowLineGapRowSpec
             )
             map.rowPut(
                 "line-gap",
                 arrayOf<String>("lg", "lgap"),
-                FormSpecs.LINE_GAP_ROWSPEC
+                FormSpecs.LineGapRowSpec
             )
             map.rowPut(
                 "paragraph-gap",
                 arrayOf<String>("pg", "pgap"),
-                FormSpecs.PARAGRAPH_GAP_ROWSPEC
+                FormSpecs.ParagraphGapRowSpec
             )
             map.rowPut(
                 "dialog-margin",
@@ -603,11 +587,11 @@ public class LayoutMap constructor(
             map.rowPut(
                 "button",
                 arrayOf<String>("b"),
-                FormSpecs.BUTTON_ROWSPEC
+                FormSpecs.ButtonRowSpec
             )
             map.rowPut(
                 "glue",
-                FormSpecs.GLUE_ROWSPEC
+                FormSpecs.GlueRowSpec
             )
 
             return map

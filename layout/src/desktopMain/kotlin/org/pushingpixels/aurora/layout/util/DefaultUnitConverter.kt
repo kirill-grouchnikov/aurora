@@ -27,16 +27,12 @@ import androidx.compose.ui.unit.Density
  * This is the default implementation of the [UnitConverter] interface.
  * It converts horizontal and vertical dialog base units to pixels.
  *
- *
- * 
  * The horizontal base unit is equal to the average width, in pixels,
  * of the characters in the system font; the vertical base unit is equal
  * to the height, in pixels, of the font.
  * Each horizontal base unit is equal to 4 horizontal dialog units;
  * each vertical base unit is equal to 8 vertical dialog units.
  *
- *
- * 
  * The DefaultUnitConverter computes dialog base units using a default font
  * and a test string for the average character width. You can configure
  * the font and the test string via the bound Bean properties
@@ -45,11 +41,8 @@ import androidx.compose.ui.unit.Density
  * [custom computation](http://support.microsoft.com/default.aspx?scid=kb;EN-US;125681).
  * More information how to use dialog units in screen design can be found
  * in Microsoft's
- * [Design
- * Specifications and Guidelines](http://msdn2.microsoft.com/en-us/library/ms997619).
+ * [Design Specifications and Guidelines](http://msdn2.microsoft.com/en-us/library/ms997619).
  *
- *
- * 
  * Since the Forms 1.1 this converter logs font information at
  * the `CONFIG` level.
  * 
@@ -78,7 +71,6 @@ public class DefaultUnitConverter(
     /**
      * Returns the cached or computed horizontal dialog base units.
      * 
-     * @param component     a Component that provides the font and graphics
      * @return the horizontal dialog base units
      */
     override fun getDialogBaseUnitsX(): Double {
@@ -89,7 +81,6 @@ public class DefaultUnitConverter(
      * Returns the cached or computed vertical dialog base units
      * for the given component.
      * 
-     * @param component     a Component that provides the font and graphics
      * @return the vertical dialog base units
      */
     override fun getDialogBaseUnitsY(): Double {
@@ -117,13 +108,10 @@ public class DefaultUnitConverter(
      * In case the component is `null` the global dialog base units
      * are answered.
      *
-     *
-     * 
      * Before we compute the dialog base units we check whether they
      * have been computed and cached before - for the same component
      * `FontMetrics`.
      * 
-     * @param c  the component that provides the graphics object
      * @return the DialogBaseUnits object for the given component
      */
     private fun getDialogBaseUnits(): DialogBaseUnits {

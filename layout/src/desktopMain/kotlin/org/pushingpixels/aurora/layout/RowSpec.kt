@@ -26,8 +26,6 @@ import androidx.compose.ui.text.TextMeasurer
  * Specifies rows in FormLayout by their default orientation,
  * start size and resizing behavior.
  *
- *
- * 
  * **Examples:**<br></br>
  * The following examples specify a centered row with a size of 14&nbsp;dlu
  * that won't grow.
@@ -39,10 +37,8 @@ import androidx.compose.ui.text.TextMeasurer
  * RowSpec.parse("14dlu:0");
  * RowSpec.parse("center:14dlu:0");
 </pre> * 
- * 
- * 
- * The [FormSpecs] provides
- * predefined frequently used RowSpec instances.
+ *
+ * The [FormSpecs] provides predefined frequently used [RowSpec] instances.
  * 
  * @see FormSpecs
  */

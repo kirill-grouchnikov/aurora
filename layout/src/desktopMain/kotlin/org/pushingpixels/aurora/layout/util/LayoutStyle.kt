@@ -26,8 +26,6 @@ import org.pushingpixels.aurora.layout.Size
  * An abstract class that describes a layout and design style guide.
  * It provides constants used to lay out panels consistently.
  *
- *
- * 
  * **Note:** This class is work in progress and
  * the API may change without notice. Therefore it is recommended
  * to not write custom subclasses for production code.
@@ -207,21 +205,11 @@ public abstract class LayoutStyle {
      */
     public abstract val buttonBarPad: ConstantSize
 
-    internal companion object {
-        /**
-         * Returns the current `LayoutStyle`.
-         * 
-         * @return the current `LayoutStyle`
-         */
-        /**
-         * Set a new `LayoutStyle`.
-         * 
-         * @param newLayoutStyle   the style to be set
-         */
+    public companion object {
         /**
          * Holds the current layout style.
          */
-        var current: LayoutStyle = initialLayoutStyle()
+        public var current: LayoutStyle = initialLayoutStyle()
 
         // Computing the initial layout style *************************************
         /**

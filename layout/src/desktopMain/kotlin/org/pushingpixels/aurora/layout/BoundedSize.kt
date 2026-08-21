@@ -56,8 +56,6 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
      * Returns this size as pixel size. Neither requires the component
      * list nor the specified measures. Honors the lower and upper bound.
      *
-     *
-     *
      * Invoked by `FormSpec` to determine the size of a column or
      * row.
      *
@@ -165,8 +163,6 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
     /**
      * Returns a string representation of this size object.
      *
-     *
-     * 
      * **Note:** This string representation may change
      * at any time. It is intended for debugging purposes. For parsing,
      * use [.encode] instead.

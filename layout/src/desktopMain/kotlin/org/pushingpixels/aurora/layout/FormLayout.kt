@@ -597,13 +597,9 @@ private class FormLayoutMeasurePolicy(
      * to the maximum number of columns/rows that a component can span
      * without spanning a growing column.
      *
-     *
-     *
      * Iterates over the specs from right to left/bottom to top,
      * sets the table value to zero if a spec can grow,
      * otherwise increases the span by one.
-     *
-     *
      *
      * **Examples:**<pre>
      * "pref, 4dlu, pref, 2dlu, p:grow, 2dlu,      pref" ->
@@ -676,8 +672,6 @@ private class FormLayoutMeasurePolicy(
      * Computes and returns the compressed sizes. Compresses space for columns
      * and rows iff the available space is less than the total preferred size
      * but more than the total minimum size.
-     *
-     *
      *
      * Only columns and rows that are specified to be compressible will be
      * affected. You can specify a column and row as compressible by

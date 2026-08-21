@@ -31,8 +31,6 @@ import kotlin.math.roundToInt
  * Logical constant sizes that vary with the current layout style
  * are delivered by the [LayoutStyle] class.
  *
- *
- * 
  * This class supports different size units:
  * <table>
  * <tr><td>**Unit**&nbsp;
@@ -46,8 +44,7 @@ import kotlin.math.roundToInt
  * <tr><td>Dialog Unit</td><td>dlu</td><td>honors l&amp;f, resolution, and
  * dialog font size</td></tr>
 </table> * 
- * 
- * 
+ *
  * **Examples:**<pre>
  * Sizes.ZERO;
  * Sizes.DLUX9;
@@ -95,8 +92,6 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
      * Returns this size as pixel size. Neither requires the component
      * list nor the specified measures.
      *
-     *
-     *
      * Invoked by [FormSpec] to determine
      * the size of a column or row.
      *
@@ -121,8 +116,6 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
      * Used by the FormLayout size computations in `#compressedSizes`
      * to check whether a column or row can be compressed or not.
      *
-     *
-     * 
      * ConstantSizes are incompressible.
      * 
      * @return `false`

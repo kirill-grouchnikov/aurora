@@ -26,8 +26,6 @@ import androidx.compose.ui.layout.IntrinsicMeasurable
  * component measuring sizes, constant sizes with value and unit,
  * and bounded sizes that provide lower and upper bounds for a size.
  *
- *
- * 
  * You can find a motivation for the different `Size` types in
  * the Forms whitepaper that is part of the product documentation and that is
  * available online too, see
@@ -65,8 +63,6 @@ public interface Size {
      * Used by the FormLayout size computations in `#compressedSizes`
      * to check whether a column or row can be compressed or not.
      *
-     *
-     * 
      * The ComponentSize *default* is compressible, as well as
      * BoundedSizes that are based on the *default* size.
      * 

@@ -26,8 +26,6 @@ import androidx.compose.ui.text.TextMeasurer
  * Specifies columns in FormLayout by their default orientation,
  * start size and resizing behavior.
  *
- *
- * 
  * **Examples:**<br></br>
  * The following examples specify a column with FILL alignment, a size of
  * 10&nbsp;dlu that won't grow.
@@ -39,8 +37,7 @@ import androidx.compose.ui.text.TextMeasurer
  * ColumnSpec.parse("10dlu:0");
  * ColumnSpec.parse("fill:10dlu:0");
 </pre> * 
- * 
- * 
+ *
  * The [FormSpecs] provides
  * predefined frequently used ColumnSpec instances.
  * 
@@ -82,8 +79,6 @@ public class ColumnSpec : FormSpec {
      * Constructs a ColumnSpec from the specified encoded description.
      * The description will be parsed to set initial values.
      *
-     *
-     * 
      * Unlike the factory method [.decode], this constructor
      * does not expand layout variables, and it cannot vend cached objects.
      * 
