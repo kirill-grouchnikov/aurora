@@ -34,11 +34,11 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * instances of [ConstantSize] to define the margins.
  * 
  * **Examples:**<br></br>
- * <pre>
+ * ```kotlin
  * Paddings.Dlu2
- * Paddings.createPaddingValues(Sizes.DluY4, Sizes.DluX2, Sizes.DluY4, Sizes.DluX2);
- * Paddings.createPaddingValues("4dlu, 2dlu, 4dlu, 2dlu");
-</pre> * 
+ * Paddings.createPaddingValues(Sizes.DluY4, Sizes.DluX2, Sizes.DluY4, Sizes.DluX2)
+ * Paddings.createPaddingValues("4dlu, 2dlu, 4dlu, 2dlu")
+ * ```
  * 
  * @see [PaddingValues]
  * @see [Sizes]

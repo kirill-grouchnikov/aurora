@@ -26,10 +26,11 @@ import androidx.compose.ui.text.TextMeasurer
  * A [Size] implementation that computes its width and height
  * by a prototype String.
  *
- * **Examples:**<pre>
- * new PrototypeSize("123-456-789");
- * new FormLayout("p, 2dlu, 'MMMM'");
-</pre> * 
+ * **Examples:**
+ * ```kotlin
+ * PrototypeSize("123-456-789")
+ * FormLayout("p, 2dlu, 'MMMM'") { ... }
+ * ```
  * 
  * @see Size
  * @see Sizes

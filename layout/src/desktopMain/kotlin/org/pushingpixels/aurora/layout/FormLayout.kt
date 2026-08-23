@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.layout.CellConstraints.Alignment
-import org.pushingpixels.aurora.layout.factories.Paddings
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -68,7 +67,7 @@ import kotlin.math.roundToInt
  *
  * FormLayout has been designed to work with non-visual builders that help you
  * specify the layout and fill the grid. For example, the
- * [ButtonBarBuilder] assists you in building button
+ * [org.pushingpixels.aurora.layout.builder.ButtonBar.Builder] assists you in building button
  * bars; it creates a standardized FormLayout and provides a minimal API that
  * specializes in adding buttons and Actions. Other builders can create
  * frequently used panel design, for example a form that consists of rows of
@@ -78,24 +77,22 @@ import kotlin.math.roundToInt
  * defined by the [Size] interface.
  *
  * **Example 1** (Plain FormLayout):<br></br>
- * The following example creates a panel with 3 data columns and 3 data rows;
+ * The following example creates a panel with 2 data columns and 3 data rows;
  * the columns and rows are specified before components are added
  * to the form.
- * <pre>
- * FormLayout layout = new FormLayout(
- * "right:pref, 6dlu, 50dlu, 4dlu, default",  // columns
- * "pref, 3dlu, pref, 3dlu, pref");           // rows
- *
- * JPanel panel = new JPanel(layout);
- * panel.add(new JLabel("Label1"),   CC.xy  (1, 1));
- * panel.add(new JTextField(),       CC.xywh(3, 1, 3, 1));
- * panel.add(new JLabel("Label2"),   CC.xy  (1, 3));
- * panel.add(new JTextField(),       CC.xy  (3, 3));
- * panel.add(new JLabel("Label3"),   CC.xy  (1, 5));
- * panel.add(new JTextField(),       CC.xy  (3, 5));
- * panel.add(new JButton("/u2026"),  CC.xy  (5, 5));
- * return panel;
-</pre> *
+ * ```kotlin
+ * FormLayout(
+ *    modifier = Modifier.fillMaxSize().padding(Paddings.Dlu9),
+ *    encodedColumnSpecs = "end:pref, 2dlu, 60dlu:grow",
+ *    encodedRowSpecs = "p, 6dlu. p, 10dlu, p"
+ * ) {
+ *    MyLabel(modifier = Modifier.xy(1, 1), ...)
+ *    MyTextField(modifier = modifier.xy(3, 1), ...)
+ *    MyLabel(modifier = Modifier.xy(3, 1), ...)
+ *    MyTextField(modifier = modifier.xy(3, 3), ...)
+ *    MyButton(modifier = modifier.xy(3, 5), ...)
+ * }
+ * ```
  *
  * **Example 2** (Using PanelBuilder):<br></br>
  * This example creates the same panel as above using the
@@ -615,7 +612,8 @@ private class FormLayoutMeasurePolicy(
      * sets the table value to zero if a spec can grow,
      * otherwise increases the span by one.
      *
-     * **Examples:**<pre>
+     * **Examples:**
+     * ```text
      * "pref, 4dlu, pref, 2dlu, p:grow, 2dlu,      pref" ->
      * [4,    3,    2,    1,    0,      MAX_VALUE, MAX_VALUE]
      *
@@ -624,7 +622,7 @@ private class FormLayoutMeasurePolicy(
      *
      * "p, 4dlu, p, 2dlu, 0:grow" ->
      * [4, 3,    2, 1,    0]
-    </pre> *
+     * ```
      *
      * @param formSpecs  the column specs or row specs
      * @return a table that maps a spec index to the maximum span for

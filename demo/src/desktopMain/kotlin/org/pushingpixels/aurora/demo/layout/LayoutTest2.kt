@@ -33,8 +33,8 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.layout.CellConstraints
 import org.pushingpixels.aurora.layout.FormLayout
+import org.pushingpixels.aurora.layout.builder.ButtonBar
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -90,20 +90,25 @@ fun main() = auroraApplication {
                 presentationModel = TextFieldPresentationModel(singleLine = true)
             ).project(Modifier.xy(3, 3))
 
-            CommandButtonProjection(
-                contentModel = Command(
-                    text = "Login",
-                    icon = radiance_menu(),
-                    action = { println("Login!") }
-                ),
-                presentationModel = CommandButtonPresentationModel(
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-                    iconDimension = DpSize(16.dp, 16.dp),
-                    iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
-                    iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
-                    presentationState = CommandButtonPresentationState.MediumFitToIcon,
-                )
-            ).project(Modifier.xy(3, 5, CellConstraints.Alignment.End, CellConstraints.Alignment.Center))
+            ButtonBar.Builder()
+                .addGlue()
+                .addButton { builderModifier ->
+                    CommandButtonProjection(
+                        contentModel = Command(
+                            text = "Login",
+                            icon = radiance_menu(),
+                            action = { println("Login!") }
+                        ),
+                        presentationModel = CommandButtonPresentationModel(
+                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                            iconDimension = DpSize(16.dp, 16.dp),
+                            iconActiveFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
+                            iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
+                            presentationState = CommandButtonPresentationState.MediumFitToIcon,
+                        )
+                    ).project(builderModifier)
+                }
+                .build(Modifier.xyw(1, 5, 3))
         }
     }
 }

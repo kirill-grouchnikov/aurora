@@ -55,30 +55,33 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * 
  * 
  * **Examples:**
- * <pre>
+ * ```kotlin
  * // Predefined variables
- * new FormLayout(
- * "pref, $lcgap, pref, $rgap, pref",
- * "p, $lgap, p, $lgap, p");
+ * FormLayout(
+ *    modifier = ...,
+ *    encodedColumnSpecs = "pref, $lcgap, pref, $rgap, pref",
+ *    encodedRowSpecs = "p, $lgap, p, $lgap, p") { ... }
  * 
  * // Custom variables
  * LayoutMap.getRoot().columnPut("half", "39dlu");
  * LayoutMap.getRoot().columnPut("full", "80dlu");
  * LayoutMap.getRoot().rowPut("table", "fill:0:grow");
  * LayoutMap.getRoot().rowPut("table50", "fill:50dlu:grow");
- * new FormLayout(
- * "pref, $lcgap, $half, 2dlu, $half",
- * "p, $lcgap, $table50");
- * new FormLayout(
- * "pref, $lcgap, $full",
- * "p, $lcgap, $table50");
+ * FormLayout(
+ *    modifier = ...,
+ *    encodedColumnSpecs = "pref, $lcgap, $half, 2dlu, $half",
+ *    encodedRowSpecs = "p, $lcgap, $table50") { ... }
+ * FormLayout(
+ *    modifier = ...,
+ *    encodedColumnSpecs = "pref, $lcgap, $full",
+ *    encodedRowSpecs = "p, $lcgap, $table50") { ... }
  * 
  * // Nested variables
  * LayoutMap.getRoot().columnPut("c-gap-c", "$half, 2dlu, $half");
- * new FormLayout(
- * "pref, $lcgap, ${c-gap-c}", // -> "pref, $lcgap, $half, 2dlu, $half",
- * "p, $lcgap, $table");
-</pre> * 
+ * FormLayout(
+ *    encodedColumnSpecs = "pref, $lcgap, ${c-gap-c}", // -> "pref, $lcgap, $half, 2dlu, $half",
+ *    encodedRowSpecs = "p, $lcgap, $table");
+ * ```
  * 
  * LayoutMap holds two internal Maps that associate key Strings with expression
  * Strings for the columns and rows respectively. Null values are not allowed.
@@ -95,7 +98,7 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  *
  * @since 1.2
  */
-public class LayoutMap constructor(
+public class LayoutMap(
     /**
      * Refers to the parent map that is used to look up values
      * if this map contains no association for a given key.

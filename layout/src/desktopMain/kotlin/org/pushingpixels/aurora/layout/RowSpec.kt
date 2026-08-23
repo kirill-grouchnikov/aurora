@@ -29,14 +29,14 @@ import androidx.compose.ui.text.TextMeasurer
  * **Examples:**<br></br>
  * The following examples specify a centered row with a size of 14&nbsp;dlu
  * that won't grow.
- * <pre>
- * new RowSpec(Sizes.dluX(14));
- * new RowSpec(RowSpec.CENTER, Sizes.dluX(14), 0.0);
- * new RowSpec(rowSpec.CENTER, Sizes.dluX(14), RowSpec.NO_GROW);
- * RowSpec.parse("14dlu");
- * RowSpec.parse("14dlu:0");
- * RowSpec.parse("center:14dlu:0");
-</pre> * 
+ * ```kotlin
+ * RowSpec(Sizes.dluX(14))
+ * RowSpec(RowSpec.Center, Sizes.dluX(14), 0.0)
+ * RowSpec(rowSpec.Center, Sizes.dluX(14), RowSpec.NoGrow)
+ * RowSpec.decode("14dlu")
+ * RowSpec.decode("14dlu:0")
+ * RowSpec.decode("center:14dlu:0")
+ * ```
  *
  * The [FormSpecs] provides predefined frequently used [RowSpec] instances.
  * 

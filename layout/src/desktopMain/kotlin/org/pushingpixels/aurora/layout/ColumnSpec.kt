@@ -29,14 +29,14 @@ import androidx.compose.ui.text.TextMeasurer
  * **Examples:**<br></br>
  * The following examples specify a column with FILL alignment, a size of
  * 10&nbsp;dlu that won't grow.
- * <pre>
- * new ColumnSpec(Sizes.dluX(10));
- * new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(10), 0.0);
- * new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(10), ColumnSpec.NO_GROW);
- * ColumnSpec.parse("10dlu");
- * ColumnSpec.parse("10dlu:0");
- * ColumnSpec.parse("fill:10dlu:0");
-</pre> * 
+ * ```kotlin
+ * ColumnSpec(Sizes.dluX(10))
+ * ColumnSpec(ColumnSpec.Fill, Sizes.dluX(10), 0.0)
+ * ColumnSpec(ColumnSpec.Fill, Sizes.dluX(10), ColumnSpec.NoGrow)
+ * ColumnSpec.decode("10dlu")
+ * ColumnSpec.decode("10dlu:0")
+ * ColumnSpec.decode("fill:10dlu:0")
+ * ```
  *
  * The [FormSpecs] provides
  * predefined frequently used ColumnSpec instances.

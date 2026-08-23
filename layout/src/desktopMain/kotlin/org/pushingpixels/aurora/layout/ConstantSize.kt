@@ -45,12 +45,13 @@ import kotlin.math.roundToInt
  * dialog font size</td></tr>
 </table> * 
  *
- * **Examples:**<pre>
- * Sizes.ZERO;
- * Sizes.DluX9;
- * Sizes.dluX(42);
- * Sizes.pixel(99);
-</pre> * 
+ * **Examples:**
+ * ```kotlin
+ * Sizes.Zero
+ * Sizes.DluX9
+ * Sizes.dluX(42)
+ * Sizes.pixel(99)
+ * ```
  * 
  * @see Size
  * @see Sizes

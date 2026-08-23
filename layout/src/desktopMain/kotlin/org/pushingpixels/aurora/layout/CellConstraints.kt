@@ -44,21 +44,21 @@ import java.util.*
  * **Examples**:<br></br>
  * The following cell constraints locate a component in the third
  * column of the fifth row; column and row span are 1; the component
- * will be aligned with the column's right-hand side and the row's
+ * will be aligned with the column's end-hand side and the row's
  * bottom.
- * <pre>
+ * ```kotlin
  * CellConstraints.xy(3, 5)
- * CellConstraints.xy(3, 5, CellConstraints.Right, CellConstraints.Bottom)
- * CellConstraints.xy(3, 5, "right, bottom")
+ * CellConstraints.xy(3, 5, CellConstraints.End, CellConstraints.Bottom)
+ * CellConstraints.xy(3, 5, "end, bottom")
  * 
  * CellConstraints.xyw (3, 5, 1)
- * CellConstraints.xyw (3, 5, 1, CellConstraints.Right, CellConstraints.Bottom)
- * CellConstraints.xyw (3, 5, 1, "right, bottom")
+ * CellConstraints.xyw (3, 5, 1, CellConstraints.End, CellConstraints.Bottom)
+ * CellConstraints.xyw (3, 5, 1, "end, bottom")
  * 
  * CellConstraints.xywh(3, 5, 1, 1)
- * CellConstraints.xywh(3, 5, 1, 1, CellConstraints.Right, CellConstraints.Bottom)
- * CellConstraints.xywh(3, 5, 1, 1, "right, bottom")
- * </pre>
+ * CellConstraints.xywh(3, 5, 1, 1, CellConstraints.End, CellConstraints.Bottom)
+ * CellConstraints.xywh(3, 5, 1, 1, "end, bottom")
+ * ```
  * See also the examples in the [FormLayout] class comment.
  *
  * TODO: Explain in the JavaDocs that the insets are actually offsets.
@@ -606,12 +606,13 @@ public data class CellConstraints(
          * Constructs an instance of [CellConstraints] from
          * the given encoded string properties.<p>
          *
-         * <strong>Examples:</strong><pre>
+         * <strong>Examples:</strong>
+         * ```kotlin
          * CellConstraints("1, 3")
          * CellConstraints("1, 3, start, bottom")
          * CellConstraints("1, 3, 2, 1, start, bottom")
          * CellConstraints("1, 3, 2, 1, s, b")
-         * </pre>
+         * ```
          *
          * @param encodedConstraints	the constraints encoded as string
          */
