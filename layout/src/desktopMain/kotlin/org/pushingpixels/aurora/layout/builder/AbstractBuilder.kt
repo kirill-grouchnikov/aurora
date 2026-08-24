@@ -16,10 +16,12 @@
 package org.pushingpixels.aurora.layout.builder
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.Composable
 import org.pushingpixels.aurora.layout.CellConstraints
 import org.pushingpixels.aurora.layout.ColumnSpec
 import org.pushingpixels.aurora.layout.RowSpec
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
+import org.pushingpixels.aurora.layout.factories.Paddings
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
@@ -40,7 +42,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * @see [Panel.Builder]
  * @see [DefaultFormBuilder]
  */
-public abstract class AbstractBuilder protected constructor(public val componentFactory: ComponentFactory) {
+public abstract class AbstractBuilder<out B: AbstractBuilder<B>> protected constructor(public val componentFactory: ComponentFactory) {
     protected val colSpecs: MutableList<ColumnSpec> = arrayListOf()
     protected val rowSpecs: MutableList<RowSpec> = arrayListOf()
     protected var padding: PaddingValues = PaddingValues.Zero
@@ -59,16 +61,23 @@ public abstract class AbstractBuilder protected constructor(public val component
      * 
      * @return the number of columns
      */
-    public fun getColumnCount(): Int {
-        return colSpecs.size
-    }
+    public val columnCount: Int = colSpecs.size
 
     /**
      * Returns the number of rows in the form.
      * 
      * @return the number of rows
      */
-    public fun getRowCount(): Int {
-        return rowSpecs.size
+    public val rowCount: Int = rowSpecs.size
+
+    public fun padding(padding: PaddingValues): B {
+        this.padding = padding
+        return this as B
+    }
+
+    @Composable
+    public open fun padding(paddingSpec: String) : B {
+        this.padding = Paddings.createPaddingValues(paddingSpec)
+        return this as B
     }
 }

@@ -204,28 +204,29 @@ private fun AuroraLocaleScope.ButtonBar(
         .addGlue()
         .addFixed { builderModifier -> AuroraLocaleSwitcher(builderModifier, resourceBundle) }
         .addUnrelatedGap()
-        .addButton { builderModifier ->
-            CommandButtonProjection(
-                contentModel = Command(
-                    text = resourceBundle.getString("FormLayout.turnOn"),
-                    action = { println("Turn on") }
-                ),
-                presentationModel = CommandButtonPresentationModel(
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
-                )
-            ).project(builderModifier)
-        }
-        .addRelatedGap()
-        .addButton { builderModifier ->
-            CommandButtonProjection(
-                contentModel = Command(
-                    text = resourceBundle.getString("FormLayout.turnOff"),
-                    action = { println("Turn off") }
-                ),
-                presentationModel = CommandButtonPresentationModel(
-                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
-                )
-            ).project(builderModifier)
-        }
+        .addButtons(
+            { builderModifier ->
+                CommandButtonProjection(
+                    contentModel = Command(
+                        text = resourceBundle.getString("FormLayout.turnOn"),
+                        action = { println("Turn on") }
+                    ),
+                    presentationModel = CommandButtonPresentationModel(
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                    )
+                ).project(builderModifier)
+            },
+            { builderModifier ->
+                CommandButtonProjection(
+                    contentModel = Command(
+                        text = resourceBundle.getString("FormLayout.turnOff"),
+                        action = { println("Turn off") }
+                    ),
+                    presentationModel = CommandButtonPresentationModel(
+                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
+                    )
+                ).project(builderModifier)
+            })
+        .padding(Paddings.Empty)
         .build(Modifier.then(modifier))
 }
