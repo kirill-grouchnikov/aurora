@@ -119,7 +119,7 @@ private fun LabelTextContent(
         val decorationAreaType = AuroraSkin.decorationAreaType
         val skinColors = AuroraSkin.colors
 
-        // If the presentation model specifies a text style with a color, use that. Otherwise
+        // If the presentation model specifies a text style with a color, use that. Otherwise,
         // use the foreground color that matches the decoration area type of this label
         val presentationStyleHasColor = presentationModel.textStyle?.color?.isSpecified ?: false
         val textColor = if (presentationStyleHasColor) presentationModel.textStyle.color else
@@ -130,6 +130,7 @@ private fun LabelTextContent(
                 tokensOverlayProvider = presentationModel.colorTokensOverlayProvider,
                 decorationAreaType = decorationAreaType,
                 associationKind = ContainerColorTokensAssociationKind.Default,
+                colorTokenQuery = presentationModel.colorTokenQuery,
                 backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Never,
                 skipFlatCheck = true,
                 inactiveContainerType = ContainerType.Neutral,

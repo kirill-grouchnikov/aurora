@@ -767,6 +767,7 @@ internal fun getTextColor(
     tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
     decorationAreaType: DecorationAreaType,
     associationKind: ContainerColorTokensAssociationKind,
+    colorTokenQuery: (ContainerColorTokens) -> Color = ContainerColorTokens::onContainer,
     backgroundAppearanceStrategy: BackgroundAppearanceStrategy,
     skipFlatCheck: Boolean,
     inactiveContainerType: ContainerType,
@@ -796,7 +797,7 @@ internal fun getTextColor(
     var foreground: Color
     if (tweakedCurrState.isDisabled || activeStates == null || activeStates.size == 1) {
         // Disabled state or only one active state being tracked
-        foreground = colorTokens.onContainer
+        foreground = colorTokenQuery.invoke(colorTokens)
     } else {
         // Get the combined foreground color from all states
         var aggrRed = 0f
@@ -814,7 +815,7 @@ internal fun getTextColor(
                 inactiveContainerType = inactiveContainerType,
                 skipFlatCheck = skipFlatCheck
             )
-            val activeForeground = activeTokens.onContainer
+            val activeForeground = colorTokenQuery.invoke(activeTokens)
             aggrRed += contribution * activeForeground.red
             aggrGreen += contribution * activeForeground.green
             aggrBlue += contribution * activeForeground.blue

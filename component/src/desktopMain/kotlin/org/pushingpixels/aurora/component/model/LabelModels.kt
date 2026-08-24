@@ -16,12 +16,14 @@
 package org.pushingpixels.aurora.component.model
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import org.pushingpixels.aurora.theming.ContainerColorTokens
 import org.pushingpixels.aurora.theming.ContainerColorTokensOverlay
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 
@@ -39,6 +41,7 @@ object LabelSizingConstants {
 
 data class LabelPresentationModel(
     val colorTokensOverlayProvider: ContainerColorTokensOverlay.Provider? = null,
+    val colorTokenQuery: (ContainerColorTokens) -> Color = ContainerColorTokens::onContainer,
     val contentPadding: PaddingValues = LabelSizingConstants.DefaultLabelContentPadding,
     val iconDimension: DpSize = LabelSizingConstants.DefaultLabelIconSize,
     val iconDisabledFilterStrategy: IconFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
