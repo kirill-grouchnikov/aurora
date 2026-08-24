@@ -262,7 +262,7 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
                     return Centimeter
                 } else {
                     throw IllegalArgumentException(
-                        "Invalid unit name '" + name + "'. Must be one of: " +
+                        "Invalid unit name '$name'. Must be one of: " +
                             "px, dlu, pt, mm, cm, in"
                     )
                 }

@@ -33,7 +33,7 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * Provides constants and factory methods for [PaddingValues] that use
  * instances of [ConstantSize] to define the margins.
  * 
- * **Examples:**<br></br>
+ * **Examples:**
  * ```kotlin
  * Paddings.Dlu2
  * Paddings.createPaddingValues(Sizes.DluY4, Sizes.DluX2, Sizes.DluY4, Sizes.DluX2)

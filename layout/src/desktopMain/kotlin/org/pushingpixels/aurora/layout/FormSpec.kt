@@ -204,7 +204,7 @@ public abstract class FormSpec protected constructor(
             return BoundedSize(basis!!, lower, upper)
         }
         throw IllegalArgumentException(
-            ("Illegal bounded size '" + token + "'. Must be one of:"
+            ("Illegal bounded size '$token'. Must be one of:"
                 + "\n[<constant size>,<logical size>]                 // lower bound"
                 + "\n[<logical size>,<constant size>]                 // upper bound"
                 + "\n[<constant size>,<logical size>,<constant size>] // lower and upper bound."
@@ -565,7 +565,7 @@ public abstract class FormSpec protected constructor(
                 return substring.toDouble()
             }
             throw IllegalArgumentException(
-                "The resize argument '" + token + "' is invalid. " +
+                "The resize argument '$token' is invalid. " +
                     " Must be one of: grow, g, none, n, grow(<double>), g(<double>)"
             )
         }

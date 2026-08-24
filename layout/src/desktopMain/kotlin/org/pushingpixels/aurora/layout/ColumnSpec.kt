@@ -27,7 +27,7 @@ import androidx.compose.ui.text.TextMeasurer
  * start size and resizing behavior.
  *
  * **Examples:**<br></br>
- * The following examples specify a column with FILL alignment, a size of
+ * The following examples specify a column with Fill alignment, a size of
  * 10&nbsp;dlu that won't grow.
  * ```kotlin
  * ColumnSpec(Sizes.dluX(10))
