@@ -41,6 +41,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
+import org.pushingpixels.aurora.layout.FormsSetup
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
@@ -1248,6 +1249,11 @@ fun AuroraApplicationScope.AuroraWindow(
     }
 
     val density = mutableStateOf(Density(1.0f, 1.0f))
+
+    // Set up the default component factory for FormsLayout, if it's not already configured
+    if (FormsSetup.ComponentFactoryDefault == null) {
+        FormsSetup.ComponentFactoryDefault = AuroraFormsComponentFactory()
+    }
 
     val decoratedBySystem = (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.System)
     Window(

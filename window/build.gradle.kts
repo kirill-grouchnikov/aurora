@@ -18,6 +18,7 @@ kotlin {
                 implementation(project(":common"))
                 implementation(project(":component"))
                 implementation(project(":theming"))
+                implementation(project(":layout"))
                 implementation(libs.ephemeral.chroma)
             }
         }

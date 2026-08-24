@@ -44,6 +44,8 @@ import kotlin.math.roundToInt
 // and JGoodies Software GmbH available under the BSD license. See the full
 // license under resources/Forms.license.
 
+public typealias ComponentLambda = @Composable FormLayoutScope.(modifier: Modifier) -> Unit
+
 /**
  * FormLayout is a powerful, flexible and precise general purpose
  * layout manager. It aligns components vertically and horizontally in

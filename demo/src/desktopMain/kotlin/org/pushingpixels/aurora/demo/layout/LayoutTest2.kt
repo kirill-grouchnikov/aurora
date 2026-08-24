@@ -90,7 +90,7 @@ fun main() = auroraApplication {
                 presentationModel = TextFieldPresentationModel(singleLine = true)
             ).project(Modifier.xy(3, 3))
 
-            ButtonBar.Builder()
+            ButtonBar.builder()
                 .addGlue()
                 .addButton { builderModifier ->
                     CommandButtonProjection(
