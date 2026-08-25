@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.layout.factories
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.graphics.painter.Painter
 import org.pushingpixels.aurora.layout.ComponentLambda
 
@@ -40,4 +41,47 @@ public interface ComponentFactory {
      * @return the created button
      */
     public fun createButton(text: String, icon: Painter?, action: (() -> Unit)?, isEnabled: Boolean): ComponentLambda
+
+    /**
+     * Creates and returns a label.
+     *
+     * @param text         the label text
+     * @return the created label
+     */
+    public fun createLabel(text: String): ComponentLambda
+
+    /**
+     * Creates and returns a label that is intended to label a read-only component.
+     *
+     * @param text         the label text
+     * @return the created label intended for read-only components
+     */
+    public fun createReadOnlyLabel(text: String): ComponentLambda
+
+    /**
+     * Creates and returns a title label.
+     *
+     * @param text         the label text
+     * @return the emphasized title label
+     */
+    public fun createTitle(text: String): ComponentLambda
+
+    /**
+     * Creates and returns a label intended for pane headers that uses
+     * a larger font and a special foreground color.
+     *
+     * @param text         the label text
+     * @return the label intended for pane headers
+     */
+    public fun createHeaderLabel(text: String): ComponentLambda
+
+    /**
+     * Creates and returns a labeled separator. Useful to separate
+     * paragraphs in a panel.
+     *
+     * @param text         the label text
+     * @param arrangement  text arrangement. One of [Arrangement.Start], [Arrangement.End], [Arrangement.Center].
+     * @return the title label with separator(s)
+     */
+    public fun createSeparator(text: String, arrangement: Arrangement.Horizontal): ComponentLambda
 }

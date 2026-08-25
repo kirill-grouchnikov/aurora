@@ -40,7 +40,6 @@ import org.pushingpixels.aurora.layout.builder.ButtonBar
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
-import org.pushingpixels.aurora.theming.resolveAuroraDefaults
 import org.pushingpixels.aurora.window.AuroraLocaleScope
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
@@ -50,17 +49,9 @@ import java.util.*
 @Composable
 private fun Separator(modifier: Modifier, label: String) {
     Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        // Resolve the default text style to get the default font size
-        val resolvedTextStyle = resolveAuroraDefaults()
-        // Create our own text style with bold weight
-        val textStyle = TextStyle(
-            fontSize = resolvedTextStyle.fontSize,
-            fontWeight = FontWeight.Bold
-        )
-
         LabelProjection(
             contentModel = LabelContentModel(text = label),
-            presentationModel = LabelPresentationModel(textStyle = textStyle)
+            presentationModel = LabelPresentationModel(textStyle = TextStyle(fontWeight = FontWeight.Bold))
         ).project()
 
         val density = LocalDensity.current
