@@ -24,7 +24,7 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.layout.builder.ButtonStackBuilder
+import org.pushingpixels.aurora.layout.builder.ButtonStack
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
@@ -46,13 +46,12 @@ fun main() = auroraApplication {
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,
     ) {
-        ButtonStackBuilder(modifier = Modifier.wrapContentSize()) {
+        ButtonStack(modifier = Modifier.wrapContentSize(), padding = Paddings.Dlu9) {
             button(text = "Start")
             unrelatedGap()
             button(text = "Pause")
             relatedGap()
             button(text = "Stop")
-            padding(Paddings.Dlu9)
         }
     }
 }

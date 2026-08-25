@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.layout.builder
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -93,7 +94,7 @@ public class ButtonStackBuilder(componentFactory: ComponentFactory): AbstractBut
     @Composable
     public fun build(modifier: Modifier) {
         FormLayout(
-            modifier = modifier.padding(padding),
+            modifier = modifier,
             colSpecs = arrayListOf(FormSpecs.ButtonColSpec),
             rowSpecs = rowSpecs,
             content = {
@@ -106,7 +107,7 @@ public class ButtonStackBuilder(componentFactory: ComponentFactory): AbstractBut
 }
 
 @Composable
-public fun ButtonStackBuilder(modifier: Modifier, block: @Composable ButtonStackBuilder.() -> Unit) {
+public fun ButtonStack(modifier: Modifier, padding: PaddingValues, block: @Composable ButtonStackBuilder.() -> Unit) {
     require (FormsSetup.ComponentFactoryDefault != null) {
         "Configure `FormsSetup.ComponentFactoryDefault` with a non-null component factory before creating this builder"
     }
@@ -119,5 +120,5 @@ public fun ButtonStackBuilder(modifier: Modifier, block: @Composable ButtonStack
 
     val builder = ButtonStackBuilder(FormsSetup.ComponentFactoryDefault!!)
     builder.block()
-    builder.build(modifier)
+    builder.build(modifier.padding(padding))
 }

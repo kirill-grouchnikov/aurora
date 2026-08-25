@@ -45,7 +45,6 @@ import org.pushingpixels.aurora.layout.factories.Paddings
 public abstract class AbstractBuilder protected constructor(public val componentFactory: ComponentFactory) {
     protected val colSpecs: MutableList<ColumnSpec> = arrayListOf()
     protected val rowSpecs: MutableList<RowSpec> = arrayListOf()
-    protected var padding: PaddingValues = PaddingValues.Zero
 
     /**
      * Holds an instance of [CellConstraints] that will be used to
@@ -69,13 +68,4 @@ public abstract class AbstractBuilder protected constructor(public val component
      * @return the number of rows
      */
     public val rowCount: Int = rowSpecs.size
-
-    public fun padding(padding: PaddingValues) {
-        this.padding = padding
-    }
-
-    @Composable
-    public open fun padding(paddingSpec: String) {
-        this.padding = Paddings.createPaddingValues(paddingSpec)
-    }
 }

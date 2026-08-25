@@ -36,7 +36,7 @@ import org.pushingpixels.aurora.demo.AuroraLocaleSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.FormLayout
 import org.pushingpixels.aurora.layout.Sizes
-import org.pushingpixels.aurora.layout.builder.ButtonBarBuilder
+import org.pushingpixels.aurora.layout.builder.ButtonBar
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
@@ -203,7 +203,7 @@ private fun AuroraLocaleScope.ButtonBar(
     modifier: Modifier,
     resourceBundle: ResourceBundle,
 ) {
-    ButtonBarBuilder(modifier) {
+    ButtonBar(modifier, Paddings.Empty) {
         glue()
         fixed { builderModifier -> AuroraLocaleSwitcher(builderModifier, resourceBundle) }
         unrelatedGap()
@@ -214,6 +214,5 @@ private fun AuroraLocaleScope.ButtonBar(
         button(
             text = resourceBundle.getString("FormLayout.turnOff"),
             action = { println("Turn off") })
-        padding(Paddings.Empty)
     }
 }

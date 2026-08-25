@@ -34,7 +34,7 @@ import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.FormLayout
-import org.pushingpixels.aurora.layout.builder.ButtonBarBuilder
+import org.pushingpixels.aurora.layout.builder.ButtonBar
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
@@ -90,7 +90,7 @@ fun main() = auroraApplication {
                 presentationModel = TextFieldPresentationModel(singleLine = true)
             ).project(Modifier.xy(3, 3))
 
-            ButtonBarBuilder(Modifier.xyw(1, 5, 3)) {
+            ButtonBar(Modifier.xyw(1, 5, 3), Paddings.Empty) {
                 glue()
                 button { builderModifier ->
                     CommandButtonProjection(

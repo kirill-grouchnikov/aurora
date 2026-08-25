@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.layout.builder
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -128,7 +129,7 @@ public class ButtonBarBuilder(componentFactory: ComponentFactory): AbstractButto
     @Composable
     public fun build(modifier: Modifier) {
         FormLayout(
-            modifier = modifier.padding(padding),
+            modifier = modifier,
             colSpecs = colSpecs,
             rowSpecs = arrayListOf(RowSpec.decode("center:pref")),
             content = {
@@ -141,7 +142,7 @@ public class ButtonBarBuilder(componentFactory: ComponentFactory): AbstractButto
 }
 
 @Composable
-public fun ButtonBarBuilder(modifier: Modifier, block: @Composable ButtonBarBuilder.() -> Unit) {
+public fun ButtonBar(modifier: Modifier, padding: PaddingValues, block: @Composable ButtonBarBuilder.() -> Unit) {
     require (FormsSetup.ComponentFactoryDefault != null) {
         "Configure `FormsSetup.ComponentFactoryDefault` with a non-null component factory before creating this builder"
     }
@@ -154,5 +155,5 @@ public fun ButtonBarBuilder(modifier: Modifier, block: @Composable ButtonBarBuil
 
     val builder = ButtonBarBuilder(FormsSetup.ComponentFactoryDefault!!)
     builder.block()
-    builder.build(modifier)
+    builder.build(modifier.padding(padding))
 }
