@@ -29,7 +29,6 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
@@ -37,9 +36,8 @@ import org.pushingpixels.aurora.demo.AuroraLocaleSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.FormLayout
 import org.pushingpixels.aurora.layout.Sizes
-import org.pushingpixels.aurora.layout.builder.ButtonBar
+import org.pushingpixels.aurora.layout.builder.ButtonBarBuilder
 import org.pushingpixels.aurora.layout.factories.Paddings
-import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.theming.resolveAuroraDefaults
@@ -98,8 +96,10 @@ fun main() = auroraApplication {
             encodedRowSpecs = "p, 3dlu, p, 3dlu, p, 10dlu, p, 3dlu, p, 3dlu, p, 14dlu, p",
             colGroupIndices = arrayOf(intArrayOf(1, 5), intArrayOf(3, 7))
         ) {
-            Separator(modifier = Modifier.xyw(col = 1, row = 1, colSpan = 7),
-                label = resourceBundle.getString("FormLayout.general"))
+            Separator(
+                modifier = Modifier.xyw(col = 1, row = 1, colSpan = 7),
+                label = resourceBundle.getString("FormLayout.general")
+            )
 
             LabelProjection(
                 contentModel = LabelContentModel(text = resourceBundle.getString("FormLayout.company")),
@@ -129,8 +129,10 @@ fun main() = auroraApplication {
                 presentationModel = TextFieldPresentationModel(singleLine = true, defaultMinSize = textFieldMinSize)
             ).project(Modifier.xyw(3, 5, 5))
 
-            Separator(modifier = Modifier.xyw(col = 1, row = 7, colSpan = 7),
-                label = resourceBundle.getString("FormLayout.propeller"))
+            Separator(
+                modifier = Modifier.xyw(col = 1, row = 7, colSpan = 7),
+                label = resourceBundle.getString("FormLayout.propeller")
+            )
 
             LabelProjection(
                 contentModel = LabelContentModel(text = resourceBundle.getString("FormLayout.powerTakeIn")),
@@ -190,7 +192,8 @@ fun main() = auroraApplication {
 
             ButtonBar(
                 modifier = Modifier.xyw(1, 13, 7),
-                resourceBundle = resourceBundle)
+                resourceBundle = resourceBundle
+            )
         }
     }
 }
@@ -200,33 +203,17 @@ private fun AuroraLocaleScope.ButtonBar(
     modifier: Modifier,
     resourceBundle: ResourceBundle,
 ) {
-    ButtonBar.builder()
-        .addGlue()
-        .addFixed { builderModifier -> AuroraLocaleSwitcher(builderModifier, resourceBundle) }
-        .addUnrelatedGap()
-        .addButtons(
-            { builderModifier ->
-                CommandButtonProjection(
-                    contentModel = Command(
-                        text = resourceBundle.getString("FormLayout.turnOn"),
-                        action = { println("Turn on") }
-                    ),
-                    presentationModel = CommandButtonPresentationModel(
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
-                    )
-                ).project(builderModifier)
-            },
-            { builderModifier ->
-                CommandButtonProjection(
-                    contentModel = Command(
-                        text = resourceBundle.getString("FormLayout.turnOff"),
-                        action = { println("Turn off") }
-                    ),
-                    presentationModel = CommandButtonPresentationModel(
-                        backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always
-                    )
-                ).project(builderModifier)
-            })
-        .padding(Paddings.Empty)
-        .build(Modifier.then(modifier))
+    ButtonBarBuilder(modifier) {
+        glue()
+        fixed { builderModifier -> AuroraLocaleSwitcher(builderModifier, resourceBundle) }
+        unrelatedGap()
+        button(
+            text = resourceBundle.getString("FormLayout.turnOn"),
+            action = { println("Turn on") })
+        relatedGap()
+        button(
+            text = resourceBundle.getString("FormLayout.turnOff"),
+            action = { println("Turn off") })
+        padding(Paddings.Empty)
+    }
 }

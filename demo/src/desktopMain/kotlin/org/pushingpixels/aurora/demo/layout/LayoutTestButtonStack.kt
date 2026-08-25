@@ -15,7 +15,7 @@
  */
 package org.pushingpixels.aurora.demo.layout
 
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -24,7 +24,7 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.layout.builder.ButtonStack
+import org.pushingpixels.aurora.layout.builder.ButtonStackBuilder
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
@@ -39,20 +39,21 @@ fun main() = auroraApplication {
         state = rememberWindowState(
             placement = WindowPlacement.Floating,
             position = WindowPosition.Aligned(Alignment.Center),
-            size = DpSize(120.dp, 160.dp)
+            size = DpSize(300.dp, 160.dp)
         ),
         windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         icon = radiance_menu(),
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,
     ) {
-        ButtonStack.builder()
-            .addButton(text = "Start")
-            .addUnrelatedGap()
-            .addButton(text = "Pause")
-            .addUnrelatedGap()
-            .addButton(text = "Stop")
-            .padding(Paddings.Dlu9)
-            .build(Modifier.fillMaxSize())
+        ButtonStackBuilder(modifier = Modifier.wrapContentSize()) {
+            button(text = "Start")
+            unrelatedGap()
+            button(text = "Pause")
+            relatedGap()
+            button(text = "Stop")
+            padding(Paddings.Dlu9)
         }
     }
+}
+

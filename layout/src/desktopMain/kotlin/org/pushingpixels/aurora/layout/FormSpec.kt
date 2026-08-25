@@ -57,9 +57,9 @@ public abstract class FormSpec protected constructor(
 
     // Instance Creation ****************************************************
     /**
-     * Constructs a `FormSpec` for the given default alignment,
+     * Constructs a [FormSpec] for the given default alignment,
      * size, and resize weight. The resize weight must be a non-negative
-     * double; you can use `NONE` as a convenience value for no
+     * double; you can use [NoGrow] as a convenience value for no
      * resize.
      * 
      * @param defaultAlignment the spec's default alignment

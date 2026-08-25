@@ -19,6 +19,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.layout.*
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
@@ -35,87 +39,85 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * a smaller gap for the related buttons.
  *
  * ```kotlin
- * ButtonStack.builder()
- *     .addButton { builderModifier -> closeButton }
- *     .addUnrelatedGap()
- *     .addButton { builderModifier -> upButton }
- *     .addRelatedGap()
- *     .addButton { builderModifier -> downButton }
- *     .build()
+ * ButtonStackBuilder(modifier) {
+ *     button { builderModifier -> closeButton }
+ *     unrelatedGap()
+ *     button { builderModifier -> upButton }
+ *     relatedGap()
+ *     button { builderModifier -> downButton }
  * }
  * ```
  *
- * @see [ButtonBar.Builder]
+ * @see [ButtonBarBuilder]
  * @see [org.pushingpixels.aurora.layout.util.LayoutStyle]
  */
-public object ButtonStack {
-    public fun builder(): Builder {
-        require (FormsSetup.ComponentFactoryDefault != null) {
-            "Configure `FormsSetup.ComponentFactoryDefault` with a non-null component factory before creating this builder"
-        }
-        return Builder(FormsSetup.ComponentFactoryDefault!!)
+public class ButtonStackBuilder(componentFactory: ComponentFactory): AbstractButtonPanelBuilder(componentFactory) {
+    private val componentLambdas: MutableList<Pair<ComponentLambda, CellConstraints>> = arrayListOf()
+
+    public override fun button(button: ComponentLambda) {
+        appendRow(FormSpecs.PrefRowSpec)
+        componentLambdas.add(Pair(button, currentCellConstraints))
+        nextRow()
     }
 
-    public fun builder(componentFactory: ComponentFactory): Builder = Builder(componentFactory)
+    public fun button(text: String, icon: Painter? = null, action: (() -> Unit)? = null, isEnabled: Boolean = true) {
+        button(createButton(text, icon, action, isEnabled))
+    }
 
-    public class Builder(componentFactory: ComponentFactory): AbstractButtonPanelBuilder<Builder>(componentFactory) {
-        private val componentLambdas: MutableList<Pair<ComponentLambda, CellConstraints>> = arrayListOf()
+    public override fun relatedGap() {
+        appendRelatedComponentsGapRow()
+        nextRow()
+    }
 
-        public override fun addButton(button: ComponentLambda): Builder {
-            appendRow(FormSpecs.PrefRowSpec)
-            componentLambdas.add(Pair(button, currentCellConstraints))
-            nextRow()
-            return this
-        }
+    public override fun unrelatedGap() {
+        appendUnrelatedComponentsGapRow()
+        nextRow()
+    }
 
-        public fun addButton(text: String, icon: Painter? = null, action: (() -> Unit)? = null, isEnabled: Boolean = true) : Builder {
-            addButton(createButton(text, icon, action, isEnabled))
-            return this
-        }
+    public fun addGlue() {
+        appendGlueRow()
+        nextRow()
+    }
 
-        public override fun addRelatedGap(): Builder {
-            appendRelatedComponentsGapRow()
-            nextRow()
-            return this
-        }
+    public fun addStrut(size: ConstantSize) {
+        appendRow(RowSpec(RowSpec.Top, size, FormSpec.NoGrow))
+        nextRow()
+    }
 
-        public override fun addUnrelatedGap(): Builder {
-            appendUnrelatedComponentsGapRow()
-            nextRow()
-            return this
-        }
+    public fun addFixed(component: ComponentLambda) {
+        appendRow(FormSpecs.PrefRowSpec)
+        this.componentLambdas.add(Pair(component, currentCellConstraints))
+        nextRow()
+    }
 
-        public fun addGlue(): Builder {
-            appendGlueRow()
-            nextRow()
-            return this
-        }
-
-        public fun addStrut(size: ConstantSize): Builder {
-            appendRow(RowSpec(RowSpec.Top, size, FormSpec.NoGrow))
-            nextRow()
-            return this
-        }
-
-        public fun addFixed(component: ComponentLambda): Builder {
-            appendRow(FormSpecs.PrefRowSpec)
-            this.componentLambdas.add(Pair(component, currentCellConstraints))
-            nextRow()
-            return this
-        }
-
-        @Composable
-        public fun build(modifier: Modifier) {
-            FormLayout(
-                modifier = modifier.padding(padding),
-                colSpecs = arrayListOf(FormSpecs.ButtonColSpec),
-                rowSpecs = rowSpecs,
-                content = {
-                    for ((componentLambda, componentBuilderModifier) in componentLambdas) {
-                        componentLambda.invoke(this, Modifier.xy(col = 1, row = componentBuilderModifier.gridY))
-                    }
+    @Composable
+    public fun build(modifier: Modifier) {
+        FormLayout(
+            modifier = modifier.padding(padding),
+            colSpecs = arrayListOf(FormSpecs.ButtonColSpec),
+            rowSpecs = rowSpecs,
+            content = {
+                for ((componentLambda, componentBuilderModifier) in componentLambdas) {
+                    componentLambda.invoke(this, Modifier.xy(col = 1, row = componentBuilderModifier.gridY))
                 }
-            )
-        }
+            }
+        )
     }
+}
+
+@Composable
+public fun ButtonStackBuilder(modifier: Modifier, block: @Composable ButtonStackBuilder.() -> Unit) {
+    require (FormsSetup.ComponentFactoryDefault != null) {
+        "Configure `FormsSetup.ComponentFactoryDefault` with a non-null component factory before creating this builder"
+    }
+
+    val textMeasurer = rememberTextMeasurer()
+    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
+    Sizes.textStyle = resolvedTextStyle
+    Sizes.textMeasurer = textMeasurer
+    Sizes.density = LocalDensity.current
+
+    val builder = ButtonStackBuilder(FormsSetup.ComponentFactoryDefault!!)
+    builder.block()
+    builder.build(modifier)
 }

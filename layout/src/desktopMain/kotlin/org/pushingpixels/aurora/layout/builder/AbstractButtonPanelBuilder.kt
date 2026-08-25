@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import org.pushingpixels.aurora.layout.*
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
-public abstract class AbstractButtonPanelBuilder<out B: AbstractButtonPanelBuilder<B>>(componentFactory: ComponentFactory): AbstractBuilder<B>(componentFactory) {
+public abstract class AbstractButtonPanelBuilder(componentFactory: ComponentFactory): AbstractBuilder(componentFactory) {
     protected fun nextColumn(columns: Int = 1) {
         val currGridX = this.currentCellConstraints.gridX
         val currGridY = this.currentCellConstraints.gridY
@@ -64,30 +64,29 @@ public abstract class AbstractButtonPanelBuilder<out B: AbstractButtonPanelBuild
         appendRow(FormSpecs.UnrelatedGapRowSpec)
     }
 
-    public abstract fun addButton(button: ComponentLambda): B
+    public abstract fun button(button: ComponentLambda)
 
-    public abstract fun addRelatedGap(): B
+    public abstract fun relatedGap()
 
-    public abstract fun addUnrelatedGap(): B
+    public abstract fun unrelatedGap()
 
-    public open fun addButtons(vararg buttons: ComponentLambda?): AbstractButtonPanelBuilder<B> {
+    public open fun buttons(vararg buttons: ComponentLambda?) {
         require(buttons.isNotEmpty()) {
             "The button array must not be empty."
         }
         var needsGap = false
         for (button in buttons) {
             if (button == null) {
-                addUnrelatedGap()
+                unrelatedGap()
                 needsGap = false
                 continue
             }
             if (needsGap) {
-                addRelatedGap()
+                relatedGap()
             }
-            addButton(button)
+            button(button)
             needsGap = true
         }
-        return this as B
     }
 
     protected fun createButton(text: String, icon: Painter?, action: (() -> Unit)?, isEnabled: Boolean): ComponentLambda {

@@ -19,6 +19,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.layout.*
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
@@ -35,123 +39,120 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * `builderModifier` to have that button properly positioned in the button bar)
  * ```kotlin
  * // 1) Build and emit a bar with three related buttons
- * ButtonBar.builder()
- *     .addButton { builderModifier -> newButton }
- *     .addRelatedGap()
- *     .addButton { builderModifier -> editButton }
- *     .addRelatedGap()
- *     .addButton { builderModifier -> deleteButton }
- *     .build()
+ * ButtonBarBuilder(modifier) {
+ *     button { builderModifier -> newButton }
+ *     relatedGap()
+ *     button { builderModifier -> editButton }
+ *     relatedGap()
+ *     button { builderModifier -> deleteButton }
+ * }
  *
  * // 2) Short hand for example 1)
- * ButtonBar.builder()
- *     .addButtons({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton })
- *     .build()
+ * ButtonBarBuilder(modifier) {
+ *     buttons({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton })
+ * }
  *
  * // 3) Build and return a bar with two sections
- * ButtonBar.builder()
- *     .addButton({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton })
- *     .addUnrelatedGap()
- *     .addButton({ builderModifier -> moveUpButton }, { builderModifier -> moveDownButton })
- *     .build();
+ * ButtonBarBuilder(modifier) {
+ *     button({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton })
+ *     unrelatedGap()
+ *     button({ builderModifier -> moveUpButton }, { builderModifier -> moveDownButton })
+ * }
  *
  * // 4) Short hand for example 3)
- * ButtonBar.builder()
- *     .addButtons({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton },
+ * ButtonBarBuilder(modifier) {
+ *     buttons({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton },
  *                null,
  *                { builderModifier -> moveUpButton }, { builderModifier -> moveDownButton })
- *     .build();
+ * }
  *
  * // 5) Build and return a complex button bar
- * ButtonBar.builder()
- *     .addButton({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton })
- *     .addUnrelatedGap()
- *     .addButton({ builderModifier -> moveUpButton }, { builderModifier -> moveDownButton })
- *     .addGlue()
- *     .addGrowing({ builderModifier -> legendComponent })
- *     .build()
+ * ButtonBarBuilder(modifier) {
+ *     button({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton })
+ *     unrelatedGap()
+ *     button({ builderModifier -> moveUpButton }, { builderModifier -> moveDownButton })
+ *     glue()
+ *     growing({ builderModifier -> legendComponent })
+ * }
  * ```
  *
- * @see [ButtonStack.Builder]
+ * @see [ButtonStackBuilder]
  * @see [org.pushingpixels.aurora.layout.util.LayoutStyle]
  */
-public object ButtonBar {
-    public fun builder(): Builder {
-        require (FormsSetup.ComponentFactoryDefault != null) {
-            "Configure `FormsSetup.ComponentFactoryDefault` with a non-null component factory before creating this builder"
-        }
-        return Builder(FormsSetup.ComponentFactoryDefault!!)
+public class ButtonBarBuilder(componentFactory: ComponentFactory): AbstractButtonPanelBuilder(componentFactory) {
+
+    private val componentLambdas: MutableList<Pair<ComponentLambda, CellConstraints>> = arrayListOf()
+
+    public override fun button(button: ComponentLambda) {
+        appendColumn(FormSpecs.ButtonColSpec)
+        componentLambdas.add(Pair(button, currentCellConstraints))
+        nextColumn()
     }
 
-    public fun builder(componentFactory: ComponentFactory): Builder = Builder(componentFactory)
+    public fun button(text: String, icon: Painter? = null, action: (() -> Unit)? = null, isEnabled: Boolean = true) {
+        button(createButton(text, icon, action, isEnabled))
+    }
 
-    public class Builder(componentFactory: ComponentFactory):
-        AbstractButtonPanelBuilder<Builder>(componentFactory) {
+    public override fun relatedGap() {
+        appendRelatedComponentsGapColumn()
+        nextColumn()
+    }
 
-        private val componentLambdas: MutableList<Pair<ComponentLambda, CellConstraints>> = arrayListOf()
+    public override fun unrelatedGap() {
+        appendUnrelatedComponentsGapColumn()
+        nextColumn()
+    }
 
-        public override fun addButton(button: ComponentLambda): Builder {
-            appendColumn(FormSpecs.ButtonColSpec)
-            componentLambdas.add(Pair(button, currentCellConstraints))
-            nextColumn()
-            return this
-        }
+    public fun glue() {
+        appendGlueColumn()
+        nextColumn()
+    }
 
-        public fun addButton(text: String, icon: Painter? = null, action: (() -> Unit)? = null, isEnabled: Boolean = true) : Builder {
-            addButton(createButton(text, icon, action, isEnabled))
-            return this
-        }
+    public fun strut(width: ConstantSize) {
+        appendColumn(ColumnSpec.createGap(width))
+        nextColumn()
+    }
 
-        public override fun addRelatedGap(): Builder {
-            appendRelatedComponentsGapColumn()
-            nextColumn()
-            return this
-        }
+    public fun fixed(component: ComponentLambda) {
+        appendColumn(FormSpecs.PrefColSpec)
+        this.componentLambdas.add(Pair(component, currentCellConstraints))
+        nextColumn()
+    }
 
-        public override fun addUnrelatedGap(): Builder {
-            appendUnrelatedComponentsGapColumn()
-            nextColumn()
-            return this
-        }
+    public fun growing(component: ComponentLambda) {
+        appendColumn(FormSpecs.GrowingButtonColSpec)
+        this.componentLambdas.add(Pair(component, currentCellConstraints))
+        nextColumn()
+    }
 
-        public fun addGlue(): Builder {
-            appendGlueColumn()
-            nextColumn()
-            return this
-        }
-
-        public fun addStrut(width: ConstantSize): Builder {
-            appendColumn(ColumnSpec.createGap(width))
-            nextColumn()
-            return this
-        }
-
-        public fun addFixed(component: ComponentLambda): Builder {
-            appendColumn(FormSpecs.PrefColSpec)
-            this.componentLambdas.add(Pair(component, currentCellConstraints))
-            nextColumn()
-            return this
-        }
-
-        public fun addGrowing(component: ComponentLambda): Builder {
-            appendColumn(FormSpecs.GrowingButtonColSpec)
-            this.componentLambdas.add(Pair(component, currentCellConstraints))
-            nextColumn()
-            return this
-        }
-
-        @Composable
-        public fun build(modifier: Modifier) {
-            FormLayout(
-                modifier = modifier.padding(padding),
-                colSpecs = colSpecs,
-                rowSpecs = arrayListOf(RowSpec.decode("center:pref")),
-                content = {
-                    for ((componentLambda, componentBuilderModifier) in componentLambdas) {
-                        componentLambda.invoke(this, Modifier.xy(col = componentBuilderModifier.gridX, row = 1))
-                    }
+    @Composable
+    public fun build(modifier: Modifier) {
+        FormLayout(
+            modifier = modifier.padding(padding),
+            colSpecs = colSpecs,
+            rowSpecs = arrayListOf(RowSpec.decode("center:pref")),
+            content = {
+                for ((componentLambda, componentBuilderModifier) in componentLambdas) {
+                    componentLambda.invoke(this, Modifier.xy(col = componentBuilderModifier.gridX, row = 1))
                 }
-            )
-        }
+            }
+        )
     }
+}
+
+@Composable
+public fun ButtonBarBuilder(modifier: Modifier, block: @Composable ButtonBarBuilder.() -> Unit) {
+    require (FormsSetup.ComponentFactoryDefault != null) {
+        "Configure `FormsSetup.ComponentFactoryDefault` with a non-null component factory before creating this builder"
+    }
+
+    val textMeasurer = rememberTextMeasurer()
+    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
+    Sizes.textStyle = resolvedTextStyle
+    Sizes.textMeasurer = textMeasurer
+    Sizes.density = LocalDensity.current
+
+    val builder = ButtonBarBuilder(FormsSetup.ComponentFactoryDefault!!)
+    builder.block()
+    builder.build(modifier)
 }

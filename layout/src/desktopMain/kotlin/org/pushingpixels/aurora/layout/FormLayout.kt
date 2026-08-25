@@ -64,15 +64,15 @@ public typealias ComponentLambda = @Composable FormLayoutScope.(modifier: Modifi
  * [CellConstraints]. The constraints object specifies where a component
  * should be located on the form's grid and how the component should be
  * positioned. In addition to its constraints object the
- * `FormLayout` also considers each component's minimum and
+ * [FormLayout] also considers each component's minimum and
  * preferred sizes in order to determine a component's size.
  *
  * FormLayout has been designed to work with non-visual builders that help you
  * specify the layout and fill the grid. For example, the
- * [org.pushingpixels.aurora.layout.builder.ButtonBar.Builder] assists you in building button
- * bars; it creates a standardized FormLayout and provides a minimal API that
- * specializes in adding buttons and Actions. Other builders can create
- * frequently used panel design, for example a form that consists of rows of
+ * [org.pushingpixels.aurora.layout.builder.ButtonBarBuilder] assists you in building button
+ * bars; it creates a standardized [FormLayout] and provides a minimal API that
+ * specializes in adding buttons. Other builders can create
+ * frequently used panel designs, for example a form that consists of rows of
  * label-component pairs.
  *
  * FormLayout has been prepared to work with different types of sizes as

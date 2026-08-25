@@ -37,12 +37,12 @@ import org.pushingpixels.aurora.layout.factories.Paddings
  * you add components. Also, it offers several methods to append custom
  * and logical columns and rows.
  * 
- * @see [ButtonBar.Builder]
- * @see [ButtonStack.Builder]
+ * @see [ButtonBarBuilder]
+ * @see [ButtonStackBuilder]
  * @see [Panel.Builder]
  * @see [DefaultFormBuilder]
  */
-public abstract class AbstractBuilder<out B: AbstractBuilder<B>> protected constructor(public val componentFactory: ComponentFactory) {
+public abstract class AbstractBuilder protected constructor(public val componentFactory: ComponentFactory) {
     protected val colSpecs: MutableList<ColumnSpec> = arrayListOf()
     protected val rowSpecs: MutableList<RowSpec> = arrayListOf()
     protected var padding: PaddingValues = PaddingValues.Zero
@@ -70,14 +70,12 @@ public abstract class AbstractBuilder<out B: AbstractBuilder<B>> protected const
      */
     public val rowCount: Int = rowSpecs.size
 
-    public fun padding(padding: PaddingValues): B {
+    public fun padding(padding: PaddingValues) {
         this.padding = padding
-        return this as B
     }
 
     @Composable
-    public open fun padding(paddingSpec: String) : B {
+    public open fun padding(paddingSpec: String) {
         this.padding = Paddings.createPaddingValues(paddingSpec)
-        return this as B
     }
 }

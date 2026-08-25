@@ -28,15 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.component.projection.CommandButtonProjection
+import org.pushingpixels.aurora.component.model.LabelContentModel
+import org.pushingpixels.aurora.component.model.TextFieldPresentationModel
+import org.pushingpixels.aurora.component.model.TextFieldStringContentModel
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.FormLayout
-import org.pushingpixels.aurora.layout.builder.ButtonBar
+import org.pushingpixels.aurora.layout.builder.ButtonBarBuilder
 import org.pushingpixels.aurora.layout.factories.Paddings
-import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -90,10 +90,10 @@ fun main() = auroraApplication {
                 presentationModel = TextFieldPresentationModel(singleLine = true)
             ).project(Modifier.xy(3, 3))
 
-            ButtonBar.builder()
-                .addGlue()
-                .addButton(text = "Login", icon = radiance_menu(), action = { println("Login") })
-                .build(Modifier.xyw(1, 5, 3))
+            ButtonBarBuilder(Modifier.xyw(1, 5, 3)) {
+                glue()
+                button(text = "Login", icon = radiance_menu(), action = { println("Login") })
+            }
         }
     }
 }
