@@ -40,7 +40,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * a smaller gap for the related buttons.
  *
  * ```kotlin
- * ButtonStackBuilder(modifier) {
+ * ButtonStack(modifier, padding) {
  *     button { builderModifier -> closeButton }
  *     unrelatedGap()
  *     button { builderModifier -> upButton }

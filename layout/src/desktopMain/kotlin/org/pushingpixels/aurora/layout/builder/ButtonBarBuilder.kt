@@ -40,7 +40,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * `builderModifier` to have that button properly positioned in the button bar)
  * ```kotlin
  * // 1) Build and emit a bar with three related buttons
- * ButtonBarBuilder(modifier) {
+ * ButtonBar(modifier, padding) {
  *     button { builderModifier -> newButton }
  *     relatedGap()
  *     button { builderModifier -> editButton }
@@ -49,26 +49,26 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * }
  *
  * // 2) Short hand for example 1)
- * ButtonBarBuilder(modifier) {
+ * ButtonBar(modifier, padding) {
  *     buttons({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton })
  * }
  *
  * // 3) Build and return a bar with two sections
- * ButtonBarBuilder(modifier) {
+ * ButtonBar(modifier, padding) {
  *     button({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton })
  *     unrelatedGap()
  *     button({ builderModifier -> moveUpButton }, { builderModifier -> moveDownButton })
  * }
  *
  * // 4) Short hand for example 3)
- * ButtonBarBuilder(modifier) {
+ * ButtonBar(modifier, padding) {
  *     buttons({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton },
  *                null,
  *                { builderModifier -> moveUpButton }, { builderModifier -> moveDownButton })
  * }
  *
  * // 5) Build and return a complex button bar
- * ButtonBarBuilder(modifier) {
+ * ButtonBar(modifier, padding) {
  *     button({ builderModifier -> newButton }, { builderModifier -> editButton }, { builderModifier -> deleteButton })
  *     unrelatedGap()
  *     button({ builderModifier -> moveUpButton }, { builderModifier -> moveDownButton })
