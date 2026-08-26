@@ -62,7 +62,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xy  (3, 3))
  *     label("Author:",                                     CellConstraints.xy  (1, 5))
  *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xy  (3, 5))
- *     button({ builderModifier -> MyButton(...) },         CellConstraints.xy  (5, 5))
+ *     component({ builderModifier -> MyButton(...) },      CellConstraints.xy  (5, 5))
  * }
  * ```
  *

@@ -78,42 +78,45 @@ public typealias ComponentLambda = @Composable FormLayoutScope.(modifier: Modifi
  * [FormLayout] has been prepared to work with different types of sizes as
  * defined by the [Size] interface.
  *
- * **Example 1** (Plain FormLayout):<br></br>
- * The following example creates a panel with 2 data columns and 3 data rows;
+ * **Example 1** (Plain [FormLayout]):<br></br>
+ * The following example creates a panel with 3 data columns and 3 data rows;
  * the columns and rows are specified before components are added
  * to the form.
  * ```kotlin
  * FormLayout(
  *    modifier = Modifier.fillMaxSize().padding(Paddings.Dlu9),
- *    encodedColumnSpecs = "end:pref, 2dlu, 60dlu:grow",
- *    encodedRowSpecs = "p, 6dlu. p, 10dlu, p"
+ *    encodedColumnSpecs = "end:pref, 6dlu, 50dlu, 4dlu, default",
+ *    encodedRowSpecs = "p, 3dlu, p, 3dlu, p"
  * ) {
  *    MyLabel(modifier = Modifier.xy(1, 1), ...)
- *    MyTextField(modifier = modifier.xy(3, 1), ...)
- *    MyLabel(modifier = Modifier.xy(3, 1), ...)
+ *    MyTextField(modifier = modifier.xywh(3, 1, 3, 1), ...)
+ *    MyLabel(modifier = Modifier.xy(1, 3), ...)
  *    MyTextField(modifier = modifier.xy(3, 3), ...)
- *    MyButton(modifier = modifier.xy(3, 5), ...)
+ *    MyLabel(modifier = Modifier.xy(1, 5), ...)
+ *    MyTextField(modifier = modifier.xy(3, 5), ...)
+ *    MyButton(modifier = modifier.xy(5, 5), ...)
  * }
  * ```
  *
- * **Example 2** (Using PanelBuilder):<br></br>
+ * **Example 2** (Using [org.pushingpixels.aurora.layout.builder.PanelBuilder]):<br></br>
  * This example creates the same panel as above using the
- * [PanelBuilder] to add components to the form.
- * <pre>
- * FormLayout layout = new FormLayout(
- * "right:pref, 6dlu, 50dlu, 4dlu, default",  // columns
- * "pref, 3dlu, pref, 3dlu, pref");           // rows
- *
- * PanelBuilder builder = new PanelBuilder(layout);
- * builder.addLabel("Label1",         CC.xy  (1, 1));
- * builder.add(new JTextField(),      CC.xywh(3, 1, 3, 1));
- * builder.addLabel("Label2",         CC.xy  (1, 3));
- * builder.add(new JTextField(),      CC.xy  (3, 3));
- * builder.addLabel("Label3",         CC.xy  (1, 5));
- * builder.add(new JTextField(),      CC.xy  (3, 5));
- * builder.add(new JButton("/u2026"), CC.xy  (5, 5));
- * return builder.getPanel();
-</pre> *
+ * [org.pushingpixels.aurora.layout.builder.PanelBuilder] to add components to the form.
+ * ```kotlin
+ * Panel(
+ *    modifier = Modifier.fillMaxSize(),
+ *    padding = Paddings.Dlu9,
+ *    encodedColumnSpecs = "end:pref, 6dlu, 50dlu, 4dlu, default",
+ *    encodedRowSpecs = "p, 3dlu, p, 3dlu, p",
+ * ) {
+ *     label("Title:",                                      CellConstraints.xy  (1, 1))
+ *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xywh(3, 1, 3, 1))
+ *     label("Price:",                                      CellConstraints.xy  (1, 3))
+ *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xy  (3, 3))
+ *     label("Author:",                                     CellConstraints.xy  (1, 5))
+ *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xy  (3, 5))
+ *     component({ builderModifier -> MyButton(...) },      CellConstraints.xy  (5, 5))
+ * }
+ * ```
  *
  * **Example 3** (Using DefaultFormBuilder):<br></br>
  * This example utilizes the
