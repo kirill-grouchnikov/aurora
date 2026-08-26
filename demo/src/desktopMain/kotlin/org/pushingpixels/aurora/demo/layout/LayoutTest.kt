@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +32,7 @@ import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.*
 import org.pushingpixels.aurora.layout.Sizes.dluX
+import org.pushingpixels.aurora.layout.Sizes.dluY
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -51,9 +53,9 @@ fun main() = auroraApplication {
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,
     ) {
-        val rowSpec1 = RowSpec(dluX(14))
+        val rowSpec1 = RowSpec(RowSpec.Fill, dluY(14), 0.0)
         val rowSpec2 = RowSpec(Sizes.ComponentSize.Preferred)
-        val colSpec1 = ColumnSpec(dluX(40))
+        val colSpec1 = ColumnSpec(dluX(30))
         val colSpec2 = ColumnSpec(Sizes.ComponentSize.Preferred)
 
         FormLayout(
@@ -61,9 +63,9 @@ fun main() = auroraApplication {
             colSpecs = listOf(colSpec1, colSpec2),
             rowSpecs = listOf(rowSpec1, rowSpec2)
         ) {
-            val rowSpec1 = RowSpec(dluX(14))
-            val rowSpec2 = RowSpec(RowSpec.Center, dluX(14), 0.0)
-            val rowSpec3 = RowSpec(RowSpec.Center, dluX(14), FormSpec.NoGrow)
+            val rowSpec1 = RowSpec(dluY(14))
+            val rowSpec2 = RowSpec(RowSpec.Center, dluY(14), 0.0)
+            val rowSpec3 = RowSpec(RowSpec.Center, dluY(14), FormSpec.NoGrow)
             val rowSpec4 = RowSpec.decode("pref")
             val rowSpec5 = RowSpec.decode("top:31dlu")
             val rowSpec6 = RowSpec.decode("center:max(20dlu;pref):grow")
@@ -75,8 +77,13 @@ fun main() = auroraApplication {
             println(rowSpec5.toString())
             println(rowSpec6.toString())
 
-            Box(modifier = Modifier.size(20.dp).background(Color.Green).xywh(col = 1, row = 1))
-            Box(modifier = Modifier.size(20.dp).background(Color.Blue).xywh(col = 2, row = 1))
+            // This box gets its width from the first column (fixed at 30dlu) and its height from the first row
+            // (fixed at 14dlu)
+            Box(modifier = Modifier.background(Color.Green).xywh(col = 1, row = 1))
+            // This box gets its height from the first row (fixed at 14dlu)
+            Box(modifier = Modifier.width(20.dp).background(Color.Blue).xywh(col = 2, row = 1))
+            // This box gets its width from spanning the two columns. The first column is fixed at 30dlu, and the
+            // second column has its width defined by the second box's fixed width from its modifier
             Box(modifier = Modifier.height(30.dp).background(Color.Yellow).xywh(col = 1, row = 2, colSpan = 2))
         }
     }

@@ -72,7 +72,7 @@ fun main() = auroraApplication {
         state = rememberWindowState(
             placement = WindowPlacement.Floating,
             position = WindowPosition.Aligned(Alignment.Center),
-            size = DpSize(500.dp, 260.dp)
+            size = DpSize(500.dp, 270.dp)
         ),
         windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         icon = radiance_menu(),
@@ -82,9 +82,9 @@ fun main() = auroraApplication {
         val textFieldMinSize = DpSize(width = 120.dp, height = TextFieldSizingConstants.MinHeight)
 
         FormLayout(
-            modifier = Modifier.fillMaxSize().padding(Paddings.Dlu9),
-            encodedColumnSpecs = "end:pref, 4dlu, pref:grow, 8dlu, end:pref, 4dlu, pref:grow",
-            encodedRowSpecs = "p, 3dlu, p, 3dlu, p, 10dlu, p, 3dlu, p, 3dlu, p, 14dlu, p",
+            modifier = Modifier.fillMaxSize().padding(Paddings.Dialog),
+            encodedColumnSpecs = "end:pref, 2dlu, pref:grow, 4dlu, end:pref, 2dlu, pref:grow",
+            encodedRowSpecs = "p, 2dlu, p, 2dlu, p, 2dlu, p, 2dlu, p, 2dlu, p, 8dlu, p",
             colGroupIndices = arrayOf(intArrayOf(1, 5), intArrayOf(3, 7))
         ) {
             Separator(

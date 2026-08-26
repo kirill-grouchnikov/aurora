@@ -50,7 +50,7 @@ fun main() = auroraApplication {
         state = rememberWindowState(
             placement = WindowPlacement.Floating,
             position = WindowPosition.Aligned(Alignment.Center),
-            size = DpSize(300.dp, 150.dp)
+            size = DpSize(300.dp, 160.dp)
         ),
         windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         icon = radiance_menu(),
@@ -58,9 +58,9 @@ fun main() = auroraApplication {
         onCloseRequest = ::exitApplication,
     ) {
         FormLayout(
-            modifier = Modifier.fillMaxSize().padding(Paddings.Dlu9),
+            modifier = Modifier.fillMaxSize().padding(Paddings.Dialog),
             encodedColumnSpecs = "end:pref, 2dlu, 60dlu:grow",
-            encodedRowSpecs = "p, 6dlu, p, 10dlu, p",
+            encodedRowSpecs = "p, 4dlu, p, 6dlu, p",
         ) {
             LabelProjection(
                 contentModel = LabelContentModel(text = "Name"),

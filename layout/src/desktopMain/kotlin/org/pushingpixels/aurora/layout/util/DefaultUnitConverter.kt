@@ -131,7 +131,6 @@ public class DefaultUnitConverter(
      * there are more information about the original computation
      * in Microsoft environments.
      * 
-     * @param metrics  the FontMetrics used to measure the dialog font
      * @return the horizontal and vertical dialog base units
      */
     private fun computeDialogBaseUnits(): DialogBaseUnits {
@@ -142,11 +141,11 @@ public class DefaultUnitConverter(
             maxLines = 1
         )
 
-        val averageCharWidth = (textLayoutResult.size.width / balancedString.length) / density.density.toDouble()
-        val ascent = (textLayoutResult.getLineBaseline(0) - textLayoutResult.getLineTop(0)) / density.density.toDouble()
+        val averageCharWidth = (textLayoutResult.size.width / balancedString.length)
+        val ascent = (textLayoutResult.getLineBaseline(0) - textLayoutResult.getLineTop(0))
         val height = if (ascent > 14.0) ascent else ascent + (15.0 - ascent) / 3.0
 
-        val dialogBaseUnits = DialogBaseUnits(x = averageCharWidth, y = height)
+        val dialogBaseUnits = DialogBaseUnits(x = averageCharWidth.toDouble(), y = height.toDouble())
         return dialogBaseUnits
     }
 

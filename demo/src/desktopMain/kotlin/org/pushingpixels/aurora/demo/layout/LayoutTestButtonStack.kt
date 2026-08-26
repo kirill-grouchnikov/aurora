@@ -46,7 +46,7 @@ fun main() = auroraApplication {
         iconFilterStrategy = IconFilterStrategy.ThemedFollowText,
         onCloseRequest = ::exitApplication,
     ) {
-        ButtonStack(modifier = Modifier.wrapContentSize(), padding = Paddings.Dlu9) {
+        ButtonStack(modifier = Modifier.wrapContentSize(), padding = Paddings.Dialog) {
             button(text = "Start")
             unrelatedGap()
             button(text = "Pause")
