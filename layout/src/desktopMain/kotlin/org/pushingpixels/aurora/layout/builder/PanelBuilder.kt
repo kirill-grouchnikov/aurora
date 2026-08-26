@@ -53,8 +53,8 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * Panel(
  *    modifier = modifier,
  *    padding = Paddings.Dlu4,
- *    encodedColumnSpecs = "pref, $lcgap, 50dlu, $rgap, default",
- *    encodedRowSpecs = "pref, $lg, pref, $lg, pref",
+ *    encodedColumnSpecs = "pref, @lcgap, 50dlu, @rgap, default",
+ *    encodedRowSpecs = "pref, @lg, pref, @lg, pref",
  * ) {
  *     label("Title:",                                      CellConstraints.xy  (1, 1))
  *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xywh(3, 1, 3, 1))

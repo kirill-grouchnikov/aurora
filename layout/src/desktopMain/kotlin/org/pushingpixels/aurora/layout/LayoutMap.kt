@@ -29,10 +29,10 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * A [LayoutMap] maps variable names to layout expression Strings. The [FormLayout],
  * [ColumnSpec], and [RowSpec] parsers expand variables before an encoded layout
  * specification is parsed and converted into ColumnSpec and RowSpec values.
- * Variables start with the '$' character. The variable name can be wrapped
+ * Variables start with the '@' character. The variable name can be wrapped
  * by braces ('{' and '}'). For example, you can write:
- * `new FormLayout("pref, $lcg, pref")` or
- * `new FormLayout("pref, ${lcg}, pref")`.
+ * `new FormLayout("pref, @lcg, pref")` or
+ * `new FormLayout("pref, @{lcg}, pref")`.
  *
  * LayoutMaps build a chain; each [LayoutMap] has an optional parent map.
  * The root is defined by [LayoutMap.getRoot]. Application-wide
@@ -59,8 +59,8 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * // Predefined variables
  * FormLayout(
  *    modifier = ...,
- *    encodedColumnSpecs = "pref, $lcgap, pref, $rgap, pref",
- *    encodedRowSpecs = "p, $lgap, p, $lgap, p") { ... }
+ *    encodedColumnSpecs = "pref, @lcgap, pref, @rgap, pref",
+ *    encodedRowSpecs = "p, @lgap, p, @lgap, p") { ... }
  * 
  * // Custom variables
  * LayoutMap.getRoot().columnPut("half", "39dlu");
@@ -69,18 +69,18 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * LayoutMap.getRoot().rowPut("table50", "fill:50dlu:grow");
  * FormLayout(
  *    modifier = ...,
- *    encodedColumnSpecs = "pref, $lcgap, $half, 2dlu, $half",
- *    encodedRowSpecs = "p, $lcgap, $table50") { ... }
+ *    encodedColumnSpecs = "pref, @lcgap, @half, 2dlu, @half",
+ *    encodedRowSpecs = "p, @lcgap, @table50") { ... }
  * FormLayout(
  *    modifier = ...,
- *    encodedColumnSpecs = "pref, $lcgap, $full",
- *    encodedRowSpecs = "p, $lcgap, $table50") { ... }
+ *    encodedColumnSpecs = "pref, @lcgap, @full",
+ *    encodedRowSpecs = "p, @lcgap, @table50") { ... }
  * 
  * // Nested variables
- * LayoutMap.getRoot().columnPut("c-gap-c", "$half, 2dlu, $half");
+ * LayoutMap.getRoot().columnPut("c-gap-c", "@half, 2dlu, @half");
  * FormLayout(
- *    encodedColumnSpecs = "pref, $lcgap, ${c-gap-c}", // -> "pref, $lcgap, $half, 2dlu, $half",
- *    encodedRowSpecs = "p, $lcgap, $table");
+ *    encodedColumnSpecs = "pref, @lcgap, @{c-gap-c}", // -> "pref, @lcgap, @half, 2dlu, @half",
+ *    encodedRowSpecs = "p, @lcgap, @table");
  * ```
  * 
  * LayoutMap holds two internal Maps that associate key Strings with expression
@@ -430,7 +430,7 @@ public class LayoutMap(
         /**
          * Marks a layout variable; used by the Forms parsers.
          */
-        private const val VARIABLE_PREFIX_CHAR = '$'
+        private const val VARIABLE_PREFIX_CHAR = '@'
 
         /**
          * Maps column aliases to their default name, for example
@@ -461,7 +461,7 @@ public class LayoutMap(
         private fun nextVariableName(expression: String, start: Int): String {
             val length = expression.length
             if (length <= start) {
-                FormSpecParser.fail(expression, start, "Missing variable name after variable char '$'.")
+                FormSpecParser.fail(expression, start, "Missing variable name after variable char '@'.")
             }
             if (expression[start + 1] == '{') {
                 val end = expression.indexOf('}', start + 1)
