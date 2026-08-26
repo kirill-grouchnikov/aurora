@@ -507,12 +507,31 @@ public data class CellConstraints(
         }
 
         /**
+         * Creates a [CellConstraints] from the column and row.
+         *
+         * **Examples:**
+         * ```kotlin
+         * CellConstraints.xy(1, 3)
+         * ```
+         *
+         * @param col       the new column index
+         * @param row       the new row index
+         *
+         * @throws IllegalArgumentException if an alignment orientation is invalid
+         */
+        public fun xy(col: Int, row: Int): CellConstraints {
+            return xywh(col, row, 1, 1)
+        }
+
+        /**
          * Creates a [CellConstraints] from the column, row, width, and height; sets the horizontal
          * and vertical alignment using the specified alignment objects.
          *
          * **Examples:**
+         * ```kotlin
          * CellConstraints.xywh(1, 3, 2, 1, CellConstraints.Start,  CellConstraints.Bottom)
          * CellConstraints.xywh(1, 3, 7, 3, CellConstraints.Center, CellConstraints.Fill)
+         * ```
          *
          * @param col       the new column index
          * @param row       the new row index
@@ -537,10 +556,12 @@ public data class CellConstraints(
          * and vertical alignments from the given string.
          *
          * **Examples:**
+         * ```kotlin
          * CellConstraints.xywh(1, 3, 2, 1, "start, bottom")
          * CellConstraints.xywh(1, 3, 2, 1, "s, b")
          * CellConstraints.xywh(1, 3, 7, 3, "center, fill")
          * CellConstraints.xywh(1, 3, 7, 3, "c, f")
+         * ```
          *
          * @param col                the new column index
          * @param row                the new row index
@@ -556,12 +577,32 @@ public data class CellConstraints(
         }
 
         /**
+         * Creates a [CellConstraints] from the row  column, height, and width; sets the vertical and
+         * horizontal alignment using the specified alignment objects.
+         *
+         * **Examples:**
+         * ```kotlin
+         * CellConstraints.rc(3, 1)
+         * ```
+         *
+         * @param row       the new row index
+         * @param col       the new column index
+         *
+         * @throws IllegalArgumentException if an alignment orientation is invalid
+         */
+        public fun rc(row: Int, col: Int): CellConstraints {
+            return rchw(row, col, 1, 1)
+        }
+
+        /**
          * Creates a [CellConstraints] from the row, column, height, and width; sets the vertical and
          * horizontal alignment using the specified alignment objects.
          *
          * **Examples:**
+         * ```kotlin
          * CellConstraints.rchw(3, 1, 1, 2, CellConstraints.Bottom, CellConstraints.Start)
          * CellConstraints.rchw(3, 1, 3, 7, CellConstraints.Fill,   CellConstraints.Center)
+         * ```
          *
          * @param row       the new row index
          * @param col       the new column index
@@ -584,10 +625,12 @@ public data class CellConstraints(
          * and vertical alignments from the given string.
          *
          * **Examples:**
+         * ```kotlin
          * CellConstraints.rchw(3, 1, 1, 2, "bottom, start")
          * CellConstraints.rchw(3, 1, 1, 2, "b, s")
          * CellConstraints.rchw(3, 1, 3, 7, "fill, center")
          * CellConstraints.rchw(3, 1, 3, 7, "f, c")
+         * ```
          *
          * @param row                the new row index
          * @param col                the new column index

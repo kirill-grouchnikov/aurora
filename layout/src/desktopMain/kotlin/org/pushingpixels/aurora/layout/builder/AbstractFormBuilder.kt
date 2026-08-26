@@ -41,8 +41,6 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * @see DefaultFormBuilder
  */
 public abstract class AbstractFormBuilder public constructor(componentFactory: ComponentFactory) : AbstractBuilder(componentFactory) {
-    private val componentLambdas: MutableList<Pair<ComponentLambda, CellConstraints>> = arrayListOf()
-
     // Accessing the Cursor Location and Extent *****************************
     /**
      * The cursor's column.
@@ -276,7 +274,7 @@ public abstract class AbstractFormBuilder public constructor(componentFactory: C
      * @param component        the component to add
      * @param cellConstraints  the component's cell constraints
      */
-    public fun add(component: ComponentLambda, cellConstraints: CellConstraints) {
+    public fun component(component: ComponentLambda, cellConstraints: CellConstraints) {
         this.componentLambdas.add(Pair(component, cellConstraints))
     }
 
@@ -286,7 +284,7 @@ public abstract class AbstractFormBuilder public constructor(componentFactory: C
      * @param component               the component to add
      * @param encodedCellConstraints  the component's encoded cell constraints
      */
-    public fun add(component: ComponentLambda, encodedCellConstraints: String) {
+    public fun component(component: ComponentLambda, encodedCellConstraints: String) {
         this.componentLambdas.add(Pair(component, CellConstraints.fromConstraints(encodedCellConstraints)))
     }
 
@@ -295,10 +293,10 @@ public abstract class AbstractFormBuilder public constructor(componentFactory: C
      *
      * @param component    the component to add
      *
-     * @see [add]
+     * @see [component]
      * @see [createAdjustedConstraints]
      */
-    public fun add(component: ComponentLambda) {
+    public fun component(component: ComponentLambda) {
         this.componentLambdas.add(Pair(component, currentCellConstraints))
     }
 

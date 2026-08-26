@@ -82,8 +82,6 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  */
 public class ButtonBarBuilder(componentFactory: ComponentFactory): AbstractButtonPanelBuilder(componentFactory) {
 
-    private val componentLambdas: MutableList<Pair<ComponentLambda, CellConstraints>> = arrayListOf()
-
     public override fun button(button: ComponentLambda) {
         appendColumn(FormSpecs.ButtonColSpec)
         componentLambdas.add(Pair(button, currentCellConstraints))

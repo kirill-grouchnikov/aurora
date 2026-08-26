@@ -259,6 +259,8 @@ public interface FormLayoutScope {
     public fun Modifier.rchw(row: Int, col: Int, rowSpan: Int = 1, colSpan: Int = 1,
         rowAlign: Alignment = Alignment.Default,
         colAlign: Alignment = Alignment.Default): Modifier
+
+    public fun Modifier.cc(cellConstraints: CellConstraints): Modifier
 }
 
 private class FormLayoutScopeImpl(private val colCount: Int, private val rowCount: Int) : FormLayoutScope {
@@ -361,6 +363,16 @@ private class FormLayoutScopeImpl(private val colCount: Int, private val rowCoun
                 colCount = colCount,
                 rowCount = rowCount,
                 inspectorInfo = debugInspectorInfo { name = "rchw" },
+            )
+        )
+
+    override fun Modifier.cc(cellConstraints: CellConstraints): Modifier =
+        this.then(
+            FormLayoutChildDataElement(
+                cellConstraints = cellConstraints.copy(),
+                colCount = colCount,
+                rowCount = rowCount,
+                inspectorInfo = debugInspectorInfo { name = "cc" },
             )
         )
 }
