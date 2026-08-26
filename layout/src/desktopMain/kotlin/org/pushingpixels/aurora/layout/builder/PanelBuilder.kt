@@ -72,7 +72,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * 
  * @see [DefaultFormBuilder]
  */
-public class PanelBuilder(
+public open class PanelBuilder(
     componentFactory: ComponentFactory,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>
