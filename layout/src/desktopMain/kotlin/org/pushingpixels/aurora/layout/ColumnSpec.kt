@@ -23,11 +23,11 @@ import androidx.compose.ui.text.TextMeasurer
 // license under resources/Forms.license.
 
 /**
- * Specifies columns in FormLayout by their default orientation,
+ * Specifies columns in [FormLayout] by their default orientation,
  * start size and resizing behavior.
  *
  * **Examples:**<br></br>
- * The following examples specify a column with Fill alignment, a size of
+ * The following examples specify a column with [ColumnSpec.Fill] alignment, a size of
  * 10&nbsp;dlu that won't grow.
  * ```kotlin
  * ColumnSpec(Sizes.dluX(10))

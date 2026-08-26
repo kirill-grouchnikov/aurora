@@ -91,7 +91,7 @@ public class PrototypeSize
 
     /**
      * Describes if this Size can be compressed, if container space gets scarce.
-     * Used by the FormLayout size computations in `#compressedSizes`
+     * Used by the [FormLayout] size computations in `#compressedSizes`
      * to check whether a column or row can be compressed or not.
      *
      * PrototypeSizes are incompressible.

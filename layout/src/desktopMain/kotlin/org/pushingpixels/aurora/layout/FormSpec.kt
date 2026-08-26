@@ -24,7 +24,7 @@ import java.util.regex.Pattern
 // license under resources/Forms.license.
 
 /**
- * An abstract class that specifies columns and rows in FormLayout
+ * An abstract class that specifies columns and rows in [FormLayout]
  * by their default alignment, start size and resizing behavior.
  * API users will use the subclasses [ColumnSpec] and [RowSpec].
  *
@@ -400,7 +400,7 @@ public abstract class FormSpec protected constructor(
      * Computes the maximum size for the given list of components, using
      * this form spec and the specified measure.
      *
-     * Invoked by FormLayout to determine the size of one of my elements
+     * Invoked by [FormLayout] to determine the size of one of my elements
      * 
      * @param container       the layout container
      * @param components      the list of components to measure

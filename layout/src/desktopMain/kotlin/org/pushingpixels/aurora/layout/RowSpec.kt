@@ -23,7 +23,7 @@ import androidx.compose.ui.text.TextMeasurer
 // license under resources/Forms.license.
 
 /**
- * Specifies rows in FormLayout by their default orientation,
+ * Specifies rows in [FormLayout] by their default orientation,
  * start size and resizing behavior.
  *
  * **Examples:**<br></br>

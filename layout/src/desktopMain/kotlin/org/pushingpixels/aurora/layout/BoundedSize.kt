@@ -25,7 +25,7 @@ import kotlin.math.min
 
 /**
  * Describes sizes that provide lower and upper bounds
- * as used by the JGoodies FormLayout.
+ * as used by the [FormLayout].
  * 
  * @see Sizes
  * @see ConstantSize

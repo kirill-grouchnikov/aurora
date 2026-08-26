@@ -29,7 +29,7 @@ import java.util.*
 // license under resources/Forms.license.
 
 /**
- * Defines constraints for components that are laid out with the FormLayout.
+ * Defines constraints for components that are laid out with the [FormLayout].
  * Defines the components display area: grid&nbsp;x, grid&nbsp;y,
  * grid width (column span), grid height (row span), horizontal alignment
  * and vertical alignment.
@@ -63,7 +63,7 @@ import java.util.*
  *
  * TODO: Explain in the JavaDocs that the insets are actually offsets.
  * And describe that these offsets are not taken into account when
- * FormLayout computes the column and row sizes.
+ * [FormLayout] computes the column and row sizes.
  *
  * TODO: Rename the inset to offsets.
  */

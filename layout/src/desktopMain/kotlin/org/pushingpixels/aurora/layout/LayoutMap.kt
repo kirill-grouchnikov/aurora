@@ -26,22 +26,22 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * Provides a hierarchical variable expansion useful to improve layout
  * consistency, style guide compliance, and layout readability.
  *
- * A LayoutMap maps variable names to layout expression Strings. The FormLayout,
- * ColumnSpec, and RowSpec parsers expand variables before an encoded layout
+ * A [LayoutMap] maps variable names to layout expression Strings. The [FormLayout],
+ * [ColumnSpec], and [RowSpec] parsers expand variables before an encoded layout
  * specification is parsed and converted into ColumnSpec and RowSpec values.
  * Variables start with the '$' character. The variable name can be wrapped
  * by braces ('{' and '}'). For example, you can write:
  * `new FormLayout("pref, $lcg, pref")` or
  * `new FormLayout("pref, ${lcg}, pref")`.
  *
- * LayoutMaps build a chain; each LayoutMap has an optional parent map.
+ * LayoutMaps build a chain; each [LayoutMap] has an optional parent map.
  * The root is defined by [LayoutMap.getRoot]. Application-wide
  * variables should be defined in the root LayoutMap. If you want to override
- * application-wide variables locally, obtain a LayoutMap using `new LayoutMap()`,
- * configure it, and provide it as argument to the
- * FormLayout, ColumnSpec, and RowSpec constructors/factory methods.
+ * application-wide variables locally, obtain a [LayoutMap] using [LayoutMap.getRoot]
+ * or with the constructor, configure it, and provide it as argument to the
+ * [FormLayout], [ColumnSpec], and [RowSpec] constructors/factory methods.
  *
- * By default the root LayoutMap provides the following associations:
+ * By default the root [LayoutMap] provides the following associations:
  * <table border="1">
  * <tr><td>**Variable Name**</td><td>**Abbreviations**</td><td>**Orientation**</td><td>**Description**</td></tr>
  * <tr><td>label-component-gap</td><td>lcg, lcgap</td><td>both</td><td>gap between a label and the labeled component</td></tr>

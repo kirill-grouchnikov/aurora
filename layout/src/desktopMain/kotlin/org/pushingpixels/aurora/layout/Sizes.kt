@@ -29,14 +29,14 @@ import org.pushingpixels.aurora.layout.util.UnitConverter
 
 /**
  * Consists only of static methods that create and convert sizes
- * as required by the FormLayout. The conversion of sizes
+ * as required by the [FormLayout]. The conversion of sizes
  * that are not based on pixel is delegated to an implementation
  * of [UnitConverter]. The conversion methods require the
  * layout container as parameter to read its current font and resolution.
  * 
- * @see Size
- * @see UnitConverter
- * @see DefaultUnitConverter
+ * @see [Size]
+ * @see [UnitConverter]
+ * @see [DefaultUnitConverter]
  */
 public object Sizes {
     // Common Constant Sizes ************************************************
@@ -326,7 +326,7 @@ public object Sizes {
          * Computes the maximum size for the given list of components, using
          * this form spec and the specified measure.
          * 
-         * Invoked by FormLayout to determine the size of one of my elements
+         * Invoked by [FormLayout] to determine the size of one of my elements
          * 
          * @param components      the list of components to measure
          * @param minMeasure      the measure used to determine the minimum size
@@ -355,16 +355,14 @@ public object Sizes {
 
         /**
          * Describes if this Size can be compressed, if container space gets scarce.
-         * Used by the FormLayout size computations in `#compressedSizes`
+         * Used by the [FormLayout] size computations in `#compressedSizes`
          * to check whether a column or row can be compressed or not.
          *
-         * The DEFAULT ComponentSize is compressible, MINIMUM and PREFERRED
+         * The [Default] [ComponentSize] is compressible, [Minimum] and [Preferred]
          * are incompressible.
          * 
-         * @return `true` for the DEFAULT size,
+         * @return `true` for the [Default] size,
          * `false` otherwise
-         * 
-         * @since 1.1
          */
         override fun compressible(): Boolean {
             return this == Default

@@ -60,11 +60,11 @@ public interface Size {
 
     /**
      * Describes if this Size can be compressed, if container space gets scarce.
-     * Used by the FormLayout size computations in `#compressedSizes`
+     * Used by the [FormLayout] size computations in `#compressedSizes`
      * to check whether a column or row can be compressed or not.
      *
-     * The ComponentSize *default* is compressible, as well as
-     * BoundedSizes that are based on the *default* size.
+     * The [Sizes.ComponentSize] *default* is compressible, as well as
+     * [BoundedSize]s that are based on the *default* size.
      * 
      * @return `true` for compressible Sizes
      * 
