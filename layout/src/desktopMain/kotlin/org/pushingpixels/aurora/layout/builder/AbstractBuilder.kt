@@ -15,13 +15,11 @@
  */
 package org.pushingpixels.aurora.layout.builder
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import org.pushingpixels.aurora.layout.CellConstraints
 import org.pushingpixels.aurora.layout.ColumnSpec
 import org.pushingpixels.aurora.layout.RowSpec
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
-import org.pushingpixels.aurora.layout.factories.Paddings
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
@@ -68,4 +66,40 @@ public abstract class AbstractBuilder protected constructor(public val component
      * @return the number of rows
      */
     public val rowCount: Int = rowSpecs.size
+
+    /**
+     * Appends the given column specification to this builder's spec.
+     */
+    protected fun appendColumn(columnSpec: ColumnSpec) {
+        this.colSpecs.add(columnSpec)
+    }
+
+    /**
+     * Appends a column specification to this builder's spec
+     * that represents the given string encoding
+     *
+     * @param encodedColumnSpec  the column specification object to append
+     */
+    @Composable
+    protected fun appendColumn(encodedColumnSpec: String) {
+        this.colSpecs.add(ColumnSpec.decode(encodedColumnSpec))
+    }
+
+    /**
+     * Appends the given row specification to this builder's spec.
+     */
+    protected fun appendRow(rowSpec: RowSpec) {
+        this.rowSpecs.add(rowSpec)
+    }
+
+    /**
+     * Appends a row specification to this builder's spec
+     * that represents the given string encoding
+     *
+     * @param encodedRowSpec  the row specification object to append
+     */
+    @Composable
+    protected fun appendRow(encodedRowSpec: String) {
+        this.rowSpecs.add(RowSpec.decode(encodedRowSpec))
+    }
 }

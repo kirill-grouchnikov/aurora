@@ -32,10 +32,6 @@ public abstract class AbstractButtonPanelBuilder(componentFactory: ComponentFact
         this.currentCellConstraints = CellConstraints(gridX = currGridX, gridY = currGridY + rows)
     }
 
-    protected fun appendColumn(columnSpec: ColumnSpec) {
-        this.colSpecs.add(columnSpec)
-    }
-
     protected fun appendGlueColumn() {
         appendColumn(FormSpecs.GlueColSpec)
     }
@@ -46,10 +42,6 @@ public abstract class AbstractButtonPanelBuilder(componentFactory: ComponentFact
 
     protected fun appendUnrelatedComponentsGapColumn() {
         appendColumn(FormSpecs.UnrelatedGapColSpec)
-    }
-
-    protected fun appendRow(rowSpec: RowSpec) {
-        this.rowSpecs.add(rowSpec)
     }
 
     protected fun appendGlueRow() {
