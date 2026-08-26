@@ -19,6 +19,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import org.pushingpixels.aurora.layout.*
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
+// This is a modified version of the original source code by Karsten Lentzsch
+// and JGoodies Software GmbH available under the BSD license. See the full
+// license under resources/Forms.license.
+
 public abstract class AbstractButtonPanelBuilder(componentFactory: ComponentFactory): AbstractBuilder(componentFactory) {
     protected fun nextColumn(columns: Int = 1) {
         val currGridX = this.currentCellConstraints.gridX

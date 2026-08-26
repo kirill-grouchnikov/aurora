@@ -38,7 +38,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * 
  * @see [ButtonBarBuilder]
  * @see [ButtonStackBuilder]
- * @see [Panel.Builder]
+ * @see [PanelBuilder]
  * @see [DefaultFormBuilder]
  */
 public abstract class AbstractBuilder protected constructor(public val componentFactory: ComponentFactory) {

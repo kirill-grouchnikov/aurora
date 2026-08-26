@@ -667,7 +667,6 @@ private class FormLayoutMeasurePolicy(
      * Computes and returns the sizes for the given form specs, component
      * lists and measures for minimum, preferred, and default size.
      *
-     * @param container         the layout container
      * @param formSpecs         the column or row specs, resp.
      * @param componentLists    the components list for each col/row
      * @param minMeasure        the measure used to determine min sizes
@@ -810,7 +809,6 @@ private class FormLayoutMeasurePolicy(
     /**
      * Computes and returns the grid's origins.
      *
-     * @param container         the layout container
      * @param totalSize         the total size to assign
      * @param offset            the offset from left or top margin
      * @param formSpecs        the column or row specs, resp.

@@ -27,6 +27,10 @@ import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.layout.*
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
+// This is a modified version of the original source code by Karsten Lentzsch
+// and JGoodies Software GmbH available under the BSD license. See the full
+// license under resources/Forms.license.
+
 /**
  * Builds consistent button stacks that comply with popular style guides.
  * Utilizes the [FormLayout] and honors the platform's

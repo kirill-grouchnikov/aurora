@@ -25,10 +25,9 @@ import org.pushingpixels.aurora.layout.ComponentLambda
 
 /**
  * An interface that defines the factory methods as used by the
- * [PanelBuilder] and its subclasses.<p>
+ * [org.pushingpixels.aurora.layout.builder.PanelBuilder] and its subclasses.<p>
  *
- * @see    DefaultComponentFactory
- * @see    PanelBuilder
+ * @see    [org.pushingpixels.aurora.layout.builder.PanelBuilder]
  */
 public interface ComponentFactory {
     /**

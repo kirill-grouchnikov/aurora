@@ -158,7 +158,7 @@ public class PanelBuilder(
     }
 
     /**
-     * Adds a intended for labeling read-only components and component to the panel using the given cell constraints.
+     * Adds a textual label intended for labeling read-only components and component to the panel using the given cell constraints.
      *
      * @param text                  the label's text
      * @param labelConstraints      the label's cell constraints
@@ -166,7 +166,6 @@ public class PanelBuilder(
      * @param componentConstraints  the component's cell constraints
      *
      * @see [ComponentFactory]
-     * @see [DefaultFormBuilder]
      */
     public fun readOnlyLabel(
         text: String, labelConstraints: CellConstraints,
