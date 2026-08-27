@@ -27,15 +27,15 @@ import org.pushingpixels.aurora.layout.Size
  * It provides constants used to lay out panels consistently.
  *
  * **Note:** This class is work in progress and
- * the API may change without notice. Therefore it is recommended
+ * the API may change without notice. Therefore, it is recommended
  * to not write custom subclasses for production code.
  * A future version of this class may collaborate with a class
  * `LogicalSize` or `StyledSize`.
  * 
- * @see MacLayoutStyle
- * @see WindowsLayoutStyle
- * @see FormSpecs
- * @see Borders
+ * @see [MacLayoutStyle]
+ * @see [WindowsLayoutStyle]
+ * @see [org.pushingpixels.aurora.layout.FormSpecs]
+ * @see [org.pushingpixels.aurora.layout.factories.Paddings]
  */
 public abstract class LayoutStyle {
     // Layout Sizes *********************************************************

@@ -63,14 +63,10 @@ public class PrototypeSize
     // Implementing the Size Interface **************************************
     /**
      * Computes and returns the width of this Size's prototype in pixel.
-     * Ignores the component list and measures. Obtains the FontMetrics
-     * from the given layout `container` for the default dialog font
-     * provided by [DefaultUnitConverter.getDefaultDialogFont].
+     * Ignores the component list and measures.
      *
-     * Invoked by [FormSpec] to determine
-     * the size of a column or row.
+     * Invoked by [FormSpec] to determine the size of a column or row.
      *
-     * @param container       the layout container
      * @param components      the list of components used to compute the size
      * @param minMeasure      the measure that determines the minimum sizes
      * @param prefMeasure     the measure that determines the preferred sizes

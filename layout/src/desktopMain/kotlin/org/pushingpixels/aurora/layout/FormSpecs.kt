@@ -229,7 +229,7 @@ public object FormSpecs {
     /**
      * Describes a logical vertical narrow gap between two rows in the grid.
      * Useful if the vertical space is scarce or if an individual vertical gap
-     * shall be small than the default line gap.
+     * shall be smaller than the default line gap.
      *
      * **Note:** In a future version this constant will likely
      * be moved to a class `LogicalSize` or `StyledSize`.

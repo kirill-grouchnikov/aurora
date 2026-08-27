@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.layout
 
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.Placeable
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full

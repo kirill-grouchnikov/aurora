@@ -102,12 +102,8 @@ public object Sizes {
          * Sets the Unit that shall be used if an encoded ConstantSize
          * provides no unit string.
          * 
-         * @param unit    the new default Unit, `null` for dialog units
-         * 
          * @throws IllegalArgumentException if `unit` is
          * [MeasurementUnit.DialogUnitsX] or [MeasurementUnit.DialogUnitsY].
-         * 
-         * @since 1.2
          */
         set(unit) {
             require(!((unit === MeasurementUnit.DialogUnitsX) || (unit === MeasurementUnit.DialogUnitsY))) {
@@ -188,7 +184,6 @@ public object Sizes {
      * Converts Inches and returns pixels using the specified resolution.
      * 
      * @param inch           the Inches
-     * @param component    the component that provides the graphics object
      * @return the given Inches as pixels
      */
     public fun inchAsPixel(inch: Double): Int {
@@ -203,7 +198,6 @@ public object Sizes {
      * given component's graphics object.
      * 
      * @param mm            Millimeters
-     * @param component    the component that provides the graphics object
      * @return the given Millimeters as pixels
      */
     public fun millimeterAsPixel(mm: Double): Int {
@@ -218,7 +212,6 @@ public object Sizes {
      * given component's graphics object.
      * 
      * @param cm            Centimeters
-     * @param component    the component that provides the graphics object
      * @return the given Centimeters as pixels
      */
     public fun centimeterAsPixel(cm: Double): Int {
@@ -233,7 +226,6 @@ public object Sizes {
      * given component's graphics object.
      * 
      * @param pt            DTP Points
-     * @param component    the component that provides the graphics object
      * @return the given Points as pixels
      */
     public fun pointAsPixel(pt: Int): Int {
@@ -248,7 +240,6 @@ public object Sizes {
      * Honors the resolution, dialog font size, platform, and l&amp;f.
      * 
      * @param dluX         the horizontal dialog units
-     * @param component    the component that provides the graphics object
      * @return the given horizontal dialog units as pixels
      */
     public fun dialogUnitXAsPixel(dluX: Int): Int {
@@ -263,7 +254,6 @@ public object Sizes {
      * Honors the resolution, dialog font size, platform, and l&amp;f.
      * 
      * @param dluY         the vertical dialog units
-     * @param component    the component that provides the graphics object
      * @return the given vertical dialog units as pixels
      */
     public fun dialogUnitYAsPixel(dluY: Int): Int {

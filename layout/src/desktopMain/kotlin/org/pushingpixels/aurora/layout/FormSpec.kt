@@ -34,10 +34,10 @@ import java.util.regex.Pattern
  *
  * TODO: Consider extracting the parser role to a separate class.
  * 
- * @see ColumnSpec
- * @see RowSpec
- * @see FormLayout
- * @see CellConstraints
+ * @see [ColumnSpec]
+ * @see [RowSpec]
+ * @see [FormLayout]
+ * @see [CellConstraints]
  */
 public abstract class FormSpec protected constructor(
     private var defaultAlignment: DefaultAlignment,
@@ -53,7 +53,7 @@ public abstract class FormSpec protected constructor(
      * @see .getDefaultAlignmentExplictlySet
      */
     private var defaultAlignmentExplictlySet: Boolean = false
-        private set
+        set
 
     // Instance Creation ****************************************************
     /**
@@ -140,7 +140,7 @@ public abstract class FormSpec protected constructor(
         var next = token[nextIndex++]
 
         // Check if the first token is an orientation.
-        val alignment = DefaultAlignment.Companion.valueOf(next, this.isHorizontal)
+        val alignment = DefaultAlignment.valueOf(next, this.isHorizontal)
         if (alignment != null) {
             setDefaultAlignment(alignment)
             require(token.size > 1) { "The form spec must provide a size." }
@@ -402,7 +402,6 @@ public abstract class FormSpec protected constructor(
      *
      * Invoked by [FormLayout] to determine the size of one of my elements
      * 
-     * @param container       the layout container
      * @param components      the list of components to measure
      * @param minMeasure      the measure used to determine the minimum size
      * @param prefMeasure     the measure used to determine the preferred size
@@ -516,9 +515,6 @@ public abstract class FormSpec protected constructor(
                     }
                 }
             }
-
-            // Serialization *****************************************************
-            private var nextOrdinal = 0
         }
     }
 

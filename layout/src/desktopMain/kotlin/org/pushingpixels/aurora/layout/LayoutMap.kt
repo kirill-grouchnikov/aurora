@@ -200,8 +200,6 @@ public class LayoutMap(
      * 
      * @throws NullPointerException if the `key` or `value`
      * is `null`.
-     * 
-     * @see Map.put
      */
     public fun columnPut(key: String, value: String): String? {
         val resolvedKey: String = resolveColumnKey(key)
@@ -234,8 +232,6 @@ public class LayoutMap(
      * if there was no mapping for key.
      * 
      * @throws NullPointerException if `key` is `null`.
-     * 
-     * @see Map.remove
      */
     public fun columnRemove(key: String): String? {
         val resolvedKey: String = resolveColumnKey(key)
@@ -319,8 +315,6 @@ public class LayoutMap(
      * 
      * @throws NullPointerException if the `key` or `value`
      * is `null`.
-     * 
-     * @see Map.put
      */
     public fun rowPut(key: String, value: RowSpec): String? {
         return rowPut(key, value.encode())
@@ -344,8 +338,6 @@ public class LayoutMap(
      * if there was no mapping for key.
      * 
      * @throws NullPointerException if `key` is `null`.
-     * 
-     * @see Map.remove
      */
     public fun rowRemove(key: String): String? {
         val resolvedKey: String = resolveRowKey(key)
@@ -508,37 +500,37 @@ public class LayoutMap(
             // Column variables
             map.columnPut(
                 "label-component-gap",
-                arrayOf<String>("lcg", "lcgap"),
+                arrayOf("lcg", "lcgap"),
                 FormSpecs.LabelComponentGapColSpec
             )
             map.columnPut(
                 "related-gap",
-                arrayOf<String>("rg", "rgap"),
+                arrayOf("rg", "rgap"),
                 FormSpecs.RelatedGapColSpec
             )
             map.columnPut(
                 "unrelated-gap",
-                arrayOf<String>("ug", "ugap"),
+                arrayOf("ug", "ugap"),
                 FormSpecs.UnrelatedGapColSpec
             )
             map.columnPut(
                 "button",
-                arrayOf<String>("b"),
+                arrayOf("b"),
                 FormSpecs.ButtonColSpec
             )
             map.columnPut(
                 "growing-button",
-                arrayOf<String>("gb"),
+                arrayOf("gb"),
                 FormSpecs.GrowingButtonColSpec
             )
             map.columnPut(
                 "dialog-margin",
-                arrayOf<String>("dm", "dmargin"),
+                arrayOf("dm", "dmargin"),
                 ColumnSpec.createGap(LayoutStyle.current.dialogMarginX)
             )
             map.columnPut(
                 "tabbed-dialog-margin",
-                arrayOf<String>("tdm", "tdmargin"),
+                arrayOf("tdm", "tdmargin"),
                 ColumnSpec.createGap(LayoutStyle.current.tabbedDialogMarginX)
             )
             map.columnPut(
@@ -549,47 +541,47 @@ public class LayoutMap(
             // Row variables
             map.rowPut(
                 "label-component-gap",
-                arrayOf<String>("lcg", "lcgap"),
+                arrayOf("lcg", "lcgap"),
                 FormSpecs.LabelComponentGapRowSpec
             )
             map.rowPut(
                 "related-gap",
-                arrayOf<String>("rg", "rgap"),
+                arrayOf("rg", "rgap"),
                 FormSpecs.RelatedGapRowSpec
             )
             map.rowPut(
                 "unrelated-gap",
-                arrayOf<String>("ug", "ugap"),
+                arrayOf("ug", "ugap"),
                 FormSpecs.UnrelatedGapRowSpec
             )
             map.rowPut(
                 "narrow-line-gap",
-                arrayOf<String>("nlg", "nlgap"),
+                arrayOf("nlg", "nlgap"),
                 FormSpecs.NarrowLineGapRowSpec
             )
             map.rowPut(
                 "line-gap",
-                arrayOf<String>("lg", "lgap"),
+                arrayOf("lg", "lgap"),
                 FormSpecs.LineGapRowSpec
             )
             map.rowPut(
                 "paragraph-gap",
-                arrayOf<String>("pg", "pgap"),
+                arrayOf("pg", "pgap"),
                 FormSpecs.ParagraphGapRowSpec
             )
             map.rowPut(
                 "dialog-margin",
-                arrayOf<String>("dm", "dmargin"),
+                arrayOf("dm", "dmargin"),
                 RowSpec.createGap(LayoutStyle.current.dialogMarginY)
             )
             map.rowPut(
                 "tabbed-dialog-margin",
-                arrayOf<String>("tdm", "tdmargin"),
+                arrayOf("tdm", "tdmargin"),
                 RowSpec.createGap(LayoutStyle.current.tabbedDialogMarginY)
             )
             map.rowPut(
                 "button",
-                arrayOf<String>("b"),
+                arrayOf("b"),
                 FormSpecs.ButtonRowSpec
             )
             map.rowPut(

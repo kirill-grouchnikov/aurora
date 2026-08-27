@@ -23,25 +23,22 @@ package org.pushingpixels.aurora.layout.internal
  * Describes an object that can access a String resource via a key.
  *
  * This interface is used by the forms APIs to access Strings from
- * [ResourceBundle]s. Since [ResourceBundle]
+ * [java.util.ResourceBundle]s. Since [java.util.ResourceBundle]
  * does not implement this interface, a wrapper can be used that implements
- * this interface and just delegates to the [ResourceBundle] to look up
- * the String for a given resource key.
- *
+ * this interface and just delegates to the [java.util.ResourceBundle]
+ * to look up the String for a given resource key.
  */
 internal interface StringResourceAccessor {
     /**
      * Looks up and returns a String associated with the given resource key.
      * If no arguments are provided, the plain [String] is returned.
-     * Otherwise the string will be formatted using [String.format]
+     * Otherwise, the string will be formatted using [String.format]
      * with the given arguments.
      * 
      * @param key   the key in the resource bundle
      * @param args  optional format arguments forwarded to `String#format`
      * @return the String value found for the given resource key,
      * formatted with the optional arguments - if any
-     * 
-     * @see format
      */
-    public fun getString(key: String, vararg args: Any): String
+    fun getString(key: String, vararg args: Any): String
 }

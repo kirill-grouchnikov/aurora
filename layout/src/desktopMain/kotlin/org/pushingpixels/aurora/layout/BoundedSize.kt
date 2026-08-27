@@ -27,22 +27,11 @@ import kotlin.math.min
  * Describes sizes that provide lower and upper bounds
  * as used by the [FormLayout].
  * 
- * @see Sizes
- * @see ConstantSize
+ * @see [Sizes]
+ * @see [ConstantSize]
  */
 public class BoundedSize(public val basis: Size, public val lowerBound: Size?, public val upperBound: Size?) : Size {
     // Instance Creation ****************************************************
-    /**
-     * Constructs a BoundedSize for the given basis using the
-     * specified lower and upper bounds.
-     * 
-     * @param basis  the base size
-     * @param lowerBound  the lower bound size
-     * @param upperBound  the upper bound size
-     * 
-     * @throws NullPointerException if `basis`, `lowerBound`,
-     * or `upperBound` is `null`
-     */
     init {
         require(!(lowerBound == null && upperBound == null)) {
             "A bounded size must have a non-null lower or upper bound."

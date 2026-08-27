@@ -46,9 +46,9 @@ import androidx.compose.ui.unit.Density
  * Since the Forms 1.1 this converter logs font information at
  * the `CONFIG` level.
  * 
- * @see UnitConverter
- * @see Size
- * @see Sizes
+ * @see [UnitConverter]
+ * @see [org.pushingpixels.aurora.layout.Size]
+ * @see [org.pushingpixels.aurora.layout.Sizes]
  */
 public class DefaultUnitConverter(
     private val textMeasurer: TextMeasurer,

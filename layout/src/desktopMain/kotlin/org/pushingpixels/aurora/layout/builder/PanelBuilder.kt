@@ -46,7 +46,6 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * static rows vs. dynamically added rows. Also, you may check out the
  * Tips &amp; Tricks section of the Forms HTML documentation.
  *
- *
  * **Example:**<br></br>
  * This example creates a panel with 3 columns and 3 rows.
  * ```kotlin
@@ -67,9 +66,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * ```
  *
  * @see [org.pushingpixels.aurora.layout.factories.ComponentFactory]
- * 
  * @see [I15dPanelBuilder]
- * 
  * @see [DefaultFormBuilder]
  */
 public open class PanelBuilder(
@@ -82,10 +79,6 @@ public open class PanelBuilder(
         this.colSpecs.addAll(colSpecs)
         this.rowSpecs.addAll(rowSpecs)
     }
-
-    // Accessors **************************************************************
-
-    // Modern (Cascading) Style Configuration *********************************
 
     // Adding Labels **********************************************************
     /**

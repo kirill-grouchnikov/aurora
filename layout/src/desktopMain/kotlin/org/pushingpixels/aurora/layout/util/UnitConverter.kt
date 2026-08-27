@@ -22,13 +22,13 @@ package org.pushingpixels.aurora.layout.util
 /**
  * An interface that describes how to convert general sizes to pixel sizes.
  * For example, *dialog units* require a conversion that honors
- * the font and resolution. The [Sizes] class
+ * the font and resolution. The [org.pushingpixels.aurora.layout.Sizes] class
  * delegates all size conversions to an implementation of this interface.
  * 
- * @see Sizes
- * @see ConstantSize
- * @see AbstractUnitConverter
- * @see DefaultUnitConverter
+ * @see [org.pushingpixels.aurora.layout.Sizes]
+ * @see [org.pushingpixels.aurora.layout.ConstantSize]
+ * @see [AbstractUnitConverter]
+ * @see [DefaultUnitConverter]
  */
 public interface UnitConverter {
     /**

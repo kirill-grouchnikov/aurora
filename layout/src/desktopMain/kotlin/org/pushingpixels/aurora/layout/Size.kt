@@ -44,7 +44,6 @@ public interface Size {
      * the size of a column or row. This method is not intended to be called
      * by API users, and it uses API invisible parameter types.
      * 
-     * @param container       the layout container
      * @param components      the list of components used to compute the size
      * @param minMeasure      the measure that determines the minimum sizes
      * @param prefMeasure     the measure that determines the preferred sizes

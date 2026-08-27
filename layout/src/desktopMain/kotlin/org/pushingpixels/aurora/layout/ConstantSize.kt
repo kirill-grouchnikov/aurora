@@ -26,10 +26,10 @@ import kotlin.math.roundToInt
  * An implementation of the [Size] interface that represents constant
  * sizes described by a value and unit, for example:
  * 10&nbsp;pixel, 15&nbsp;point or 4&nbsp;dialog units.
- * You can get instances of `ConstantSize` using
+ * You can get instances of [ConstantSize] using
  * the factory methods and constants in the [Sizes] class.
  * Logical constant sizes that vary with the current layout style
- * are delivered by the [LayoutStyle] class.
+ * are delivered by the [org.pushingpixels.aurora.layout.util.LayoutStyle] class.
  *
  * This class supports different size units:
  * <table>
@@ -73,7 +73,6 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
     /**
      * Converts the size if necessary and returns the value in pixels.
      * 
-     * @param component  the associated component
      * @return the size in pixels
      */
     public fun getPixelSize(): Int {
@@ -96,7 +95,6 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
      * Invoked by [FormSpec] to determine
      * the size of a column or row.
      *
-     * @param container       the layout container
      * @param components      the list of components used to compute the size
      * @param minMeasure      the measure that determines the minimum sizes
      * @param prefMeasure     the measure that determines the preferred sizes

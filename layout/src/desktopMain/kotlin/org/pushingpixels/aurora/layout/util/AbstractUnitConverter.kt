@@ -26,9 +26,9 @@ import kotlin.math.roundToInt
  * An abstract implementation of the [UnitConverter] interface that
  * minimizes the effort required to convert font-dependent sizes to pixels.
  * 
- * @see DefaultUnitConverter
- * @see Size
- * @see Sizes
+ * @see [DefaultUnitConverter]
+ * @see [org.pushingpixels.aurora.layout.Size]
+ * @see [org.pushingpixels.aurora.layout.Sizes]
  */
 public abstract class AbstractUnitConverter : UnitConverter {
     // Unit Converter Implementation *********************************************

@@ -92,7 +92,7 @@ public data class CellConstraints(
     // Parsing and Decoding String Descriptions *****************************
     /**
      * Checks and verifies that this constraints object has valid grid
-     * index values, i. e. the display area cells are inside the form's grid.
+     * index values, i.e. the display area cells are inside the form's grid.
      * 
      * @param colCount  number of columns in the grid
      * @param rowCount  number of rows in the grid

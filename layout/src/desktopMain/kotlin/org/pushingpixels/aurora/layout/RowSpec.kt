@@ -49,7 +49,7 @@ public class RowSpec : FormSpec {
      * size, and resize weight.
      *
      * The resize weight must be a non-negative double; you can use
-     * [NoFill] as a convenience value for no resize.
+     * [NoGrow] as a convenience value for no resize.
      * 
      * @param defaultAlignment  the row's default alignment
      * @param size              constant size, component size, or bounded size
@@ -135,10 +135,6 @@ public class RowSpec : FormSpec {
          * 
          * @param gapHeight   specifies the gap height
          * @return a RowSpec that describes a vertical gap with the given height
-         * 
-         * @throws NullPointerException if `gapHeight` is `null`
-         * 
-         * @since 1.2
          */
         public fun createGap(gapHeight: ConstantSize): RowSpec {
             return RowSpec(Default, gapHeight, NoGrow)
@@ -147,17 +143,14 @@ public class RowSpec : FormSpec {
         /**
          * Parses the encoded row specifications and returns a RowSpec object
          * that represents the string. Variables are expanded using the given
-         * LayoutMap.
+         * [LayoutMap].
          * 
          * @param encodedRowSpec    the encoded column specification
          * @param layoutMap         expands layout row variables
          * 
          * @return a RowSpec instance for the given specification
-         * @throws NullPointerException if `encodedRowSpec` or
-         * `layoutMap` is `null`
-         * 
-         * @see .decodeSpecs
-         * @since 1.2
+         *
+         * @see [decodeSpecs]
          */
         @Composable
         public fun decode(encodedRowSpec: String, layoutMap: LayoutMap = LayoutMap.getRoot()): RowSpec {
@@ -176,7 +169,7 @@ public class RowSpec : FormSpec {
          * or constructs and returns a new RowSpec instance.
          * 
          * @param expandedTrimmedLowerCaseSpec  the encoded column specification
-         * @return a RowSpec for the given encoded row spec
+         * @return a [RowSpec] for the given encoded row spec
          */
         @Composable
         public fun decodeExpanded(expandedTrimmedLowerCaseSpec: String): RowSpec {
@@ -196,11 +189,7 @@ public class RowSpec : FormSpec {
          * @param layoutMap           expands layout row variables
          * @return an array of decoded row specifications
          * 
-         * @throws NullPointerException `encodedRowSpecs` or
-         * `layoutMap` is `null`
-         * 
-         * @see RowSpec.RowSpec
-         * @since 1.2
+         * @see [RowSpec]
          */
         @Composable
         public fun decodeSpecs(encodedRowSpecs: String, layoutMap: LayoutMap = LayoutMap.getRoot()): List<RowSpec> {
