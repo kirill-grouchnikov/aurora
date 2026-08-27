@@ -69,7 +69,7 @@ import java.util.*
  * that are part of the Forms documentation.
  *
  * Sometimes a form consists of many standardized rows but has a few
- * rows that require a customization. The DefaultFormBuilder can do everything
+ * rows that require a customization. The [DefaultFormBuilder] can do everything
  * that the superclasses [AbstractFormBuilder] and [PanelBuilder] can do;
  * among other things: appending new rows and moving the cursor.
  * Again, ask yourself if the [DefaultFormBuilder] is the appropriate builder.
@@ -127,62 +127,58 @@ import java.util.*
  * ```
  *
  * **Custom Row Example:**
- * <pre>
- * public JComponent buildPanel() {
- * initComponents();
+ * ````kotlin
+ * DefaultForm(
+ *    modifier = Modifier.fillMaxSize(),
+ *    padding = Paddings.Dialog,
+ *    encodedColumnSpecs = "end:pref, 3dlu, default:grow",
+ *    encodedRowSpecs = "",
+ *    bundle = resourceBundle
+ * ) {
+ *     rowGroupingEnabled = true
+ *
+ *     // In this approach, we add a gap and a custom row.
+ *     // The advantage of this approach is, that we can express
+ *     // the row spec and comment area cell constraints freely.
+ *     // The disadvantage is the misalignment of the leading label.
+ *     // Also the row's height may be inconsistent with other rows.
+ *     appendSeparator("Single Custom Row")
+ *     append("Name", component({ builderModifier -> MyTextField(...) }))
+ *     appendLineGapRow()
+ *     appendRow(RowSpec.decode("top:31dlu")) // Assumes line is 14, gap is 3
+ *     nextLine(2)
+ *     append("Comment")
+ *     component({ builderModifier -> MyCommentsScrollPane(...) },
+ *         CellConstraints.xywh(col = column, row = row, colSpan = 1, rowSpan = 1, encodedAlignments = "fill, fill"))
+ *     nextLine()
  * 
- * FormLayout layout = new FormLayout(
- * "right:pref, 3dlu, default:grow",
- * "");
- * DefaultFormBuilder builder = new DefaultFormBuilder(layout)
- * .border(Borders.DIALOG)
- * .rowGroupingEnabled(true);
+ *     // In this approach, we append a standard row with gap before it.
+ *     // The advantage is, that the leading label is aligned well.
+ *     // The disadvantage is that the comment area now spans
+ *     // multiple cells and is slightly less flexible.
+ *     // Also the row's height may be inconsistent with other rows.
+ *     appendSeparator("Standard + Custom Row")
+ *     append("Name", component({ builderModifier -> MyTextField(...) }))
+ *     append("Comment")
+ *     appendRow(RowSpec.decode("17dlu")) // Assumes line is 14, gap is 3
+ *     component({ builderModifier -> MyCommentsScrollPane(...) },
+ *         CellConstraints.xywh(col = column, row = row, colSpan = 1, rowSpan = 2))
+ *     nextLine(2)
  * 
- * // In this approach, we add a gap and a custom row.
- * // The advantage of this approach is, that we can express
- * // the row spec and comment area cell constraints freely.
- * // The disadvantage is the misalignment of the leading label.
- * // Also the row's height may be inconsistent with other rows.
- *     appendSeparator("Single Custom Row");
- *     append("Name", name1Field);
- *     appendLineGapRow();
- *     appendRow(RowSpec.decode("top:31dlu")); // Assumes line is 14, gap is 3
- *     nextLine(2);
- *     append("Comment");
- *     add(new JScrollPane(comment1Area),
- * CC.xy(builder.getColumn(), builder.getRow(), "fill, fill"));
- *     nextLine();
- * 
- * // In this approach, we append a standard row with gap before it.
- * // The advantage is, that the leading label is aligned well.
- * // The disadvantage is that the comment area now spans
- * // multiple cells and is slightly less flexible.
- * // Also the row's height may be inconsistent with other rows.
- *     appendSeparator("Standard + Custom Row");
- *     append("Name", name2Field);
- *     append("Comment");
- *     appendRow(RowSpec.decode("17dlu")); // Assumes line is 14, gap is 3
- *     add(new JScrollPane(comment2Area),
- * CC.xywh(builder.getColumn(), builder.getRow(), 1, 2));
- *     nextLine(2);
- * 
- * // In this approach, we append two standard rows with associated gaps.
- * // The advantage is, that the leading label is aligned well,
- * // and the height is consistent with other rows.
- * // The disadvantage is that the comment area now spans
- * // multiple cells and is slightly less flexible.
- *     appendSeparator("Two Standard Rows");
- *     append("Name", name3Field);
- *     append("Comment");
- *     nextLine();
- *     append("");
- *     nextRow(-2);
- *     add(new JScrollPane(comment3Area),
- * CC.xywh(builder.getColumn(), builder.getRow(), 1, 3));
- * 
- * return     build();
- * }
-</pre> * 
+ *    // In this approach, we append two standard rows with associated gaps.
+ *    // The advantage is, that the leading label is aligned well,
+ *    // and the height is consistent with other rows.
+ *    // The disadvantage is that the comment area now spans
+ *    // multiple cells and is slightly less flexible.
+ *     appendSeparator("Two Standard Rows")
+ *     append("Name", component({ builderModifier -> MyTextField(...) }))
+ *     append("Comment")
+ *     nextLine()
+ *     append("")
+ *     nextRow(-2)
+ *     component({ builderModifier -> MyCommentsScrollPane(...) },
+ *         CellConstraints.xywh(col = column, row = row, colSpan = 1, rowSpan = 3))
+ * ```
  *
  * TODO: Consider adding a method for appending a component that spans the
  * remaining columns in the current row. Method name candidates are

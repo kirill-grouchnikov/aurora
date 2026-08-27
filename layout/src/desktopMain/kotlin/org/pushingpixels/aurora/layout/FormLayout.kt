@@ -98,9 +98,9 @@ public typealias ComponentLambda = @Composable FormLayoutScope.(modifier: Modifi
  * }
  * ```
  *
- * **Example 2** (Using [org.pushingpixels.aurora.layout.builder.PanelBuilder]):<br></br>
+ * **Example 2** (Using [org.pushingpixels.aurora.layout.builder.Panel]):<br></br>
  * This example creates the same panel as above using the
- * [org.pushingpixels.aurora.layout.builder.PanelBuilder] to add components to the form.
+ * [org.pushingpixels.aurora.layout.builder.Panel] to add components to the form.
  * ```kotlin
  * Panel(
  *    modifier = Modifier.fillMaxSize(),
@@ -118,28 +118,31 @@ public typealias ComponentLambda = @Composable FormLayoutScope.(modifier: Modifi
  * }
  * ```
  *
- * **Example 3** (Using DefaultFormBuilder):<br></br>
- * This example utilizes the
- * [DefaultFormBuilder] that
+ * **Example 3** (Using [org.pushingpixels.aurora.layout.builder.DefaultForm]):<br></br>
+ * This example utilizes the [org.pushingpixels.aurora.layout.builder.DefaultForm] that
  * ships with the source distribution.
- * <pre>
- * FormLayout layout = new FormLayout(
- * "right:pref, 6dlu, 50dlu, 4dlu, default"); // 5 columns; add rows later
+ * ```kotlin
+ * DefaultForm(
+ *    modifier = Modifier.fillMaxSize(),
+ *    padding = Paddings.Dlu9,
+ *    encodedColumnSpecs = "end:pref, @lcgap, 60dlu, @rgap, max(40dlu;default)",
+ *    encodedRowSpecs = "",
+ *    bundle = resourceBundle
+ * ) {
+ *     appendI15d("MyForm.title", component({ builderModifier -> MyTextField(...) }, 3)
+ *     appendI15d("MyForm.price", component({ builderModifier -> MyTextField(...) })
+ *     nextLine()
+ *     appendI15d("MyForm.author", component({ builderModifier -> MyTextField(...) })
+ *     append({ builderModifier -> MyButton(...) })
+ * }
+ * ```
  *
- * DefaultFormBuilder builder = new DefaultFormBuilder(layout);
- * builder.append("Label1", new JTextField(), 3);
- * builder.append("Label2", new JTextField());
- * builder.append("Label3", new JTextField());
- * builder.append(new JButton("/u2026"));
- * return builder.getPanel();
-</pre> *
- *
- * @see ColumnSpec
- * @see RowSpec
- * @see CellConstraints
- * @see FormSpecs
- * @see Size
- * @see Sizes
+ * @see [ColumnSpec]
+ * @see [RowSpec]
+ * @see [CellConstraints]
+ * @see [FormSpecs]
+ * @see [Size]
+ * @see [Sizes]
  */
 @Composable
 public fun FormLayout(
