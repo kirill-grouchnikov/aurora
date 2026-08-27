@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.demo.layout
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,7 +60,7 @@ fun main() = auroraApplication {
         Panel(
             modifier = Modifier.wrapContentSize(),
             padding = Paddings.Dlu4,
-            encodedColumnSpecs = "pref, @lcgap, 50dlu, @rgap, default",
+            encodedColumnSpecs = "pref, @lcgap, 60dlu, @rgap, max(40dlu;default)",
             encodedRowSpecs = "pref, @lg, pref, @lg, pref",
         ) {
             label("Title:", CellConstraints.xy(1, 1))
@@ -115,7 +114,6 @@ fun main() = auroraApplication {
                     presentationModel = CommandButtonPresentationModel(
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                         presentationState = CommandButtonPresentationState.Medium,
-                        contentPadding = PaddingValues(start = 20.dp, top = 3.dp, end = 20.dp, bottom = 4.dp)
                     )
                 ).project(builderModifier)
             }, CellConstraints.xy(5, 5))

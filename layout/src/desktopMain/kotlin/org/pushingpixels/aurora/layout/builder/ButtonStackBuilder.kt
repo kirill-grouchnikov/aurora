@@ -18,6 +18,7 @@ package org.pushingpixels.aurora.layout.builder
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
@@ -120,7 +121,12 @@ public fun ButtonStack(modifier: Modifier, padding: PaddingValues, block: @Compo
     Sizes.textMeasurer = textMeasurer
     Sizes.density = LocalDensity.current
 
-    val builder = ButtonStackBuilder(FormsSetup.ComponentFactoryDefault!!)
-    builder.block()
-    builder.build(modifier.padding(padding))
+    CompositionLocalProvider(
+        LocalTextMeasurer provides textMeasurer,
+        LocalResolvedTextStyle provides resolvedTextStyle,
+    ) {
+        val builder = ButtonStackBuilder(FormsSetup.ComponentFactoryDefault!!)
+        builder.block()
+        builder.build(modifier.padding(padding))
+    }
 }

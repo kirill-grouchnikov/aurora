@@ -242,7 +242,7 @@ public open class PanelBuilder(
     }
 
     @Composable
-    public fun build(modifier: Modifier) {
+    public open fun build(modifier: Modifier) {
         FormLayout(
             modifier = modifier,
             colSpecs = this.colSpecs,
@@ -319,5 +319,4 @@ public fun Panel(
         builder.build(modifier.padding(padding))
     }
 }
-
 

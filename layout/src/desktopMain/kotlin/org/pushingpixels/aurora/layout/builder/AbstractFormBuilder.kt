@@ -40,7 +40,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * @see I15dPanelBuilder
  * @see DefaultFormBuilder
  */
-public abstract class AbstractFormBuilder public constructor(componentFactory: ComponentFactory) : AbstractBuilder(componentFactory) {
+public abstract class AbstractFormBuilder(componentFactory: ComponentFactory) : AbstractBuilder(componentFactory) {
     // Accessing the Cursor Location and Extent *****************************
     /**
      * The cursor's column.
@@ -167,12 +167,10 @@ public abstract class AbstractFormBuilder public constructor(componentFactory: C
      * 
      * @param lines  number of rows to move
      */
-    @JvmOverloads
     public fun nextLine(lines: Int = 1) {
         nextRow(lines)
         column = 1
     }
-
 
     // Appending Columns ******************************************************
 
@@ -303,11 +301,10 @@ public abstract class AbstractFormBuilder public constructor(componentFactory: C
     // Misc *****************************************************************
     /**
      * Creates and returns a [CellConstraints] object at
-     * the current cursor position that uses the given column span
-     * and is adjusted to the left. Useful when building from right to left.
+     * the current cursor position that uses the given column span.
      * 
      * @param columnSpan   the column span to be used in the constraints
-     * @return [CellConstraints] adjusted to the left hand side
+     * @return [CellConstraints] adjusted to the given column span
      */
     protected fun createAdjustedConstraints(columnSpan: Int): CellConstraints {
         return currentCellConstraints.copy(gridWidth = columnSpan)
