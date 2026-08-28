@@ -66,7 +66,6 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * ```
  *
  * @see [org.pushingpixels.aurora.layout.factories.ComponentFactory]
- * @see [I15dPanelBuilder]
  * @see [DefaultFormBuilder]
  */
 public open class PanelBuilder(

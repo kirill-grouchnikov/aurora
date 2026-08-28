@@ -126,13 +126,12 @@ public typealias ComponentLambda = @Composable FormLayoutScope.(modifier: Modifi
  *    modifier = Modifier.fillMaxSize(),
  *    padding = Paddings.Dlu9,
  *    encodedColumnSpecs = "end:pref, @lcgap, 60dlu, @rgap, max(40dlu;default)",
- *    encodedRowSpecs = "",
- *    bundle = resourceBundle
+ *    encodedRowSpecs = ""
  * ) {
- *     appendI15d("MyForm.title", component({ builderModifier -> MyTextField(...) }, 3)
- *     appendI15d("MyForm.price", component({ builderModifier -> MyTextField(...) })
+ *     append(resourceString(Res.string.title), component({ builderModifier -> MyTextField(...) }, 3)
+ *     append(resourceString(Res.string.price), component({ builderModifier -> MyTextField(...) })
  *     nextLine()
- *     appendI15d("MyForm.author", component({ builderModifier -> MyTextField(...) })
+ *     append(resourceString(Res.string.author), component({ builderModifier -> MyTextField(...) })
  *     append({ builderModifier -> MyButton(...) })
  * }
  * ```

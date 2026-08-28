@@ -37,7 +37,6 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * @see [ButtonBarBuilder]
  * @see [ButtonStackBuilder]
  * @see PanelBuilder
- * @see [I15dPanelBuilder]
  * @see [DefaultFormBuilder]
  */
 public abstract class AbstractFormBuilder(componentFactory: ComponentFactory) : AbstractBuilder(componentFactory) {

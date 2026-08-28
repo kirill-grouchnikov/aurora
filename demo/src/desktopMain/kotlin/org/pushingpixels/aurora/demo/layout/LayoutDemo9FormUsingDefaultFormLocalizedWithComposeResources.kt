@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.demo.layout
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,10 +27,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import org.jetbrains.compose.resources.stringResource
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
 import org.pushingpixels.aurora.demo.AuroraLocaleSwitcher
+import org.pushingpixels.aurora.demo.resources.Res
+import org.pushingpixels.aurora.demo.resources.author
+import org.pushingpixels.aurora.demo.resources.price
+import org.pushingpixels.aurora.demo.resources.title
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.builder.ButtonBar
 import org.pushingpixels.aurora.layout.builder.DefaultForm
@@ -42,13 +46,8 @@ import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
-import java.util.*
 
 fun main() = auroraApplication {
-    val resourceBundle by derivedStateOf {
-        ResourceBundle.getBundle("org.pushingpixels.aurora.demo.Resources", applicationLocale)
-    }
-
     AuroraWindow(
         skin = marinerSkin(),
         title = "Aurora FormLayout Demo",
@@ -69,11 +68,10 @@ fun main() = auroraApplication {
             padding = Paddings.Dlu4,
             encodedColumnSpecs = "end:pref, @lcgap, 60dlu, @rgap, max(40dlu;default)",
             encodedRowSpecs = "",
-            bundle = resourceBundle
         ) {
             var textTitle by rememberSaveable { mutableStateOf("") }
-            appendI15d(
-                resourceKey = "FormLayout.title",
+            append(
+                text = stringResource(Res.string.title),
                 component = { builderModifier ->
                     TextFieldStringProjection(
                         contentModel = TextFieldStringContentModel(
@@ -91,8 +89,8 @@ fun main() = auroraApplication {
             )
 
             var textPrice by rememberSaveable { mutableStateOf("") }
-            appendI15d(
-                resourceKey = "FormLayout.price",
+            append(
+                text = stringResource(Res.string.price),
                 component = { builderModifier ->
                     TextFieldStringProjection(
                         contentModel = TextFieldStringContentModel(
@@ -110,8 +108,8 @@ fun main() = auroraApplication {
             nextLine()
 
             var textAuthor by rememberSaveable { mutableStateOf("") }
-            appendI15d(
-                resourceKey = "FormLayout.author",
+            append(
+                text = stringResource(Res.string.author),
                 component = { builderModifier ->
                     TextFieldStringProjection(
                         contentModel = TextFieldStringContentModel(
@@ -148,7 +146,7 @@ fun main() = auroraApplication {
                 component = { builderModifier ->
                     ButtonBar(builderModifier, Paddings.createPaddingValues("6dlu, 0dlu, 0dlu, 0dlu")) {
                         glue()
-                        fixed({ AuroraLocaleSwitcher(it, resourceBundle) })
+                        fixed({ AuroraLocaleSwitcher(it) })
                     }
                 },
                 columnSpan = 5

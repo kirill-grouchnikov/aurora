@@ -50,10 +50,6 @@ import java.util.*
  * A set of component appenders allows to add a textual label and
  * associated component in a single step.
  *
- * This builder can map resource keys to internationalized (i15d) texts
- * when creating text labels, titles and titled separators. Therefore
- * you must specify a [ResourceBundle] in the constructor.
- *
  * You can configure the build process by setting a leading column,
  * enabling the row grouping and by modifying the gaps between normal
  * lines and between paragraphs. The leading column will be honored
@@ -132,8 +128,7 @@ import java.util.*
  *    modifier = Modifier.fillMaxSize(),
  *    padding = Paddings.Dialog,
  *    encodedColumnSpecs = "end:pref, 3dlu, default:grow",
- *    encodedRowSpecs = "",
- *    bundle = resourceBundle
+ *    encodedRowSpecs = ""
  * ) {
  *     rowGroupingEnabled = true
  *
@@ -188,12 +183,11 @@ import java.util.*
  * @see [org.pushingpixels.aurora.layout.FormSpecs]
  * @see [org.pushingpixels.aurora.layout.FormLayout]
  */
-public class DefaultFormBuilder(
+public open class DefaultFormBuilder(
     componentFactory: ComponentFactory,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>,
-    bundle: ResourceBundle
-) : I15dPanelBuilder(componentFactory, colSpecs, rowSpecs, bundle) {
+) : PanelBuilder(componentFactory, colSpecs, rowSpecs) {
     /**
      * Holds the row specification that is reused to describe rows
      * that are intended for labels and components.
@@ -366,99 +360,6 @@ public class DefaultFormBuilder(
         append(c4)
     }
 
-    // Appending internationalized labels with optional components ------------
-    /**
-     * Adds an internationalized (i15d) text label to the panel using
-     * the given resource key and proceeds to the next column.
-     * 
-     * @param resourceKey      the resource key for the label's text
-     */
-    public fun appendI15d(resourceKey: String) {
-        append(getResourceString(resourceKey))
-    }
-
-    /**
-     * Adds an internationalized (i15d) text label and component
-     * to the panel; then proceeds to the next data column
-     * and adds a component with the given column span.
-     *
-     * @param resourceKey  the resource key for the text to add
-     * @param component    the component to add
-     * @param columnSpan   number of columns the component shall span
-     */
-    public fun appendI15d(resourceKey: String, component: ComponentLambda, columnSpan: Int = 1) {
-        append(getResourceString(resourceKey), component, columnSpan)
-    }
-
-    /**
-     * Adds an internationalized (i15d) text label and component
-     * to the panel. Then proceeds to the next data column.
-     * Goes to the next line if the boolean flag is set.
-     * 
-     * @param resourceKey  the resource key for the text to add
-     * @param component    the component to add
-     * @param nextLine     true forces a next line
-     */
-    public fun appendI15d(resourceKey: String, component: ComponentLambda, nextLine: Boolean) {
-        append(getResourceString(resourceKey), component, nextLine)
-    }
-
-    /**
-     * Adds an internationalized (i15d) text label and two components
-     * to the panel; each component will span a single column.
-     * Proceeds to the next data column.
-     *
-     * @param resourceKey  the resource key for the text to add
-     * @param c1    the first component to add
-     * @param c2    the second component to add
-     */
-    public fun appendI15d(resourceKey: String, c1: ComponentLambda, c2: ComponentLambda) {
-        append(getResourceString(resourceKey), c1, c2)
-    }
-
-    /**
-     * Adds an internationalized (i15d) text label and two components
-     * to the panel; each component will span a single column.
-     * Proceeds to the next data column.
-     * 
-     * @param resourceKey  the resource key for the text to add
-     * @param c1      the first component to add
-     * @param c2      the second component to add
-     * @param colSpan the column span for the second component
-     */
-    public fun appendI15d(resourceKey: String, c1: ComponentLambda, c2: ComponentLambda, colSpan: Int) {
-        append(getResourceString(resourceKey), c1, c2, colSpan)
-    }
-
-    /**
-     * Adds an internationalized (i15d) text label and three components
-     * to the panel; each component will span a single column.
-     * Proceeds to the next data column.
-     *
-     * @param resourceKey  the resource key for the text to add
-     * @param c1    the first component to add
-     * @param c2    the second component to add
-     * @param c3    the third component to add
-     */
-    public fun appendI15d(resourceKey: String, c1: ComponentLambda, c2: ComponentLambda, c3: ComponentLambda) {
-        append(getResourceString(resourceKey), c1, c2, c3)
-    }
-
-    /**
-     * Adds an internationalized (i15d) text label and four components
-     * to the panel; each component will span a single column.
-     * Proceeds to the next data column.
-     *
-     * @param resourceKey  the resource key for the text to add
-     * @param c1    the first component to add
-     * @param c2    the second component to add
-     * @param c3    the third component to add
-     * @param c4    the third component to add
-     */
-    public fun appendI15d(resourceKey: String, c1: ComponentLambda, c2: ComponentLambda, c3: ComponentLambda, c4: ComponentLambda) {
-        append(getResourceString(resourceKey), c1, c2, c3, c4)
-    }
-
     // Adding Titles ----------------------------------------------------------
     /**
      * Adds a title label to the panel and proceeds to the next column.
@@ -467,16 +368,6 @@ public class DefaultFormBuilder(
      */
     public fun appendTitle(text: String) {
         append(componentFactory.createTitle(text))
-    }
-
-    /**
-     * Adds an internationalized title label to the panel and
-     * proceeds to the next column.
-     * 
-     * @param resourceKey   the resource key for the title's text
-     */
-    public fun appendI15dTitle(resourceKey: String) {
-        appendTitle(getResourceString(resourceKey))
     }
 
     // Appending Separators ---------------------------------------------------
@@ -496,16 +387,6 @@ public class DefaultFormBuilder(
         separator(text)
         this.columnSpan = 1
         nextColumn(columnSpan)
-    }
-
-    /**
-     * Appends an internationalized titled separator for
-     * the given resource key that spans all columns.
-     * 
-     * @param resourceKey   the resource key for the separator title's text
-     */
-    public fun appendI15dSeparator(resourceKey: String) {
-        return appendSeparator(getResourceString(resourceKey))
     }
 
     // Adding Rows **********************************************************
@@ -588,7 +469,6 @@ public fun DefaultForm(
     padding: PaddingValues,
     encodedColumnSpecs: String,
     encodedRowSpecs: String,
-    bundle: ResourceBundle,
     block: @Composable DefaultFormBuilder.() -> Unit) {
 
     require (FormsSetup.ComponentFactoryDefault != null) {
@@ -609,7 +489,6 @@ public fun DefaultForm(
             componentFactory = FormsSetup.ComponentFactoryDefault!!,
             colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs),
             rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs),
-            bundle = bundle
         )
         builder.block()
         builder.build(modifier.padding(padding))
@@ -622,7 +501,6 @@ public fun DefaultForm(
     padding: PaddingValues,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>,
-    bundle: ResourceBundle,
     block: @Composable DefaultFormBuilder.() -> Unit) {
 
     require (FormsSetup.ComponentFactoryDefault != null) {
@@ -643,7 +521,6 @@ public fun DefaultForm(
             componentFactory = FormsSetup.ComponentFactoryDefault!!,
             colSpecs = colSpecs,
             rowSpecs = rowSpecs,
-            bundle = bundle
         )
         builder.block()
         builder.build(modifier.padding(padding))
