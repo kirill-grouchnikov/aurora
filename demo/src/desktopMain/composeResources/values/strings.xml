@@ -1,0 +1,20 @@
+<resources>
+    <string name="general">General</string>
+    <string name="company">Company</string>
+    <string name="contact">Contact</string>
+    <string name="propeller">Propeller</string>
+    <string name="powerTakeIn">PTI [kW]</string>
+    <string name="power">Power [kW]</string>
+    <string name="radius">R [mm]</string>
+    <string name="diameter">D [mm]</string>
+    <string name="turnOn">Turn on</string>
+    <string name="turnOff">Turn off</string>
+
+    <string name="title">Title</string>
+    <string name="price">Price</string>
+    <string name="author">Author</string>
+
+    <string name="languageSelect">Language</string>
+    <string name="languageEnglish">English</string>
+    <string name="languageHebrew">Hebrew</string>
+</resources>

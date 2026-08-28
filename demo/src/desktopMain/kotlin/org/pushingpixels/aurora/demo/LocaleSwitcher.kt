@@ -17,12 +17,14 @@ package org.pushingpixels.aurora.demo
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import org.jetbrains.compose.resources.stringResource
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.demo.svg.flags.il
 import org.pushingpixels.aurora.demo.svg.flags.us
 import org.pushingpixels.aurora.demo.svg.tango.preferences_desktop_locale
 import org.pushingpixels.aurora.window.AuroraLocaleScope
+import org.pushingpixels.aurora.demo.resources.*
 import java.awt.ComponentOrientation
 import java.awt.Window
 import java.util.*
@@ -46,7 +48,7 @@ fun AuroraLocaleScope.AuroraLocaleSwitcher(modifier: Modifier = Modifier, resour
         text = resourceBundle.getString("Language.hebrew"),
         icon = il(),
         action = {
-            applicationLocale = Locale.forLanguageTag("iw-IL")
+            applicationLocale = Locale.forLanguageTag("he-IL")
             // Only necessary for embedded Swing content
             for (window in Window.getWindows()) {
                 window.applyComponentOrientation(
@@ -57,6 +59,49 @@ fun AuroraLocaleScope.AuroraLocaleSwitcher(modifier: Modifier = Modifier, resour
     )
     val localeCommand = Command(
         text = resourceBundle.getString("Language.select"),
+        icon = preferences_desktop_locale(),
+        secondaryContentModel = CommandMenuContentModel(
+            group = CommandGroup(commands = arrayListOf(englishLocale, hebrewLocale))
+        )
+    )
+    CommandButtonProjection(
+        contentModel = localeCommand,
+        presentationModel = CommandButtonPresentationModel(
+            presentationState = CommandButtonPresentationState.Medium
+        )
+    ).project(modifier = modifier)
+}
+
+@Composable
+fun AuroraLocaleScope.AuroraLocaleSwitcher(modifier: Modifier = Modifier) {
+    val englishLocale = Command(
+        text = stringResource(Res.string.languageEnglish),
+        icon = us(),
+        action = {
+            applicationLocale = Locale.US
+            // Only necessary for embedded Swing content
+            for (window in Window.getWindows()) {
+                window.applyComponentOrientation(
+                    ComponentOrientation.getOrientation(applicationLocale)
+                )
+            }
+        }
+    )
+    val hebrewLocale = Command(
+        text = stringResource(Res.string.languageHebrew),
+        icon = il(),
+        action = {
+            applicationLocale = Locale.forLanguageTag("he-IL")
+            // Only necessary for embedded Swing content
+            for (window in Window.getWindows()) {
+                window.applyComponentOrientation(
+                    ComponentOrientation.getOrientation(applicationLocale)
+                )
+            }
+        }
+    )
+    val localeCommand = Command(
+        text = stringResource(Res.string.languageSelect),
         icon = preferences_desktop_locale(),
         secondaryContentModel = CommandMenuContentModel(
             group = CommandGroup(commands = arrayListOf(englishLocale, hebrewLocale))
