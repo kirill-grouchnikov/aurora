@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.layout
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.TextMeasurer
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full

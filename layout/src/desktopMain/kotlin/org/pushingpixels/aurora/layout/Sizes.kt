@@ -18,7 +18,6 @@ package org.pushingpixels.aurora.layout
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.Density
 import org.pushingpixels.aurora.layout.ConstantSize.MeasurementUnit
 import org.pushingpixels.aurora.layout.util.DefaultUnitConverter
 import org.pushingpixels.aurora.layout.util.UnitConverter

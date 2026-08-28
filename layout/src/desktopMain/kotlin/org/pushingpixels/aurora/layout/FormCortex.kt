@@ -16,7 +16,6 @@
 package org.pushingpixels.aurora.layout
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.ui.text.TextStyle
