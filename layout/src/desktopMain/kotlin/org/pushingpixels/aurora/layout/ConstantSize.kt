@@ -15,7 +15,10 @@
  */
 package org.pushingpixels.aurora.layout
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.layout.IntrinsicMeasurable
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import kotlin.math.roundToInt
 
 // This is a modified version of the original source code by Karsten Lentzsch
@@ -84,6 +87,13 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
             MeasurementUnit.Centimeter -> Sizes.centimeterAsPixel(value)
             MeasurementUnit.DialogUnitsX -> Sizes.dialogUnitXAsPixel(intValue())
             MeasurementUnit.DialogUnitsY -> Sizes.dialogUnitYAsPixel(intValue())
+        }
+    }
+
+    @Composable
+    public fun toDp(): Dp {
+        with (LocalDensity.current) {
+            return getPixelSize().toDp()
         }
     }
 

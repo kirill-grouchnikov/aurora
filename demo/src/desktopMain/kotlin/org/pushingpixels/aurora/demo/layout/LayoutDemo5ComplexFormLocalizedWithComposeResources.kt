@@ -23,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
@@ -58,8 +57,7 @@ private fun Separator(modifier: Modifier, label: String) {
             presentationModel = LabelPresentationModel(textStyle = TextStyle(fontWeight = FontWeight.Bold))
         ).project()
 
-        val density = LocalDensity.current
-        Spacer(modifier = Modifier.width((Sizes.DluX1.getPixelSize() / density.density).dp))
+        Spacer(modifier = Modifier.width(Sizes.DluX1.toDp()))
 
         HorizontalSeparatorProjection().project(modifier = Modifier.weight(1.0f, fill = true).padding(top = 2.dp))
     }

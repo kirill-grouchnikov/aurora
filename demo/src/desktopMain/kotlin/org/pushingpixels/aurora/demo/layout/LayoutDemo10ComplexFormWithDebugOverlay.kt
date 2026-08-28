@@ -24,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
@@ -37,17 +36,14 @@ import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
-import org.pushingpixels.aurora.demo.AuroraLocaleSwitcher
 import org.pushingpixels.aurora.demo.resources.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.FormLayout
 import org.pushingpixels.aurora.layout.FormLayoutDebugConfiguration
 import org.pushingpixels.aurora.layout.Sizes
-import org.pushingpixels.aurora.layout.builder.ButtonBar
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
-import org.pushingpixels.aurora.window.AuroraLocaleScope
 import org.pushingpixels.aurora.window.AuroraWindow
 import org.pushingpixels.aurora.window.AuroraWindowTitlePaneConfigurations
 import org.pushingpixels.aurora.window.auroraApplication
@@ -60,8 +56,7 @@ private fun Separator(modifier: Modifier, label: String) {
             presentationModel = LabelPresentationModel(textStyle = TextStyle(fontWeight = FontWeight.Bold))
         ).project()
 
-        val density = LocalDensity.current
-        Spacer(modifier = Modifier.width((Sizes.DluX1.getPixelSize() / density.density).dp))
+        Spacer(modifier = Modifier.width(Sizes.DluX1.toDp()))
 
         HorizontalSeparatorProjection().project(modifier = Modifier.weight(1.0f, fill = true).padding(top = 2.dp))
     }

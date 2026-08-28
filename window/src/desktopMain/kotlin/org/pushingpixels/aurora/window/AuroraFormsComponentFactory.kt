@@ -15,24 +15,14 @@
  */
 package org.pushingpixels.aurora.window
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.pushingpixels.aurora.component.model.Command
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationModel
-import org.pushingpixels.aurora.component.model.CommandButtonPresentationState
-import org.pushingpixels.aurora.component.model.LabelContentModel
-import org.pushingpixels.aurora.component.model.LabelPresentationModel
+import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.HorizontalSeparatorProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
@@ -122,9 +112,7 @@ class AuroraFormsComponentFactory: ComponentFactory {
                             presentationModel = LabelPresentationModel(textStyle = TextStyle(fontWeight = FontWeight.Bold))
                         ).project()
 
-                        with (LocalDensity.current) {
-                            Spacer(modifier = Modifier.width(Sizes.DluX1.getPixelSize().toDp()))
-                        }
+                        Spacer(modifier = Modifier.width(Sizes.DluX1.toDp()))
 
                         HorizontalSeparatorProjection().project(
                             modifier = Modifier.weight(1.0f, fill = true).padding(top = 2.dp))
@@ -135,9 +123,7 @@ class AuroraFormsComponentFactory: ComponentFactory {
                         HorizontalSeparatorProjection().project(
                             modifier = Modifier.weight(1.0f, fill = true).padding(top = 2.dp))
 
-                        with (LocalDensity.current) {
-                            Spacer(modifier = Modifier.width(Sizes.DluX1.getPixelSize().toDp()))
-                        }
+                        Spacer(modifier = Modifier.width(Sizes.DluX1.toDp()))
 
                         LabelProjection(
                             contentModel = LabelContentModel(text = text),
@@ -150,18 +136,14 @@ class AuroraFormsComponentFactory: ComponentFactory {
                         HorizontalSeparatorProjection().project(
                             modifier = Modifier.weight(1.0f, fill = true).padding(top = 2.dp))
 
-                        with (LocalDensity.current) {
-                            Spacer(modifier = Modifier.width(Sizes.DluX3.getPixelSize().toDp()))
-                        }
+                        Spacer(modifier = Modifier.width(Sizes.DluX3.toDp()))
 
                         LabelProjection(
                             contentModel = LabelContentModel(text = text),
                             presentationModel = LabelPresentationModel(textStyle = TextStyle(fontWeight = FontWeight.Bold))
                         ).project()
 
-                        with (LocalDensity.current) {
-                            Spacer(modifier = Modifier.width(Sizes.DluX3.getPixelSize().toDp()))
-                        }
+                        Spacer(modifier = Modifier.width(Sizes.DluX3.toDp()))
 
                         HorizontalSeparatorProjection().project(
                             modifier = Modifier.weight(1.0f, fill = true).padding(top = 2.dp))
