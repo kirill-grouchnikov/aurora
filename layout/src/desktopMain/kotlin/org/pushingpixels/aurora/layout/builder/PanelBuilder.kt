@@ -239,6 +239,7 @@ public open class PanelBuilder(
             modifier = modifier,
             colSpecs = this.colSpecs,
             rowSpecs = this.rowSpecs,
+            debugConfiguration = this.debugConfiguration,
             content = {
                 for ((componentLambda, componentBuilderModifier) in componentLambdas) {
                     componentLambda.invoke(this, Modifier.cc(componentBuilderModifier))

@@ -152,6 +152,7 @@ public fun FormLayout(
     rowSpecs: List<RowSpec>,
     colGroupIndices: Array<IntArray> = arrayOf(),
     rowGroupIndices: Array<IntArray> = arrayOf(),
+    debugConfiguration: FormLayoutDebugConfiguration? = null,
     content: @Composable FormLayoutScope.() -> Unit) {
 
     val textMeasurer = rememberTextMeasurer()
@@ -165,10 +166,11 @@ public fun FormLayout(
         LocalResolvedTextStyle provides resolvedTextStyle,
     ) {
         val measurePolicy = FormLayoutMeasurePolicy(colSpecs, rowSpecs, colGroupIndices, rowGroupIndices)
+        val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
         Layout(
             content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
             measurePolicy = measurePolicy,
-            modifier = modifier.debugOverlay(measurePolicy))
+            modifier = formModifier)
     }
 }
 
@@ -179,6 +181,7 @@ public fun FormLayout(
     layoutMap: LayoutMap,
     colGroupIndices: Array<IntArray> = arrayOf(),
     rowGroupIndices: Array<IntArray> = arrayOf(),
+    debugConfiguration: FormLayoutDebugConfiguration? = null,
     content: @Composable FormLayoutScope.() -> Unit) {
 
     val textMeasurer = rememberTextMeasurer()
@@ -198,10 +201,11 @@ public fun FormLayout(
             colGroupIndices = colGroupIndices,
             rowGroupIndices = rowGroupIndices
         )
+        val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
         Layout(
             content = { FormLayoutScopeImpl(colSpecs.size, 0).content() },
             measurePolicy = measurePolicy,
-            modifier = modifier.debugOverlay(measurePolicy)
+            modifier = formModifier
         )
     }
 }
@@ -213,6 +217,7 @@ public fun FormLayout(
     encodedRowSpecs: String,
     colGroupIndices: Array<IntArray> = arrayOf(),
     rowGroupIndices: Array<IntArray> = arrayOf(),
+    debugConfiguration: FormLayoutDebugConfiguration? = null,
     content: @Composable FormLayoutScope.() -> Unit) {
 
     val textMeasurer = rememberTextMeasurer()
@@ -235,10 +240,11 @@ public fun FormLayout(
             colGroupIndices = colGroupIndices,
             rowGroupIndices = rowGroupIndices
         )
+        val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
         Layout(
             content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
             measurePolicy = measurePolicy,
-            modifier = modifier.debugOverlay(measurePolicy)
+            modifier = formModifier
         )
     }
 }
@@ -427,17 +433,26 @@ internal class FormLayoutChildDataNode(internal var cellConstraints: CellConstra
 }
 
 @Composable
-internal fun rememberFormLayoutMeasurePolicy(colSpecs: List<ColumnSpec>,
+public fun rememberFormLayoutMeasurePolicy(colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>, colGroupIndices: Array<IntArray>, rowGroupIndices: Array<IntArray>): MeasurePolicy =
     remember {
         FormLayoutMeasurePolicy(colSpecs, rowSpecs, colGroupIndices, rowGroupIndices)
     }
 
-private class DebugDrawNode(var measurePolicy: FormLayoutMeasurePolicy) : DrawModifierNode, ParentDataModifierNode, Modifier.Node() {
-    private val gridColor = Color.Red
+public data class FormLayoutDebugConfiguration(
+    public val gridColor: Color = Color.Red,
+    public val paintUnderContent: Boolean = false,
+    public val paintDiagonals: Boolean = false)
 
+private class DebugDrawNode(
+    var measurePolicy: FormLayoutMeasurePolicy,
+    var debugConfiguration: FormLayoutDebugConfiguration
+) : DrawModifierNode, ParentDataModifierNode, Modifier.Node() {
     override fun ContentDrawScope.draw() {
-        drawContent()
+        if (!debugConfiguration.paintUnderContent) {
+            // Paint content first, then the grid
+            drawContent()
+        }
 
         val gridXs = measurePolicy.gridXs
         val gridYs = measurePolicy.gridYs
@@ -453,11 +468,13 @@ private class DebugDrawNode(var measurePolicy: FormLayoutMeasurePolicy) : DrawMo
             for ((colIndex, col) in gridXs.withIndex()) {
                 val firstOrLast = (colIndex == 0) || (colIndex == gridXs.size - 1)
                 val start = if (firstOrLast) 0 else gridTop
-                val stop = if (firstOrLast) gridHeight else (gridTop + gridHeight)
+                val stop = if (firstOrLast) gridHeight else gridTop + gridHeight
+
+                // Account for LTR vs RTL for the current vertical grid line
                 val colX = if (ltr) col else size.width - col
 
                 drawLine(
-                    color = gridColor,
+                    color = debugConfiguration.gridColor,
                     start = Offset(colX.toFloat(), start.toFloat()),
                     end = Offset(colX.toFloat(), stop.toFloat()),
                     strokeWidth = 1.0f,
@@ -475,7 +492,7 @@ private class DebugDrawNode(var measurePolicy: FormLayoutMeasurePolicy) : DrawMo
                 val stop = if (firstOrLast) gridWidth else (gridLeft + gridWidth)
 
                 drawLine(
-                    color = gridColor,
+                    color = debugConfiguration.gridColor,
                     start = Offset(start.toFloat(), row.toFloat()),
                     end = Offset(stop.toFloat(), row.toFloat()),
                     strokeWidth = 1.0f,
@@ -486,18 +503,53 @@ private class DebugDrawNode(var measurePolicy: FormLayoutMeasurePolicy) : DrawMo
                 )
             }
 
+            if (debugConfiguration.paintDiagonals) {
+                drawLine(
+                    color = debugConfiguration.gridColor,
+                    start = Offset(gridLeft.toFloat(), gridTop.toFloat()),
+                    end = Offset((gridLeft + gridWidth).toFloat(), (gridTop + gridHeight).toFloat()),
+                    strokeWidth = 1.0f,
+                    pathEffect = PathEffect.dashPathEffect(
+                        intervals = floatArrayOf(3.0f, 2.0f),
+                        phase = 0f
+                    )
+                )
+
+                drawLine(
+                    color = debugConfiguration.gridColor,
+                    start = Offset((gridLeft + gridWidth).toFloat(), gridTop.toFloat()),
+                    end = Offset(gridLeft.toFloat(), (gridTop + gridHeight).toFloat()),
+                    strokeWidth = 1.0f,
+                    pathEffect = PathEffect.dashPathEffect(
+                        intervals = floatArrayOf(3.0f, 2.0f),
+                        phase = 0f
+                    )
+                )
+            }
+        }
+
+        if (debugConfiguration.paintUnderContent) {
+            // Paint grid first, then the content
+            drawContent()
         }
     }
 
     override fun Density.modifyParentData(parentData: Any?) = this@DebugDrawNode
 }
 
-private data class DebugDrawElement(val measurePolicy: FormLayoutMeasurePolicy) : ModifierNodeElement<DebugDrawNode>() {
-    override fun create() = DebugDrawNode(measurePolicy)
+private data class DebugDrawElement(
+    val measurePolicy: FormLayoutMeasurePolicy,
+    val debugConfiguration: FormLayoutDebugConfiguration
+) : ModifierNodeElement<DebugDrawNode>() {
+    override fun create() = DebugDrawNode(measurePolicy, debugConfiguration)
 
     override fun update(node: DebugDrawNode) {
         node.measurePolicy = measurePolicy
+        node.debugConfiguration = debugConfiguration
     }
 }
 
-private fun Modifier.debugOverlay(measurePolicy: FormLayoutMeasurePolicy) = this then DebugDrawElement(measurePolicy)
+private fun Modifier.debugOverlay(
+    measurePolicy: FormLayoutMeasurePolicy,
+    debugConfiguration: FormLayoutDebugConfiguration
+) = this then DebugDrawElement(measurePolicy, debugConfiguration)

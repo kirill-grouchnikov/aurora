@@ -461,6 +461,7 @@ public open class DefaultFormBuilder(
             colSpecs = this.colSpecs,
             rowSpecs = this.rowSpecs,
             rowGroupIndices = this.rowGroupIndices,
+            debugConfiguration = this.debugConfiguration,
             content = {
                 for ((componentLambda, componentBuilderModifier) in componentLambdas) {
                     componentLambda.invoke(this, Modifier.cc(componentBuilderModifier))

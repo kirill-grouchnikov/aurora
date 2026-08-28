@@ -131,6 +131,7 @@ public class ButtonBarBuilder(componentFactory: ComponentFactory): AbstractButto
             modifier = modifier,
             colSpecs = colSpecs,
             rowSpecs = arrayListOf(RowSpec.decode("center:pref")),
+            debugConfiguration = this.debugConfiguration,
             content = {
                 for ((componentLambda, componentBuilderModifier) in componentLambdas) {
                     componentLambda.invoke(this, Modifier.xy(col = componentBuilderModifier.gridX, row = 1))

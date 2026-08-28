@@ -100,6 +100,7 @@ public class ButtonStackBuilder(componentFactory: ComponentFactory): AbstractBut
             modifier = modifier,
             colSpecs = arrayListOf(FormSpecs.ButtonColSpec),
             rowSpecs = rowSpecs,
+            debugConfiguration = this.debugConfiguration,
             content = {
                 for ((componentLambda, componentBuilderModifier) in componentLambdas) {
                     componentLambda.invoke(this, Modifier.xy(col = 1, row = componentBuilderModifier.gridY))

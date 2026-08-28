@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import org.pushingpixels.aurora.layout.CellConstraints
 import org.pushingpixels.aurora.layout.ColumnSpec
 import org.pushingpixels.aurora.layout.ComponentLambda
+import org.pushingpixels.aurora.layout.FormLayoutDebugConfiguration
 import org.pushingpixels.aurora.layout.RowSpec
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
@@ -56,6 +57,8 @@ public abstract class AbstractBuilder protected constructor(public val component
     protected var currentCellConstraints: CellConstraints = CellConstraints(gridX = 1, gridY = 1)
 
     protected val componentLambdas: MutableList<Pair<ComponentLambda, CellConstraints>> = arrayListOf()
+
+    public var debugConfiguration: FormLayoutDebugConfiguration? = null
 
     // Accessors ************************************************************
 
