@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.layout
 
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
@@ -47,7 +48,7 @@ public class PrototypeSize
  * 
  * @since 1.2
  */(
-    private val textMeasurer: TextMeasurer,
+    //private val textMeasurer: TextMeasurer,
     /**
      * Returns this size's prototype string.
      * 
@@ -77,12 +78,14 @@ public class PrototypeSize
      * `DefaultUnitConverter`'s default dialog font
      */
     override fun maximumSize(
+        textMeasurer: TextMeasurer,
+        textStyle: TextStyle,
         components: List<IntrinsicMeasurable>,
         minMeasure: Measure,
         prefMeasure: Measure,
         defaultMeasure: Measure
     ): Int {
-        return this.textMeasurer.measure(this.prototype).size.width
+        return textMeasurer.measure(this.prototype).size.width
     }
 
     /**

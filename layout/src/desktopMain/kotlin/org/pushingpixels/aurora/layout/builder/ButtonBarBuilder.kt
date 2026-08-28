@@ -18,13 +18,8 @@ package org.pushingpixels.aurora.layout.builder
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.layout.*
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
@@ -143,22 +138,11 @@ public class ButtonBarBuilder(componentFactory: ComponentFactory): AbstractButto
 
 @Composable
 public fun ButtonBar(modifier: Modifier, padding: PaddingValues, block: @Composable ButtonBarBuilder.() -> Unit) {
-    require (FormsSetup.ComponentFactoryDefault != null) {
-        "Configure `FormsSetup.ComponentFactoryDefault` with a non-null component factory before creating this builder"
+    require(LocalFormLayoutInitialized.current) {
+        "Initialize the FormLayout parameters via `FormCortex` first"
     }
 
-    val textMeasurer = rememberTextMeasurer()
-    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
-    Sizes.textStyle = resolvedTextStyle
-    Sizes.textMeasurer = textMeasurer
-    Sizes.density = LocalDensity.current
-
-    CompositionLocalProvider(
-        LocalTextMeasurer provides textMeasurer,
-        LocalResolvedTextStyle provides resolvedTextStyle,
-    ) {
-        val builder = ButtonBarBuilder(FormsSetup.ComponentFactoryDefault!!)
-        builder.block()
-        builder.build(modifier.padding(padding))
-    }
+    val builder = ButtonBarBuilder(LocalComponentFactory.current)
+    builder.block()
+    builder.build(modifier.padding(padding))
 }

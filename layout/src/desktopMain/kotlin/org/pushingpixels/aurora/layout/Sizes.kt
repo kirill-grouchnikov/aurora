@@ -78,11 +78,6 @@ public object Sizes {
      */
     private lateinit var unitConverter: UnitConverter
 
-    // TODO: figure out how to push these in a cleaner way
-    internal lateinit var textStyle: TextStyle
-    internal lateinit var textMeasurer: TextMeasurer
-    internal lateinit var density: Density
-
     /**
      * Returns the Unit that is used if an encoded ConstantSize contains
      * no unit string.
@@ -182,85 +177,85 @@ public object Sizes {
     // Unit Conversion ******************************************************
     /**
      * Converts Inches and returns pixels using the specified resolution.
-     * 
+     *
      * @param inch           the Inches
      * @return the given Inches as pixels
      */
-    public fun inchAsPixel(inch: Double): Int {
+    public fun inchAsPixel(textMeasurer: TextMeasurer, textStyle: TextStyle, inch: Double): Int {
         return if (inch == 0.0)
             0
         else
-            getUnitConverter().inchAsPixel(inch)
+            getUnitConverter(textMeasurer, textStyle).inchAsPixel(inch)
     }
 
     /**
      * Converts Millimeters and returns pixels using the resolution of the
      * given component's graphics object.
-     * 
+     *
      * @param mm            Millimeters
      * @return the given Millimeters as pixels
      */
-    public fun millimeterAsPixel(mm: Double): Int {
+    public fun millimeterAsPixel(textMeasurer: TextMeasurer, textStyle: TextStyle, mm: Double): Int {
         return if (mm == 0.0)
             0
         else
-            getUnitConverter().millimeterAsPixel(mm)
+            getUnitConverter(textMeasurer, textStyle).millimeterAsPixel(mm)
     }
 
     /**
      * Converts Centimeters and returns pixels using the resolution of the
      * given component's graphics object.
-     * 
+     *
      * @param cm            Centimeters
      * @return the given Centimeters as pixels
      */
-    public fun centimeterAsPixel(cm: Double): Int {
+    public fun centimeterAsPixel(textMeasurer: TextMeasurer, textStyle: TextStyle, cm: Double): Int {
         return if (cm == 0.0)
             0
         else
-            getUnitConverter().centimeterAsPixel(cm)
+            getUnitConverter(textMeasurer, textStyle).centimeterAsPixel(cm)
     }
 
     /**
      * Converts DTP Points and returns pixels using the resolution of the
      * given component's graphics object.
-     * 
+     *
      * @param pt            DTP Points
      * @return the given Points as pixels
      */
-    public fun pointAsPixel(pt: Int): Int {
+    public fun pointAsPixel(textMeasurer: TextMeasurer, textStyle: TextStyle, pt: Int): Int {
         return if (pt == 0)
             0
         else
-            getUnitConverter().pointAsPixel(pt)
+            getUnitConverter(textMeasurer, textStyle).pointAsPixel(pt)
     }
 
     /**
      * Converts horizontal dialog units and returns pixels.
      * Honors the resolution, dialog font size, platform, and l&amp;f.
-     * 
+     *
      * @param dluX         the horizontal dialog units
      * @return the given horizontal dialog units as pixels
      */
-    public fun dialogUnitXAsPixel(dluX: Int): Int {
+    public fun dialogUnitXAsPixel(textMeasurer: TextMeasurer, textStyle: TextStyle, dluX: Int): Int {
         return if (dluX == 0)
             0
         else
-            getUnitConverter().dialogUnitXAsPixel(dluX)
+            getUnitConverter(textMeasurer, textStyle).dialogUnitXAsPixel(dluX)
     }
 
     /**
      * Converts vertical dialog units and returns pixels.
      * Honors the resolution, dialog font size, platform, and l&amp;f.
-     * 
+     *
      * @param dluY         the vertical dialog units
      * @return the given vertical dialog units as pixels
      */
-    public fun dialogUnitYAsPixel(dluY: Int): Int {
+    public fun dialogUnitYAsPixel(textMeasurer: TextMeasurer, textStyle: TextStyle, dluY: Int): Int {
         return if (dluY == 0)
             0
         else
-            getUnitConverter().dialogUnitYAsPixel(dluY)
+            getUnitConverter(textMeasurer, textStyle).dialogUnitYAsPixel(dluY)
     }
 
     // Accessing the Unit Converter *******************************************
@@ -268,11 +263,11 @@ public object Sizes {
      * Returns the current [UnitConverter]. If it has not been initialized
      * before it will get an instance of [DefaultUnitConverter].
      * 
-     * @return the current `UnitConverter`
+     * @return the current [UnitConverter]
      */
-    public fun getUnitConverter(): UnitConverter {
+    public fun getUnitConverter(textMeasurer: TextMeasurer, textStyle: TextStyle, ): UnitConverter {
         if (!::unitConverter.isInitialized) {
-            unitConverter = DefaultUnitConverter(textMeasurer, textStyle, density)
+            unitConverter = DefaultUnitConverter(textMeasurer, textStyle)
         }
         return unitConverter
     }
@@ -325,6 +320,8 @@ public object Sizes {
          * @return the maximum size in pixels for the given list of components
          */
         public override fun maximumSize(
+            textMeasurer: TextMeasurer,
+            textStyle: TextStyle,
             components: List<IntrinsicMeasurable>,
             minMeasure: Measure,
             prefMeasure: Measure,

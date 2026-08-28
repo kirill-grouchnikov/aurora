@@ -22,6 +22,8 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
@@ -30,6 +32,8 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 internal class FormLayoutMeasurePolicy(
+    private val textMeasurer: TextMeasurer,
+    private val textStyle: TextStyle,
     private val colSpecs: List<ColumnSpec>,
     private val rowSpecs: List<RowSpec>,
     private val colGroupIndices: Array<IntArray>,
@@ -294,6 +298,8 @@ internal class FormLayoutMeasurePolicy(
         for (i in 0..<size) {
             formSpec = formSpecs[i]
             result[i] = formSpec.maximumSize(
+                textMeasurer,
+                textStyle,
                 componentLists[i],
                 minMeasure,
                 prefMeasure,

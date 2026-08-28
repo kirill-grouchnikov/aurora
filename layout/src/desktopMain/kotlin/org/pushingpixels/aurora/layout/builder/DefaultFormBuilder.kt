@@ -18,22 +18,8 @@ package org.pushingpixels.aurora.layout.builder
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.resolveDefaults
-import org.pushingpixels.aurora.layout.ColumnSpec
-import org.pushingpixels.aurora.layout.ComponentLambda
-import org.pushingpixels.aurora.layout.FormLayout
-import org.pushingpixels.aurora.layout.FormSpecs
-import org.pushingpixels.aurora.layout.FormsSetup
-import org.pushingpixels.aurora.layout.LocalResolvedTextStyle
-import org.pushingpixels.aurora.layout.LocalTextMeasurer
-import org.pushingpixels.aurora.layout.LocalTextStyle
-import org.pushingpixels.aurora.layout.RowSpec
-import org.pushingpixels.aurora.layout.Sizes
+import org.pushingpixels.aurora.layout.*
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
 /**
@@ -479,28 +465,17 @@ public fun DefaultForm(
     encodedRowSpecs: String,
     block: @Composable DefaultFormBuilder.() -> Unit) {
 
-    require (FormsSetup.ComponentFactoryDefault != null) {
-        "Configure `FormsSetup.ComponentFactoryDefault` with a non-null component factory before creating this builder"
+    require(LocalFormLayoutInitialized.current) {
+        "Initialize the FormLayout parameters via `FormCortex` first"
     }
 
-    val textMeasurer = rememberTextMeasurer()
-    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
-    Sizes.textStyle = resolvedTextStyle
-    Sizes.textMeasurer = textMeasurer
-    Sizes.density = LocalDensity.current
-
-    CompositionLocalProvider(
-        LocalTextMeasurer provides textMeasurer,
-        LocalResolvedTextStyle provides resolvedTextStyle,
-    ) {
-        val builder = DefaultFormBuilder(
-            componentFactory = FormsSetup.ComponentFactoryDefault!!,
-            colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs),
-            rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs),
-        )
-        builder.block()
-        builder.build(modifier.padding(padding))
-    }
+    val builder = DefaultFormBuilder(
+        componentFactory = LocalComponentFactory.current,
+        colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs),
+        rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs),
+    )
+    builder.block()
+    builder.build(modifier.padding(padding))
 }
 
 @Composable
@@ -511,27 +486,16 @@ public fun DefaultForm(
     rowSpecs: List<RowSpec>,
     block: @Composable DefaultFormBuilder.() -> Unit) {
 
-    require (FormsSetup.ComponentFactoryDefault != null) {
-        "Configure `FormsSetup.ComponentFactoryDefault` with a non-null component factory before creating this builder"
+    require(LocalFormLayoutInitialized.current) {
+        "Initialize the FormLayout parameters via `FormCortex` first"
     }
 
-    val textMeasurer = rememberTextMeasurer()
-    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
-    Sizes.textStyle = resolvedTextStyle
-    Sizes.textMeasurer = textMeasurer
-    Sizes.density = LocalDensity.current
-
-    CompositionLocalProvider(
-        LocalTextMeasurer provides textMeasurer,
-        LocalResolvedTextStyle provides resolvedTextStyle,
-    ) {
-        val builder = DefaultFormBuilder(
-            componentFactory = FormsSetup.ComponentFactoryDefault!!,
-            colSpecs = colSpecs,
-            rowSpecs = rowSpecs,
-        )
-        builder.block()
-        builder.build(modifier.padding(padding))
-    }
+    val builder = DefaultFormBuilder(
+        componentFactory = LocalComponentFactory.current,
+        colSpecs = colSpecs,
+        rowSpecs = rowSpecs,
+    )
+    builder.block()
+    builder.build(modifier.padding(padding))
 }
 

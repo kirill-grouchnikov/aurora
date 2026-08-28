@@ -19,12 +19,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.resolveDefaults
 import org.pushingpixels.aurora.layout.*
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
@@ -257,28 +252,17 @@ public fun Panel(
     encodedRowSpecs: String,
     block: @Composable PanelBuilder.() -> Unit) {
 
-    require (FormsSetup.ComponentFactoryDefault != null) {
-        "Configure `FormsSetup.ComponentFactoryDefault` with a non-null component factory before creating this builder"
+    require(LocalFormLayoutInitialized.current) {
+        "Initialize the FormLayout parameters via `FormCortex` first"
     }
 
-    val textMeasurer = rememberTextMeasurer()
-    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
-    Sizes.textStyle = resolvedTextStyle
-    Sizes.textMeasurer = textMeasurer
-    Sizes.density = LocalDensity.current
-
-    CompositionLocalProvider(
-        LocalTextMeasurer provides textMeasurer,
-        LocalResolvedTextStyle provides resolvedTextStyle,
-    ) {
-        val builder = PanelBuilder(
-            componentFactory = FormsSetup.ComponentFactoryDefault!!,
-            colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs),
-            rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs)
-        )
-        builder.block()
-        builder.build(modifier.padding(padding))
-    }
+    val builder = PanelBuilder(
+        componentFactory = LocalComponentFactory.current,
+        colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs),
+        rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs)
+    )
+    builder.block()
+    builder.build(modifier.padding(padding))
 }
 
 @Composable
@@ -289,27 +273,16 @@ public fun Panel(
     rowSpecs: List<RowSpec>,
     block: @Composable PanelBuilder.() -> Unit) {
 
-    require (FormsSetup.ComponentFactoryDefault != null) {
-        "Configure `FormsSetup.ComponentFactoryDefault` with a non-null component factory before creating this builder"
+    require(LocalFormLayoutInitialized.current) {
+        "Initialize the FormLayout parameters via `FormCortex` first"
     }
 
-    val textMeasurer = rememberTextMeasurer()
-    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
-    Sizes.textStyle = resolvedTextStyle
-    Sizes.textMeasurer = textMeasurer
-    Sizes.density = LocalDensity.current
-
-    CompositionLocalProvider(
-        LocalTextMeasurer provides textMeasurer,
-        LocalResolvedTextStyle provides resolvedTextStyle,
-    ) {
-        val builder = PanelBuilder(
-            componentFactory = FormsSetup.ComponentFactoryDefault!!,
-            colSpecs = colSpecs,
-            rowSpecs = rowSpecs
-        )
-        builder.block()
-        builder.build(modifier.padding(padding))
-    }
+    val builder = PanelBuilder(
+        componentFactory = LocalComponentFactory.current,
+        colSpecs = colSpecs,
+        rowSpecs = rowSpecs
+    )
+    builder.block()
+    builder.build(modifier.padding(padding))
 }
 

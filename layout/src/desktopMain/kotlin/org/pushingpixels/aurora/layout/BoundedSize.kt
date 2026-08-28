@@ -16,6 +16,8 @@
 package org.pushingpixels.aurora.layout
 
 import androidx.compose.ui.layout.IntrinsicMeasurable
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import kotlin.math.max
 import kotlin.math.min
 
@@ -56,12 +58,16 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
      * @see FormSpec.maximumSize
      */
     override fun maximumSize(
+        textMeasurer: TextMeasurer,
+        textStyle: TextStyle,
         components: List<IntrinsicMeasurable>,
         minMeasure: Measure,
         prefMeasure: Measure,
         defaultMeasure: Measure
     ): Int {
         var size = basis.maximumSize(
+            textMeasurer,
+            textStyle,
             components,
             minMeasure,
             prefMeasure,
@@ -70,6 +76,8 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
         if (lowerBound != null) {
             size = max(
                 size, lowerBound.maximumSize(
+                    textMeasurer,
+                    textStyle,
                     components,
                     minMeasure,
                     prefMeasure,
@@ -80,6 +88,8 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
         if (upperBound != null) {
             size = min(
                 size, upperBound.maximumSize(
+                    textMeasurer,
+                    textStyle,
                     components,
                     minMeasure,
                     prefMeasure,

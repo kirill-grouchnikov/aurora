@@ -41,7 +41,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.LabelProjection
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
-import org.pushingpixels.aurora.layout.FormsSetup
+import org.pushingpixels.aurora.layout.getFormCortexCompositionLocals
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
@@ -1250,11 +1250,6 @@ fun AuroraApplicationScope.AuroraWindow(
 
     val density = mutableStateOf(Density(1.0f, 1.0f))
 
-    // Set up the default component factory for FormsLayout, if it's not already configured
-    if (FormsSetup.ComponentFactoryDefault == null) {
-        FormsSetup.ComponentFactoryDefault = AuroraFormsComponentFactory()
-    }
-
     val decoratedBySystem = (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.System)
     Window(
         onCloseRequest = onCloseRequest,
@@ -1273,15 +1268,23 @@ fun AuroraApplicationScope.AuroraWindow(
         val swingComponentOrientation = ComponentOrientation.getOrientation(applicationLocale)
         val composeLayoutDirection = if (swingComponentOrientation.isLeftToRight)
             LayoutDirection.Ltr else LayoutDirection.Rtl
+
+        // Get the Aurora-specific composition locals for FormLayout
+        val formCortexCompositionLocals = getFormCortexCompositionLocals(
+            textStyle = resolveAuroraDefaults(),
+            componentFactory = AuroraFormsComponentFactory()
+        )
+
         // Get the current composition context
-        CompositionLocalProvider(
+        val compositionLocals = arrayOf(
             LocalWindow provides window,
             LocalWindowDecorated provides ((windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraPlain)
                 or (windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraIntegrated)),
             LocalWindowSize provides state.size,
             LocalTopWindowSize provides state.size,
             LocalLayoutDirection provides composeLayoutDirection
-        ) {
+        ) + formCortexCompositionLocals
+        CompositionLocalProvider(*compositionLocals) {
             val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraWindow, this, windowTitlePaneConfiguration)
             AuroraSkin(
                 displayName = skin.displayName,

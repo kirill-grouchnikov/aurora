@@ -81,8 +81,7 @@ public class RowSpec : FormSpec {
      * 
      * @param encodedDescription    the encoded description
      */
-    private constructor(encodedDescription: String,
-        textMeasurer: TextMeasurer) : super(Default, encodedDescription, textMeasurer)
+    private constructor(encodedDescription: String) : super(Default, encodedDescription)
 
     // Implementing Abstract Behavior ***************************************
     override val isHorizontal: Boolean
@@ -175,7 +174,7 @@ public class RowSpec : FormSpec {
         public fun decodeExpanded(expandedTrimmedLowerCaseSpec: String): RowSpec {
             var spec: RowSpec? = CACHE[expandedTrimmedLowerCaseSpec]
             if (spec == null) {
-                spec = RowSpec(expandedTrimmedLowerCaseSpec, LocalTextMeasurer.current)
+                spec = RowSpec(expandedTrimmedLowerCaseSpec)
                 CACHE[expandedTrimmedLowerCaseSpec] = spec
             }
             return spec

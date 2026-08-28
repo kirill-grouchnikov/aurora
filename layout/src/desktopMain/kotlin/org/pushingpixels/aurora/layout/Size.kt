@@ -16,6 +16,8 @@
 package org.pushingpixels.aurora.layout
 
 import androidx.compose.ui.layout.IntrinsicMeasurable
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
@@ -51,6 +53,8 @@ public interface Size {
      * @return the maximum size in pixels for the given list of components
      */
     public fun maximumSize(
+        textMeasurer: TextMeasurer,
+        textStyle: TextStyle,
         components: List<IntrinsicMeasurable>,
         minMeasure: Measure,
         prefMeasure: Measure,

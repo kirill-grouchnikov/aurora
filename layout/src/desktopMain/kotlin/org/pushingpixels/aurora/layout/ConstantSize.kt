@@ -18,6 +18,8 @@ package org.pushingpixels.aurora.layout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import kotlin.math.roundToInt
 
@@ -56,8 +58,8 @@ import kotlin.math.roundToInt
  * Sizes.pixel(99)
  * ```
  * 
- * @see Size
- * @see Sizes
+ * @see [Size]
+ * @see [Sizes]
  */
 public data class ConstantSize(public val value: Double, public val unit: MeasurementUnit) : Size {
     // Instance Creation ****************************************************
@@ -78,22 +80,22 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
      * 
      * @return the size in pixels
      */
-    public fun getPixelSize(): Int {
+    public fun getPixelSize(textMeasurer: TextMeasurer, textStyle: TextStyle): Int {
         return when (unit) {
             MeasurementUnit.Pixel -> intValue()
-            MeasurementUnit.Point -> Sizes.pointAsPixel(intValue())
-            MeasurementUnit.Inch -> Sizes.inchAsPixel(value)
-            MeasurementUnit.Millimeter -> Sizes.millimeterAsPixel(value)
-            MeasurementUnit.Centimeter -> Sizes.centimeterAsPixel(value)
-            MeasurementUnit.DialogUnitsX -> Sizes.dialogUnitXAsPixel(intValue())
-            MeasurementUnit.DialogUnitsY -> Sizes.dialogUnitYAsPixel(intValue())
+            MeasurementUnit.Point -> Sizes.pointAsPixel(textMeasurer, textStyle, intValue())
+            MeasurementUnit.Inch -> Sizes.inchAsPixel(textMeasurer, textStyle, value)
+            MeasurementUnit.Millimeter -> Sizes.millimeterAsPixel(textMeasurer, textStyle, value)
+            MeasurementUnit.Centimeter -> Sizes.centimeterAsPixel(textMeasurer, textStyle, value)
+            MeasurementUnit.DialogUnitsX -> Sizes.dialogUnitXAsPixel(textMeasurer, textStyle, intValue())
+            MeasurementUnit.DialogUnitsY -> Sizes.dialogUnitYAsPixel(textMeasurer, textStyle, intValue())
         }
     }
 
     @Composable
     public fun toDp(): Dp {
         with (LocalDensity.current) {
-            return getPixelSize().toDp()
+            return getPixelSize(LocalTextMeasurer.current, LocalTextStyle.current).toDp()
         }
     }
 
@@ -112,12 +114,14 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
      * @return the computed maximum size in pixel
      */
     override fun maximumSize(
+        textMeasurer: TextMeasurer,
+        textStyle: TextStyle,
         components: List<IntrinsicMeasurable>,
         minMeasure: Measure,
         prefMeasure: Measure,
         defaultMeasure: Measure
     ): Int {
-        return getPixelSize()
+        return getPixelSize(textMeasurer, textStyle)
     }
 
     /**

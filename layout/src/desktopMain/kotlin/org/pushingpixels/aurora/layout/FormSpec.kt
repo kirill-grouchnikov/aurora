@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.layout
 
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import java.util.regex.Pattern
 
 // This is a modified version of the original source code by Karsten Lentzsch
@@ -44,9 +45,6 @@ public abstract class FormSpec protected constructor(
     internal var size: Size,
     internal var resizeWeight: Double,
 ) {
-    // Fields ***************************************************************
-    private lateinit var textMeasurer: TextMeasurer
-
     /**
      * Describes whether the default alignment has been explictly set.
      * 
@@ -83,13 +81,12 @@ public abstract class FormSpec protected constructor(
      * @param defaultAlignment        the default alignment
      * @param encodedDescription    the encoded description
      */
-    protected constructor(defaultAlignment: DefaultAlignment, encodedDescription: String, textMeasurer: TextMeasurer) :
+    protected constructor(defaultAlignment: DefaultAlignment, encodedDescription: String) :
         this(
             defaultAlignment,
             Sizes.ComponentSize.Default,
             NoGrow,
         ) {
-            this.textMeasurer = textMeasurer
             parseAndInitValues(encodedDescription.lowercase())
         }
 
@@ -269,8 +266,7 @@ public abstract class FormSpec protected constructor(
         if (trimmedToken.startsWith("'") && trimmedToken.endsWith("'")) {
             val length = trimmedToken.length
             require(length >= 2) { "Missing closing \"'\" for prototype." }
-            require(::textMeasurer.isInitialized) { "Text measurer has not been initialized internally" }
-            return PrototypeSize(textMeasurer, trimmedToken.substring(1, length - 1))
+            return PrototypeSize(trimmedToken.substring(1, length - 1))
         }
         val componentSize: Sizes.ComponentSize? = Sizes.ComponentSize.parseValueOf(trimmedToken)
         if (componentSize != null) {
@@ -409,12 +405,16 @@ public abstract class FormSpec protected constructor(
      * @return the maximum size in pixels
      */
     public fun maximumSize(
+        textMeasurer: TextMeasurer,
+        textStyle: TextStyle,
         components: List<IntrinsicMeasurable>,
         minMeasure: Measure,
         prefMeasure: Measure,
         defaultMeasure: Measure
     ): Int {
         return size.maximumSize(
+            textMeasurer,
+            textStyle,
             components,
             minMeasure,
             prefMeasure,

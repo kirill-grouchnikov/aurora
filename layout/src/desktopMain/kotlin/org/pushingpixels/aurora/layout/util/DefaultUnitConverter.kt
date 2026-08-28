@@ -52,8 +52,7 @@ import androidx.compose.ui.unit.Density
  */
 public class DefaultUnitConverter(
     private val textMeasurer: TextMeasurer,
-    private val textStyle: TextStyle,
-    private val density: Density)
+    private val textStyle: TextStyle)
 /**
  * Constructs a DefaultUnitConverter and registers
  * a listener that handles changes in the look&amp;feel.

@@ -155,23 +155,14 @@ public fun FormLayout(
     debugConfiguration: FormLayoutDebugConfiguration? = null,
     content: @Composable FormLayoutScope.() -> Unit) {
 
-    val textMeasurer = rememberTextMeasurer()
-    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
-    Sizes.textStyle = resolvedTextStyle
-    Sizes.textMeasurer = textMeasurer
-    Sizes.density = LocalDensity.current
-
-    CompositionLocalProvider(
-        LocalTextMeasurer provides textMeasurer,
-        LocalResolvedTextStyle provides resolvedTextStyle,
-    ) {
-        val measurePolicy = FormLayoutMeasurePolicy(colSpecs, rowSpecs, colGroupIndices, rowGroupIndices)
-        val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
-        Layout(
-            content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
-            measurePolicy = measurePolicy,
-            modifier = formModifier)
-    }
+    val measurePolicy = FormLayoutMeasurePolicy(
+        LocalTextMeasurer.current, LocalTextStyle.current,
+        colSpecs, rowSpecs, colGroupIndices, rowGroupIndices)
+    val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
+    Layout(
+        content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
+        measurePolicy = measurePolicy,
+        modifier = formModifier)
 }
 
 @Composable
@@ -184,30 +175,21 @@ public fun FormLayout(
     debugConfiguration: FormLayoutDebugConfiguration? = null,
     content: @Composable FormLayoutScope.() -> Unit) {
 
-    val textMeasurer = rememberTextMeasurer()
-    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
-    Sizes.textStyle = resolvedTextStyle
-    Sizes.textMeasurer = textMeasurer
-    Sizes.density = LocalDensity.current
-
-    CompositionLocalProvider(
-        LocalTextMeasurer provides textMeasurer,
-        LocalResolvedTextStyle provides resolvedTextStyle,
-    ) {
-        val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)
-        val measurePolicy = FormLayoutMeasurePolicy(
-            colSpecs = colSpecs,
-            rowSpecs = listOf(),
-            colGroupIndices = colGroupIndices,
-            rowGroupIndices = rowGroupIndices
-        )
-        val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
-        Layout(
-            content = { FormLayoutScopeImpl(colSpecs.size, 0).content() },
-            measurePolicy = measurePolicy,
-            modifier = formModifier
-        )
-    }
+    val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)
+    val measurePolicy = FormLayoutMeasurePolicy(
+        textMeasurer = LocalTextMeasurer.current,
+        textStyle = LocalTextStyle.current,
+        colSpecs = colSpecs,
+        rowSpecs = listOf(),
+        colGroupIndices = colGroupIndices,
+        rowGroupIndices = rowGroupIndices
+    )
+    val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
+    Layout(
+        content = { FormLayoutScopeImpl(colSpecs.size, 0).content() },
+        measurePolicy = measurePolicy,
+        modifier = formModifier
+    )
 }
 
 @Composable
@@ -220,33 +202,24 @@ public fun FormLayout(
     debugConfiguration: FormLayoutDebugConfiguration? = null,
     content: @Composable FormLayoutScope.() -> Unit) {
 
-    val textMeasurer = rememberTextMeasurer()
-    val resolvedTextStyle = resolveDefaults(LocalTextStyle.current, LocalLayoutDirection.current)
-    Sizes.textStyle = resolvedTextStyle
-    Sizes.textMeasurer = textMeasurer
-    Sizes.density = LocalDensity.current
+    val layoutMap: LayoutMap = LayoutMap.getRoot()
+    val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)
+    val rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs, layoutMap)
 
-    CompositionLocalProvider(
-        LocalTextMeasurer provides textMeasurer,
-        LocalResolvedTextStyle provides resolvedTextStyle,
-    ) {
-        val layoutMap: LayoutMap = LayoutMap.getRoot()
-        val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)
-        val rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs, layoutMap)
-
-        val measurePolicy = FormLayoutMeasurePolicy(
-            colSpecs = colSpecs,
-            rowSpecs = rowSpecs,
-            colGroupIndices = colGroupIndices,
-            rowGroupIndices = rowGroupIndices
-        )
-        val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
-        Layout(
-            content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
-            measurePolicy = measurePolicy,
-            modifier = formModifier
-        )
-    }
+    val measurePolicy = FormLayoutMeasurePolicy(
+        textMeasurer = LocalTextMeasurer.current,
+        textStyle = LocalTextStyle.current,
+        colSpecs = colSpecs,
+        rowSpecs = rowSpecs,
+        colGroupIndices = colGroupIndices,
+        rowGroupIndices = rowGroupIndices
+    )
+    val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
+    Layout(
+        content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
+        measurePolicy = measurePolicy,
+        modifier = formModifier
+    )
 }
 
 /** A FormLayoutScope provides a scope for the children of [FormLayout]. */
@@ -431,13 +404,6 @@ internal class FormLayoutChildDataNode(internal var cellConstraints: CellConstra
     ParentDataModifierNode, Modifier.Node() {
     override fun Density.modifyParentData(parentData: Any?) = this@FormLayoutChildDataNode
 }
-
-@Composable
-public fun rememberFormLayoutMeasurePolicy(colSpecs: List<ColumnSpec>,
-    rowSpecs: List<RowSpec>, colGroupIndices: Array<IntArray>, rowGroupIndices: Array<IntArray>): MeasurePolicy =
-    remember {
-        FormLayoutMeasurePolicy(colSpecs, rowSpecs, colGroupIndices, rowGroupIndices)
-    }
 
 public data class FormLayoutDebugConfiguration(
     public val gridColor: Color = Color.Red,

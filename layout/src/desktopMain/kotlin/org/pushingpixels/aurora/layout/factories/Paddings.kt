@@ -18,11 +18,12 @@ package org.pushingpixels.aurora.layout.factories
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import org.pushingpixels.aurora.layout.ConstantSize
-import org.pushingpixels.aurora.layout.Sizes
+import org.pushingpixels.aurora.layout.*
 import org.pushingpixels.aurora.layout.util.LayoutStyle
 
 // This is a modified version of the original source code by Karsten Lentzsch
@@ -182,8 +183,15 @@ public object Paddings {
         top: ConstantSize, start: ConstantSize,
         bottom: ConstantSize, end: ConstantSize
     ): PaddingValues {
+        require(LocalFormLayoutInitialized.current) {
+            "Initialize the FormLayout parameters via `FormCortex` first"
+        }
+        // This is not great, but it allows to fall back on default values if paddings are
+        // created as part of the [FormLayout] or builder initialization parameters.
+        val textMeasurer = LocalTextMeasurer.current
+        val textStyle = LocalTextStyle.current
         val density = LocalDensity.current
-        return FormPaddingValues(density, top, start, bottom, end)
+        return FormPaddingValues(textMeasurer, textStyle, density, top, start, bottom, end)
     }
 
     /**
@@ -217,6 +225,8 @@ public object Paddings {
      * to define the top, start, bottom and end gap.
      */
     public class FormPaddingValues(
+        private val textMeasurer: TextMeasurer,
+        private val textStyle: TextStyle,
         private val density: Density,
         private val top: ConstantSize,
         private val start: ConstantSize,
@@ -226,27 +236,27 @@ public object Paddings {
 
         override fun calculateTopPadding(): Dp {
             with(density) {
-                return top.getPixelSize().toDp()
+                return top.getPixelSize(textMeasurer, textStyle).toDp()
             }
         }
 
         override fun calculateBottomPadding(): Dp {
             with(density) {
-                return bottom.getPixelSize().toDp()
+                return bottom.getPixelSize(textMeasurer, textStyle).toDp()
             }
         }
 
         override fun calculateLeftPadding(layoutDirection: LayoutDirection): Dp {
             val left = if (layoutDirection == LayoutDirection.Ltr) start else end
             with(density) {
-                return left.getPixelSize().toDp()
+                return left.getPixelSize(textMeasurer, textStyle).toDp()
             }
         }
 
         override fun calculateRightPadding(layoutDirection: LayoutDirection): Dp {
             val right = if (layoutDirection == LayoutDirection.Ltr) end else start
             with(density) {
-                return right.getPixelSize().toDp()
+                return right.getPixelSize(textMeasurer, textStyle).toDp()
             }
         }
     }
