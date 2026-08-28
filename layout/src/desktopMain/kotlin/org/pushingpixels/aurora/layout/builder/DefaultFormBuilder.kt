@@ -35,7 +35,6 @@ import org.pushingpixels.aurora.layout.LocalTextStyle
 import org.pushingpixels.aurora.layout.RowSpec
 import org.pushingpixels.aurora.layout.Sizes
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
-import java.util.*
 
 /**
  * Provides a means to build form-oriented panels quickly and consistently
@@ -49,6 +48,14 @@ import java.util.*
  * [appendRow] and the set of `add` methods.
  * A set of component appenders allows to add a textual label and
  * associated component in a single step.
+ *
+ * The choice for localizing text content is left to the application side. For
+ * interoperability with Swing, you can load your strings from
+ * [java.util.ResourceBundle]s, and extend the [DefaultFormBuilder] class
+ * to provide the various `append` methods that do so. For Compose resources,
+ * you can load your strings with `stringResource(Res.string.xyz)`,
+ * and extend the [DefaultFormBuilder] class to provide the various `append`
+ * methods that do so.
  *
  * You can configure the build process by setting a leading column,
  * enabling the row grouping and by modifying the gaps between normal
