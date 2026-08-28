@@ -58,6 +58,7 @@ import org.pushingpixels.aurora.component.ribbon.impl.*
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainter
 import org.pushingpixels.aurora.component.utils.TransitionAwarePainterDelegate
 import org.pushingpixels.aurora.component.utils.popup.GeneralCommandMenuPopupHandler
+import org.pushingpixels.aurora.layout.getFormCortexCompositionLocals
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decoration.AuroraDecorationArea
 import org.pushingpixels.aurora.theming.decorator.window.AuroraWindowDecorator
@@ -1007,14 +1008,23 @@ fun AuroraApplicationScope.AuroraRibbonWindow(
         val composeLayoutDirection = if (swingComponentOrientation.isLeftToRight)
             LayoutDirection.Ltr else LayoutDirection.Rtl
         val titlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain()
-        // Get the current composition context
-        CompositionLocalProvider(
+
+        // Get the Aurora-specific composition locals for FormLayout
+        val formCortexCompositionLocals = getFormCortexCompositionLocals(
+            textStyle = resolveAuroraDefaults(),
+            componentFactory = AuroraFormsComponentFactory()
+        )
+
+        val compositionLocals = arrayOf(
             LocalWindow provides window,
             LocalWindowDecorated provides true,
             LocalWindowSize provides state.size,
             LocalTopWindowSize provides state.size,
-            LocalLayoutDirection provides composeLayoutDirection
-        ) {
+            LocalLayoutDirection provides composeLayoutDirection,
+        ) + formCortexCompositionLocals
+
+        // Get the current composition context
+        CompositionLocalProvider(*compositionLocals) {
             val auroraWindowScope = AuroraWindowScopeImpl(this@AuroraRibbonWindow, this, titlePaneConfiguration)
             AuroraSkin(
                 displayName = skin.displayName,

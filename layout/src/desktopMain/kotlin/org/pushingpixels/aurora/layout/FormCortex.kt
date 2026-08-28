@@ -23,6 +23,27 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
+/**
+ * This composable function can be used at the top level of your UI hierarchy
+ * to initialize the configuration needed by [FormLayout] APIs by wrapping your
+ * hierarchy.
+ *
+ * For example:
+ * ```kotlin
+ * FormCortex(
+ *     textStyle = AcmeDesignSystemTextStyle(),
+ *     componentFactory = AcmeDesignSystemComponentFactory()
+ * ) {
+ *     MyAcmeWindowContent()
+ * }
+ * ```
+ *
+ * @param textStyle The default text style used by your design system. This will
+ *    be used to convert DLU units to pixel and dp values.
+ * @param componentFactory Component factory that matches the components used by
+ *    your design system. This will be used by APIs in form builders such as
+ *    [org.pushingpixels.aurora.layout.builder.PanelBuilder].
+ */
 @Composable
 public fun FormCortex(
     textStyle: TextStyle,
@@ -41,6 +62,38 @@ public fun FormCortex(
     }
 }
 
+/**
+ * This composable function can be used at the top level of your UI hierarchy
+ * to initialize the configuration needed by [FormLayout] APIs by adding the
+ * returned composition locals (via the array of [ProvidedValue]s) to your top
+ * level [CompositionLocalProvider].
+ *
+ * For example:
+ * ```kotlin
+ * val formCortexCompositionLocals = getFormCortexCompositionLocals(
+ *     textStyle = AcmeDesignSystemTextStyle(),
+ *     componentFactory = AcmeDesignSystemComponentFactory()
+ * )
+ *
+ * // Combine my design system composition locals with FormLayout composition locals
+ * val compositionLocals = arrayOf(
+ *     AcmeColorsCompositionLocal provides AcmeColors(),
+ *     AcmeTypographyCompositionLocal provides AcmeTypography(),
+ *     ...
+ * ) + formCortexCompositionLocals
+ *
+ * // And set them all in one go
+ * CompositionLocalProvider(*compositionLocals) {
+ *     MyAcmeWindowContent()
+ * }
+ * ```
+ *
+ * @param textStyle The default text style used by your design system. This will
+ *    be used to convert DLU units to pixel and dp values.
+ * @param componentFactory Component factory that matches the components used by
+ *    your design system. This will be used by APIs in form builders such as
+ *    [org.pushingpixels.aurora.layout.builder.PanelBuilder].
+ */
 @Composable
 public fun getFormCortexCompositionLocals(
     textStyle: TextStyle,

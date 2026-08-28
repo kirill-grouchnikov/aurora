@@ -1275,7 +1275,6 @@ fun AuroraApplicationScope.AuroraWindow(
             componentFactory = AuroraFormsComponentFactory()
         )
 
-        // Get the current composition context
         val compositionLocals = arrayOf(
             LocalWindow provides window,
             LocalWindowDecorated provides ((windowTitlePaneConfiguration is AuroraWindowTitlePaneConfigurations.AuroraPlain)
