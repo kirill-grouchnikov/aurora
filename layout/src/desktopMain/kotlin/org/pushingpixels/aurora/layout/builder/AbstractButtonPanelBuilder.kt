@@ -16,7 +16,9 @@
 package org.pushingpixels.aurora.layout.builder
 
 import androidx.compose.ui.graphics.painter.Painter
-import org.pushingpixels.aurora.layout.*
+import org.pushingpixels.aurora.layout.CellConstraints
+import org.pushingpixels.aurora.layout.ComponentLambda
+import org.pushingpixels.aurora.layout.FormSpecs
 import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
 // This is a modified version of the original source code by Karsten Lentzsch
