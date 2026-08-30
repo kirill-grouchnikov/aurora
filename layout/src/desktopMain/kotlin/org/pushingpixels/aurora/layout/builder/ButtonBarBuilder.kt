@@ -84,7 +84,7 @@ public class ButtonBarBuilder(componentFactory: ComponentFactory): AbstractButto
         nextColumn()
     }
 
-    public fun button(text: String, icon: Painter? = null, action: (() -> Unit)? = null, isEnabled: Boolean = true) {
+    public fun button(text: String, icon: Painter? = null, action: () -> Unit, isEnabled: Boolean = true) {
         button(createButton(text, icon, action, isEnabled))
     }
 

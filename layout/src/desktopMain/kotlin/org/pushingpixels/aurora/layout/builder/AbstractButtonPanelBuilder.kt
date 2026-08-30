@@ -87,7 +87,7 @@ public abstract class AbstractButtonPanelBuilder(componentFactory: ComponentFact
         }
     }
 
-    protected fun createButton(text: String, icon: Painter?, action: (() -> Unit)?, isEnabled: Boolean): ComponentLambda {
+    protected fun createButton(text: String, icon: Painter?, action: () -> Unit, isEnabled: Boolean): ComponentLambda {
         return this.componentFactory.createButton(text, icon, action, isEnabled)
     }
 }

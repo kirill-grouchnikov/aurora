@@ -36,7 +36,7 @@ class AuroraFormsComponentFactory: ComponentFactory {
     override fun createButton(
         text: String,
         icon: Painter?,
-        action: (() -> Unit)?,
+        action: () -> Unit,
         isEnabled: Boolean
     ): ComponentLambda {
         return { builderModifier: Modifier ->

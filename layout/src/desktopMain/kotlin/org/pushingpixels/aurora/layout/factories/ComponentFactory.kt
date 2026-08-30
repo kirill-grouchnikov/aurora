@@ -39,7 +39,7 @@ public interface ComponentFactory {
      * @param isEnabled    button enabled status
      * @return the created button
      */
-    public fun createButton(text: String, icon: Painter?, action: (() -> Unit)?, isEnabled: Boolean): ComponentLambda
+    public fun createButton(text: String, icon: Painter?, action: () -> Unit, isEnabled: Boolean): ComponentLambda
 
     /**
      * Creates and returns a label.

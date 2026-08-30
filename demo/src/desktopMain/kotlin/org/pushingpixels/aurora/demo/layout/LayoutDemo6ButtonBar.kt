@@ -47,11 +47,11 @@ fun main() = auroraApplication {
         onCloseRequest = ::exitApplication,
     ) {
         ButtonBar(modifier = Modifier.wrapContentSize(), padding = Paddings.Dialog) {
-            button(text = "Start")
+            button(text = "Start", action = { println("Start!") })
             unrelatedGap()
-            button(text = "Pause")
+            button(text = "Pause", action = { println("Pause!") })
             relatedGap()
-            button(text = "Stop")
+            button(text = "Stop", action = { println("Stop!") })
         }
     }
 }

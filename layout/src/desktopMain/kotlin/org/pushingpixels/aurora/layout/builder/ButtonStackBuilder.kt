@@ -59,7 +59,7 @@ public class ButtonStackBuilder(componentFactory: ComponentFactory): AbstractBut
         nextRow()
     }
 
-    public fun button(text: String, icon: Painter? = null, action: (() -> Unit)? = null, isEnabled: Boolean = true) {
+    public fun button(text: String, icon: Painter? = null, action: () -> Unit, isEnabled: Boolean = true) {
         button(createButton(text, icon, action, isEnabled))
     }
 
