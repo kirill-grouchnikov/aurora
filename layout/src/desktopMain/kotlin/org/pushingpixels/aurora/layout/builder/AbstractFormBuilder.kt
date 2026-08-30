@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.layout.builder
 
+import androidx.compose.runtime.Composable
 import org.pushingpixels.aurora.layout.CellConstraints
 import org.pushingpixels.aurora.layout.ComponentLambda
 import org.pushingpixels.aurora.layout.FormSpecs
@@ -271,6 +272,7 @@ public abstract class AbstractFormBuilder(componentFactory: ComponentFactory) : 
      * @param component        the component to add
      * @param cellConstraints  the component's cell constraints
      */
+    @Composable
     public fun component(component: ComponentLambda, cellConstraints: CellConstraints) {
         this.componentLambdas.add(Pair(component, cellConstraints))
     }
@@ -281,6 +283,7 @@ public abstract class AbstractFormBuilder(componentFactory: ComponentFactory) : 
      * @param component               the component to add
      * @param encodedCellConstraints  the component's encoded cell constraints
      */
+    @Composable
     public fun component(component: ComponentLambda, encodedCellConstraints: String) {
         this.componentLambdas.add(Pair(component, CellConstraints.fromConstraints(encodedCellConstraints)))
     }
@@ -293,6 +296,7 @@ public abstract class AbstractFormBuilder(componentFactory: ComponentFactory) : 
      * @see [component]
      * @see [createAdjustedConstraints]
      */
+    @Composable
     public fun component(component: ComponentLambda) {
         this.componentLambdas.add(Pair(component, currentCellConstraints))
     }

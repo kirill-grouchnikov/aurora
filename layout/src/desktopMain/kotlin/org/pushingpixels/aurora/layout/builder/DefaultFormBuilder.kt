@@ -228,6 +228,7 @@ public open class DefaultFormBuilder(
      * @param component the component to append
      * @param columnSpan    the column span used to add
      */
+    @Composable
     public fun append(component: ComponentLambda, columnSpan: Int = 1) {
         ensureCursorColumnInGrid()
         ensureHasGapRow(lineGapSpec)
@@ -244,6 +245,7 @@ public open class DefaultFormBuilder(
      * @param c1    the first component to add
      * @param c2    the second component to add
      */
+    @Composable
     public fun append(c1: ComponentLambda, c2: ComponentLambda) {
         append(c1)
         append(c2)
@@ -257,6 +259,7 @@ public open class DefaultFormBuilder(
      * @param c2    the second component to add
      * @param c3    the third component to add
      */
+    @Composable
     public fun append(c1: ComponentLambda, c2: ComponentLambda, c3: ComponentLambda) {
         append(c1)
         append(c2)
@@ -270,6 +273,7 @@ public open class DefaultFormBuilder(
      * @param text  the label's text
      * @return the added label
      */
+    @Composable
     public fun append(text: String) {
         append(componentFactory.createLabel(text))
     }
@@ -282,6 +286,7 @@ public open class DefaultFormBuilder(
      * @param component         the component to add
      * @param columnSpan        number of columns the component shall span
      */
+    @Composable
     public fun append(text: String, component: ComponentLambda, columnSpan: Int = 1) {
         append(text)
         append(component, columnSpan)
@@ -296,6 +301,7 @@ public open class DefaultFormBuilder(
      * @param component         the component to add
      * @param nextLine          true forces a next line
      */
+    @Composable
     public fun append(text: String, component: ComponentLambda, nextLine: Boolean) {
         append(text, component)
         if (nextLine) {
@@ -313,6 +319,7 @@ public open class DefaultFormBuilder(
      * @param component2        the second component to add
      * @param colSpan           the column span for the second component
      */
+    @Composable
     public fun append(text: String, component1: ComponentLambda, component2: ComponentLambda, colSpan: Int = 1) {
         append(text, component1)
         append(component2, colSpan)
@@ -327,6 +334,7 @@ public open class DefaultFormBuilder(
      * @param c2    the second component to add
      * @param c3    the third component to add
      */
+    @Composable
     public fun append(text: String, c1: ComponentLambda, c2: ComponentLambda, c3: ComponentLambda) {
         append(text, c1, c2)
         append(c3)
@@ -342,6 +350,7 @@ public open class DefaultFormBuilder(
      * @param c3    the third component to add
      * @param c4    the fourth component to add
      */
+    @Composable
     public fun append(
         text: String,
         c1: ComponentLambda,
@@ -359,6 +368,7 @@ public open class DefaultFormBuilder(
      * 
      * @param text  the label's text
      */
+    @Composable
     public fun appendTitle(text: String) {
         append(componentFactory.createTitle(text))
     }
@@ -369,6 +379,7 @@ public open class DefaultFormBuilder(
      * 
      * @param text      the separator title text
      */
+    @Composable
     public fun appendSeparator(text: String = "") {
         ensureCursorColumnInGrid()
         ensureHasGapRow(paragraphGapSpec)

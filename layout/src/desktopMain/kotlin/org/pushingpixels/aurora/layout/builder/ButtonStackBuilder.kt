@@ -53,36 +53,43 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * @see [org.pushingpixels.aurora.layout.util.LayoutStyle]
  */
 public class ButtonStackBuilder(componentFactory: ComponentFactory): AbstractButtonPanelBuilder(componentFactory) {
+    @Composable
     public override fun button(button: ComponentLambda) {
         appendRow(FormSpecs.PrefRowSpec)
         componentLambdas.add(Pair(button, currentCellConstraints))
         nextRow()
     }
 
+    @Composable
     public fun button(text: String, icon: Painter? = null, action: () -> Unit, isEnabled: Boolean = true) {
         button(createButton(text, icon, action, isEnabled))
     }
 
+    @Composable
     public override fun relatedGap() {
         appendRelatedComponentsGapRow()
         nextRow()
     }
 
+    @Composable
     public override fun unrelatedGap() {
         appendUnrelatedComponentsGapRow()
         nextRow()
     }
 
+    @Composable
     public fun addGlue() {
         appendGlueRow()
         nextRow()
     }
 
+    @Composable
     public fun addStrut(size: ConstantSize) {
         appendRow(RowSpec(RowSpec.Top, size, FormSpec.NoGrow))
         nextRow()
     }
 
+    @Composable
     public fun addFixed(component: ComponentLambda) {
         appendRow(FormSpecs.PrefRowSpec)
         this.componentLambdas.add(Pair(component, currentCellConstraints))
