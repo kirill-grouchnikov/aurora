@@ -453,6 +453,7 @@ public open class DefaultFormScope(
 
     @Composable
     public override fun build(modifier: Modifier) {
+        // TODO: is there a more elegant way to pass cell constraints down to the measure policy?
         val constraintsMapping = componentLambdas.map { it.second }
         FormLayout(
             modifier = modifier,

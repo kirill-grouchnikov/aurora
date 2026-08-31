@@ -553,6 +553,7 @@ internal class FormLayoutMeasurePolicy(
     }
 
     private fun getCellConstraints(index: Int, measurable: IntrinsicMeasurable) : CellConstraints? {
+        // TODO: is there a more elegant way to only look at one place where child constraints are defined?
         if (constraintsMapping != null) {
             return constraintsMapping[index]
         }

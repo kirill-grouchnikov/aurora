@@ -128,6 +128,7 @@ public class ButtonBarScope(componentFactory: ComponentFactory): AbstractButtonP
 
     @Composable
     public fun build(modifier: Modifier) {
+        // TODO: is there a more elegant way to pass cell constraints down to the measure policy?
         val constraintsMapping = componentLambdas.map {
             CellConstraints.xy(col = it.second.gridX, row = 1)
         }

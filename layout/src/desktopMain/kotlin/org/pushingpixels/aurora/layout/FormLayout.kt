@@ -579,6 +579,7 @@ private data class DebugDrawElement(
     }
 }
 
+// TODO: is there a more elegant way to share the grid structure from measure policy to this modifier?
 private fun Modifier.debugOverlay(
     measurePolicy: FormLayoutMeasurePolicy,
     debugConfiguration: FormLayoutDebugConfiguration
