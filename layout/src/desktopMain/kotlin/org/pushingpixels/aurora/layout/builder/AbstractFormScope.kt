@@ -27,20 +27,20 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
 /**
  * An abstract class that minimizes the effort required to implement
- * non-visual builders that use the [org.pushingpixels.aurora.layout.FormLayout].
+ * non-visual scopes that use the [org.pushingpixels.aurora.layout.FormLayout].
  *
- * Builders hide details of the FormLayout and provide convenience behavior
+ * Scopes hide details of the FormLayout and provide convenience behavior
  * that assists you in constructing a form.
  * This class provides a cell cursor that helps you traverse a form while
  * you add components. Also, it offers several methods to append custom
  * and logical columns and rows.
  * 
- * @see [ButtonBarBuilder]
- * @see [ButtonStackBuilder]
- * @see PanelBuilder
- * @see [DefaultFormBuilder]
+ * @see [ButtonBarScope]
+ * @see [ButtonStackScope]
+ * @see PanelScope
+ * @see [DefaultFormScope]
  */
-public abstract class AbstractFormBuilder(componentFactory: ComponentFactory) : AbstractBuilder(componentFactory) {
+public abstract class AbstractFormScope(componentFactory: ComponentFactory) : AbstractScope(componentFactory) {
     // Accessing the Cursor Location and Extent *****************************
     /**
      * The cursor's column.

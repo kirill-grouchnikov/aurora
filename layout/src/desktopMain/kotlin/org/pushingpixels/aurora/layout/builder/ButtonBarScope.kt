@@ -28,36 +28,59 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
 // license under resources/Forms.license.
 
 /**
- * Builds consistent button stacks that comply with popular style guides.
+ * Builds consistent button bars that comply with popular style guides.
  * Utilizes the [FormLayout] and honors the platform's
  * [org.pushingpixels.aurora.layout.util.LayoutStyle] regarding button sizes, and gaps.<p>
  *
- * <strong>Example:</strong><br> (note that in each of the lambdas you must use the passed in
- * `builderModifier` to have that button properly positioned in the button bar).
- * The following example builds a button stack with <i>Close, Up</i> and
- * <i>Down</i>, where Up and Down are related, and Close is not related
- * to the other buttons, which makes a wide gap for the unrelated and
- * a smaller gap for the related buttons.
- *
+ * <strong>Examples:</strong>
  * ```kotlin
- * ButtonStack(modifier, padding) {
- *     button { builderModifier -> closeButton }
- *     unrelatedGap()
- *     button { builderModifier -> upButton }
+ * // 1) Build and emit a bar with three related buttons
+ * ButtonBar(modifier, padding) {
+ *     button { newButton }
  *     relatedGap()
- *     button { builderModifier -> downButton }
+ *     button { editButton }
+ *     relatedGap()
+ *     button { deleteButton }
+ * }
+ *
+ * // 2) Short hand for example 1)
+ * ButtonBar(modifier, padding) {
+ *     buttons({ newButton }, { editButton }, { deleteButton })
+ * }
+ *
+ * // 3) Build and return a bar with two sections
+ * ButtonBar(modifier, padding) {
+ *     button({ newButton }, { editButton }, { deleteButton })
+ *     unrelatedGap()
+ *     button({ moveUpButton }, { moveDownButton })
+ * }
+ *
+ * // 4) Short hand for example 3)
+ * ButtonBar(modifier, padding) {
+ *     buttons({ newButton }, { editButton }, { deleteButton },
+ *             null,
+ *             { moveUpButton }, { moveDownButton })
+ * }
+ *
+ * // 5) Build and return a complex button bar
+ * ButtonBar(modifier, padding) {
+ *     button({ newButton }, { editButton }, { deleteButton })
+ *     unrelatedGap()
+ *     button({ moveUpButton }, { moveDownButton })
+ *     glue()
+ *     growing({ legendComponent })
  * }
  * ```
  *
- * @see [ButtonBarBuilder]
+ * @see [ButtonStackScope]
  * @see [org.pushingpixels.aurora.layout.util.LayoutStyle]
  */
-public class ButtonStackBuilder(componentFactory: ComponentFactory): AbstractButtonPanelBuilder(componentFactory) {
+public class ButtonBarScope(componentFactory: ComponentFactory): AbstractButtonPanelScope(componentFactory) {
     @Composable
     public override fun button(button: ComponentLambda) {
-        appendRow(FormSpecs.PrefRowSpec)
+        appendColumn(FormSpecs.ButtonColSpec)
         componentLambdas.add(Pair(button, currentCellConstraints))
-        nextRow()
+        nextColumn()
     }
 
     @Composable
@@ -67,44 +90,51 @@ public class ButtonStackBuilder(componentFactory: ComponentFactory): AbstractBut
 
     @Composable
     public override fun relatedGap() {
-        appendRelatedComponentsGapRow()
-        nextRow()
+        appendRelatedComponentsGapColumn()
+        nextColumn()
     }
 
     @Composable
     public override fun unrelatedGap() {
-        appendUnrelatedComponentsGapRow()
-        nextRow()
+        appendUnrelatedComponentsGapColumn()
+        nextColumn()
     }
 
     @Composable
-    public fun addGlue() {
-        appendGlueRow()
-        nextRow()
+    public fun glue() {
+        appendGlueColumn()
+        nextColumn()
     }
 
     @Composable
-    public fun addStrut(size: ConstantSize) {
-        appendRow(RowSpec(RowSpec.Top, size, FormSpec.NoGrow))
-        nextRow()
+    public fun strut(width: ConstantSize) {
+        appendColumn(ColumnSpec.createGap(width))
+        nextColumn()
     }
 
     @Composable
-    public fun addFixed(component: ComponentLambda) {
-        appendRow(FormSpecs.PrefRowSpec)
+    public fun fixed(component: ComponentLambda) {
+        appendColumn(FormSpecs.PrefColSpec)
         this.componentLambdas.add(Pair(component, currentCellConstraints))
-        nextRow()
+        nextColumn()
+    }
+
+    @Composable
+    public fun growing(component: ComponentLambda) {
+        appendColumn(FormSpecs.GrowingButtonColSpec)
+        this.componentLambdas.add(Pair(component, currentCellConstraints))
+        nextColumn()
     }
 
     @Composable
     public fun build(modifier: Modifier) {
         val constraintsMapping = componentLambdas.map {
-            CellConstraints.xy(col = 1, row = it.second.gridY)
+            CellConstraints.xy(col = it.second.gridX, row = 1)
         }
         FormLayout(
             modifier = modifier,
-            colSpecs = arrayListOf(FormSpecs.ButtonColSpec),
-            rowSpecs = rowSpecs,
+            colSpecs = colSpecs,
+            rowSpecs = arrayListOf(RowSpec.decode("center:pref")),
             debugConfiguration = this.debugConfiguration,
             constraintsMapping = constraintsMapping,
             content = {
@@ -117,12 +147,12 @@ public class ButtonStackBuilder(componentFactory: ComponentFactory): AbstractBut
 }
 
 @Composable
-public fun ButtonStack(modifier: Modifier, padding: PaddingValues, block: @Composable ButtonStackBuilder.() -> Unit) {
+public fun ButtonBar(modifier: Modifier, padding: PaddingValues, block: @Composable ButtonBarScope.() -> Unit) {
     require(LocalFormLayoutInitialized.current) {
         "Initialize the FormLayout parameters via `FormCortex` first"
     }
 
-    val builder = ButtonStackBuilder(LocalComponentFactory.current)
-    builder.block()
-    builder.build(modifier.padding(padding))
+    val scope = ButtonBarScope(LocalComponentFactory.current)
+    scope.block()
+    scope.build(modifier.padding(padding))
 }

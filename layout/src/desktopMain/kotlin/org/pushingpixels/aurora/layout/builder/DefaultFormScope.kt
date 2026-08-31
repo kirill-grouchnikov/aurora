@@ -24,7 +24,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
 /**
  * Provides a means to build form-oriented panels quickly and consistently
- * using the [org.pushingpixels.aurora.layout.FormLayout]. This builder
+ * using the [org.pushingpixels.aurora.layout.FormLayout]. This scope
  * combines frequently used panel building steps: add a new row, add a label,
  * proceed to the next data column, then add a component.
  *
@@ -37,10 +37,10 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  *
  * The choice for localizing text content is left to the application side. For
  * interoperability with Swing, you can load your strings from
- * [java.util.ResourceBundle]s, and extend the [DefaultFormBuilder] class
+ * [java.util.ResourceBundle]s, and extend the [DefaultFormScope] class
  * to provide the various `append` methods that do so. For Compose resources,
  * you can load your strings with `stringResource(Res.string.xyz)`,
- * and extend the [DefaultFormBuilder] class to provide the various `append`
+ * and extend the [DefaultFormScope] class to provide the various `append`
  * methods that do so.
  *
  * You can configure the build process by setting a leading column,
@@ -50,7 +50,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * start in the specified lead column, except appended separators that
  * span all columns.
  *
- * It is tempting to use the [DefaultFormBuilder] all the time and
+ * It is tempting to use the [DefaultFormScope] all the time and
  * to let it add rows automatically. Use a simpler style if it increases
  * the code readability. Explicit row specifications and cell constraints
  * make your layout easier to understand - but harder to maintain.
@@ -58,11 +58,11 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * that are part of the Forms documentation.
  *
  * Sometimes a form consists of many standardized rows but has a few
- * rows that require a customization. The [DefaultFormBuilder] can do everything
- * that the superclasses [AbstractFormBuilder] and [PanelBuilder] can do;
+ * rows that require a customization. The [DefaultFormScope] can do everything
+ * that the superclasses [AbstractFormScope] and [PanelScope] can do;
  * among other things: appending new rows and moving the cursor.
- * Again, ask yourself if the [DefaultFormBuilder] is the appropriate builder.
- * As a rule of thumb you should have more components than builder commands.
+ * Again, ask yourself if the [DefaultFormScope] is the appropriate scope.
+ * As a rule of thumb you should have more components than scope commands.
  * There are different ways to add custom rows. Find below example code
  * that presents and compares the pros and cons of three approaches.
  *
@@ -78,40 +78,40 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * ) {
  *     appendSeparator("Flange")
  * 
- *     append("Identifier", { builderModifier -> MyIdentifierField(...) })
+ *     append("Identifier", { MyIdentifierField(...) })
  *     nextLine()
  * 
- *     append("PTI [kW]",   { builderModifier -> MyTextField(...) })
- *     append("Power [kW]", { builderModifier -> MyTextField(...) })
+ *     append("PTI [kW]",   { MyTextField(...) })
+ *     append("Power [kW]", { MyTextField(...) })
  * 
- *     append("s [mm]",     { builderModifier -> MyTextField(...) })
+ *     append("s [mm]",     { MyTextField(...) })
  *     nextLine()
  * 
  *     appendSeparator("Diameters")
  * 
- *     append("da [mm]",    { builderModifier -> MyTextField(...) })
- *     append("di [mm]",    { builderModifier -> MyTextField(...) })
+ *     append("da [mm]",    { MyTextField(...) })
+ *     append("di [mm]",    { MyTextField(...) })
  * 
- *     append("da2 [mm]",   { builderModifier -> MyTextField(...) })
- *     append("di2 [mm]",   { builderModifier -> MyTextField(...) })
+ *     append("da2 [mm]",   { MyTextField(...) })
+ *     append("di2 [mm]",   { MyTextField(...) })
  * 
- *     append("R [mm]",     { builderModifier -> MyTextField(...) })
- *     append("D [mm]",     { builderModifier -> MyTextField(...) })
+ *     append("R [mm]",     { MyTextField(...) })
+ *     append("D [mm]",     { MyTextField(...) })
  * 
  *     appendSeparator("Criteria")
  * 
- *     append("Location",   { builderModifier -> MyLocationComboBox(...) })
- *     append("k-factor",   { builderModifier -> MyTextField(...) })
+ *     append("Location",   { MyLocationComboBox(...) })
+ *     append("k-factor",   { MyTextField(...) })
  * 
  *     appendSeparator("Bolts")
  * 
- *     append("Material",   { builderModifier -> MyMaterialComboBox(...) })
+ *     append("Material",   { MyMaterialComboBox(...) })
  *     nextLine()
  * 
- *     append("Numbers",    { builderModifier -> MyTextField(...) })
+ *     append("Numbers",    { MyTextField(...) })
  *     nextLine()
  * 
- *     append("ds [mm]",    { builderModifier -> MyTextField(...) })
+ *     append("ds [mm]",    { MyTextField(...) })
  * }
  * ```
  *
@@ -131,12 +131,12 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  *     // The disadvantage is the misalignment of the leading label.
  *     // Also the row's height may be inconsistent with other rows.
  *     appendSeparator("Single Custom Row")
- *     append("Name", component({ builderModifier -> MyTextField(...) }))
+ *     append("Name", component({ MyTextField(...) }))
  *     appendLineGapRow()
  *     appendRow(RowSpec.decode("top:31dlu")) // Assumes line is 14, gap is 3
  *     nextLine(2)
  *     append("Comment")
- *     component({ builderModifier -> MyCommentsScrollPane(...) },
+ *     component({ MyCommentsScrollPane(...) },
  *         CellConstraints.xywh(col = column, row = row, colSpan = 1, rowSpan = 1, encodedAlignments = "fill, fill"))
  *     nextLine()
  * 
@@ -146,10 +146,10 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  *     // multiple cells and is slightly less flexible.
  *     // Also the row's height may be inconsistent with other rows.
  *     appendSeparator("Standard + Custom Row")
- *     append("Name", component({ builderModifier -> MyTextField(...) }))
+ *     append("Name", component({ MyTextField(...) }))
  *     append("Comment")
  *     appendRow(RowSpec.decode("17dlu")) // Assumes line is 14, gap is 3
- *     component({ builderModifier -> MyCommentsScrollPane(...) },
+ *     component({ MyCommentsScrollPane(...) },
  *         CellConstraints.xywh(col = column, row = row, colSpan = 1, rowSpan = 2))
  *     nextLine(2)
  * 
@@ -159,12 +159,12 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  *    // The disadvantage is that the comment area now spans
  *    // multiple cells and is slightly less flexible.
  *     appendSeparator("Two Standard Rows")
- *     append("Name", component({ builderModifier -> MyTextField(...) }))
+ *     append("Name", component({ MyTextField(...) }))
  *     append("Comment")
  *     nextLine()
  *     append("")
  *     nextRow(-2)
- *     component({ builderModifier -> MyCommentsScrollPane(...) },
+ *     component({ MyCommentsScrollPane(...) },
  *         CellConstraints.xywh(col = column, row = row, colSpan = 1, rowSpan = 3))
  * ```
  *
@@ -172,15 +172,15 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * remaining columns in the current row. Method name candidates are
  * `#appendFullSpan` and `#appendRemaining`.
  * 
- * @see [AbstractFormBuilder]
+ * @see [AbstractFormScope]
  * @see [org.pushingpixels.aurora.layout.FormSpecs]
  * @see [org.pushingpixels.aurora.layout.FormLayout]
  */
-public open class DefaultFormBuilder(
+public open class DefaultFormScope(
     componentFactory: ComponentFactory,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>,
-) : PanelBuilder(componentFactory, colSpecs, rowSpecs) {
+) : PanelScope(componentFactory, colSpecs, rowSpecs) {
     /**
      * Holds the row specification that is reused to describe rows
      * that are intended for labels and components.
@@ -211,7 +211,7 @@ public open class DefaultFormBuilder(
 
     // Appending Rows ********************************************************
     /**
-     * Appends a row with this builder's line gap size.
+     * Appends a row with this scope's line gap size.
      * 
      * @see [lineGapSpec]
      * @see [appendRow]
@@ -476,19 +476,19 @@ public fun DefaultForm(
     padding: PaddingValues,
     encodedColumnSpecs: String,
     encodedRowSpecs: String,
-    block: @Composable DefaultFormBuilder.() -> Unit) {
+    block: @Composable DefaultFormScope.() -> Unit) {
 
     require(LocalFormLayoutInitialized.current) {
         "Initialize the FormLayout parameters via `FormCortex` first"
     }
 
-    val builder = DefaultFormBuilder(
+    val scope = DefaultFormScope(
         componentFactory = LocalComponentFactory.current,
         colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs),
         rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs),
     )
-    builder.block()
-    builder.build(modifier.padding(padding))
+    scope.block()
+    scope.build(modifier.padding(padding))
 }
 
 @Composable
@@ -497,18 +497,18 @@ public fun DefaultForm(
     padding: PaddingValues,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>,
-    block: @Composable DefaultFormBuilder.() -> Unit) {
+    block: @Composable DefaultFormScope.() -> Unit) {
 
     require(LocalFormLayoutInitialized.current) {
         "Initialize the FormLayout parameters via `FormCortex` first"
     }
 
-    val builder = DefaultFormBuilder(
+    val scope = DefaultFormScope(
         componentFactory = LocalComponentFactory.current,
         colSpecs = colSpecs,
         rowSpecs = rowSpecs,
     )
-    builder.block()
-    builder.build(modifier.padding(padding))
+    scope.block()
+    scope.build(modifier.padding(padding))
 }
 

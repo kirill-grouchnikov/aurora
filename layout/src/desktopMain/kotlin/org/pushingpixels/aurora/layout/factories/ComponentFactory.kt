@@ -25,9 +25,9 @@ import org.pushingpixels.aurora.layout.ComponentLambda
 
 /**
  * An interface that defines the factory methods as used by the
- * [org.pushingpixels.aurora.layout.builder.PanelBuilder] and its subclasses.<p>
+ * [org.pushingpixels.aurora.layout.builder.PanelScope] and its subclasses.<p>
  *
- * @see    [org.pushingpixels.aurora.layout.builder.PanelBuilder]
+ * @see    [org.pushingpixels.aurora.layout.builder.PanelScope]
  */
 public interface ComponentFactory {
     /**

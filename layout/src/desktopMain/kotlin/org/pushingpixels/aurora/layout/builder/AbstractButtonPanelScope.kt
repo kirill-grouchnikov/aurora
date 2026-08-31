@@ -26,7 +26,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
 // and JGoodies Software GmbH available under the BSD license. See the full
 // license under resources/Forms.license.
 
-public abstract class AbstractButtonPanelBuilder(componentFactory: ComponentFactory): AbstractBuilder(componentFactory) {
+public abstract class AbstractButtonPanelScope(componentFactory: ComponentFactory): AbstractScope(componentFactory) {
     protected fun nextColumn(columns: Int = 1) {
         val currGridX = this.currentCellConstraints.gridX
         val currGridY = this.currentCellConstraints.gridY

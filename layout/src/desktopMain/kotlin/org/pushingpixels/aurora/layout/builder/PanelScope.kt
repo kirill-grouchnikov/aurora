@@ -28,16 +28,16 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
 // license under resources/Forms.license.
 
 /**
- * A general purpose panel builder that uses the [org.pushingpixels.aurora.layout.FormLayout]
+ * A general purpose panel scope that uses the [org.pushingpixels.aurora.layout.FormLayout]
  * to lay out panels. It provides convenience methods to add labels, titles and titled separators.
  *
- * The PanelBuilder is the working horse for layouts when more specialized
- * builders like the [ButtonBarBuilder] or [DefaultFormBuilder]
+ * The PanelScope is the working horse for layouts when more specialized
+ * scopes like the [ButtonBarScope] or [DefaultFormScope]
  * are inappropriate.
  *
  * The Forms tutorial includes several examples that present and compare
- * different style to build with the PanelBuilder: static row numbers
- * vs. row variable, explicit [CellConstraints] vs. builder cursor,
+ * different style to build with the PanelScope: static row numbers
+ * vs. row variable, explicit [CellConstraints] vs. scope cursor,
  * static rows vs. dynamically added rows. Also, you may check out the
  * Tips &amp; Tricks section of the Forms HTML documentation.
  *
@@ -51,23 +51,23 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  *    encodedRowSpecs = "pref, @lg, pref, @lg, pref",
  * ) {
  *     label("Title:",                                      CellConstraints.xy  (1, 1))
- *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xywh(3, 1, 3, 1))
+ *     component({ MyTextField(...) },   CellConstraints.xywh(3, 1, 3, 1))
  *     label("Price:",                                      CellConstraints.xy  (1, 3))
- *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xy  (3, 3))
+ *     component({ MyTextField(...) },   CellConstraints.xy  (3, 3))
  *     label("Author:",                                     CellConstraints.xy  (1, 5))
- *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xy  (3, 5))
- *     component({ builderModifier -> MyButton(...) },      CellConstraints.xy  (5, 5))
+ *     component({ MyTextField(...) },   CellConstraints.xy  (3, 5))
+ *     component({ MyButton(...) },      CellConstraints.xy  (5, 5))
  * }
  * ```
  *
  * @see [org.pushingpixels.aurora.layout.factories.ComponentFactory]
- * @see [DefaultFormBuilder]
+ * @see [DefaultFormScope]
  */
-public open class PanelBuilder(
+public open class PanelScope(
     componentFactory: ComponentFactory,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>
-) : AbstractFormBuilder(componentFactory) {
+) : AbstractFormScope(componentFactory) {
     // Instance Creation ******************************************************
     init {
         this.colSpecs.addAll(colSpecs)
@@ -110,7 +110,7 @@ public open class PanelBuilder(
      * @param componentConstraints  the component's cell constraints
      *
      * @see [ComponentFactory]
-     * @see [DefaultFormBuilder]
+     * @see [DefaultFormScope]
      */
     @Composable
     public fun label(
@@ -264,19 +264,19 @@ public fun Panel(
     padding: PaddingValues,
     encodedColumnSpecs: String,
     encodedRowSpecs: String,
-    block: @Composable PanelBuilder.() -> Unit) {
+    block: @Composable PanelScope.() -> Unit) {
 
     require(LocalFormLayoutInitialized.current) {
         "Initialize the FormLayout parameters via `FormCortex` first"
     }
 
-    val builder = PanelBuilder(
+    val scope = PanelScope(
         componentFactory = LocalComponentFactory.current,
         colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs),
         rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs)
     )
-    builder.block()
-    builder.build(modifier.padding(padding))
+    scope.block()
+    scope.build(modifier.padding(padding))
 }
 
 @Composable
@@ -285,18 +285,18 @@ public fun Panel(
     padding: PaddingValues,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>,
-    block: @Composable PanelBuilder.() -> Unit) {
+    block: @Composable PanelScope.() -> Unit) {
 
     require(LocalFormLayoutInitialized.current) {
         "Initialize the FormLayout parameters via `FormCortex` first"
     }
 
-    val builder = PanelBuilder(
+    val scope = PanelScope(
         componentFactory = LocalComponentFactory.current,
         colSpecs = colSpecs,
         rowSpecs = rowSpecs
     )
-    builder.block()
-    builder.build(modifier.padding(padding))
+    scope.block()
+    scope.build(modifier.padding(padding))
 }
 

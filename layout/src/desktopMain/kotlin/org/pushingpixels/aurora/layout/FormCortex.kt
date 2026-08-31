@@ -41,7 +41,7 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  *    be used to convert DLU units to pixel and dp values.
  * @param componentFactory Component factory that matches the components used by
  *    your design system. This will be used by APIs in form builders such as
- *    [org.pushingpixels.aurora.layout.builder.PanelBuilder].
+ *    [org.pushingpixels.aurora.layout.builder.PanelScope].
  */
 @Composable
 public fun FormCortex(
@@ -91,7 +91,7 @@ public fun FormCortex(
  *    be used to convert DLU units to pixel and dp values.
  * @param componentFactory Component factory that matches the components used by
  *    your design system. This will be used by APIs in form builders such as
- *    [org.pushingpixels.aurora.layout.builder.PanelBuilder].
+ *    [org.pushingpixels.aurora.layout.builder.PanelScope].
  */
 @Composable
 public fun getFormCortexCompositionLocals(

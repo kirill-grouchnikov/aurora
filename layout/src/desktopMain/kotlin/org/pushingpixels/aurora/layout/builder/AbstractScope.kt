@@ -25,20 +25,20 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
 
 /**
  * An abstract class that minimizes the effort required to implement
- * non-visual builders that use the [org.pushingpixels.aurora.layout.FormLayout].
+ * non-visual scopes that use the [org.pushingpixels.aurora.layout.FormLayout].
  *
- * Builders hide details of the FormLayout and provide convenience behavior
+ * Scopes hide details of the FormLayout and provide convenience behavior
  * that assists you in constructing a form, bar, stack.
  * This class provides a cell cursor that helps you traverse a form while
  * you add components. Also, it offers several methods to append custom
  * and logical columns and rows.
  * 
- * @see [ButtonBarBuilder]
- * @see [ButtonStackBuilder]
- * @see [PanelBuilder]
- * @see [DefaultFormBuilder]
+ * @see [ButtonBarScope]
+ * @see [ButtonStackScope]
+ * @see [PanelScope]
+ * @see [DefaultFormScope]
  */
-public abstract class AbstractBuilder protected constructor(public val componentFactory: ComponentFactory) {
+public abstract class AbstractScope protected constructor(public val componentFactory: ComponentFactory) {
     protected val colSpecs: MutableList<ColumnSpec> = arrayListOf()
     protected val rowSpecs: MutableList<RowSpec> = arrayListOf()
 
@@ -75,14 +75,14 @@ public abstract class AbstractBuilder protected constructor(public val component
         get() = rowSpecs.size
 
     /**
-     * Appends the given column specification to this builder's spec.
+     * Appends the given column specification to this scope's spec.
      */
     protected fun appendColumn(columnSpec: ColumnSpec) {
         this.colSpecs.add(columnSpec)
     }
 
     /**
-     * Appends a column specification to this builder's spec
+     * Appends a column specification to this scope's spec
      * that represents the given string encoding
      *
      * @param encodedColumnSpec  the column specification object to append
@@ -93,14 +93,14 @@ public abstract class AbstractBuilder protected constructor(public val component
     }
 
     /**
-     * Appends the given row specification to this builder's spec.
+     * Appends the given row specification to this scope's spec.
      */
     protected fun appendRow(rowSpec: RowSpec) {
         this.rowSpecs.add(rowSpec)
     }
 
     /**
-     * Appends a row specification to this builder's spec
+     * Appends a row specification to this scope's spec
      * that represents the given string encoding
      *
      * @param encodedRowSpec  the row specification object to append

@@ -64,7 +64,7 @@ public typealias ComponentLambda = @Composable FormLayoutScope.() -> Unit
  *
  * [FormLayout] has been designed to work with non-visual builders that help you
  * specify the layout and fill the grid. For example, the
- * [org.pushingpixels.aurora.layout.builder.ButtonBarBuilder] assists you in building button
+ * [org.pushingpixels.aurora.layout.builder.ButtonBarScope] assists you in building button
  * bars; it creates a standardized [FormLayout] and provides a minimal API that
  * specializes in adding buttons. Other builders can create
  * frequently used panel designs, for example a form that consists of rows of
@@ -104,12 +104,12 @@ public typealias ComponentLambda = @Composable FormLayoutScope.() -> Unit
  *    encodedRowSpecs = "p, 3dlu, p, 3dlu, p",
  * ) {
  *     label("Title:",                                      CellConstraints.xy  (1, 1))
- *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xywh(3, 1, 3, 1))
+ *     component({ MyTextField(...) },   CellConstraints.xywh(3, 1, 3, 1))
  *     label("Price:",                                      CellConstraints.xy  (1, 3))
- *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xy  (3, 3))
+ *     component({ MyTextField(...) },   CellConstraints.xy  (3, 3))
  *     label("Author:",                                     CellConstraints.xy  (1, 5))
- *     component({ builderModifier -> MyTextField(...) },   CellConstraints.xy  (3, 5))
- *     component({ builderModifier -> MyButton(...) },      CellConstraints.xy  (5, 5))
+ *     component({ MyTextField(...) },   CellConstraints.xy  (3, 5))
+ *     component({ MyButton(...) },      CellConstraints.xy  (5, 5))
  * }
  * ```
  *
@@ -123,11 +123,11 @@ public typealias ComponentLambda = @Composable FormLayoutScope.() -> Unit
  *    encodedColumnSpecs = "end:pref, @lcgap, 60dlu, @rgap, max(40dlu;default)",
  *    encodedRowSpecs = ""
  * ) {
- *     append(resourceString(Res.string.title), component({ builderModifier -> MyTextField(...) }, 3)
- *     append(resourceString(Res.string.price), component({ builderModifier -> MyTextField(...) })
+ *     append(resourceString(Res.string.title), component({ MyTextField(...) }, 3)
+ *     append(resourceString(Res.string.price), component({ MyTextField(...) })
  *     nextLine()
- *     append(resourceString(Res.string.author), component({ builderModifier -> MyTextField(...) })
- *     append({ builderModifier -> MyButton(...) })
+ *     append(resourceString(Res.string.author), component({ MyTextField(...) })
+ *     append({ MyButton(...) })
  * }
  * ```
  *
