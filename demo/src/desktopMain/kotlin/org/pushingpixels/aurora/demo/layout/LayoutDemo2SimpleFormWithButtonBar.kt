@@ -92,7 +92,7 @@ fun main() = auroraApplication {
 
             ButtonBar(Modifier.xyw(1, 5, 3), Paddings.Empty) {
                 glue()
-                button { builderModifier ->
+                button {
                     CommandButtonProjection(
                         contentModel = Command(
                             text = "Login",
@@ -106,7 +106,7 @@ fun main() = auroraApplication {
                             iconEnabledFilterStrategy = IconFilterStrategy.ThemedFollowColorTokens,
                             presentationState = CommandButtonPresentationState.MediumFitToIcon,
                         )
-                    ).project(builderModifier)
+                    ).project()
                 }
             }
         }

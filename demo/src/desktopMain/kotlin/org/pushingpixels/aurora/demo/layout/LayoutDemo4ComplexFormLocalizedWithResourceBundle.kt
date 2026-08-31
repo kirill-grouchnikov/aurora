@@ -194,7 +194,7 @@ private fun AuroraLocaleScope.ButtonBar(
 ) {
     ButtonBar(modifier, Paddings.Empty) {
         glue()
-        fixed { builderModifier -> AuroraLocaleSwitcher(builderModifier, resourceBundle) }
+        fixed { AuroraLocaleSwitcher(Modifier, resourceBundle) }
         unrelatedGap()
         button(
             text = resourceBundle.getString("FormLayout.turnOn"),

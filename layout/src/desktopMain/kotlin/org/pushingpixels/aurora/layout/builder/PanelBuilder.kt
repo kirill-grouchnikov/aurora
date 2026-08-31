@@ -242,14 +242,16 @@ public open class PanelBuilder(
 
     @Composable
     public open fun build(modifier: Modifier) {
+        val constraintsMapping = componentLambdas.map { it.second }
         FormLayout(
             modifier = modifier,
             colSpecs = this.colSpecs,
             rowSpecs = this.rowSpecs,
             debugConfiguration = this.debugConfiguration,
+            constraintsMapping = constraintsMapping,
             content = {
-                for ((componentLambda, componentBuilderModifier) in componentLambdas) {
-                    componentLambda.invoke(this, Modifier.cc(componentBuilderModifier))
+                for ((componentLambda, _) in componentLambdas) {
+                    componentLambda.invoke(this)
                 }
             }
         )

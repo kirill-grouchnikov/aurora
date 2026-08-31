@@ -39,7 +39,7 @@ import org.pushingpixels.aurora.layout.CellConstraints.Alignment
 // and JGoodies Software GmbH available under the BSD license. See the full
 // license under resources/Forms.license.
 
-public typealias ComponentLambda = @Composable FormLayoutScope.(modifier: Modifier) -> Unit
+public typealias ComponentLambda = @Composable FormLayoutScope.() -> Unit
 
 /**
  * FormLayout is a powerful, flexible and precise general purpose
@@ -148,9 +148,32 @@ public fun FormLayout(
     debugConfiguration: FormLayoutDebugConfiguration? = null,
     content: @Composable FormLayoutScope.() -> Unit) {
 
+    FormLayout(
+        modifier = modifier,
+        colSpecs = colSpecs,
+        rowSpecs = rowSpecs,
+        colGroupIndices = colGroupIndices,
+        rowGroupIndices = rowGroupIndices,
+        debugConfiguration = debugConfiguration,
+        constraintsMapping = null,
+        content = content)
+}
+
+@Composable
+internal fun FormLayout(
+    modifier: Modifier,
+    colSpecs: List<ColumnSpec>,
+    rowSpecs: List<RowSpec>,
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
+    debugConfiguration: FormLayoutDebugConfiguration? = null,
+    constraintsMapping: List<CellConstraints>?,
+    content: @Composable FormLayoutScope.() -> Unit) {
+
     val measurePolicy = FormLayoutMeasurePolicy(
         LocalTextMeasurer.current, LocalTextStyle.current,
-        colSpecs, rowSpecs, colGroupIndices, rowGroupIndices)
+        colSpecs, rowSpecs, colGroupIndices, rowGroupIndices,
+        constraintsMapping)
     val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
     Layout(
         content = { FormLayoutScopeImpl(colSpecs.size, rowSpecs.size).content() },
@@ -168,6 +191,29 @@ public fun FormLayout(
     debugConfiguration: FormLayoutDebugConfiguration? = null,
     content: @Composable FormLayoutScope.() -> Unit) {
 
+    FormLayout(
+        modifier = modifier,
+        encodedColumnSpecs = encodedColumnSpecs,
+        layoutMap = layoutMap,
+        colGroupIndices = colGroupIndices,
+        rowGroupIndices = rowGroupIndices,
+        debugConfiguration = debugConfiguration,
+        constraintsMapping = null,
+        content = content
+    )
+}
+
+@Composable
+internal fun FormLayout(
+    modifier: Modifier,
+    encodedColumnSpecs: String,
+    layoutMap: LayoutMap,
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
+    debugConfiguration: FormLayoutDebugConfiguration? = null,
+    constraintsMapping: List<CellConstraints>?,
+    content: @Composable FormLayoutScope.() -> Unit) {
+
     val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)
     val measurePolicy = FormLayoutMeasurePolicy(
         textMeasurer = LocalTextMeasurer.current,
@@ -175,7 +221,8 @@ public fun FormLayout(
         colSpecs = colSpecs,
         rowSpecs = listOf(),
         colGroupIndices = colGroupIndices,
-        rowGroupIndices = rowGroupIndices
+        rowGroupIndices = rowGroupIndices,
+        constraintsMapping = constraintsMapping
     )
     val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
     Layout(
@@ -195,6 +242,29 @@ public fun FormLayout(
     debugConfiguration: FormLayoutDebugConfiguration? = null,
     content: @Composable FormLayoutScope.() -> Unit) {
 
+    FormLayout(
+        modifier = modifier,
+        encodedColumnSpecs = encodedColumnSpecs,
+        encodedRowSpecs = encodedRowSpecs,
+        colGroupIndices = colGroupIndices,
+        rowGroupIndices = rowGroupIndices,
+        debugConfiguration = debugConfiguration,
+        constraintsMapping = null,
+        content = content
+    )
+}
+
+@Composable
+internal fun FormLayout(
+    modifier: Modifier,
+    encodedColumnSpecs: String,
+    encodedRowSpecs: String,
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
+    debugConfiguration: FormLayoutDebugConfiguration? = null,
+    constraintsMapping: List<CellConstraints>? = null,
+    content: @Composable FormLayoutScope.() -> Unit) {
+
     val layoutMap: LayoutMap = LayoutMap.getRoot()
     val colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs, layoutMap)
     val rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs, layoutMap)
@@ -205,7 +275,8 @@ public fun FormLayout(
         colSpecs = colSpecs,
         rowSpecs = rowSpecs,
         colGroupIndices = colGroupIndices,
-        rowGroupIndices = rowGroupIndices
+        rowGroupIndices = rowGroupIndices,
+        constraintsMapping = constraintsMapping
     )
     val formModifier = if (debugConfiguration != null) modifier.debugOverlay(measurePolicy, debugConfiguration) else modifier
     Layout(

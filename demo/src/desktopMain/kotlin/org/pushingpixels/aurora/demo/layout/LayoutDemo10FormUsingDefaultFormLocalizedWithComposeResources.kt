@@ -72,7 +72,7 @@ fun main() = auroraApplication {
             var textTitle by rememberSaveable { mutableStateOf("") }
             append(
                 text = stringResource(Res.string.title),
-                component = { builderModifier ->
+                component = {
                     TextFieldStringProjection(
                         contentModel = TextFieldStringContentModel(
                             value = textTitle,
@@ -83,7 +83,7 @@ fun main() = auroraApplication {
                             singleLine = true,
                             defaultMinSize = textFieldMinSize
                         )
-                    ).project(builderModifier)
+                    ).project()
                 },
                 columnSpan = 3
             )
@@ -91,7 +91,7 @@ fun main() = auroraApplication {
             var textPrice by rememberSaveable { mutableStateOf("") }
             append(
                 text = stringResource(Res.string.price),
-                component = { builderModifier ->
+                component = {
                     TextFieldStringProjection(
                         contentModel = TextFieldStringContentModel(
                             value = textPrice,
@@ -102,7 +102,7 @@ fun main() = auroraApplication {
                             singleLine = true,
                             defaultMinSize = textFieldMinSize
                         )
-                    ).project(builderModifier)
+                    ).project()
                 })
 
             nextLine()
@@ -110,7 +110,7 @@ fun main() = auroraApplication {
             var textAuthor by rememberSaveable { mutableStateOf("") }
             append(
                 text = stringResource(Res.string.author),
-                component = { builderModifier ->
+                component = {
                     TextFieldStringProjection(
                         contentModel = TextFieldStringContentModel(
                             value = textAuthor,
@@ -121,10 +121,10 @@ fun main() = auroraApplication {
                             singleLine = true,
                             defaultMinSize = textFieldMinSize
                         )
-                    ).project(builderModifier)
+                    ).project()
                 })
 
-            append(component = { builderModifier ->
+            append(component = {
                 CommandButtonProjection(
                     contentModel = Command(
                         text = "...",
@@ -134,7 +134,7 @@ fun main() = auroraApplication {
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                         presentationState = CommandButtonPresentationState.Medium,
                     )
-                ).project(builderModifier)
+                ).project()
             })
 
             nextLine()
@@ -143,10 +143,10 @@ fun main() = auroraApplication {
             // Technically, it breaks the horizontal grid rhythm as it's not aligned to the last
             // column. Doesn't matter much here since it's not meant to be a part of the main form content.
             append(
-                component = { builderModifier ->
-                    ButtonBar(builderModifier, Paddings.createPaddingValues("6dlu, 0dlu, 0dlu, 0dlu")) {
+                component = {
+                    ButtonBar(Modifier, Paddings.createPaddingValues("6dlu, 0dlu, 0dlu, 0dlu")) {
                         glue()
-                        fixed({ AuroraLocaleSwitcher(it) })
+                        fixed({ AuroraLocaleSwitcher() })
                     }
                 },
                 columnSpan = 5

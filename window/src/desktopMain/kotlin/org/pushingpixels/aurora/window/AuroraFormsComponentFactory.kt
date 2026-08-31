@@ -39,7 +39,7 @@ class AuroraFormsComponentFactory: ComponentFactory {
         action: () -> Unit,
         isEnabled: Boolean
     ): ComponentLambda {
-        return { builderModifier: Modifier ->
+        return {
             CommandButtonProjection(
                 contentModel = Command(
                     text = text,
@@ -50,44 +50,44 @@ class AuroraFormsComponentFactory: ComponentFactory {
                     backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                     presentationState = CommandButtonPresentationState.Medium
                 )
-            ).project(builderModifier)
+            ).project()
         }
     }
 
     override fun createLabel(text: String): ComponentLambda {
-        return { builderModifier: Modifier ->
+        return {
             LabelProjection(
                 contentModel = LabelContentModel(text = text),
                 presentationModel = LabelPresentationModel(textMaxLines = 1)
-            ).project(builderModifier)
+            ).project()
         }
     }
 
     override fun createReadOnlyLabel(text: String): ComponentLambda {
-        return { builderModifier: Modifier ->
+        return {
             LabelProjection(
                 contentModel = LabelContentModel(text = text),
                 presentationModel = LabelPresentationModel(
                     textMaxLines = 1,
                     colorTokenQuery = ContainerColorTokens::onContainerLow)
-            ).project(builderModifier)
+            ).project()
         }
     }
 
     override fun createTitle(text: String): ComponentLambda {
-        return { builderModifier: Modifier ->
+        return {
             LabelProjection(
                 contentModel = LabelContentModel(text = text),
                 presentationModel = LabelPresentationModel(
                     textMaxLines = 1,
                     textStyle = TextStyle(fontWeight = FontWeight.Bold)
                 )
-            ).project(builderModifier)
+            ).project()
         }
     }
 
     override fun createHeaderLabel(text: String): ComponentLambda {
-        return { builderModifier: Modifier ->
+        return {
             LabelProjection(
                 contentModel = LabelContentModel(text = text),
                 presentationModel = LabelPresentationModel(
@@ -95,7 +95,7 @@ class AuroraFormsComponentFactory: ComponentFactory {
                     colorTokenQuery = ContainerColorTokens::accentOnContainer,
                     textStyle = TextStyle(fontWeight = FontWeight.Bold)
                 )
-            ).project(builderModifier)
+            ).project()
         }
     }
 
@@ -103,10 +103,10 @@ class AuroraFormsComponentFactory: ComponentFactory {
         require((arrangement == Arrangement.Start) || (arrangement == Arrangement.End) || (arrangement == Arrangement.Center)) {
             "Only Arrangement.Start, Arrangement.End and Arrangement.Center are supported"
         }
-        return { builderModifier: Modifier ->
+        return {
             when (arrangement) {
                 Arrangement.Start ->
-                    Row(modifier = builderModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         LabelProjection(
                             contentModel = LabelContentModel(text = text),
                             presentationModel = LabelPresentationModel(textStyle = TextStyle(fontWeight = FontWeight.Bold))
@@ -119,7 +119,7 @@ class AuroraFormsComponentFactory: ComponentFactory {
                     }
 
                 Arrangement.End ->
-                    Row(modifier = builderModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         HorizontalSeparatorProjection().project(
                             modifier = Modifier.weight(1.0f, fill = true).padding(top = 2.dp))
 
@@ -132,7 +132,7 @@ class AuroraFormsComponentFactory: ComponentFactory {
                     }
 
                 Arrangement.Center ->
-                    Row(modifier = builderModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         HorizontalSeparatorProjection().project(
                             modifier = Modifier.weight(1.0f, fill = true).padding(top = 2.dp))
 

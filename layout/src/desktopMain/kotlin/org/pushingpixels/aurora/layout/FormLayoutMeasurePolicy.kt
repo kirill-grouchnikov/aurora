@@ -32,6 +32,7 @@ internal class FormLayoutMeasurePolicy(
     private val rowSpecs: List<RowSpec>,
     private val colGroupIndices: Array<IntArray>,
     private val rowGroupIndices: Array<IntArray>,
+    private val constraintsMapping: List<CellConstraints>? = null
 ) : MeasurePolicy {
     private var colComponents: Array<MutableList<IntrinsicMeasurable>> = Array(colSpecs.size) { arrayListOf() }
     private var rowComponents: Array<MutableList<IntrinsicMeasurable>> = Array(rowSpecs.size) { arrayListOf() }
@@ -112,10 +113,9 @@ internal class FormLayoutMeasurePolicy(
             rowComponents[i] = ArrayList()
         }
 
-        for (element in measurables) {
-            val elementDataNode = element.parentData as? FormLayoutChildDataNode
-            if (elementDataNode != null) {
-                val constraints = elementDataNode.cellConstraints
+        for ((index, element) in measurables.withIndex()) {
+            val constraints = getCellConstraints(index, element)
+            if (constraints != null) {
                 if (constraints.gridWidth == 1) {
                     colComponents[constraints.gridX - 1].add(element)
                 }
@@ -142,10 +142,9 @@ internal class FormLayoutMeasurePolicy(
             rowComponents2[i] = ArrayList()
         }
 
-        for (element in measurables) {
-            val elementDataNode = element.parentData as? FormLayoutChildDataNode
-            if (elementDataNode != null) {
-                val constraints = elementDataNode.cellConstraints
+        for ((index, element) in measurables.withIndex()) {
+            val constraints = getCellConstraints(index, element)
+            if (constraints != null) {
                 if (constraints.gridWidth == 1) {
                     colComponents2[constraints.gridX - 1].add(element)
                 }
@@ -480,11 +479,9 @@ internal class FormLayoutMeasurePolicy(
 
         val result = hashMapOf<Placeable, IntOffset>()
 
-        for (element in measurables) {
-            val elementDataNode = element.parentData as? FormLayoutChildDataNode
-            if (elementDataNode != null) {
-                val constraints = elementDataNode.cellConstraints
-
+        for ((index, element) in measurables.withIndex()) {
+            val constraints = getCellConstraints(index, element)
+            if (constraints != null) {
                 val gridX = constraints.gridX - 1
                 val gridY = constraints.gridY - 1
                 val gridWidth = constraints.gridWidth
@@ -553,5 +550,13 @@ internal class FormLayoutMeasurePolicy(
                 placeable.placeRelative(offset.x, offset.y)
             }
         }
+    }
+
+    private fun getCellConstraints(index: Int, measurable: IntrinsicMeasurable) : CellConstraints? {
+        if (constraintsMapping != null) {
+            return constraintsMapping[index]
+        }
+        val elementDataNode = measurable.parentData as? FormLayoutChildDataNode
+        return elementDataNode?.cellConstraints
     }
 }

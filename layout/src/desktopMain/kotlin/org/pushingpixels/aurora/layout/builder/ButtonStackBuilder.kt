@@ -98,14 +98,18 @@ public class ButtonStackBuilder(componentFactory: ComponentFactory): AbstractBut
 
     @Composable
     public fun build(modifier: Modifier) {
+        val constraintsMapping = componentLambdas.map {
+            CellConstraints.xy(col = 1, row = it.second.gridY)
+        }
         FormLayout(
             modifier = modifier,
             colSpecs = arrayListOf(FormSpecs.ButtonColSpec),
             rowSpecs = rowSpecs,
             debugConfiguration = this.debugConfiguration,
+            constraintsMapping = constraintsMapping,
             content = {
-                for ((componentLambda, componentBuilderModifier) in componentLambdas) {
-                    componentLambda.invoke(this, Modifier.xy(col = 1, row = componentBuilderModifier.gridY))
+                for ((componentLambda, _) in componentLambdas) {
+                    componentLambda.invoke(this)
                 }
             }
         )

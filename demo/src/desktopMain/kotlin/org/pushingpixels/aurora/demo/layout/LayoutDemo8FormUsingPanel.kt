@@ -66,7 +66,7 @@ fun main() = auroraApplication {
             label("Title:", CellConstraints.xy(1, 1))
 
             var textTitle by rememberSaveable { mutableStateOf("") }
-            component({ builderModifier ->
+            component({
                 TextFieldStringProjection(
                     contentModel = TextFieldStringContentModel(
                         value = textTitle,
@@ -74,13 +74,13 @@ fun main() = auroraApplication {
                         onValueChange = { textTitle = it },
                     ),
                     presentationModel = TextFieldPresentationModel(singleLine = true, defaultMinSize = textFieldMinSize)
-                ).project(builderModifier)
+                ).project()
             }, CellConstraints.xywh(3, 1, 3, 1))
 
             label("Price:", CellConstraints.xy(1, 3))
 
             var textPrice by rememberSaveable { mutableStateOf("") }
-            component({ builderModifier ->
+            component({
                 TextFieldStringProjection(
                     contentModel = TextFieldStringContentModel(
                         value = textPrice,
@@ -88,13 +88,13 @@ fun main() = auroraApplication {
                         onValueChange = { textPrice = it },
                     ),
                     presentationModel = TextFieldPresentationModel(singleLine = true, defaultMinSize = textFieldMinSize)
-                ).project(builderModifier)
+                ).project()
             }, CellConstraints.xy(3, 3))
 
             label("Author:", CellConstraints.xy(1, 5))
 
             var textAuthor by rememberSaveable { mutableStateOf("") }
-            component({ builderModifier ->
+            component({
                 TextFieldStringProjection(
                     contentModel = TextFieldStringContentModel(
                         value = textAuthor,
@@ -102,10 +102,10 @@ fun main() = auroraApplication {
                         onValueChange = { textAuthor = it },
                     ),
                     presentationModel = TextFieldPresentationModel(singleLine = true, defaultMinSize = textFieldMinSize)
-                ).project(builderModifier)
+                ).project()
             }, CellConstraints.xy(3, 5))
 
-            component({ builderModifier ->
+            component({
                 CommandButtonProjection(
                     contentModel = Command(
                         text = "...",
@@ -115,7 +115,7 @@ fun main() = auroraApplication {
                         backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
                         presentationState = CommandButtonPresentationState.Medium,
                     )
-                ).project(builderModifier)
+                ).project()
             }, CellConstraints.xy(5, 5))
         }
     }

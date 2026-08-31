@@ -188,7 +188,7 @@ fun main() = auroraApplication {
 private fun AuroraLocaleScope.ButtonBar(modifier: Modifier) {
     ButtonBar(modifier, Paddings.Empty) {
         glue()
-        fixed { builderModifier -> AuroraLocaleSwitcher(builderModifier) }
+        fixed { AuroraLocaleSwitcher() }
         unrelatedGap()
         button(
             text = stringResource(Res.string.turnOn),

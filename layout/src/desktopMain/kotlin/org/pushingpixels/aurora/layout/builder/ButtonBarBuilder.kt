@@ -129,14 +129,18 @@ public class ButtonBarBuilder(componentFactory: ComponentFactory): AbstractButto
 
     @Composable
     public fun build(modifier: Modifier) {
+        val constraintsMapping = componentLambdas.map {
+            CellConstraints.xy(col = it.second.gridX, row = 1)
+        }
         FormLayout(
             modifier = modifier,
             colSpecs = colSpecs,
             rowSpecs = arrayListOf(RowSpec.decode("center:pref")),
             debugConfiguration = this.debugConfiguration,
+            constraintsMapping = constraintsMapping,
             content = {
-                for ((componentLambda, componentBuilderModifier) in componentLambdas) {
-                    componentLambda.invoke(this, Modifier.xy(col = componentBuilderModifier.gridX, row = 1))
+                for ((componentLambda, _) in componentLambdas) {
+                    componentLambda.invoke(this)
                 }
             }
         )
