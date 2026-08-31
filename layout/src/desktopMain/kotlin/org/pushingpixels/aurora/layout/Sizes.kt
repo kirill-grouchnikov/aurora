@@ -391,3 +391,9 @@ public object Sizes {
         }
     }
 }
+
+public inline val Int.dluX: ConstantSize
+    get() = Sizes.dluX(this)
+
+public inline val Int.dluY: ConstantSize
+    get() = Sizes.dluY(this)
