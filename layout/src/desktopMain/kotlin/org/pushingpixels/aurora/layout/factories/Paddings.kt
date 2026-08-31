@@ -186,8 +186,6 @@ public object Paddings {
         require(LocalFormLayoutInitialized.current) {
             "Initialize the FormLayout parameters via `FormCortex` first"
         }
-        // This is not great, but it allows to fall back on default values if paddings are
-        // created as part of the [FormLayout] or builder initialization parameters.
         val textMeasurer = LocalTextMeasurer.current
         val textStyle = LocalTextStyle.current
         val density = LocalDensity.current

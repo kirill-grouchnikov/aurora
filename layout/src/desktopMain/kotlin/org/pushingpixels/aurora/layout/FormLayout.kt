@@ -62,11 +62,11 @@ public typealias ComponentLambda = @Composable FormLayoutScope.() -> Unit
  * [FormLayout] also considers each component's minimum and
  * preferred sizes in order to determine a component's size.
  *
- * [FormLayout] has been designed to work with non-visual builders that help you
+ * [FormLayout] has been designed to work with non-visual DSLs that help you
  * specify the layout and fill the grid. For example, the
- * [org.pushingpixels.aurora.layout.builder.ButtonBarScope] assists you in building button
+ * [org.pushingpixels.aurora.layout.builder.ButtonBar] assists you in building button
  * bars; it creates a standardized [FormLayout] and provides a minimal API that
- * specializes in adding buttons. Other builders can create
+ * specializes in adding buttons. Other APIs can create
  * frequently used panel designs, for example a form that consists of rows of
  * label-component pairs.
  *

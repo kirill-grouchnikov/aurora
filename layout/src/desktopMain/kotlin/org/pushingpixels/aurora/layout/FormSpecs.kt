@@ -77,7 +77,7 @@ public object FormSpecs {
     // Layout Style Dependent Column Specs ***********************************
     /**
      * Describes a logical horizontal gap between a label and an associated
-     * component. Useful for builders that automatically fill a grid with labels
+     * component. Useful for DSLs that automatically fill a grid with labels
      * and components.
      *
      * **Note:** In a future version this constant will likely
@@ -194,7 +194,7 @@ public object FormSpecs {
     // Layout Style Dependent Row Specs *************************************
     /**
      * Describes a logical horizontal gap between a label and an associated
-     * component. Useful for builders that automatically fill a grid with labels
+     * component. Useful for DSLs that automatically fill a grid with labels
      * and components.
      *
      * **Note:** In a future version this constant will likely

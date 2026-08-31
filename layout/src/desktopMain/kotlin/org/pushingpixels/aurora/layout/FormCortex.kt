@@ -40,8 +40,8 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * @param textStyle The default text style used by your design system. This will
  *    be used to convert DLU units to pixel and dp values.
  * @param componentFactory Component factory that matches the components used by
- *    your design system. This will be used by APIs in form builders such as
- *    [org.pushingpixels.aurora.layout.builder.PanelScope].
+ *    your design system. This will be used by APIs in form DSL based APIs such as
+ *    [org.pushingpixels.aurora.layout.builder.Panel].
  */
 @Composable
 public fun FormCortex(
@@ -90,8 +90,8 @@ public fun FormCortex(
  * @param textStyle The default text style used by your design system. This will
  *    be used to convert DLU units to pixel and dp values.
  * @param componentFactory Component factory that matches the components used by
- *    your design system. This will be used by APIs in form builders such as
- *    [org.pushingpixels.aurora.layout.builder.PanelScope].
+ *    your design system. This will be used by APIs in form DSL based APIs such as
+ *    [org.pushingpixels.aurora.layout.builder.Panel].
  */
 @Composable
 public fun getFormCortexCompositionLocals(

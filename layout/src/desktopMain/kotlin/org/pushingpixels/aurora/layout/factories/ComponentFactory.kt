@@ -24,10 +24,12 @@ import org.pushingpixels.aurora.layout.ComponentLambda
 // license under resources/Forms.license.
 
 /**
- * An interface that defines the factory methods as used by the
- * [org.pushingpixels.aurora.layout.builder.PanelScope] and its subclasses.<p>
+ * An interface that defines the factory methods as used by DSL based APIs such as
+ * [org.pushingpixels.aurora.layout.builder.Panel] and
+ * [org.pushingpixels.aurora.layout.builder.DefaultForm].<p>
  *
- * @see    [org.pushingpixels.aurora.layout.builder.PanelScope]
+ * @see    [org.pushingpixels.aurora.layout.builder.Panel]
+ * @see    [org.pushingpixels.aurora.layout.builder.DefaultForm]
  */
 public interface ComponentFactory {
     /**
