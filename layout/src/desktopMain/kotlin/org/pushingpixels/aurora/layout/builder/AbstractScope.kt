@@ -208,6 +208,102 @@ public abstract class AbstractScope protected constructor(public val componentFa
         setRowGroupsImpl(newRowGroups, false)
     }
 
+    /**
+     * Sets the column groups, where each column in a group gets the same
+     * group wide width. Each group is described by an array of integers that
+     * are interpreted as column indices. The parameter is an array of such
+     * group descriptions.
+     *
+     * **Examples:**
+     * ```kotlin
+     * // Group columns 1, 3 and 4.
+     * setColumnGroups(arrayOf(intArrayOf(1, 3, 4)))
+     *
+     * // Group columns 1, 3, 4, and group columns 7 and 9
+     * setColumnGroups(arrayOf(intArrayOf(1, 3, 4), intArrayOf(7, 9)))
+     * ```
+     *
+     * @param groupOfIndices    a two-dimensional array of column groups indices
+     *
+     * @throws    IndexOutOfBoundsException if an index is outside the grid
+     * @throws IllegalArgumentException if a column index is used twice,
+     * or of a group of indices contains only a single element
+     */
+    public fun setColumnGroups(groupOfIndices: Array<IntArray>) {
+        setColumnGroupsImpl(groupOfIndices, true)
+    }
+
+    private fun setColumnGroupsImpl(groupOfIndices: Array<IntArray>, checkIndices: Boolean) {
+        val maxColumn: Int = this.columnCount
+        val usedIndices = BooleanArray(maxColumn + 1)
+        for (group in groupOfIndices.indices) {
+            val indices = groupOfIndices[group]
+            if (checkIndices) {
+                require(indices.size >= 2) {
+                    "Each indice group must contain at least two indices."
+                }
+            }
+            for (index in indices) {
+                if (index !in 1..maxColumn) {
+                    throw java.lang.IndexOutOfBoundsException(
+                        "Invalid column group index $index in group ${group + 1}"
+                    )
+                }
+                require(!usedIndices[index]) { "Column index $index must not be used in multiple column groups." }
+                usedIndices[index] = true
+            }
+        }
+        this.colGroupIndices = deepClone(groupOfIndices)
+    }
+
+    /**
+     * Sets a single column group, where each column gets the same width.
+     *
+     * **Example:**
+     * ```kotlin
+     * // Group columns 1, 3 and 4.
+     * setColumnGroup(arrayOf(intArrayOf(1, 3, 4)))
+     * ```
+     *
+     * @param indices   the indices for a single column group
+     * @throws  IndexOutOfBoundsException if an index is outside the grid
+     * @throws IllegalArgumentException if a column index is used twice
+     * or if there is only a single index
+     * @throws NullPointerException if `indices` is `null`
+     *
+     * @see [setColumnGroups]
+     */
+    public fun setColumnGroup(vararg indices: Int) {
+        require(indices.size >= 2) {
+            "You must specify at least two indices."
+        }
+        setColumnGroups(arrayOf(indices))
+    }
+
+    /**
+     * Adds the specified column index to the last column group.
+     * In case there are no groups, a new group will be created.
+     *
+     * @param columnIndex    the column index to be set grouped
+     */
+    public fun addGroupedColumn(columnIndex: Int) {
+        var newColGroups: Array<IntArray> = deepClone(this.colGroupIndices)
+        // Create a group if none exists.
+        if (newColGroups.isEmpty()) {
+            newColGroups = arrayOf(intArrayOf(columnIndex))
+        } else {
+            val lastGroupIndex = newColGroups.size - 1
+            val lastGroup = newColGroups[lastGroupIndex]
+            val groupSize = lastGroup.size
+            val newLastGroup = IntArray(groupSize + 1)
+            System.arraycopy(lastGroup, 0, newLastGroup, 0, groupSize)
+            newLastGroup[groupSize] = columnIndex
+            newColGroups[lastGroupIndex] = newLastGroup
+        }
+        setColumnGroupsImpl(newColGroups, false)
+    }
+
+
     // Helper Code **********************************************************
     private fun deepClone(array: Array<IntArray>): Array<IntArray> {
         return Array(array.size) {
