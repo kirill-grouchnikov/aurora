@@ -15,7 +15,6 @@
  */
 package org.pushingpixels.aurora.layout.builder
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import org.pushingpixels.aurora.layout.CellConstraints
 import org.pushingpixels.aurora.layout.ComponentLambda
@@ -39,46 +38,36 @@ public abstract class AbstractButtonPanelScope(componentFactory: ComponentFactor
         this.currentCellConstraints = CellConstraints(gridX = currGridX, gridY = currGridY + rows)
     }
 
-    @Composable
     protected fun appendGlueColumn() {
         appendColumn(FormSpecs.GlueColSpec)
     }
 
-    @Composable
     protected fun appendRelatedComponentsGapColumn() {
         appendColumn(FormSpecs.RelatedGapColSpec)
     }
 
-    @Composable
     protected fun appendUnrelatedComponentsGapColumn() {
         appendColumn(FormSpecs.UnrelatedGapColSpec)
     }
 
-    @Composable
     protected fun appendGlueRow() {
         appendRow(FormSpecs.GlueRowSpec)
     }
 
-    @Composable
     protected fun appendRelatedComponentsGapRow() {
         appendRow(FormSpecs.RelatedGapRowSpec)
     }
 
-    @Composable
     protected fun appendUnrelatedComponentsGapRow() {
         appendRow(FormSpecs.UnrelatedGapRowSpec)
     }
 
-    @Composable
     public abstract fun button(button: ComponentLambda)
 
-    @Composable
     public abstract fun relatedGap()
 
-    @Composable
     public abstract fun unrelatedGap()
 
-    @Composable
     public open fun buttons(vararg buttons: ComponentLambda?) {
         require(buttons.isNotEmpty()) {
             "The button array must not be empty."

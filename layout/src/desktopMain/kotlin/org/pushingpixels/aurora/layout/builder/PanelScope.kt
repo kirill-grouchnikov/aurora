@@ -83,7 +83,6 @@ public open class PanelScope(
      *
      * @see [ComponentFactory]
      */
-    @Composable
     public fun label(text: String, constraints: CellConstraints = currentCellConstraints) {
         componentLambdas.add(Pair(componentFactory.createLabel(text), constraints))
     }
@@ -96,7 +95,6 @@ public open class PanelScope(
      *
      * @see [ComponentFactory]
      */
-    @Composable
     public fun label(text: String, encodedConstraints: String) {
         componentLambdas.add(Pair(componentFactory.createLabel(text), CellConstraints.fromConstraints(encodedConstraints)))
     }
@@ -112,7 +110,6 @@ public open class PanelScope(
      * @see [ComponentFactory]
      * @see [DefaultFormScope]
      */
-    @Composable
     public fun label(
         text: String, labelConstraints: CellConstraints,
         component: ComponentLambda, componentConstraints: CellConstraints
@@ -131,7 +128,6 @@ public open class PanelScope(
      *
      * @see [ComponentFactory]
      */
-    @Composable
     public fun readOnlyLabel(text: String, constraints: CellConstraints = currentCellConstraints) {
         componentLambdas.add(Pair(componentFactory.createReadOnlyLabel(text), constraints))
     }
@@ -144,7 +140,6 @@ public open class PanelScope(
      *
      * @see [ComponentFactory]
      */
-    @Composable
     public fun readOnlyLabel(text: String, encodedConstraints: String) {
         componentLambdas.add(Pair(componentFactory.createReadOnlyLabel(text), CellConstraints.fromConstraints(encodedConstraints)))
     }
@@ -159,7 +154,6 @@ public open class PanelScope(
      *
      * @see [ComponentFactory]
      */
-    @Composable
     public fun readOnlyLabel(
         text: String, labelConstraints: CellConstraints,
         component: ComponentLambda, componentConstraints: CellConstraints
@@ -178,7 +172,6 @@ public open class PanelScope(
      *
      * @see [ComponentFactory]
      */
-    @Composable
     public fun title(text: String, constraints: CellConstraints = currentCellConstraints) {
         componentLambdas.add(Pair(componentFactory.createTitle(text), constraints))
     }
@@ -191,7 +184,6 @@ public open class PanelScope(
      *
      * @see [ComponentFactory]
      */
-    @Composable
     public fun title(text: String, encodedConstraints: String) {
         componentLambdas.add(Pair(componentFactory.createTitle(text), CellConstraints.fromConstraints(encodedConstraints)))
     }
@@ -202,7 +194,6 @@ public open class PanelScope(
      *
      * @param text   the separator label's text
      */
-    @Composable
     public fun separator(text: String) {
         return separator(text, this.columnCount)
     }
@@ -213,7 +204,6 @@ public open class PanelScope(
      * @param text   the separator label's text
      * @param constraints  the separator's cell constraints
      */
-    @Composable
     public fun separator(text: String, constraints: CellConstraints) {
         component(componentFactory.createSeparator(text, Arrangement.Start), constraints)
     }
@@ -224,7 +214,6 @@ public open class PanelScope(
      * @param text   the separator label's text
      * @param encodedConstraints  a string representation for the constraints
      */
-    @Composable
     public fun separator(text: String, encodedConstraints: String) {
         return separator(text, CellConstraints.fromConstraints(encodedConstraints))
     }
@@ -235,7 +224,6 @@ public open class PanelScope(
      * @param text   the separator label's text
      * @param columnSpan    the number of columns the separator spans
      */
-    @Composable
     public fun separator(text: String, columnSpan: Int) {
         return separator(text, createAdjustedConstraints(columnSpan))
     }

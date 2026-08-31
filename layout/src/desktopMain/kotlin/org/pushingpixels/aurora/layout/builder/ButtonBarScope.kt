@@ -76,50 +76,42 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
  * @see [org.pushingpixels.aurora.layout.util.LayoutStyle]
  */
 public class ButtonBarScope(componentFactory: ComponentFactory): AbstractButtonPanelScope(componentFactory) {
-    @Composable
     public override fun button(button: ComponentLambda) {
         appendColumn(FormSpecs.ButtonColSpec)
         componentLambdas.add(Pair(button, currentCellConstraints))
         nextColumn()
     }
 
-    @Composable
     public fun button(text: String, icon: Painter? = null, action: () -> Unit, isEnabled: Boolean = true) {
         button(createButton(text, icon, action, isEnabled))
     }
 
-    @Composable
     public override fun relatedGap() {
         appendRelatedComponentsGapColumn()
         nextColumn()
     }
 
-    @Composable
     public override fun unrelatedGap() {
         appendUnrelatedComponentsGapColumn()
         nextColumn()
     }
 
-    @Composable
     public fun glue() {
         appendGlueColumn()
         nextColumn()
     }
 
-    @Composable
     public fun strut(width: ConstantSize) {
         appendColumn(ColumnSpec.createGap(width))
         nextColumn()
     }
 
-    @Composable
     public fun fixed(component: ComponentLambda) {
         appendColumn(FormSpecs.PrefColSpec)
         this.componentLambdas.add(Pair(component, currentCellConstraints))
         nextColumn()
     }
 
-    @Composable
     public fun growing(component: ComponentLambda) {
         appendColumn(FormSpecs.GrowingButtonColSpec)
         this.componentLambdas.add(Pair(component, currentCellConstraints))
