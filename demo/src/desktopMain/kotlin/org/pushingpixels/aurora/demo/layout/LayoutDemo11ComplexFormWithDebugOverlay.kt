@@ -69,7 +69,7 @@ fun main() = auroraApplication {
         state = rememberWindowState(
             placement = WindowPlacement.Floating,
             position = WindowPosition.Aligned(Alignment.Center),
-            size = DpSize(500.dp, 240.dp)
+            size = DpSize(500.dp, 254.dp)
         ),
         windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         icon = radiance_menu(),
@@ -80,8 +80,8 @@ fun main() = auroraApplication {
 
         FormLayout(
             modifier = Modifier.fillMaxSize().padding(Paddings.Dialog),
-            encodedColumnSpecs = "end:pref, 2dlu, pref:grow, 4dlu, end:pref, 2dlu, pref:grow",
-            encodedRowSpecs = "p, 2dlu, p, 2dlu, p, 2dlu, p, 2dlu, p, 2dlu, p",
+            encodedColumnSpecs = "end:pref, 3dlu, pref:grow, 7dlu, end:pref, 3dlu, pref:grow",
+            encodedRowSpecs = "p, 3dlu, p, 3dlu, p, 9dlu, p, 3dlu, p, 3dlu, p",
             colGroupIndices = arrayOf(intArrayOf(1, 5), intArrayOf(3, 7)),
             debugConfiguration = FormLayoutDebugConfiguration(
                 gridColor = Color.Magenta,

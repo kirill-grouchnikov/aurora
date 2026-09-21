@@ -12,7 +12,7 @@ The first one is a **device independent pixel** that abstracts away the pixel de
 
 The second one is **scalable pixel**. In the default configuration, it is the same size as `dp`. However, it resizes based on the user's preferred text size.
 
-In core Android and core Compose, the **sp** unit is reserved only for text sizes, and never for layout sizes. In this port of FormLayout, the `dlu` unit is the logical equivalent of the `sp` unit, and is **the recommended** way of configuring all layout sizes.
+In core Android and core Compose, the `sp` unit is reserved *only* for text sizes, and *never* for layout sizes. In the world of FormLayout, the `dlu` unit is the logical equivalent of the `sp` unit, and is **the recommended** way of configuring *all* layout sizes.
 
 To stay true to the origins of the `dlu` unit, FormLayout supports axis-specific resolution - for horizontal and vertical dialog units.
 
