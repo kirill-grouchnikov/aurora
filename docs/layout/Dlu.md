@@ -8,13 +8,13 @@ A dialog unit is the device-independent measure to use for layout. One horizonta
 
 The two main units of measurement in Compose - `dp` and `sp` trace their origins to [Android](https://developer.android.com/training/multiscreen/screendensities).
 
-The first one is a **device independent pixel** that abstracts away the pixel density of the underlying screen. A higher resolution screen will pack more pixels in the same amount of physical space compared to a lower resolution screen. One `dp` unit abstracts this difference and operates in the physical space - much like its spiritual predecessor from the world of physical print - the `DPI` unit or dots per inch.
+The first one is a **device independent pixel** that abstracts away the pixel density of the underlying screen. A higher resolution screen will pack more pixels in the same amount of physical space compared to a lower resolution screen. The `dp` unit abstracts this difference and operates in the physical space - much like its spiritual predecessor from the world of physical print - the `DPI` unit or dots per inch.
 
 The second one is **scalable pixel**. In the default configuration, it is the same size as `dp`. However, it resizes based on the user's preferred text size.
 
-In core Android and core Compose, the `sp` unit is reserved *only* for text sizes, and *never* for layout sizes. In the world of FormLayout, the `dlu` unit is the logical equivalent of the `sp` unit, and is **the recommended** way of configuring *all* layout sizes.
+In core Android and core Compose, the `sp` unit is reserved *only* for text sizes, and *never* for layout sizes. In the world of `FormLayout`, the `dlu` unit is the logical equivalent of the `sp` unit, and is **the recommended** way of configuring *all* layout sizes.
 
-To stay true to the origins of the `dlu` unit, FormLayout supports axis-specific resolution - for horizontal and vertical dialog units.
+To stay true to the origins of the `dlu` unit, `FormLayout` supports axis-specific resolution - for horizontal and vertical dialog units.
 
 The available APIs are:
 
@@ -24,4 +24,4 @@ The available APIs are:
 
 ### Next
 
-Continue to a [more detailed sample walkthrough](Sample.md).
+Continue to [quick start](QuickStart.md).
