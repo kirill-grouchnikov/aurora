@@ -180,7 +180,9 @@ public open class DefaultFormScope(
     componentFactory: ComponentFactory,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>,
-) : PanelScope(componentFactory, colSpecs, rowSpecs) {
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
+) : PanelScope(componentFactory, colSpecs, rowSpecs, colGroupIndices, rowGroupIndices) {
     /**
      * Holds the row specification that is reused to describe rows
      * that are intended for labels and components.
@@ -447,6 +449,7 @@ public open class DefaultFormScope(
             modifier = modifier,
             colSpecs = this.colSpecs,
             rowSpecs = this.rowSpecs,
+            colGroupIndices = this.colGroupIndices,
             rowGroupIndices = this.rowGroupIndices,
             debugConfiguration = this.debugConfiguration,
             constraintsMapping = constraintsMapping,
@@ -465,6 +468,8 @@ public fun DefaultForm(
     padding: PaddingValues,
     encodedColumnSpecs: String,
     encodedRowSpecs: String,
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
     block: @Composable DefaultFormScope.() -> Unit) {
 
     require(LocalFormLayoutInitialized.current) {
@@ -475,6 +480,8 @@ public fun DefaultForm(
         componentFactory = LocalComponentFactory.current,
         colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs),
         rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs),
+        colGroupIndices = colGroupIndices,
+        rowGroupIndices = rowGroupIndices,
     )
     scope.block()
     scope.build(modifier.padding(padding))
@@ -486,6 +493,8 @@ public fun DefaultForm(
     padding: PaddingValues,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>,
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
     block: @Composable DefaultFormScope.() -> Unit) {
 
     require(LocalFormLayoutInitialized.current) {
@@ -496,6 +505,8 @@ public fun DefaultForm(
         componentFactory = LocalComponentFactory.current,
         colSpecs = colSpecs,
         rowSpecs = rowSpecs,
+        colGroupIndices = colGroupIndices,
+        rowGroupIndices = rowGroupIndices,
     )
     scope.block()
     scope.build(modifier.padding(padding))

@@ -66,12 +66,16 @@ import org.pushingpixels.aurora.layout.factories.ComponentFactory
 public open class PanelScope(
     componentFactory: ComponentFactory,
     colSpecs: List<ColumnSpec>,
-    rowSpecs: List<RowSpec>
+    rowSpecs: List<RowSpec>,
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
 ) : AbstractFormScope(componentFactory) {
     // Instance Creation ******************************************************
     init {
         this.colSpecs.addAll(colSpecs)
         this.rowSpecs.addAll(rowSpecs)
+        this.setColumnGroups(colGroupIndices)
+        this.setRowGroups(rowGroupIndices)
     }
 
     // Adding Labels **********************************************************
@@ -236,6 +240,8 @@ public open class PanelScope(
             modifier = modifier,
             colSpecs = this.colSpecs,
             rowSpecs = this.rowSpecs,
+            colGroupIndices = this.colGroupIndices,
+            rowGroupIndices = this.rowGroupIndices,
             debugConfiguration = this.debugConfiguration,
             constraintsMapping = constraintsMapping,
             content = {
@@ -253,6 +259,8 @@ public fun Panel(
     padding: PaddingValues,
     encodedColumnSpecs: String,
     encodedRowSpecs: String,
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
     block: @Composable PanelScope.() -> Unit) {
 
     require(LocalFormLayoutInitialized.current) {
@@ -262,7 +270,9 @@ public fun Panel(
     val scope = PanelScope(
         componentFactory = LocalComponentFactory.current,
         colSpecs = ColumnSpec.decodeSpecs(encodedColumnSpecs),
-        rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs)
+        rowSpecs = RowSpec.decodeSpecs(encodedRowSpecs),
+        colGroupIndices = colGroupIndices,
+        rowGroupIndices = rowGroupIndices,
     )
     scope.block()
     scope.build(modifier.padding(padding))
@@ -274,6 +284,8 @@ public fun Panel(
     padding: PaddingValues,
     colSpecs: List<ColumnSpec>,
     rowSpecs: List<RowSpec>,
+    colGroupIndices: Array<IntArray> = arrayOf(),
+    rowGroupIndices: Array<IntArray> = arrayOf(),
     block: @Composable PanelScope.() -> Unit) {
 
     require(LocalFormLayoutInitialized.current) {
@@ -283,7 +295,9 @@ public fun Panel(
     val scope = PanelScope(
         componentFactory = LocalComponentFactory.current,
         colSpecs = colSpecs,
-        rowSpecs = rowSpecs
+        rowSpecs = rowSpecs,
+        colGroupIndices = colGroupIndices,
+        rowGroupIndices = rowGroupIndices,
     )
     scope.block()
     scope.build(modifier.padding(padding))
