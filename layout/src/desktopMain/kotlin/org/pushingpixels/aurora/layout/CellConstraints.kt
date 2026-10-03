@@ -51,9 +51,9 @@ import java.util.*
  * CellConstraints.xy(3, 5, CellConstraints.End, CellConstraints.Bottom)
  * CellConstraints.xy(3, 5, "end, bottom")
  * 
- * CellConstraints.xyw (3, 5, 1)
- * CellConstraints.xyw (3, 5, 1, CellConstraints.End, CellConstraints.Bottom)
- * CellConstraints.xyw (3, 5, 1, "end, bottom")
+ * CellConstraints.xyw(3, 5, 1)
+ * CellConstraints.xyw(3, 5, 1, CellConstraints.End, CellConstraints.Bottom)
+ * CellConstraints.xyw(3, 5, 1, "end, bottom")
  * 
  * CellConstraints.xywh(3, 5, 1, 1)
  * CellConstraints.xywh(3, 5, 1, 1, CellConstraints.End, CellConstraints.Bottom)
