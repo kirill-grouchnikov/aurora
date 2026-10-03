@@ -25,11 +25,11 @@ import org.pushingpixels.aurora.layout.ComponentLambda
 
 /**
  * An interface that defines the factory methods as used by DSL based APIs such as
- * [org.pushingpixels.aurora.layout.builder.Panel] and
- * [org.pushingpixels.aurora.layout.builder.DefaultForm].<p>
+ * [org.pushingpixels.aurora.layout.dsl.Panel] and
+ * [org.pushingpixels.aurora.layout.dsl.DefaultForm].<p>
  *
- * @see    [org.pushingpixels.aurora.layout.builder.Panel]
- * @see    [org.pushingpixels.aurora.layout.builder.DefaultForm]
+ * @see    [org.pushingpixels.aurora.layout.dsl.Panel]
+ * @see    [org.pushingpixels.aurora.layout.dsl.DefaultForm]
  */
 public interface ComponentFactory {
     /**

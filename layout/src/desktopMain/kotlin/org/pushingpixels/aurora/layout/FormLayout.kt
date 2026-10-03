@@ -64,7 +64,7 @@ public typealias ComponentLambda = @Composable FormLayoutScope.() -> Unit
  *
  * [FormLayout] has been designed to work with non-visual DSLs that help you
  * specify the layout and fill the grid. For example, the
- * [org.pushingpixels.aurora.layout.builder.ButtonBar] assists you in building button
+ * [org.pushingpixels.aurora.layout.dsl.ButtonBar] assists you in building button
  * bars; it creates a standardized [FormLayout] and provides a minimal API that
  * specializes in adding buttons. Other APIs can create
  * frequently used panel designs, for example a form that consists of rows of
@@ -93,9 +93,9 @@ public typealias ComponentLambda = @Composable FormLayoutScope.() -> Unit
  * }
  * ```
  *
- * **Example 2** (Using [org.pushingpixels.aurora.layout.builder.Panel]):<br></br>
+ * **Example 2** (Using [org.pushingpixels.aurora.layout.dsl.Panel]):<br></br>
  * This example creates the same panel as above using the
- * [org.pushingpixels.aurora.layout.builder.Panel] to add components to the form.
+ * [org.pushingpixels.aurora.layout.dsl.Panel] to add components to the form.
  * ```kotlin
  * Panel(
  *    modifier = Modifier.fillMaxSize(),
@@ -113,8 +113,8 @@ public typealias ComponentLambda = @Composable FormLayoutScope.() -> Unit
  * }
  * ```
  *
- * **Example 3** (Using [org.pushingpixels.aurora.layout.builder.DefaultForm]):<br></br>
- * This example utilizes the [org.pushingpixels.aurora.layout.builder.DefaultForm] that
+ * **Example 3** (Using [org.pushingpixels.aurora.layout.dsl.DefaultForm]):<br></br>
+ * This example utilizes the [org.pushingpixels.aurora.layout.dsl.DefaultForm] that
  * ships with the source distribution.
  * ```kotlin
  * DefaultForm(

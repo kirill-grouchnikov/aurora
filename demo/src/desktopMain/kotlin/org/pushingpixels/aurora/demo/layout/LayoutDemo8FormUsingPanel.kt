@@ -32,7 +32,7 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.CellConstraints
-import org.pushingpixels.aurora.layout.builder.Panel
+import org.pushingpixels.aurora.layout.dsl.Panel
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy

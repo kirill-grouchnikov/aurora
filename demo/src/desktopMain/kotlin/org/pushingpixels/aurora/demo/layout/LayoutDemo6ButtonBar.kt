@@ -24,7 +24,7 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.layout.builder.ButtonBar
+import org.pushingpixels.aurora.layout.dsl.ButtonBar
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin

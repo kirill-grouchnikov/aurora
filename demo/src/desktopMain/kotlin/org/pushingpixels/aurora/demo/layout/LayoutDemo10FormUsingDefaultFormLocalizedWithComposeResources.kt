@@ -37,8 +37,8 @@ import org.pushingpixels.aurora.demo.resources.author
 import org.pushingpixels.aurora.demo.resources.price
 import org.pushingpixels.aurora.demo.resources.title
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.layout.builder.ButtonBar
-import org.pushingpixels.aurora.layout.builder.DefaultForm
+import org.pushingpixels.aurora.layout.dsl.ButtonBar
+import org.pushingpixels.aurora.layout.dsl.DefaultForm
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy

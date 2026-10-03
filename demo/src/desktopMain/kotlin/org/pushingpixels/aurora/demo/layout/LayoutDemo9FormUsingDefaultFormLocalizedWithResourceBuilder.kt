@@ -33,8 +33,8 @@ import org.pushingpixels.aurora.component.projection.CommandButtonProjection
 import org.pushingpixels.aurora.component.projection.TextFieldStringProjection
 import org.pushingpixels.aurora.demo.AuroraLocaleSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
-import org.pushingpixels.aurora.layout.builder.ButtonBar
-import org.pushingpixels.aurora.layout.builder.DefaultForm
+import org.pushingpixels.aurora.layout.dsl.ButtonBar
+import org.pushingpixels.aurora.layout.dsl.DefaultForm
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.BackgroundAppearanceStrategy
 import org.pushingpixels.aurora.theming.IconFilterStrategy
