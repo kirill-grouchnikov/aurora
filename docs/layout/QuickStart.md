@@ -146,4 +146,4 @@ TextFieldStringProjection(
 
 ### Next
 
-Continue to a [another sample](AnotherSample.md).
+Continue to [another sample](AnotherSample.md).
