@@ -6,7 +6,7 @@ Working with the `FormLayout` is a six step process:
 * Find the Grid
 * Create the layout: specify columns and rows
 * Group columns and rows
-* Create and configure a scope
+* Create and configure a DSL scope
 * Add content
 
 ### A Sample Layout
@@ -94,7 +94,7 @@ FormLayout(
 
 ### Step 5: Create and Configure a scope-based layout
 
-Instead of using `FormLayout` directly, you typically add content using a scope-based layout wrapper that in turn adds them to the layout container. These wrappers helps you create frequently used components, keep track of the location for the next component and assist you in style guide compliance.
+Instead of using `FormLayout` directly, you typically add content using a scope-based DSL driven wrapper that in turn adds them to the layout container. These wrappers helps you create frequently used components, keep track of the location for the next component and assist you in style guide compliance.
 
 Some wrappers can be configured (for example the `DefaultForm`). The panel-oriented wrappers can set standardized paddings.
 
@@ -146,4 +146,4 @@ TextFieldStringProjection(
 
 ### Next
 
-Continue to [another sample](AnotherSample.md).
+Continue to [basics](Basics.md).
