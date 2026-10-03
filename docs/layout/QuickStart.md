@@ -20,7 +20,7 @@ General: *company name* and *contact person*; propeller: *PTI*, *power*, *radius
 
 Before you construct and implement a design with the Forms, find the layout. Play around with different layouts and evaluate how they meet your requirements.
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/layout/quickstart-drafts.jpg" width="312"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/layout/quickstart-drafts.jpg" width="625"/>
 
 *Playing With Designs*
 
@@ -39,7 +39,7 @@ Since `FormLayout` is grid-based, we need to find the grid, i. e. the columns an
 
 We have columns for the leading labels, for the PTI and R fields, a second label column and a second field column.
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/layout/quickstart-grid.jpg" width="327"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/layout/quickstart-grid.jpg" width="655"/>
 
 *Design Draft*
 
@@ -47,7 +47,7 @@ We add gap columns and gap rows between all component columns and rows. Then we 
 
 In this tiny example, no column grows if the container grows, otherwise we would add growing information too.
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/layout/quickstart-grid-details.jpg" width="328"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/layout/quickstart-grid-details.jpg" width="656"/>
 
 *Grid, Sizes & Orientations*
 
@@ -57,7 +57,7 @@ We transform the sizes and orientations into the Forms layout specification lang
 
 We create an instance of `FormLayout` and specify the columns and rows using strings. We abbreviate the row specs to save space.
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/layout/quickstart-grid-specs.jpg" width="328"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/layout/quickstart-grid-specs.jpg" width="656"/>
 
 *Grid Specification*
 
@@ -76,7 +76,7 @@ The label and field columns shall get the same width. In `FormLayout` this is do
 
 To group columns, you specify an array of column indices. Since we have two groups, we have two arrays of such indices; these are in turn combined in an array.
 
-<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/layout/quickstart-groups.jpg" width="328"/>
+<img src="https://raw.githubusercontent.com/kirill-grouchnikov/aurora/icicle/docs/images/layout/quickstart-groups.jpg" width="656"/>
 
 *Group Specification*
 
