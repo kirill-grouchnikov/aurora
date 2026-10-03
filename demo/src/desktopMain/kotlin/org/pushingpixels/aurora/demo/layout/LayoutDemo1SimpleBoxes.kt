@@ -53,9 +53,9 @@ fun main() = auroraApplication {
         onCloseRequest = ::exitApplication,
     ) {
         val rowSpec1 = RowSpec(RowSpec.Fill, dluY(14), 0.0)
-        val rowSpec2 = RowSpec(Sizes.ComponentSize.Preferred)
+        val rowSpec2 = RowSpec(Sizes.ComponentSize.Maximum)
         val colSpec1 = ColumnSpec(dluX(30))
-        val colSpec2 = ColumnSpec(Sizes.ComponentSize.Preferred)
+        val colSpec2 = ColumnSpec(Sizes.ComponentSize.Maximum)
 
         FormLayout(
             modifier = Modifier.fillMaxSize(),

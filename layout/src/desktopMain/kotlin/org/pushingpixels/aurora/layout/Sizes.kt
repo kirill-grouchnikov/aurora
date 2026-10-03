@@ -295,13 +295,13 @@ public object Sizes {
         Minimum,
 
         /**
-         * Use the maximum of all component preferred sizes as column or row size.
+         * Use the maximum of all component maximum sizes as column or row size.
          */
-        Preferred,
+        Maximum,
 
         /**
          * Use the maximum of all component sizes as column or row size;
-         * measures preferred sizes when asked for the preferred size
+         * measures maximum sizes when asked for the maximum size
          * and minimum sizes when asked for the minimum size.
          */
         Default;
@@ -314,7 +314,7 @@ public object Sizes {
          * 
          * @param components      the list of components to measure
          * @param minMeasure      the measure used to determine the minimum size
-         * @param prefMeasure     the measure used to determine the preferred size
+         * @param maxMeasure      the measure used to determine the maximum size
          * @param defaultMeasure  the measure used to determine the default size
          * @return the maximum size in pixels for the given list of components
          */
@@ -323,13 +323,13 @@ public object Sizes {
             textStyle: TextStyle,
             components: List<IntrinsicMeasurable>,
             minMeasure: Measure,
-            prefMeasure: Measure,
+            maxMeasure: Measure,
             defaultMeasure: Measure
         ): Int {
             val measure: Measure = if (this == Minimum)
                 minMeasure
             else
-                (if (this == Preferred) prefMeasure else defaultMeasure)
+                (if (this == Maximum) maxMeasure else defaultMeasure)
             var maximum = 0
             val i: Iterator<IntrinsicMeasurable> = components.iterator()
             while (i.hasNext()) {
@@ -344,7 +344,7 @@ public object Sizes {
          * Used by the [FormLayout] size computations in `#compressedSizes`
          * to check whether a column or row can be compressed or not.
          *
-         * The [Default] [ComponentSize] is compressible, [Minimum] and [Preferred]
+         * The [Default] [ComponentSize] is compressible, [Minimum] and [Maximum]
          * are incompressible.
          * 
          * @return `true` for the [Default] size,
@@ -381,7 +381,7 @@ public object Sizes {
                     return Minimum
                 }
                 if (str == "p" || str == "pref") {
-                    return Preferred
+                    return Maximum
                 }
                 if (str == "d" || str == "default") {
                     return Default

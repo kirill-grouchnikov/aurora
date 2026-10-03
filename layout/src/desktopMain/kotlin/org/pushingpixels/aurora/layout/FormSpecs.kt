@@ -49,7 +49,7 @@ public object FormSpecs {
      *
      * @see .DEFAULT_COLSPEC
      */
-    public val PrefColSpec: ColumnSpec by lazy {ColumnSpec(Sizes.ComponentSize.Preferred) }
+    public val PrefColSpec: ColumnSpec by lazy {ColumnSpec(Sizes.ComponentSize.Maximum) }
 
     /**
      * An unmodifiable `ColumnSpec` that determines its preferred
@@ -123,7 +123,7 @@ public object FormSpecs {
     public val ButtonColSpec: ColumnSpec by lazy {
         ColumnSpec(
             Sizes.bounded(
-                Sizes.ComponentSize.Preferred,
+                Sizes.ComponentSize.Maximum,
                 LayoutStyle.current.defaultButtonWidth,
                 null
             )
@@ -166,7 +166,7 @@ public object FormSpecs {
      *
      * @see .DEFAULT_ROWSPEC
      */
-    public val PrefRowSpec: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Preferred) }
+    public val PrefRowSpec: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Maximum) }
 
     /**
      * An unmodifiable `RowSpec` that determines its preferred
@@ -278,7 +278,7 @@ public object FormSpecs {
     public val ButtonRowSpec: RowSpec by lazy {
         RowSpec(
             Sizes.bounded(
-                Sizes.ComponentSize.Preferred,
+                Sizes.ComponentSize.Maximum,
                 LayoutStyle.current.defaultButtonHeight,
                 null
             )

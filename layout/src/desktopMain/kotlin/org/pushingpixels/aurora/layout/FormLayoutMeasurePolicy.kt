@@ -40,8 +40,8 @@ internal class FormLayoutMeasurePolicy(
     private var rowComponents2: Array<MutableList<Measurable>> = Array(rowSpecs.size) { arrayListOf() }
     private val minimumWidthMeasure: Measure = MinimumWidthMeasure()
     private val minimumHeightMeasure: Measure = MinimumHeightMeasure()
-    private val preferredWidthMeasure: Measure = PreferredWidthMeasure()
-    private val preferredHeightMeasure: Measure = PreferredHeightMeasure()
+    private val maximumWidthMeasure: Measure = MaximumWidthMeasure()
+    private val maximumHeightMeasure: Measure = MaximumHeightMeasure()
 
     internal var gridXs: IntArray? = null
     internal var gridYs: IntArray? = null
@@ -65,18 +65,18 @@ internal class FormLayoutMeasurePolicy(
     }
 
     /**
-     * Measures a component by computing its preferred width.
+     * Measures a component by computing its maximum width.
      */
-    private class PreferredWidthMeasure : Measure {
+    private class MaximumWidthMeasure : Measure {
         override fun sizeOf(measurable: IntrinsicMeasurable): Int {
             return measurable.maxIntrinsicWidth(Constraints.Infinity)
         }
     }
 
     /**
-     * Measures a component by computing its preferred height.
+     * Measures a component by computing its maximum height.
      */
-    private class PreferredHeightMeasure : Measure {
+    private class MaximumHeightMeasure : Measure {
         override fun sizeOf(measurable: IntrinsicMeasurable): Int {
             return measurable.maxIntrinsicHeight(Constraints.Infinity)
         }
@@ -269,12 +269,12 @@ internal class FormLayoutMeasurePolicy(
 
     /**
      * Computes and returns the sizes for the given form specs, component
-     * lists and measures for minimum, preferred, and default size.
+     * lists and measures for minimum, maximum, and default size.
      *
      * @param formSpecs         the column or row specs, resp.
      * @param componentLists    the components list for each col/row
      * @param minMeasure        the measure used to determine min sizes
-     * @param prefMeasure       the measure used to determine pre sizes
+     * @param maxMeasure        the measure used to determine max sizes
      * @param defaultMeasure    the measure used to determine default sizes
      * @return the column or row sizes
      */
@@ -282,7 +282,7 @@ internal class FormLayoutMeasurePolicy(
         formSpecs: List<FormSpec>,
         componentLists: Array<List<IntrinsicMeasurable>>,
         minMeasure: Measure,
-        prefMeasure: Measure,
+        maxMeasure: Measure,
         defaultMeasure: Measure
     ): IntArray {
         var formSpec: FormSpec
@@ -295,7 +295,7 @@ internal class FormLayoutMeasurePolicy(
                 textStyle,
                 componentLists[i],
                 minMeasure,
-                prefMeasure,
+                maxMeasure,
                 defaultMeasure
             )
         }
@@ -304,7 +304,7 @@ internal class FormLayoutMeasurePolicy(
 
     /**
      * Computes and returns the compressed sizes. Compresses space for columns
-     * and rows iff the available space is less than the total preferred size
+     * and rows iff the available space is less than the total maximum size
      * but more than the total minimum size.
      *
      * Only columns and rows that are specified to be compressible will be
@@ -314,31 +314,31 @@ internal class FormLayoutMeasurePolicy(
      * @param formSpecs      the column or row specs to use
      * @param totalSize      the total available size
      * @param totalMinSize   the sum of all minimum sizes
-     * @param totalPrefSize  the sum of all preferred sizes
+     * @param totalMaxSize   the sum of all maximum sizes
      * @param minSizes       an int array of column/row minimum sizes
-     * @param prefSizes      an int array of column/row preferred sizes
+     * @param maxSizes       an int array of column/row maximum sizes
      * @return an int array of compressed column/row sizes
      */
     private fun compressedSizes(
         formSpecs: List<FormSpec>,
-        totalSize: Int, totalMinSize: Int, totalPrefSize: Int,
-        minSizes: IntArray, prefSizes: IntArray
+        totalSize: Int, totalMinSize: Int, totalMaxSize: Int,
+        minSizes: IntArray, maxSizes: IntArray
     ): IntArray {
         // If we have less space than the total min size, answer the min sizes.
 
         if (totalSize < totalMinSize) {
             return minSizes
         }
-        // If we have more space than the total pref size, answer the pref sizes.
-        if (totalSize >= totalPrefSize) {
-            return prefSizes
+        // If we have more space than the total max size, answer the max sizes.
+        if (totalSize >= totalMaxSize) {
+            return maxSizes
         }
 
         val count = formSpecs.size
         val sizes = IntArray(count)
 
-        val totalCompressionSpace = (totalPrefSize - totalSize).toDouble()
-        val maxCompressionSpace = (totalPrefSize - totalMinSize).toDouble()
+        val totalCompressionSpace = (totalMaxSize - totalSize).toDouble()
+        val maxCompressionSpace = (totalMaxSize - totalMinSize).toDouble()
         val compressionFactor = totalCompressionSpace / maxCompressionSpace
 
         //      System.out.println("Total compression space=" + totalCompressionSpace);
@@ -346,9 +346,9 @@ internal class FormLayoutMeasurePolicy(
 //      System.out.println("Compression factor     =" + compressionFactor);
         for (i in 0..<count) {
             val formSpec = formSpecs[i]
-            sizes[i] = prefSizes[i]
+            sizes[i] = maxSizes[i]
             if (formSpec.size.compressible()) {
-                sizes[i] -= ((prefSizes[i] - minSizes[i]) * compressionFactor).roundToInt()
+                sizes[i] -= ((maxSizes[i] - minSizes[i]) * compressionFactor).roundToInt()
             }
         }
         return sizes
@@ -362,16 +362,16 @@ internal class FormLayoutMeasurePolicy(
      *
      * @param formSpecs      the column/row specifications to work with
      * @param totalSize      the total available size
-     * @param totalPrefSize  the sum of all preferred sizes
+     * @param totalMaxSize   the sum of all maximum sizes
      * @param inputSizes     the input sizes
      * @return the distributed sizes
      */
     private fun distributedSizes(
         formSpecs: List<FormSpec>,
-        totalSize: Int, totalPrefSize: Int,
+        totalSize: Int, totalMaxSize: Int,
         inputSizes: IntArray
     ): IntArray {
-        val totalFreeSpace = (totalSize - totalPrefSize).toDouble()
+        val totalFreeSpace = (totalSize - totalMaxSize).toDouble()
         // Do nothing if there's no free space.
         if (totalFreeSpace < 0) {
             return inputSizes
@@ -417,10 +417,10 @@ internal class FormLayoutMeasurePolicy(
      *
      * @param totalSize         the total size to assign
      * @param offset            the offset from left or top margin
-     * @param formSpecs        the column or row specs, resp.
+     * @param formSpecs         the column or row specs, resp.
      * @param componentLists    the components list for each col/row
      * @param minMeasure        the measure used to determine min sizes
-     * @param prefMeasure        the measure used to determine pre sizes
+     * @param maxMeasure        the measure used to determine max sizes
      * @param groupIndices        the group specification
      * @return an int array with the origins
      */
@@ -431,34 +431,34 @@ internal class FormLayoutMeasurePolicy(
         componentLists: Array<MutableList<Measurable>>,
         groupIndices: Array<IntArray>,
         minMeasure: Measure,
-        prefMeasure: Measure
+        maxMeasure: Measure
     ): IntArray {
-        /* For each spec compute the minimum and preferred size that is
-     * the maximum of all component minimum and preferred sizes resp.
+        /* For each spec compute the minimum and maximum size that is
+     * the maximum of all component minimum and maximum sizes resp.
      */
         // TODO: simplify
         val intrinsicComponentLists: Array<List<IntrinsicMeasurable>> =
             componentLists.map { it.map { m -> m as IntrinsicMeasurable } }.toTypedArray()
         val minSizes: IntArray = maximumSizes(
             formSpecs, intrinsicComponentLists,
-            minMeasure, prefMeasure, minMeasure
+            minMeasure, maxMeasure, minMeasure
         )
-        val prefSizes: IntArray = maximumSizes(
+        val maxSizes: IntArray = maximumSizes(
             formSpecs, intrinsicComponentLists,
-            minMeasure, prefMeasure, prefMeasure
+            minMeasure, maxMeasure, maxMeasure
         )
 
         val groupedMinSizes: IntArray = groupedSizes(groupIndices, minSizes)
-        val groupedPrefSizes: IntArray = groupedSizes(groupIndices, prefSizes)
+        val groupedMaxSizes: IntArray = groupedSizes(groupIndices, maxSizes)
         val totalMinSize: Int = sum(groupedMinSizes)
-        val totalPrefSize: Int = sum(groupedPrefSizes)
+        val totalMaxSize: Int = sum(groupedMaxSizes)
         val compressedSizes: IntArray = compressedSizes(
             formSpecs,
             totalSize,
             totalMinSize,
-            totalPrefSize,
+            totalMaxSize,
             groupedMinSizes,
-            prefSizes
+            maxSizes
         )
         val groupedSizes: IntArray = groupedSizes(groupIndices, compressedSizes)
         val totalGroupedSize: Int = sum(groupedSizes)
@@ -495,7 +495,7 @@ internal class FormLayoutMeasurePolicy(
                 val rect = constraints.getBounds(measureScope, element,
                     colSpecs, rowSpecs, cellBounds, layoutDirection,
                     minimumWidthMeasure, minimumHeightMeasure,
-                    preferredWidthMeasure, preferredHeightMeasure
+                    maximumWidthMeasure, maximumHeightMeasure
                 )
 
                 val placeable = element.measure(Constraints.fixed(rect.width, rect.height))
@@ -524,7 +524,7 @@ internal class FormLayoutMeasurePolicy(
             colComponents2,
             colGroupIndices,
             minimumWidthMeasure,
-            preferredWidthMeasure
+            maximumWidthMeasure
         )
         val y: IntArray = computeGridOrigins(
             totalHeight,
@@ -533,7 +533,7 @@ internal class FormLayoutMeasurePolicy(
             rowComponents2,
             rowGroupIndices,
             minimumHeightMeasure,
-            preferredHeightMeasure
+            maximumHeightMeasure
         )
 
         gridXs = x

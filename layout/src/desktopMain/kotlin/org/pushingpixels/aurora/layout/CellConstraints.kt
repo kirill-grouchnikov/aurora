@@ -140,8 +140,8 @@ public data class CellConstraints(
      * @param cellBounds         the cell's bounds
      * @param minWidthMeasure    measures the minimum width
      * @param minHeightMeasure   measures the minimum height
-     * @param prefWidthMeasure   measures the preferred width
-     * @param prefHeightMeasure  measures the preferred height
+     * @param maxWidthMeasure    measures the maximum width
+     * @param maxHeightMeasure   measures the maximum height
      */
     public fun getBounds(
         measureScope: MeasureScope,
@@ -152,8 +152,8 @@ public data class CellConstraints(
         layoutDirection: LayoutDirection,
         minWidthMeasure: Measure,
         minHeightMeasure: Measure,
-        prefWidthMeasure: Measure,
-        prefHeightMeasure: Measure
+        maxWidthMeasure: Measure,
+        maxHeightMeasure: Measure
     ): IntRect {
         with (measureScope) {
             val colSpec: ColumnSpec? = if (gridWidth == 1) colSpecs[gridX-1] else null
@@ -168,11 +168,11 @@ public data class CellConstraints(
                 padding.calculateBottomPadding().toPx()
             val compW: Int = componentSize(
                 measurable, colSpec, cellW.toInt(), minWidthMeasure,
-                prefWidthMeasure
+                maxWidthMeasure
             )
             val compH: Int = componentSize(
                 measurable, rowSpec, cellH.toInt(), minHeightMeasure,
-                prefHeightMeasure
+                maxHeightMeasure
             )
             val x: Int = origin(concreteHAlign, cellX.toInt(), cellW.toInt(), compW)
             val y: Int = origin(concreteVAlign, cellY.toInt(), cellH.toInt(), compH)
@@ -406,7 +406,7 @@ public data class CellConstraints(
          * @param component    the component to measure
          * @param formSpec        the specification of the component's column/row
          * @param minMeasure    the measure for the minimum size
-         * @param prefMeasure    the measure for the preferred size
+         * @param maxMeasure    the measure for the maximum size
          * @param cellSize        the cell size
          * @return the component size as measured or a constant
          */
@@ -415,16 +415,16 @@ public data class CellConstraints(
             formSpec: FormSpec?,
             cellSize: Int,
             minMeasure: Measure,
-            prefMeasure: Measure
+            maxMeasure: Measure
         ): Int {
             return if (formSpec == null) {
-                prefMeasure.sizeOf(component)
+                maxMeasure.sizeOf(component)
             } else if (formSpec.size === Sizes.ComponentSize.Minimum) {
                 minMeasure.sizeOf(component)
-            } else if (formSpec.size === Sizes.ComponentSize.Preferred) {
-                prefMeasure.sizeOf(component)
+            } else if (formSpec.size === Sizes.ComponentSize.Maximum) {
+                maxMeasure.sizeOf(component)
             } else {  // default mode
-                cellSize.coerceAtMost(prefMeasure.sizeOf(component))
+                cellSize.coerceAtMost(maxMeasure.sizeOf(component))
             }
         }
 
