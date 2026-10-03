@@ -35,32 +35,8 @@ import androidx.compose.ui.text.TextStyle
  * 
  * @see Size
  * @see Sizes
- *
- * @since 1.2
  */
-public class PrototypeSize
-/**
- * Constructs a PrototypeSize for the given String.
- * 
- * @param prototype    the String used to compute the width and height.
- * 
- * @throws NullPointerException if `prototype` is `null`.
- * 
- * @since 1.2
- */(
-    //private val textMeasurer: TextMeasurer,
-    /**
-     * Returns this size's prototype string.
-     * 
-     * @return the prototype string
-     */
-    // Fields ***************************************************************
-    private val prototype: String
-) : Size {
-    // Instance Creation ****************************************************
-
-    // Accessors ************************************************************
-
+public class PrototypeSize(private val prototype: String) : Size {
     // Implementing the Size Interface **************************************
     /**
      * Computes and returns the width of this Size's prototype in pixel.
@@ -73,9 +49,8 @@ public class PrototypeSize
      * @param prefMeasure     the measure that determines the preferred sizes
      * @param defaultMeasure  the measure that determines the default sizes
      *
-     * @return the `stringWidth` for this size's prototype string
-     * computed by the `container`'s FontMetrics for the
-     * `DefaultUnitConverter`'s default dialog font
+     * @return string width for this size's prototype string
+     * computed by the [TextMeasurer] passed into the computation.
      */
     override fun maximumSize(
         textMeasurer: TextMeasurer,

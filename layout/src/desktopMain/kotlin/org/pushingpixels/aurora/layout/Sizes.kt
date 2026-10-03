@@ -78,14 +78,6 @@ public object Sizes {
     private lateinit var unitConverter: UnitConverter
 
     /**
-     * Returns the Unit that is used if an encoded ConstantSize contains
-     * no unit string.
-     * 
-     * @return the Unit if no unit string is provided
-     * 
-     * @since 1.2
-     */
-    /**
      * Holds the Unit that is used if no Unit is provided in encoded
      * ConstantSizes.
      * 
@@ -362,8 +354,6 @@ public object Sizes {
          * Returns a parseable string representation of this ComponentSize.
          * 
          * @return a String that can be parsed by the Forms parser
-         * 
-         * @since 1.2
          */
         override fun encode(): String {
             return name.substring(0, 1)

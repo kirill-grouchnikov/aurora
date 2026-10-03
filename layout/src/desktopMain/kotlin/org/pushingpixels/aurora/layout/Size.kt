@@ -70,8 +70,6 @@ public interface Size {
      * [BoundedSize]s that are based on the *default* size.
      * 
      * @return `true` for compressible Sizes
-     * 
-     * @since 1.1
      */
     public fun compressible(): Boolean
 

@@ -68,8 +68,6 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
      * 
      * @param value     the size value interpreted in the given units
      * @param unit        the size's unit
-     * 
-     * @since 1.1
      */
     public constructor(value: Int, unit: MeasurementUnit) : this(value.toDouble(), unit)
     // Accessors ************************************************************
@@ -132,8 +130,6 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
      * ConstantSizes are incompressible.
      * 
      * @return `false`
-     * 
-     * @since 1.1
      */
     override fun compressible(): Boolean {
         return false
@@ -195,8 +191,6 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
      * Returns a parseable string representation of this constant size.
      * 
      * @return a String that can be parsed by the Forms parser
-     * 
-     * @since 1.2
      */
     override fun encode(): String {
         return if (value == intValue().toDouble())
@@ -231,8 +225,6 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
          * Returns a parseable string representation of this unit.
          * 
          * @return a String that can be parsed by the Forms parser
-         * 
-         * @since 1.2
          */
         public fun encode(): String {
             return parseAbbreviation ?: abbreviation

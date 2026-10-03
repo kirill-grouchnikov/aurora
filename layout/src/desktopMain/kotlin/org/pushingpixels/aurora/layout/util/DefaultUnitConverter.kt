@@ -42,22 +42,14 @@ import androidx.compose.ui.text.TextStyle
  * in Microsoft's
  * [Design Specifications and Guidelines](http://msdn2.microsoft.com/en-us/library/ms997619).
  *
- * Since the Forms 1.1 this converter logs font information at
- * the `CONFIG` level.
- * 
  * @see [UnitConverter]
  * @see [org.pushingpixels.aurora.layout.Size]
  * @see [org.pushingpixels.aurora.layout.Sizes]
  */
 public class DefaultUnitConverter(
     private val textMeasurer: TextMeasurer,
-    private val textStyle: TextStyle)
-/**
- * Constructs a DefaultUnitConverter and registers
- * a listener that handles changes in the look&amp;feel.
- */
-    : AbstractUnitConverter() {
-
+    private val textStyle: TextStyle
+) : AbstractUnitConverter() {
     // Cached *****************************************************************
     /**
      * Holds the lazily created cached global dialog base units that are used

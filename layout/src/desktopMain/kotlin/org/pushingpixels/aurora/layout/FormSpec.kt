@@ -359,8 +359,7 @@ public abstract class FormSpec protected constructor(
      *
      * @return  a string representation of the form specification.
      * 
-     * @see .toShortString
-     * @since 1.2
+     * @see [toShortString]
      */
     public fun encode(): String {
         val buffer = StringBuffer()

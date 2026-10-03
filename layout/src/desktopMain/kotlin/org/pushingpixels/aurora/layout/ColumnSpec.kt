@@ -122,8 +122,6 @@ public class ColumnSpec : FormSpec {
          * A special alignment value for table column alignment specifications.
          * Some cell renderers shall not be aligned during the renderer
          * preparation.
-         * 
-         * @since 1.8
          */
         public val None: DefaultAlignment = DefaultAlignment.NoAlign
 
@@ -147,8 +145,6 @@ public class ColumnSpec : FormSpec {
          * @return a ColumnSpec that describes a horizontal gap
          * 
          * @throws NullPointerException if `gapWidth` is `null`
-         * 
-         * @since 1.2
          */
         public fun createGap(gapWidth: ConstantSize): ColumnSpec {
             return ColumnSpec(Default, gapWidth, NoGrow)
@@ -168,8 +164,7 @@ public class ColumnSpec : FormSpec {
          * @throws IllegalArgumentException if `encodedColumnSpec` is empty
          * or whitespace
          * 
-         * @see .decodeSpecs
-         * @since 1.2
+         * @see [decodeSpecs]
          */
         @Composable
         public fun decode(encodedColumnSpec: String, layoutMap: LayoutMap = LayoutMap.getRoot()): ColumnSpec {
@@ -211,9 +206,8 @@ public class ColumnSpec : FormSpec {
          * @throws NullPointerException if `encodedColumnSpecs` or
          * `layoutMap` is `null`
          * 
-         * @see .decodeSpecs
-         * @see .decode
-         * @since 1.2
+         * @see [decodeSpecs]
+         * @see [decode]
          */
         @Composable
         public fun decodeSpecs(encodedColumnSpecs: String, layoutMap: LayoutMap = LayoutMap.getRoot()): List<ColumnSpec> {

@@ -108,8 +108,6 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
      * BoundedSizes are compressible if the base Size is compressible.
      * 
      * @return `true` if and only if the basis is compressible
-     * 
-     * @since 1.1
      */
     override fun compressible(): Boolean {
         return this.basis.compressible()
@@ -176,8 +174,6 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
      * Returns a parseable string representation of this bounded size.
      * 
      * @return a String that can be parsed by the Forms parser
-     * 
-     * @since 1.2
      */
     override fun encode(): String {
         val buffer = StringBuffer("[")

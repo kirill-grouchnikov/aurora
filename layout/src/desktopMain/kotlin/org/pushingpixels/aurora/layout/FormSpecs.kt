@@ -26,8 +26,6 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * 
  * @see FormLayout
  * @see ColumnSpec
- *
- * @since 1.6  This class was the FormFactory before.
  */
 public object FormSpecs {
     // Frequently used Column Specifications ********************************
@@ -35,9 +33,8 @@ public object FormSpecs {
      * An unmodifiable `ColumnSpec` that determines its width by
      * computing the maximum of all column component minimum widths.
      *
-     * @see .PREF_COLSPEC
-     *
-     * @see .DEFAULT_COLSPEC
+     * @see [PrefColSpec]
+     * @see [DefaultColSpec]
      */
     public val MinColSpec: ColumnSpec by lazy { ColumnSpec(Sizes.ComponentSize.Minimum) }
 
@@ -45,9 +42,8 @@ public object FormSpecs {
      * An unmodifiable `ColumnSpec` that determines its width by
      * computing the maximum of all column component preferred widths.
      *
-     * @see .MIN_COLSPEC
-     *
-     * @see .DEFAULT_COLSPEC
+     * @see [MinColSpec]
+     * @see [DefaultColSpec]
      */
     public val PrefColSpec: ColumnSpec by lazy {ColumnSpec(Sizes.ComponentSize.Maximum) }
 
@@ -59,9 +55,8 @@ public object FormSpecs {
      * Useful to let a column shrink from preferred width to minimum width
      * if the container space gets scarce.
      *
-     * @see .MIN_COLSPEC
-     *
-     * @see .PREF_COLSPEC
+     * @see [MinColSpec]
+     * @see [PrefColSpec]
      */
     public val DefaultColSpec: ColumnSpec by lazy { ColumnSpec(Sizes.ComponentSize.Default) }
 
@@ -70,7 +65,7 @@ public object FormSpecs {
      * of 0 pixels and that grows. Useful to describe *glue* columns
      * that fill the space between other columns.
      *
-     * @see .GLUE_ROWSPEC
+     * @see [GlueRowSpec]
      */
     public val GlueColSpec: ColumnSpec by lazy {ColumnSpec(ColumnSpec.Default, Sizes.Zero, FormSpec.DefaultGrow) }
 
@@ -79,11 +74,6 @@ public object FormSpecs {
      * Describes a logical horizontal gap between a label and an associated
      * component. Useful for DSLs that automatically fill a grid with labels
      * and components.
-     *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @since 1.0.3
      */
     public val LabelComponentGapColSpec: ColumnSpec by lazy {
         ColumnSpec.createGap(LayoutStyle.current.labelComponentPadX)
@@ -94,20 +84,14 @@ public object FormSpecs {
      * For example the *OK* and *Cancel* buttons are considered
      * related.
      *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @see .UNRELATED_GAP_COLSPEC
+     * @see [UnrelatedGapColSpec]
      */
     public val RelatedGapColSpec: ColumnSpec by lazy {ColumnSpec.createGap(LayoutStyle.current.relatedComponentsPadX) }
 
     /**
      * Describes a logical horizontal gap between two unrelated components.
      *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @see .RELATED_GAP_COLSPEC
+     * @see [RelatedGapColSpec]
      */
     public val UnrelatedGapColSpec: ColumnSpec by lazy {ColumnSpec.createGap(LayoutStyle.current.unrelatedComponentsPadX) }
 
@@ -115,10 +99,7 @@ public object FormSpecs {
      * Describes a logical horizontal column for a fixed size button. This spec
      * honors the current layout style's default button minimum width.
      *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @see .GROWING_BUTTON_COLSPEC
+     * @see [GrowingButtonColSpec]
      */
     public val ButtonColSpec: ColumnSpec by lazy {
         ColumnSpec(
@@ -134,10 +115,7 @@ public object FormSpecs {
      * Describes a logical horizontal column for a growing button. This spec
      * does *not* use the layout style's default button minimum width.
      *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @see .BUTTON_COLSPEC
+     * @see [ButtonColSpec]
      */
     public val GrowingButtonColSpec: ColumnSpec by lazy {
         ColumnSpec(
@@ -152,9 +130,8 @@ public object FormSpecs {
      * An unmodifiable `RowSpec` that determines its height by
      * computing the maximum of all column component minimum heights.
      *
-     * @see .PREF_ROWSPEC
-     *
-     * @see .DEFAULT_ROWSPEC
+     * @see [PrefRowSpec]
+     * @see [DefaultRowSpec]
      */
     public val MinRowSpec: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Minimum) }
 
@@ -162,9 +139,8 @@ public object FormSpecs {
      * An unmodifiable `RowSpec` that determines its height by
      * computing the maximum of all column component preferred heights.
      *
-     * @see .MIN_ROWSPEC
-     *
-     * @see .DEFAULT_ROWSPEC
+     * @see [MinRowSpec]
+     * @see [DefaultRowSpec]
      */
     public val PrefRowSpec: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Maximum) }
 
@@ -176,9 +152,8 @@ public object FormSpecs {
      * Useful to let a column shrink from preferred height to minimum height
      * if the container space gets scarce.
      *
-     * @see .MIN_COLSPEC
-     *
-     * @see .PREF_COLSPEC
+     * @see [MinRowSpec]
+     * @see [PrefRowSpec]
      */
     public val DefaultRowSpec: RowSpec by lazy {RowSpec(Sizes.ComponentSize.Default) }
 
@@ -187,7 +162,7 @@ public object FormSpecs {
      * of 0 pixels and that grows. Useful to describe *glue* rows
      * that fill the space between other rows.
      *
-     * @see .GLUE_COLSPEC
+     * @see [GlueColSpec]
      */
     public val GlueRowSpec: RowSpec by lazy {RowSpec(RowSpec.Default, Sizes.Zero, FormSpec.DefaultGrow) }
 
@@ -196,11 +171,6 @@ public object FormSpecs {
      * Describes a logical horizontal gap between a label and an associated
      * component. Useful for DSLs that automatically fill a grid with labels
      * and components.
-     *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @since 1.4
      */
     public val LabelComponentGapRowSpec: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.labelComponentPadY) }
 
@@ -209,20 +179,14 @@ public object FormSpecs {
      * For example the *OK* and *Cancel* buttons are considered
      * related.
      *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @see .UNRELATED_GAP_ROWSPEC
+     * @see [UnrelatedGapColSpec]
      */
     public val RelatedGapRowSpec: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.relatedComponentsPadY) }
 
     /**
      * Describes a logical vertical gap between two unrelated components.
      *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @see .RELATED_GAP_ROWSPEC
+     * @see [RelatedGapColSpec]
      */
     public val UnrelatedGapRowSpec: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.unrelatedComponentsPadY) }
 
@@ -231,12 +195,8 @@ public object FormSpecs {
      * Useful if the vertical space is scarce or if an individual vertical gap
      * shall be smaller than the default line gap.
      *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @see .LINE_GAP_ROWSPEC
-     *
-     * @see .PARAGRAPH_GAP_ROWSPEC
+     * @see [LineGapRowSpec]
+     * @see [ParagraphGapRowSpec]
      */
     public val NarrowLineGapRowSpec: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.narrowLinePad) }
 
@@ -244,12 +204,8 @@ public object FormSpecs {
      * Describes the logical vertical default gap between two rows in the grid.
      * A little bit larger than the narrow line gap.
      *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @see .NARROW_LINE_GAP_ROWSPEC
-     *
-     * @see .PARAGRAPH_GAP_ROWSPEC
+     * @see [NarrowLineGapRowSpec]
+     * @see [ParagraphGapRowSpec]
      */
     public val LineGapRowSpec: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.linePad) }
 
@@ -257,23 +213,14 @@ public object FormSpecs {
      * Describes the logical vertical default gap between two paragraphs in
      * the layout grid. This gap is larger than the default line gap.
      *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @see .NARROW_LINE_GAP_ROWSPEC
-     *
-     * @see .LINE_GAP_ROWSPEC
+     * @see [NarrowLineGapRowSpec]
+     * @see [LineGapRowSpec]
      */
     public val ParagraphGapRowSpec: RowSpec by lazy {RowSpec.createGap(LayoutStyle.current.paragraphPad) }
 
     /**
      * Describes a logical row for a fixed size button. This spec
      * honors the current layout style's default button minimum height.
-     *
-     * **Note:** In a future version this constant will likely
-     * be moved to a class `LogicalSize` or `StyledSize`.
-     *
-     * @since 1.2
      */
     public val ButtonRowSpec: RowSpec by lazy {
         RowSpec(

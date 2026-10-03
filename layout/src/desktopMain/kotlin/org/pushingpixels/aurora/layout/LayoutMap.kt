@@ -95,8 +95,6 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * @see FormLayout
  * @see ColumnSpec
  * @see RowSpec
- *
- * @since 1.2
  */
 public class LayoutMap(
     /**
