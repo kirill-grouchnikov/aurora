@@ -35,7 +35,7 @@ import org.pushingpixels.aurora.demo.AuroraLocaleSwitcher
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.layout.FormLayout
 import org.pushingpixels.aurora.layout.Sizes
-import org.pushingpixels.aurora.layout.builder.ButtonBar
+import org.pushingpixels.aurora.layout.dsl.ButtonBar
 import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.IconFilterStrategy
 import org.pushingpixels.aurora.theming.marinerSkin
