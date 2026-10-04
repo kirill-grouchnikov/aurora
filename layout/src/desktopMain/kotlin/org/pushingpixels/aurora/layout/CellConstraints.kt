@@ -516,8 +516,6 @@ public data class CellConstraints(
          *
          * @param col       the new column index
          * @param row       the new row index
-         *
-         * @throws IllegalArgumentException if an alignment orientation is invalid
          */
         public fun xy(col: Int, row: Int): CellConstraints {
             return xywh(col, row, 1, 1)
@@ -587,8 +585,6 @@ public data class CellConstraints(
          *
          * @param row       the new row index
          * @param col       the new column index
-         *
-         * @throws IllegalArgumentException if an alignment orientation is invalid
          */
         public fun rc(row: Int, col: Int): CellConstraints {
             return rchw(row, col, 1, 1)
@@ -651,10 +647,10 @@ public data class CellConstraints(
          *
          * <strong>Examples:</strong>
          * ```kotlin
-         * CellConstraints("1, 3")
-         * CellConstraints("1, 3, start, bottom")
-         * CellConstraints("1, 3, 2, 1, start, bottom")
-         * CellConstraints("1, 3, 2, 1, s, b")
+         * CellConstraints.fromConstraints("1, 3")
+         * CellConstraints.fromConstraints("1, 3, start, bottom")
+         * CellConstraints.fromConstraints("1, 3, 2, 1, start, bottom")
+         * CellConstraints.fromConstraints("1, 3, 2, 1, s, b")
          * ```
          *
          * @param encodedConstraints	the constraints encoded as string

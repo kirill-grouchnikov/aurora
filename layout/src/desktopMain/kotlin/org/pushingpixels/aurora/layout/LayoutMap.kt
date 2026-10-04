@@ -41,19 +41,21 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * or with the constructor, configure it, and provide it as argument to the
  * [FormLayout], [ColumnSpec], and [RowSpec] constructors/factory methods.
  *
- * By default the root [LayoutMap] provides the following associations:
- * <table border="1">
- * <tr><td>**Variable Name**</td><td>**Abbreviations**</td><td>**Orientation**</td><td>**Description**</td></tr>
- * <tr><td>label-component-gap</td><td>lcg, lcgap</td><td>both</td><td>gap between a label and the labeled component</td></tr>
- * <tr><td>related-gap</td><td>rg, rgap</td><td>both</td><td>gap between two related components</td></tr>
- * <tr><td>unrelated-gap</td><td>ug, ugap</td><td>both</td><td>gap between two unrelated components</td></tr>
- * <tr><td>button</td><td>b</td><td>horizontal</td><td>button column with minimum width</td></tr>
- * <tr><td>line-gap</td><td>lg, lgap</td><td>vertical</td><td>gap between two lines</td></tr>
- * <tr><td>narrow-line-gap</td><td>nlg, nlgap</td><td>vertical</td><td>narrow gap between two lines</td></tr>
- * <tr><td>paragraph</td><td>pg, pgap</td><td>vertical</td><td>gap between two paragraphs/sections</td></tr>
-</table> * 
- * 
- * 
+ * By default, the root [LayoutMap] provides the following associations:
+ * | Variable Name | Abbreviations | Orientation | Description |
+ * | :--- | :--- | :--- | :--- |
+ * | label-component-gap | lcg, lcgap | both | gap between a label and the labeled component |
+ * | related-gap | rg, rgap | both | gap between two related components |
+ * | unrelated-gap | ug, ugap | both | gap between two unrelated components |
+ * | button | b | horizontal | button column with minimum width |
+ * | growing-button | gb | horizontal | growing button column |
+ * | dialog-margin | dm, dmargin | both | margin for general dialogs |
+ * | tabbed-dialog-margin | tdm, tdmargin | both | margin for tabbed dialogs |
+ * | glue | glue | both | glue that grows and fills the space between other columns |
+ * | line-gap | lg, lgap | vertical | gap between two lines |
+ * | narrow-line-gap | nlg, nlgap | vertical | narrow gap between two lines |
+ * | paragraph | pg, pgap | vertical | gap between two paragraphs/sections |
+ *
  * **Examples:**
  * ```kotlin
  * // Predefined variables
