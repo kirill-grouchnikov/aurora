@@ -55,6 +55,7 @@ LayoutMap.getRoot().columnPut("c-gap-c", "@half, 2dlu, @half");
 FormLayout(
    encodedColumnSpecs = "pref, @lcgap, @{c-gap-c}", // -> "pref, @lcgap, @half, 2dlu, @half",
    encodedRowSpecs = "p, @lcgap, @table") { ... }
+```
 
 `LayoutMap` holds two internal maps that associate key strings with expression strings for the columns and rows respectively. Null values are not allowed.
 
