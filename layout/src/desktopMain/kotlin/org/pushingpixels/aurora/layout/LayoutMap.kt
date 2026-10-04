@@ -31,8 +31,8 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * specification is parsed and converted into ColumnSpec and RowSpec values.
  * Variables start with the '@' character. The variable name can be wrapped
  * by braces ('{' and '}'). For example, you can write:
- * `new FormLayout("pref, @lcg, pref")` or
- * `new FormLayout("pref, @{lcg}, pref")`.
+ * `FormLayout("pref, @lcg, pref")` or
+ * `FormLayout("pref, @{lcg}, pref")`.
  *
  * LayoutMaps build a chain; each [LayoutMap] has an optional parent map.
  * The root is defined by [LayoutMap.getRoot]. Application-wide
@@ -82,7 +82,7 @@ import org.pushingpixels.aurora.layout.util.LayoutStyle
  * LayoutMap.getRoot().columnPut("c-gap-c", "@half, 2dlu, @half");
  * FormLayout(
  *    encodedColumnSpecs = "pref, @lcgap, @{c-gap-c}", // -> "pref, @lcgap, @half, 2dlu, @half",
- *    encodedRowSpecs = "p, @lcgap, @table");
+ *    encodedRowSpecs = "p, @lcgap, @table") { ... }
  * ```
  * 
  * LayoutMap holds two internal Maps that associate key Strings with expression
