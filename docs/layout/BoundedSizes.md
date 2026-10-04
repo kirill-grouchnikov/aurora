@@ -20,7 +20,7 @@ boundedSize ::=   MIN(constantSize;componentSize)
 ```kotlin
 ColumnSpec.decode("max(50dlu;pref)")  // maximum of 50dlu and maximum size
 
-RowSpec.decode("min(100dlu;pref)");    // minimum of 100dlu and maximum size
+RowSpec.decode("min(100dlu;pref)")    // minimum of 100dlu and maximum size
 
 FormLayout(
   encodedColumnSpecs = "max(50dlu;pref), 4dlu, max(100dlu;min)",
