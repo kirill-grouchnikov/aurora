@@ -11,6 +11,8 @@ FormLayout("pref, @{lcg}, pref")
 
 `LayoutMap`s build a chain; each `LayoutMap` has an optional parent map. The root is defined by `LayoutMap.getRoot`. Application-wide variables should be defined in the root `LayoutMap`. If you want to override application-wide variables locally, obtain a `LayoutMap` using `LayoutMap.getRoot` or with the constructor, configure it, and provide it as argument to the `FormLayout`, `ColumnSpec`, and `RowSpec` constructors/factory methods.
 
+### Predefined variables
+
 By default, the root `LayoutMap` provides the following associations:
 
 | Variable Name | Abbreviations | Orientation | Description |
@@ -27,7 +29,7 @@ By default, the root `LayoutMap` provides the following associations:
 | narrow-line-gap | nlg, nlgap | vertical | narrow gap between two lines |
 | paragraph | pg, pgap | vertical | gap between two paragraphs / sections |
 
-Examples:
+### Examples
 
 ```kotlin
 // Predefined variables
