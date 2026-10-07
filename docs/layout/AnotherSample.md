@@ -84,4 +84,4 @@ The last row which is our button bar is using the `ButtonBar` composable provide
 
 ### Next
 
-Continue to a [more detailed sample walkthrough](Sample.md).
+Continue to a [basics](Basics.md).
