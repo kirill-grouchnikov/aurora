@@ -2,6 +2,7 @@ include(
     ":common",
     ":theming",
     ":component",
+    ":loading",
     ":layout",
     ":window",
     ":tools:svg-transcoder",
