@@ -70,6 +70,7 @@ the [Ephemeral](https://github.com/kirill-grouchnikov/ephemeral) design system. 
   * [Command panels](docs/component/CommandPanel.md)
   * [Breadcrumb bars](docs/component/BreadcrumbBar.md)
   * [Box with highlights](docs/component/BoxWithHighlights.md)
+  * [Loaders](docs/loading/Overview.md)
 * Miscellaneous
   * [Context menus](docs/component/ContextMenu.md)
   * [All custom modifiers](docs/component/Modifiers.md)
