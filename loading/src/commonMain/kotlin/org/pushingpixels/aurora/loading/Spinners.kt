@@ -106,10 +106,10 @@ fun Atom(
                     1.0f at (animationDuration / 2) using easing
 
                     // Returns to 1.0f at the end of the active animation time
-                    0.0f at animationDuration
+                    0.0f at animationDuration using easing
 
                     // Holds 1.0f from animationDuration until totalDuration (the delay)
-                    0.0f at duration
+                    0.0f at duration using easing
                 },
                 repeatMode = RepeatMode.Restart,
                 // Set the initial start delay (only applies to the very first run). Note the
