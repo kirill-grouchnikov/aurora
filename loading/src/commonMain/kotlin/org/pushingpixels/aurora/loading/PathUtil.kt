@@ -117,7 +117,7 @@ private fun pathFromCubics(
                     x = cubics[0].anchor0X - rotationPivotX,
                 )
             )
-        // Rotate the Path to to start from the given angle.
+        // Rotate the Path to start from the given angle.
         path.transform(Matrix().apply { rotateZ(-angleToFirstCubic + startAngle) })
     }
 }

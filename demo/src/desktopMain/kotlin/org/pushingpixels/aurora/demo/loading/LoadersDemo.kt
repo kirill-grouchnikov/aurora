@@ -15,10 +15,7 @@
  */
 package org.pushingpixels.aurora.demo.loading
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.BasicText
@@ -44,8 +41,7 @@ fun main() = application {
         state = state,
         onCloseRequest = ::exitApplication
     ) {
-        val params = SpinnerParams(color = Color(0xFF007F7C))
-
+        val color = Color(0xFF007F7C)
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
             columns = GridCells.Adaptive(minSize = 100.dp),
@@ -53,35 +49,35 @@ fun main() = application {
             verticalArrangement = Arrangement.spacedBy(32.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 24.dp),
         ) {
-            item { SpinnerItem("Arc") { Arc(params = params) } }
-            item { SpinnerItem("Atom") { Atom(params = params) } }
-            item { SpinnerItem("Blocks") { Blocks(params = params, sweep = BlocksSweep.Diagonal) } }
-            item { SpinnerItem("BouncingDots") { BouncingDots(params = params) } }
-            item { SpinnerItem("Cascade") { Cascade(params = params) } }
-            item { SpinnerItem("CircularDots") { CircularDots(params = params) } }
-            item { SpinnerItem("Classic") { Classic(params = params) } }
-            item { SpinnerItem("ClassicV2") { ClassicV2(params = params) } }
-            item { SpinnerItem("Clock") { Clock(params = params) } }
-            item { SpinnerItem("Comet") { Comet(params = params) } }
-            item { SpinnerItem("Compass") { Compass(params = params) } }
-            item { SpinnerItem("Dual") { Dual(params = params) } }
-            item { SpinnerItem("Eclipse") { Eclipse(params = params) } }
-            item { SpinnerItem("Flip") { Flip(params = params) } }
-            item { SpinnerItem("Gather") { Gather(params = params) } }
-            item { SpinnerItem("Leap") { Leap(params = params) } }
-            item { SpinnerItem("LinearDots") { LinearDots(params = params) } }
-            item { SpinnerItem("Loading") { Loading(params = params) } }
-            item { SpinnerItem("Morph") { Morph(params = params) } }
-            item { SpinnerItem("Orbit") { Orbit(params = params) } }
-            item { SpinnerItem("Pulse") { Pulse(params = params) } }
-            item { SpinnerItem("Radar") { Radar(params = params) } }
-            item { SpinnerItem("Ring") { Ring(params = params) } }
-            item { SpinnerItem("Ripple") { Ripple(params = params) } }
-            item { SpinnerItem("Slide") { Slide(params = params) } }
-            item { SpinnerItem("Snake") { Snake(params = params) } }
-            item { SpinnerItem("Swirl") { Swirl(params = params) } }
-            item { SpinnerItem("Trace") { Trace(params = params) } }
-            item { SpinnerItem("Wave") { Wave(params = params) } }
+            item { SpinnerItem("Arc") { Arc(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Atom") { Atom(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Blocks") { Blocks(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("BouncingDots") { BouncingDots(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Cascade") { Cascade(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("CircularDots") { CircularDots(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Classic") { Classic(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("ClassicV2") { ClassicV2(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Clock") { Clock(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Comet") { Comet(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Compass") { Compass(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Dual") { Dual(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Eclipse") { Eclipse(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Flip") { Flip(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Gather") { Gather(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Leap") { Leap(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("LinearDots") { LinearDots(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Loading") { Loading(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Morph") { Morph(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Orbit") { Orbit(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Pulse") { Pulse(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Radar") { Radar(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Ring") { Ring(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Ripple") { Ripple(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Slide") { Slide(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Snake") { Snake(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Swirl") { Swirl(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Trace") { Trace(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Wave") { Wave(modifier = Modifier.size(24.dp), color = color) } }
         }
     }
 }

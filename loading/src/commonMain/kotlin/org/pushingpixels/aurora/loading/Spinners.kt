@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.loading
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -31,7 +30,6 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.CornerRounding
@@ -43,26 +41,16 @@ import kotlin.math.sin
 // This is a modified version of the original source code by Jakub Krehel
 // available under the MIT license. See the full license under resources/Loading.license.
 
-/**
- * Common parameters for all spinners.
- */
-data class SpinnerParams(
-    val size: Dp = 24.dp,
-    val color: Color,
-    val duration: Long? = null,
-)
-
 // ─── Arc ───────────────────────────────────────────────────────────────────────
 
 @Composable
 fun Arc(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 800,
     easing: Easing = LinearEasing,
     cap: StrokeCap = StrokeCap.Round,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Arc.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val angle by t.animateFloat(
         initialValue = 0f,
@@ -70,7 +58,7 @@ fun Arc(
         animationSpec = infiniteRepeatable(tween(durationMillis = duration, easing = easing)),
     )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val radius = size.width / 2f
         val strokeWidth = 2.5.dp.toPx()
         val circumference = 2f * PI.toFloat() * radius
@@ -92,12 +80,11 @@ fun Arc(
 
 @Composable
 fun Atom(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1000,
     easing: Easing = LinearEasing,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Atom.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
 
     val animationDuration = duration * 2 / 3
@@ -136,7 +123,7 @@ fun Atom(
         )
     }
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val strokeWidth = 1.5.dp.toPx()
         val innerStrokeWidth = 0.8.dp.toPx()
         drawCircle(color, radius = size.width / 2f, style = Stroke(strokeWidth))
@@ -165,12 +152,11 @@ enum class BlocksSweep { Columns, Diagonal, Rows }
 
 @Composable
 fun Blocks(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1300,
     sweep: BlocksSweep = BlocksSweep.Diagonal,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Blocks.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
 
     val gridSize = 3
@@ -198,7 +184,7 @@ fun Blocks(
         )
     }
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val gap = dim * 0.1f
         val cellSize = (dim - gap * 2) / gridSize
@@ -242,11 +228,10 @@ fun Blocks(
 
 @Composable
 fun BouncingDots(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 500,
 ) {
-    val color = params.color
-    val duration = SpinnerName.BouncingDots.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
 
     // Dots
@@ -267,7 +252,7 @@ fun BouncingDots(
         )
     }
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val dotSize = dim * 0.25f
         val gap = dim * 0.2f
@@ -290,12 +275,11 @@ fun BouncingDots(
 
 @Composable
 fun Cascade(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1500,
     cap: StrokeCap = StrokeCap.Round,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Cascade.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val cascades = List(3) {
         // The Y coordinate of the first control point is negative to start each cascade rotation in the
@@ -313,7 +297,7 @@ fun Cascade(
         )
     }
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val center = dim / 2.0f
         listOf(0.875f, 0.58f, 0.3f).forEachIndexed { index, cascadeScale ->
@@ -346,18 +330,17 @@ fun Cascade(
 
 @Composable
 fun CircularDots(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 800,
 ) {
-    val color = params.color
-    val duration = SpinnerName.CircularDots.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val highlight by t.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(tween(durationMillis = duration, easing = LinearEasing)))
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val scale = dim / 16f
         val dotR = 1.5f * scale
@@ -382,11 +365,10 @@ fun CircularDots(
 
 @Composable
 fun Classic(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1200,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Classic.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val highlight by t.animateFloat(
         initialValue = 0f,
@@ -394,7 +376,7 @@ fun Classic(
         animationSpec = infiniteRepeatable(tween(durationMillis = duration, easing = LinearEasing))
     )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val barLength = 0.22f * dim
         val barThickness = 0.1f * dim
@@ -431,11 +413,10 @@ fun Classic(
 
 @Composable
 fun ClassicV2(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 800,
 ) {
-    val color = params.color
-    val duration = SpinnerName.ClassicV2.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val highlight by t.animateFloat(
         initialValue = 0f,
@@ -443,7 +424,7 @@ fun ClassicV2(
         animationSpec = infiniteRepeatable(tween(durationMillis = duration, easing = LinearEasing))
     )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val barLength = 0.22f * dim
         val barThickness = 0.1f * dim
@@ -492,12 +473,11 @@ internal fun directionVectorPointF(angleRadians: Float) =
 
 @Composable
 fun Clock(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1200,
     easing: Easing = LinearEasing,
 ) {
-    val arcColor = params.color
-    val duration = SpinnerName.Clock.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val angle by t.animateFloat(
         initialValue = 0f,
@@ -541,15 +521,15 @@ fun Clock(
     }
 
     val path = polygon.toPath()
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
-        drawCircle(arcColor.copy(alpha = 0.1f), radius = dim / 2f)
+        drawCircle(color.copy(alpha = 0.1f), radius = dim / 2f)
         withTransform({
             rotate(angle)
             scale(size.width * 0.5f, size.width * 0.5f)
             translate(size.width * 0.5f, size.height * 0.5f)
         }) {
-            drawPath(path, color = arcColor)
+            drawPath(path, color = color)
         }
     }
 }
@@ -558,12 +538,11 @@ fun Clock(
 
 @Composable
 fun Comet(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 700,
     easing: Easing = LinearEasing,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Comet.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val angle by t.animateFloat(
         initialValue = 0f,
@@ -571,7 +550,7 @@ fun Comet(
         animationSpec = infiniteRepeatable(tween(durationMillis = duration, easing = easing))
     )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val radius = size.width / 2
         val strokeWidth = 2.5.dp.toPx()
 
@@ -601,11 +580,10 @@ fun Comet(
 
 @Composable
 fun Compass(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 500,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Compass.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val angle by t.animateFloat(
         initialValue = 0f,
@@ -613,7 +591,7 @@ fun Compass(
         infiniteRepeatable(tween(durationMillis = duration, easing = EaseInOut), RepeatMode.Restart)
     )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val barLength = 0.22f * dim
         val barThickness = 0.1f * dim
@@ -648,13 +626,12 @@ fun Compass(
 
 @Composable
 fun Dual(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1000,
     easing: Easing = LinearEasing,
     cap: StrokeCap = StrokeCap.Round,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Dual.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val angle by t.animateFloat(
         initialValue = 0f,
@@ -662,7 +639,7 @@ fun Dual(
         animationSpec = infiniteRepeatable(tween(durationMillis = duration, easing = easing))
     )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val strokeWidth = 2.5f.dp.toPx()
 
@@ -715,11 +692,10 @@ fun Dual(
 
 @Composable
 fun Eclipse(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1200,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Eclipse.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
 
     val slide = List(2) { index ->
@@ -824,7 +800,7 @@ fun Eclipse(
         )
     }
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val dotSize = dim * 0.4f
         for (index in 0..1) {
@@ -844,11 +820,10 @@ fun Eclipse(
 
 @Composable
 fun Flip(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1200,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Flip.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val position by t.animateFloat(
         initialValue = 0f,
@@ -860,7 +835,7 @@ fun Flip(
     // Second half is Y flip
     val rotY = if (position > 0.5f) -(position - 0.5f) * 360f else 0f
 
-    Canvas(modifier = modifier.size(params.size).graphicsLayer {
+    Canvas(modifier.graphicsLayer {
         rotationX = rotX
         rotationY = rotY
     }) {
@@ -879,11 +854,10 @@ fun Flip(
 
 @Composable
 fun Gather(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1600,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Gather.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
 
     val pull =
@@ -936,7 +910,7 @@ fun Gather(
             )
         )
 
-    Canvas(modifier = modifier.size(params.size)) {//.background(Color.Red)) {
+    Canvas(modifier) {//.background(Color.Red)) {
         val dim = size.width
         val defaultBlockGap = dim * 0.24f
         val blockSize = (dim - defaultBlockGap) / 2f
@@ -961,11 +935,10 @@ fun Gather(
 
 @Composable
 fun Leap(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1800,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Leap.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
 
     val translate = List(3) { index ->
@@ -1031,7 +1004,7 @@ fun Leap(
         )
     }
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val dotDiameter = dim * 0.24f
         val gap = (dim - 3 * dotDiameter) / 2f
@@ -1054,11 +1027,10 @@ fun Leap(
 
 @Composable
 fun LinearDots(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 900,
 ) {
-    val color = params.color
-    val duration = SpinnerName.LinearDots.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
 
     val fade = List(3) { index ->
@@ -1089,7 +1061,7 @@ fun LinearDots(
         )
     }
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val dotDiameter = dim * 0.24f
         val gap = (dim - 3 * dotDiameter) / 2f
@@ -1109,11 +1081,10 @@ fun LinearDots(
 
 @Composable
 fun Loading(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1000,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Loading.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val highlight by t.animateFloat(
         initialValue = 0f,
@@ -1124,7 +1095,7 @@ fun Loading(
         IntOffset(10, 2), IntOffset(6, 0), IntOffset(2, 2), IntOffset(0, 6),
         IntOffset(2, 10), IntOffset(6, 12), IntOffset(10, 10), IntOffset(12, 6))
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val cellSize = dim / 15.0f
         segments.forEachIndexed { index, (x, y) ->
@@ -1154,11 +1125,10 @@ fun Loading(
 
 @Composable
 fun Morph(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1200,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Morph.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
 
     val cornerRadiusFactor =
@@ -1205,7 +1175,7 @@ fun Morph(
             )
         )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val sq = dim * 0.64f
         val cornerRadius = cornerRadiusFactor.value * sq
@@ -1226,12 +1196,11 @@ fun Morph(
 
 @Composable
 fun Orbit(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 750,
     easing: Easing = LinearEasing,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Orbit.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val angle by t.animateFloat(
         initialValue = 0f,
@@ -1239,7 +1208,7 @@ fun Orbit(
         animationSpec = infiniteRepeatable(tween(durationMillis = duration, easing = easing))
     )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val strokeWidth = 2.0.dp.toPx()
         val dotR = dim / 8.0f
@@ -1267,11 +1236,10 @@ fun Orbit(
 
 @Composable
 fun Pulse(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1200,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Pulse.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val position by t.animateFloat(
         initialValue = 0f,
@@ -1281,7 +1249,7 @@ fun Pulse(
     val alpha = 0.4f * (1f - position)
     val sc = 0.25f + position * 0.75f
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val dotR = dim / 8.0f
         drawCircle(
@@ -1296,12 +1264,11 @@ fun Pulse(
 
 @Composable
 fun Radar(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1500,
     easing: Easing = LinearEasing,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Radar.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val beamAngle by t.animateFloat(
         initialValue = 0f,
@@ -1309,7 +1276,7 @@ fun Radar(
         animationSpec = infiniteRepeatable(tween(durationMillis = duration, easing = easing))
     )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val beamStart = dim / 5.0f
 
@@ -1363,13 +1330,12 @@ fun Radar(
 
 @Composable
 fun Ring(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 800,
     easing: Easing = LinearEasing,
     cap: StrokeCap = StrokeCap.Round,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Ring.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val angle by t.animateFloat(
         0f,
@@ -1377,7 +1343,7 @@ fun Ring(
         infiniteRepeatable(tween(durationMillis = duration, easing = easing))
     )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val radius = size.width / 2f
         val strokeWidth = 2.5.dp.toPx()
         val circumference = 2f * PI.toFloat() * radius
@@ -1403,19 +1369,18 @@ enum class RippleDirection { In, Out }
 
 @Composable
 fun Ripple(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1200,
     direction: RippleDirection = RippleDirection.Out,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Ripple.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val position by t.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(tween(durationMillis = duration, easing = LinearEasing)))
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
 
         for (i in 0..2) {
@@ -1432,11 +1397,10 @@ fun Ripple(
 
 @Composable
 fun Slide(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 2400,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Slide.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
 
     val slideX = List(3) { index ->
@@ -1511,7 +1475,7 @@ fun Slide(
     }
 
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val dotSize = dim * 0.34f
         val gap = dim * 0.2f
@@ -1531,12 +1495,11 @@ fun Slide(
 
 @Composable
 fun Snake(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1400,
     cap: StrokeCap = StrokeCap.Round,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Snake.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
 
     // Our snake does two full rotations in the allotted duration
@@ -1583,7 +1546,7 @@ fun Snake(
             )
         )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val radius = size.width / 2f
         val strokeWidth = 2.5.dp.toPx()
         val circumference = 2f * PI.toFloat() * radius
@@ -1614,11 +1577,10 @@ fun Snake(
 
 @Composable
 fun Swirl(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1200,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Swirl.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val highlight by t.animateFloat(
         initialValue = 0f,
@@ -1628,7 +1590,7 @@ fun Swirl(
     val ring = listOf(0, 1, 2, 7, null, 3, 6, 5, 4)
     val cellCount = 8
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val gap = dim * 5.0f / 32.0f
         val padding = dim / 16.0f
@@ -1658,13 +1620,12 @@ fun Swirl(
 
 @Composable
 fun Trace(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1200,
     easing: Easing = LinearEasing,
     cap: StrokeCap = StrokeCap.Round,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Trace.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
     val angle by t.animateFloat(
         0f,
@@ -1672,7 +1633,7 @@ fun Trace(
         infiniteRepeatable(tween(durationMillis = duration, easing = easing))
     )
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
 
         val strokeWidth = 2.5.dp.toPx()
@@ -1709,14 +1670,12 @@ enum class WaveOrigin { Bottom, Center }
 
 @Composable
 fun Wave(
-    modifier: Modifier = Modifier,
-    params: SpinnerParams,
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 900,
     origin: WaveOrigin = WaveOrigin.Center,
 ) {
-    val color = params.color
-    val duration = SpinnerName.Wave.effectiveDuration(params).toInt()
     val t = rememberInfiniteTransition()
-    val p by t.animateFloat(0f, 1f, infiniteRepeatable(tween(durationMillis = duration, easing = FastOutSlowInEasing)))
 
     val rise = List(5) { index ->
         t.animateFloat(
@@ -1747,7 +1706,7 @@ fun Wave(
     }
 
 
-    Canvas(modifier = modifier.size(params.size)) {
+    Canvas(modifier) {
         val dim = size.width
         val barWidth = dim * 0.12f
         val gap = (dim - 5 * barWidth) / 6f
