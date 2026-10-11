@@ -52,7 +52,7 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
      *
      * @param components      the list of components to measure
      * @param minMeasure      the measure used to determine the minimum size
-     * @param prefMeasure     the measure used to determine the preferred size
+     * @param maxMeasure      the measure used to determine the maximum size
      * @param defaultMeasure  the measure used to determine the default size
      * @return the maximum size in pixels
      * @see FormSpec.maximumSize
@@ -62,7 +62,7 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
         textStyle: TextStyle,
         components: List<IntrinsicMeasurable>,
         minMeasure: Measure,
-        prefMeasure: Measure,
+        maxMeasure: Measure,
         defaultMeasure: Measure
     ): Int {
         var size = basis.maximumSize(
@@ -70,7 +70,7 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
             textStyle,
             components,
             minMeasure,
-            prefMeasure,
+            maxMeasure,
             defaultMeasure
         )
         if (lowerBound != null) {
@@ -80,7 +80,7 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
                     textStyle,
                     components,
                     minMeasure,
-                    prefMeasure,
+                    maxMeasure,
                     defaultMeasure
                 )
             )
@@ -92,7 +92,7 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
                     textStyle,
                     components,
                     minMeasure,
-                    prefMeasure,
+                    maxMeasure,
                     defaultMeasure
                 )
             )

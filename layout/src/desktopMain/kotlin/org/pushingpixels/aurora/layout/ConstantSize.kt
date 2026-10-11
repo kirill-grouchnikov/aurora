@@ -107,7 +107,7 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
      *
      * @param components      the list of components used to compute the size
      * @param minMeasure      the measure that determines the minimum sizes
-     * @param prefMeasure     the measure that determines the preferred sizes
+     * @param maxMeasure      the measure that determines the maximum sizes
      * @param defaultMeasure  the measure that determines the default sizes
      * @return the computed maximum size in pixel
      */
@@ -116,7 +116,7 @@ public data class ConstantSize(public val value: Double, public val unit: Measur
         textStyle: TextStyle,
         components: List<IntrinsicMeasurable>,
         minMeasure: Measure,
-        prefMeasure: Measure,
+        maxMeasure: Measure,
         defaultMeasure: Measure
     ): Int {
         return getPixelSize(textMeasurer, textStyle)

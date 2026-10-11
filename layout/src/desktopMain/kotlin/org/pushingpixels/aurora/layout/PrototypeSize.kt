@@ -46,7 +46,7 @@ public class PrototypeSize(private val prototype: String) : Size {
      *
      * @param components      the list of components used to compute the size
      * @param minMeasure      the measure that determines the minimum sizes
-     * @param prefMeasure     the measure that determines the preferred sizes
+     * @param maxMeasure      the measure that determines the maximum sizes
      * @param defaultMeasure  the measure that determines the default sizes
      *
      * @return string width for this size's prototype string
@@ -57,7 +57,7 @@ public class PrototypeSize(private val prototype: String) : Size {
         textStyle: TextStyle,
         components: List<IntrinsicMeasurable>,
         minMeasure: Measure,
-        prefMeasure: Measure,
+        maxMeasure: Measure,
         defaultMeasure: Measure
     ): Int {
         return textMeasurer.measure(this.prototype).size.width
