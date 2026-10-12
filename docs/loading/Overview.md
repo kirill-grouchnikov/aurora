@@ -13,3 +13,6 @@ This module has 29 configurable loaders to use in your application. Each loader 
 Some loaders accept additional parameters for more specific configuration.
 
 Visit Jakub's [playground](https://loading.dev/) to see the original loaders in action.
+
+**Note:** This module is a multiplatform library, and can be used for targets outside of desktop, such as web.
+See [this online demo](https://pushing-pixels.org/demos/aurora-loaders-demo/index.html) that is using the Wasm/JS target of this module.
