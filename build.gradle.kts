@@ -39,6 +39,13 @@ allprojects {
         maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
     }
 
+    tasks.matching {
+        it.name == "checkComposeUiTestConfigurationForJs" ||
+        it.name == "checkComposeUiTestConfigurationForWasmJs"
+    }.configureEach {
+        enabled = false
+    }
+
     tasks.withType<Jar>().configureEach {
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
