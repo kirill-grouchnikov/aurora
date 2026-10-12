@@ -555,7 +555,7 @@ fun Comet(
         val strokeWidth = 2.5.dp.toPx()
 
         // Account for the rounded stroke cap in start and sweep angles of the arc
-        val circumference = 2.0f * Math.PI.toFloat() * (radius - strokeWidth / 2)
+        val circumference = 2.0f * PI.toFloat() * (radius - strokeWidth / 2)
         val strokeAngle = strokeWidth / circumference * 180.0f
 
         withTransform({

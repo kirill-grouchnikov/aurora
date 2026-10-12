@@ -10,4 +10,5 @@ build/
 out/
 bin/
 drop/*-SNAPSHOT/**
+kotlin-js-store/
 
