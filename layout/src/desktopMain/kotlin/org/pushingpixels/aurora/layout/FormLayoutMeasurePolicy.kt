@@ -21,6 +21,7 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -82,33 +83,33 @@ internal class FormLayoutMeasurePolicy(
         }
     }
 
-//    override fun IntrinsicMeasureScope.minIntrinsicWidth(measurables: List<IntrinsicMeasurable>, height: Int): Int {
-//        return computeLayoutSize(measurables, minimumWidthMeasure, minimumHeightMeasure).width.toInt()
-//    }
-//
-//    override fun IntrinsicMeasureScope.minIntrinsicHeight(measurables: List<IntrinsicMeasurable>, width: Int): Int {
-//        return computeLayoutSize(measurables, minimumWidthMeasure, minimumHeightMeasure).height.toInt()
-//    }
-//
-//    override fun IntrinsicMeasureScope.maxIntrinsicWidth(measurables: List<IntrinsicMeasurable>, height: Int): Int {
-//        return computeLayoutSize(measurables, preferredWidthMeasure, preferredHeightMeasure).width.toInt()
-//    }
-//
-//    override fun IntrinsicMeasureScope.maxIntrinsicHeight(measurables: List<IntrinsicMeasurable>, width: Int): Int {
-//        return computeLayoutSize(measurables, preferredWidthMeasure, preferredHeightMeasure).height.toInt()
-//    }
+    override fun IntrinsicMeasureScope.minIntrinsicWidth(measurables: List<IntrinsicMeasurable>, height: Int): Int {
+        return computeLayoutSize(measurables, minimumWidthMeasure, minimumHeightMeasure).width.toInt()
+    }
+
+    override fun IntrinsicMeasureScope.minIntrinsicHeight(measurables: List<IntrinsicMeasurable>, width: Int): Int {
+        return computeLayoutSize(measurables, minimumWidthMeasure, minimumHeightMeasure).height.toInt()
+    }
+
+    override fun IntrinsicMeasureScope.maxIntrinsicWidth(measurables: List<IntrinsicMeasurable>, height: Int): Int {
+        return computeLayoutSize(measurables, maximumWidthMeasure, maximumHeightMeasure).width.toInt()
+    }
+
+    override fun IntrinsicMeasureScope.maxIntrinsicHeight(measurables: List<IntrinsicMeasurable>, width: Int): Int {
+        return computeLayoutSize(measurables, maximumWidthMeasure, maximumHeightMeasure).height.toInt()
+    }
 
     private fun initializeColAndRowComponentLists(
         measurables: List<IntrinsicMeasurable>,
         colSpecs: List<ColumnSpec>,
         rowSpecs: List<RowSpec>) {
 
-        colComponents = arrayOf()
+        colComponents = Array(colSpecs.size) { arrayListOf() }
         for (i in colSpecs.indices) {
             colComponents[i] = ArrayList()
         }
 
-        rowComponents = arrayOf()
+        rowComponents = Array(rowSpecs.size) { arrayListOf() }
         for (i in rowSpecs.indices) {
             rowComponents[i] = ArrayList()
         }
@@ -280,7 +281,7 @@ internal class FormLayoutMeasurePolicy(
      */
     private fun maximumSizes(
         formSpecs: List<FormSpec>,
-        componentLists: Array<List<IntrinsicMeasurable>>,
+        componentLists: Array<out List<IntrinsicMeasurable>>,
         minMeasure: Measure,
         maxMeasure: Measure,
         defaultMeasure: Measure
@@ -559,5 +560,82 @@ internal class FormLayoutMeasurePolicy(
         }
         val elementDataNode = measurable.parentData as? FormLayoutChildDataNode
         return elementDataNode?.cellConstraints
+    }
+
+    private fun computeLayoutSize(
+        measurables: List<IntrinsicMeasurable>,
+        defaultWidthMeasure: Measure,
+        defaultHeightMeasure: Measure
+    ): IntSize {
+        initializeColAndRowComponentLists(
+            measurables, colSpecs, rowSpecs
+        )
+        val colWidths: IntArray = maximumSizes(
+            colSpecs, colComponents,
+            minimumWidthMeasure,
+            maximumWidthMeasure,
+            defaultWidthMeasure
+        )
+        val rowHeights: IntArray = maximumSizes(
+            rowSpecs, rowComponents,
+            minimumHeightMeasure,
+            maximumHeightMeasure,
+            defaultHeightMeasure
+        )
+
+        val groupedWidths: IntArray = groupedSizes(colGroupIndices, colWidths)
+        val groupedHeights: IntArray = groupedSizes(rowGroupIndices, rowHeights)
+
+        // Convert sizes to origins.
+        val xOrigins: IntArray = computeOrigins(groupedWidths, 0)
+        val yOrigins: IntArray = computeOrigins(groupedHeights, 0)
+
+        val width1: Int = sum(groupedWidths)
+        val height1: Int = sum(groupedHeights)
+        var maxWidth = width1
+        var maxHeight = height1
+
+        /*
+         * Take components that span multiple columns or rows into account.
+         * This shall be done if and only if a component spans an interval
+         * that can grow.
+         */
+        // First computes the maximum number of cols/rows a component
+        // can span without spanning a growing column.
+        val maxFixedSizeColsTable: IntArray = computeMaximumFixedSpanTable(colSpecs)
+        val maxFixedSizeRowsTable: IntArray = computeMaximumFixedSpanTable(rowSpecs)
+
+        for ((index, measurable) in measurables.withIndex()) {
+            val constraints = getCellConstraints(index, measurable) ?: continue
+
+            if (constraints.gridWidth > 1
+                && constraints.gridWidth > maxFixedSizeColsTable[constraints.gridX - 1]
+            ) {
+                val compWidth: Int = defaultWidthMeasure.sizeOf(measurable)
+                val gridX1 = constraints.gridX - 1
+                val gridX2 = gridX1 + constraints.gridWidth
+                val leadX = xOrigins[gridX1]
+                val trailX = width1 - xOrigins[gridX2]
+                val myWidth = leadX + compWidth + trailX
+                if (myWidth > maxWidth) {
+                    maxWidth = myWidth
+                }
+            }
+
+            if (constraints.gridHeight > 1
+                && constraints.gridHeight > maxFixedSizeRowsTable[constraints.gridY - 1]
+            ) {
+                val compHeight: Int = defaultHeightMeasure.sizeOf(measurable)
+                val gridY1 = constraints.gridY - 1
+                val gridY2 = gridY1 + constraints.gridHeight
+                val leadY = yOrigins[gridY1]
+                val trailY = height1 - yOrigins[gridY2]
+                val myHeight = leadY + compHeight + trailY
+                if (myHeight > maxHeight) {
+                    maxHeight = myHeight
+                }
+            }
+        }
+        return IntSize(maxWidth, maxHeight)
     }
 }
