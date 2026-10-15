@@ -98,7 +98,7 @@ internal class FormLayoutMeasurePolicy(
     }
 
     private fun initializeColAndRowComponentLists(
-        measurables: List<out IntrinsicMeasurable>,
+        measurables: List<IntrinsicMeasurable>,
         colSpecs: List<ColumnSpec>,
         rowSpecs: List<RowSpec>) {
 
@@ -113,15 +113,13 @@ internal class FormLayoutMeasurePolicy(
         }
 
         for ((index, element) in measurables.withIndex()) {
-            val constraints = getCellConstraints(index, element)
-            if (constraints != null) {
-                if (constraints.gridWidth == 1) {
-                    colComponents[constraints.gridX - 1].add(element)
-                }
+            val constraints = getCellConstraints(index, element) ?: continue
+            if (constraints.gridWidth == 1) {
+                colComponents[constraints.gridX - 1].add(element)
+            }
 
-                if (constraints.gridHeight == 1) {
-                    rowComponents[constraints.gridY - 1].add(element)
-                }
+            if (constraints.gridHeight == 1) {
+                rowComponents[constraints.gridY - 1].add(element)
             }
         }
     }
@@ -181,20 +179,6 @@ internal class FormLayoutMeasurePolicy(
     }
 
     /**
-     * Computes and returns the sum of integers in the given array of ints.
-     *
-     * @param sizes    an array of ints to sum up
-     * @return the sum of ints in the array
-     */
-    private fun sum(sizes: IntArray): Int {
-        var sum = 0
-        for (i in sizes.indices.reversed()) {
-            sum += sizes[i]
-        }
-        return sum
-    }
-
-    /**
      * Computes and returns a table that maps a column/row index
      * to the maximum number of columns/rows that a component can span
      * without spanning a growing column.
@@ -235,7 +219,6 @@ internal class FormLayoutMeasurePolicy(
         }
         return table
     }
-
 
     /**
      * Computes and returns the sizes for the given form specs, component
@@ -323,8 +306,6 @@ internal class FormLayoutMeasurePolicy(
         }
         return sizes
     }
-
-
 
     /**
      * Distributes free space over columns and rows and
@@ -417,8 +398,8 @@ internal class FormLayoutMeasurePolicy(
 
         val groupedMinSizes: IntArray = groupedSizes(groupIndices, minSizes)
         val groupedMaxSizes: IntArray = groupedSizes(groupIndices, maxSizes)
-        val totalMinSize: Int = sum(groupedMinSizes)
-        val totalMaxSize: Int = sum(groupedMaxSizes)
+        val totalMinSize: Int = groupedMinSizes.sum()
+        val totalMaxSize: Int = groupedMaxSizes.sum()
         val compressedSizes: IntArray = compressedSizes(
             formSpecs,
             totalSize,
@@ -428,7 +409,7 @@ internal class FormLayoutMeasurePolicy(
             maxSizes
         )
         val groupedSizes: IntArray = groupedSizes(groupIndices, compressedSizes)
-        val totalGroupedSize: Int = sum(groupedSizes)
+        val totalGroupedSize: Int = groupedSizes.sum()
         val sizes: IntArray = distributedSizes(
             formSpecs,
             totalSize,
@@ -556,8 +537,8 @@ internal class FormLayoutMeasurePolicy(
         val xOrigins: IntArray = computeOrigins(groupedWidths, 0)
         val yOrigins: IntArray = computeOrigins(groupedHeights, 0)
 
-        val width1: Int = sum(groupedWidths)
-        val height1: Int = sum(groupedHeights)
+        val width1: Int = groupedWidths.sum()
+        val height1: Int = groupedHeights.sum()
         var maxWidth = width1
         var maxHeight = height1
 
