@@ -59,6 +59,8 @@ import org.pushingpixels.aurora.component.ribbon.resize.CoreRibbonResizeSequenci
 import org.pushingpixels.aurora.demo.*
 import org.pushingpixels.aurora.demo.svg.radiance_menu
 import org.pushingpixels.aurora.demo.svg.tango.*
+import org.pushingpixels.aurora.layout.dsl.DefaultForm
+import org.pushingpixels.aurora.layout.factories.Paddings
 import org.pushingpixels.aurora.theming.*
 import org.pushingpixels.aurora.theming.decorator.AuroraDecorators
 import org.pushingpixels.aurora.theming.decorator.tab.DefaultTabDecorator
@@ -602,7 +604,7 @@ fun main() = auroraApplication {
         onShowContextualMenuListener = onShowContextualMenuListener
     )
 
-    val vmf = MessageFormat(resourceBundle.getString("GroupVisibility.text"))
+    val vmf = MessageFormat(resourceBundle.getString("Demo.ribbonGroupVisibilityLabel"))
     AuroraRibbonWindow(
         skin = skin,
         onCloseRequest = ::exitApplication,
@@ -617,124 +619,159 @@ fun main() = auroraApplication {
                     modifier = Modifier.weight(1.0f).fillMaxHeight(),
                     ribbonColorData = ribbonColorData
                 )
-                Column(
-                    modifier = Modifier.fillMaxHeight().padding(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                DefaultForm(
+                    modifier = Modifier.width(IntrinsicSize.Min).fillMaxHeight(),
+                    padding = Paddings.Dlu4,
+                    encodedColumnSpecs = "end:pref, 4dlu, fill:pref",
+                    encodedRowSpecs = "",
                 ) {
-                    CheckBoxProjection(
-                        contentModel = SelectorContentModel(
-                            text = resourceBundle.getString("Minimized.text"),
-                            selected = minimizedMode,
-                            onClick = {
-                                minimizedMode = !minimizedMode
-                            }
-                        )
-                    ).project()
-                    CheckBoxProjection(
-                        contentModel = SelectorContentModel(
-                            text = vmf.format(arrayOf("1")),
-                            selected = contextualTaskGroup1Visible,
-                            onClick = {
-                                contextualTaskGroup1Visible = !contextualTaskGroup1Visible
-                            }
-                        )
-                    ).project()
-                    CheckBoxProjection(
-                        contentModel = SelectorContentModel(
-                            text = vmf.format(arrayOf("2")),
-                            selected = contextualTaskGroup2Visible,
-                            onClick = {
-                                contextualTaskGroup2Visible = !contextualTaskGroup2Visible
-                            }
-                        )
-                    ).project()
-                    CommandButtonProjection(
-                        contentModel = Command(text = resourceBundle.getString("Skin.underlineTabs"),
-                            isActionEnabled = true,
-                            action = { skin = geminiSkin().copy(
-                                decorators = AuroraDecorators(
-                                    tabDecorator = object: DefaultTabDecorator() {
-                                        override fun getTabExtraPadding(): PaddingValues {
-                                            return PaddingValues(start = 0.dp, end = 0.dp, top = 0.dp, bottom = 3.dp)
-                                        }
+                    append(
+                        text = resourceBundle.getString("Demo.ribbonMinimizedLabel"),
+                        component = {
+                            CheckBoxProjection(
+                                contentModel = SelectorContentModel(
+                                    text = resourceBundle.getString("Demo.ribbonMinimizedDesc"),
+                                    selected = minimizedMode,
+                                    onClick = {
+                                        minimizedMode = !minimizedMode
+                                    }
+                                )
+                            ).project()
+                        },
+                    )
 
-                                        override fun shouldDrawUnbrokenContentEdge(): Boolean {
-                                            return true
-                                        }
+                    append(
+                        text = vmf.format(arrayOf("1")),
+                        component = {
+                            CheckBoxProjection(
+                                contentModel = SelectorContentModel(
+                                    text = resourceBundle.getString("Demo.ribbonGroupVisibilityDesc"),
+                                    selected = contextualTaskGroup1Visible,
+                                    onClick = {
+                                        contextualTaskGroup1Visible = !contextualTaskGroup1Visible
+                                    }
+                                )
+                            ).project()
+                        }
+                    )
 
-                                        @Composable
-                                        override fun getDecoratedTabContentColor(
-                                            currState: ComponentState,
-                                            activeStates: Map<ComponentState, Float>,
-                                            parentDecorationAreaType: DecorationAreaType,
-                                            tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
-                                            backgroundAppearanceStrategy: BackgroundAppearanceStrategy
-                                        ): Color {
-                                            val skinColors = AuroraSkin.colors
+                    append(
+                        text = vmf.format(arrayOf("2")),
+                        component = {
+                            CheckBoxProjection(
+                                contentModel = SelectorContentModel(
+                                    text = resourceBundle.getString("Demo.ribbonGroupVisibilityDesc"),
+                                    selected = contextualTaskGroup2Visible,
+                                    onClick = {
+                                        contextualTaskGroup2Visible = !contextualTaskGroup2Visible
+                                    }
+                                )
+                            ).project()
+                        }
+                    )
 
-                                            val parentSurfaceTokens = skinColors.getNeutralContainerTokens(
-                                                decorationAreaType = parentDecorationAreaType,
-                                                associationKind = ContainerColorTokensAssociationKind.Tab
-                                            )
+                    append(
+                        text = resourceBundle.getString("Demo.ribbonUnderlineTabs"),
+                        component = {
+                            CommandButtonProjection(
+                                contentModel = Command(text = resourceBundle.getString("Apply.text"),
+                                    isActionEnabled = true,
+                                    action = { skin = geminiSkin().copy(
+                                        decorators = AuroraDecorators(
+                                            tabDecorator = object: DefaultTabDecorator() {
+                                                override fun getTabExtraPadding(): PaddingValues {
+                                                    return PaddingValues(start = 0.dp, end = 0.dp, top = 0.dp, bottom = 3.dp)
+                                                }
 
-                                            val alpha = if (currState.isDisabled) parentSurfaceTokens.onContainerDisabledAlpha
-                                                else parentSurfaceTokens.onContainerEnabledAlpha
-                                            return parentSurfaceTokens.onContainer.byAlpha(alpha)
-                                        }
+                                                override fun shouldDrawUnbrokenContentEdge(): Boolean {
+                                                    return true
+                                                }
 
-                                        override fun paintTabSurface(
-                                            drawScope: DrawScope,
-                                            skinColors: AuroraSkinColors,
-                                            decorationAreaType: DecorationAreaType,
-                                            decorationPainter: AuroraDecorationPainter,
-                                            outlineFill: Outline,
-                                            density: Density,
-                                            rootSize: Size,
-                                            offsetFromRoot: Offset,
-                                            size: Size,
-                                            surfaceColorTokens: ContainerColorTokens,
-                                            alpha: Float
-                                        ) {}
+                                                @Composable
+                                                override fun getDecoratedTabContentColor(
+                                                    currState: ComponentState,
+                                                    activeStates: Map<ComponentState, Float>,
+                                                    parentDecorationAreaType: DecorationAreaType,
+                                                    tokensOverlayProvider: ContainerColorTokensOverlay.Provider?,
+                                                    backgroundAppearanceStrategy: BackgroundAppearanceStrategy
+                                                ): Color {
+                                                    val skinColors = AuroraSkin.colors
 
-                                        override fun paintTabSurfaceHighlight(
-                                            drawScope: DrawScope,
-                                            outlineSupplier: OutlineSupplier,
-                                            density: Density,
-                                            size: Size,
-                                            surfaceHighlightColorTokens: ContainerColorTokens,
-                                            alpha: Float
-                                        ) {
-                                            with(drawScope) {
-                                                drawRect(
-                                                    color = surfaceHighlightColorTokens.containerSurfaceHighest,
-                                                    topLeft = Offset(0.0f, size.height - 3.dp.toPx()),
-                                                    size = Size(size.width, 3.dp.toPx()),
-                                                    style = Fill,
-                                                    alpha = alpha
-                                                )
-                                            }
-                                        }
+                                                    val parentSurfaceTokens = skinColors.getNeutralContainerTokens(
+                                                        decorationAreaType = parentDecorationAreaType,
+                                                        associationKind = ContainerColorTokensAssociationKind.Tab
+                                                    )
 
-                                        override fun paintTabOutline(
-                                            drawScope: DrawScope,
-                                            outlineSupplier: OutlineSupplier,
-                                            density: Density,
-                                            size: Size,
-                                            outlineColor: Color,
-                                            alpha: Float
-                                        ) {}
-                                    },
-                                    windowDecorator = DefaultWindowDecorator()
-                                ))
-                            }),
-                        presentationModel = CommandButtonPresentationModel(
-                            presentationState = CommandButtonPresentationState.Medium,
-                            backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
-                        )
-                    ).project()
+                                                    val alpha = if (currState.isDisabled) parentSurfaceTokens.onContainerDisabledAlpha
+                                                    else parentSurfaceTokens.onContainerEnabledAlpha
+                                                    return parentSurfaceTokens.onContainer.byAlpha(alpha)
+                                                }
 
-                    AuroraSkinSwitcher({ skin = it })
-                    AuroraLocaleSwitcher(Modifier, resourceBundle)
+                                                override fun paintTabSurface(
+                                                    drawScope: DrawScope,
+                                                    skinColors: AuroraSkinColors,
+                                                    decorationAreaType: DecorationAreaType,
+                                                    decorationPainter: AuroraDecorationPainter,
+                                                    outlineFill: Outline,
+                                                    density: Density,
+                                                    rootSize: Size,
+                                                    offsetFromRoot: Offset,
+                                                    size: Size,
+                                                    surfaceColorTokens: ContainerColorTokens,
+                                                    alpha: Float
+                                                ) {}
+
+                                                override fun paintTabSurfaceHighlight(
+                                                    drawScope: DrawScope,
+                                                    outlineSupplier: OutlineSupplier,
+                                                    density: Density,
+                                                    size: Size,
+                                                    surfaceHighlightColorTokens: ContainerColorTokens,
+                                                    alpha: Float
+                                                ) {
+                                                    with(drawScope) {
+                                                        drawRect(
+                                                            color = surfaceHighlightColorTokens.containerSurfaceHighest,
+                                                            topLeft = Offset(0.0f, size.height - 3.dp.toPx()),
+                                                            size = Size(size.width, 3.dp.toPx()),
+                                                            style = Fill,
+                                                            alpha = alpha
+                                                        )
+                                                    }
+                                                }
+
+                                                override fun paintTabOutline(
+                                                    drawScope: DrawScope,
+                                                    outlineSupplier: OutlineSupplier,
+                                                    density: Density,
+                                                    size: Size,
+                                                    outlineColor: Color,
+                                                    alpha: Float
+                                                ) {}
+                                            },
+                                            windowDecorator = DefaultWindowDecorator()
+                                        ))
+                                    }),
+                                presentationModel = CommandButtonPresentationModel(
+                                    presentationState = CommandButtonPresentationState.Medium,
+                                    backgroundAppearanceStrategy = BackgroundAppearanceStrategy.Always,
+                                )
+                            ).project()
+                        }
+                    )
+
+                    append(
+                        text = resourceBundle.getString("Skin.text"),
+                        component = {
+                            AuroraSkinSwitcher({ skin = it })
+                        }
+                    )
+                    append(
+                        text = resourceBundle.getString("Locale.text"),
+                        component = {
+                            AuroraLocaleSwitcher(Modifier, resourceBundle)
+                        }
+                    )
                 }
             }
         }
