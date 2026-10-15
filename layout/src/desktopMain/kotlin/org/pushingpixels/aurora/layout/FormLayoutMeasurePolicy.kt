@@ -37,8 +37,6 @@ internal class FormLayoutMeasurePolicy(
 ) : MeasurePolicy {
     private var colComponents: Array<MutableList<IntrinsicMeasurable>> = Array(colSpecs.size) { arrayListOf() }
     private var rowComponents: Array<MutableList<IntrinsicMeasurable>> = Array(rowSpecs.size) { arrayListOf() }
-    private var colComponents2: Array<MutableList<Measurable>> = Array(colSpecs.size) { arrayListOf() }
-    private var rowComponents2: Array<MutableList<Measurable>> = Array(rowSpecs.size) { arrayListOf() }
     private val minimumWidthMeasure: Measure = MinimumWidthMeasure()
     private val minimumHeightMeasure: Measure = MinimumHeightMeasure()
     private val maximumWidthMeasure: Measure = MaximumWidthMeasure()
@@ -84,23 +82,23 @@ internal class FormLayoutMeasurePolicy(
     }
 
     override fun IntrinsicMeasureScope.minIntrinsicWidth(measurables: List<IntrinsicMeasurable>, height: Int): Int {
-        return computeLayoutSize(measurables, minimumWidthMeasure, minimumHeightMeasure).width.toInt()
+        return computeLayoutSize(measurables, minimumWidthMeasure, minimumHeightMeasure).width
     }
 
     override fun IntrinsicMeasureScope.minIntrinsicHeight(measurables: List<IntrinsicMeasurable>, width: Int): Int {
-        return computeLayoutSize(measurables, minimumWidthMeasure, minimumHeightMeasure).height.toInt()
+        return computeLayoutSize(measurables, minimumWidthMeasure, minimumHeightMeasure).height
     }
 
     override fun IntrinsicMeasureScope.maxIntrinsicWidth(measurables: List<IntrinsicMeasurable>, height: Int): Int {
-        return computeLayoutSize(measurables, maximumWidthMeasure, maximumHeightMeasure).width.toInt()
+        return computeLayoutSize(measurables, maximumWidthMeasure, maximumHeightMeasure).width
     }
 
     override fun IntrinsicMeasureScope.maxIntrinsicHeight(measurables: List<IntrinsicMeasurable>, width: Int): Int {
-        return computeLayoutSize(measurables, maximumWidthMeasure, maximumHeightMeasure).height.toInt()
+        return computeLayoutSize(measurables, maximumWidthMeasure, maximumHeightMeasure).height
     }
 
     private fun initializeColAndRowComponentLists(
-        measurables: List<IntrinsicMeasurable>,
+        measurables: List<out IntrinsicMeasurable>,
         colSpecs: List<ColumnSpec>,
         rowSpecs: List<RowSpec>) {
 
@@ -123,35 +121,6 @@ internal class FormLayoutMeasurePolicy(
 
                 if (constraints.gridHeight == 1) {
                     rowComponents[constraints.gridY - 1].add(element)
-                }
-            }
-        }
-    }
-
-    private fun initializeColAndRowComponentLists2(
-        measurables: List<Measurable>,
-        colSpecs: List<ColumnSpec>,
-        rowSpecs: List<RowSpec>) {
-
-        colComponents2 = Array(colSpecs.size) { arrayListOf() }
-        for (i in colSpecs.indices) {
-            colComponents2[i] = ArrayList()
-        }
-
-        rowComponents2 = Array(rowSpecs.size) { arrayListOf() }
-        for (i in rowSpecs.indices) {
-            rowComponents2[i] = ArrayList()
-        }
-
-        for ((index, element) in measurables.withIndex()) {
-            val constraints = getCellConstraints(index, element)
-            if (constraints != null) {
-                if (constraints.gridWidth == 1) {
-                    colComponents2[constraints.gridX - 1].add(element)
-                }
-
-                if (constraints.gridHeight == 1) {
-                    rowComponents2[constraints.gridY - 1].add(element)
                 }
             }
         }
@@ -181,13 +150,13 @@ internal class FormLayoutMeasurePolicy(
         for (groupIndices in groups) {
             var groupMaxSize = 0
             // Compute the group's maximum size.
-            for (groupIndice in groupIndices) {
-                val index = groupIndice - 1
+            for (groupIndex in groupIndices) {
+                val index = groupIndex - 1
                 groupMaxSize = max(groupMaxSize, sizes[index])
             }
             // Set all sizes of this group to the group's maximum size.
-            for (groupIndice in groupIndices) {
-                val index = groupIndice - 1
+            for (groupIndex in groupIndices) {
+                val index = groupIndex - 1
                 sizes[index] = groupMaxSize
             }
         }
@@ -429,23 +398,20 @@ internal class FormLayoutMeasurePolicy(
         totalSize: Int,
         offset: Int,
         formSpecs: List<FormSpec>,
-        componentLists: Array<MutableList<Measurable>>,
+        componentLists: Array<MutableList<IntrinsicMeasurable>>,
         groupIndices: Array<IntArray>,
         minMeasure: Measure,
         maxMeasure: Measure
     ): IntArray {
         /* For each spec compute the minimum and maximum size that is
-     * the maximum of all component minimum and maximum sizes resp.
-     */
-        // TODO: simplify
-        val intrinsicComponentLists: Array<List<IntrinsicMeasurable>> =
-            componentLists.map { it.map { m -> m as IntrinsicMeasurable } }.toTypedArray()
+         * the maximum of all component minimum and maximum sizes resp.
+         */
         val minSizes: IntArray = maximumSizes(
-            formSpecs, intrinsicComponentLists,
+            formSpecs, componentLists,
             minMeasure, maxMeasure, minMeasure
         )
         val maxSizes: IntArray = maximumSizes(
-            formSpecs, intrinsicComponentLists,
+            formSpecs, componentLists,
             minMeasure, maxMeasure, maxMeasure
         )
 
@@ -511,7 +477,7 @@ internal class FormLayoutMeasurePolicy(
         measurables: List<Measurable>,
         constraints: Constraints,
     ): MeasureResult {
-        initializeColAndRowComponentLists2(measurables, colSpecs, rowSpecs)
+        initializeColAndRowComponentLists(measurables, colSpecs, rowSpecs)
 //            val size = parent.getSize()
 //
 //            val insets = parent.getInsets()
@@ -522,7 +488,7 @@ internal class FormLayoutMeasurePolicy(
             totalWidth,
             0,
             colSpecs,
-            colComponents2,
+            colComponents,
             colGroupIndices,
             minimumWidthMeasure,
             maximumWidthMeasure
@@ -531,7 +497,7 @@ internal class FormLayoutMeasurePolicy(
             totalHeight,
             0,
             rowSpecs,
-            rowComponents2,
+            rowComponents,
             rowGroupIndices,
             minimumHeightMeasure,
             maximumHeightMeasure
