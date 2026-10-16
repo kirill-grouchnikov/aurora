@@ -848,7 +848,8 @@ fun AuroraApplicationScope.DemoArea(
             Row(modifier = Modifier.fillMaxWidth()) {
                 LabelProjection(
                     contentModel = LabelContentModel(
-                        text = resourceBundle.getString("Control.selector.switches")
+                        text = resourceBundle.getString("Control.selector.switches"),
+                        enabled = contentEnabled
                     )
                 ).project()
 

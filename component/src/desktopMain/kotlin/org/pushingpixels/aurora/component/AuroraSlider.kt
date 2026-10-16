@@ -325,7 +325,12 @@ internal fun AuroraSlider(
                     it.changes.first().position.x, it.changes.first().position.y
                 )
             }
-        }.then(drag)
+        }.then(
+            if (contentModel.enabled) {
+                drag
+            } else {
+                Modifier
+            })
     ) {
         // Populate the cached color tokens for filling the overall track
         // based on the current model state info
