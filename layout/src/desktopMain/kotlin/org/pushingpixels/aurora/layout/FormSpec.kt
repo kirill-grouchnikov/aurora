@@ -64,7 +64,6 @@ public abstract class FormSpec protected constructor(
      * @param size             a constant, component or bounded size
      * @param resizeWeight     the spec resize weight
      * 
-     * @throws NullPointerException  if the `size` is `null`
      * @throws IllegalArgumentException if the `resizeWeight` is negative
      */
     init {

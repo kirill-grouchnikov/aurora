@@ -55,7 +55,6 @@ public class ColumnSpec : FormSpec {
      * @param size             constant, component size or bounded size
      * @param resizeWeight     the column's non-negative resize weight
      * 
-     * @throws NullPointerException if the `size` is `null`
      * @throws IllegalArgumentException if the size is invalid or
      * the `resizeWeight` is negative
      */
