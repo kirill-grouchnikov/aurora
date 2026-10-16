@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-
 plugins {
     kotlin("multiplatform")
     alias(libs.plugins.jetbrainsCompose)
@@ -10,10 +8,9 @@ plugins {
 }
 
 kotlin {
-    //explicitApi()
+    explicitApi()
     jvm("desktop")
     js { browser() }
-    @OptIn(ExperimentalWasmDsl::class)
     wasmJs { browser() }
     sourceSets {
         named("commonMain") {

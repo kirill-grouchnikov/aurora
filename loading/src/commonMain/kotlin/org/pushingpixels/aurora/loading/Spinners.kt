@@ -44,7 +44,7 @@ import kotlin.math.sin
 // ─── Arc ───────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Arc(
+public fun Arc(
     modifier: Modifier,
     color: Color,
     duration: Int = 800,
@@ -79,7 +79,7 @@ fun Arc(
 // ─── Atom ──────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Atom(
+public fun Atom(
     modifier: Modifier,
     color: Color,
     duration: Int = 1000,
@@ -148,10 +148,10 @@ fun Atom(
 
 // ─── Blocks ────────────────────────────────────────────────────────────────────
 
-enum class BlocksSweep { Columns, Diagonal, Rows }
+public enum class BlocksSweep { Columns, Diagonal, Rows }
 
 @Composable
-fun Blocks(
+public fun Blocks(
     modifier: Modifier,
     color: Color,
     duration: Int = 1300,
@@ -227,7 +227,7 @@ fun Blocks(
 // ─── BouncingDots ──────────────────────────────────────────────────────────────
 
 @Composable
-fun BouncingDots(
+public fun BouncingDots(
     modifier: Modifier,
     color: Color,
     duration: Int = 500,
@@ -274,7 +274,7 @@ fun BouncingDots(
 // ─── Cascade ───────────────────────────────────────────────────────────────────
 
 @Composable
-fun Cascade(
+public fun Cascade(
     modifier: Modifier,
     color: Color,
     duration: Int = 1500,
@@ -329,7 +329,7 @@ fun Cascade(
 // ─── CircularDots ──────────────────────────────────────────────────────────────
 
 @Composable
-fun CircularDots(
+public fun CircularDots(
     modifier: Modifier,
     color: Color,
     duration: Int = 800,
@@ -364,7 +364,7 @@ fun CircularDots(
 // ─── Classic ───────────────────────────────────────────────────────────────────
 
 @Composable
-fun Classic(
+public fun Classic(
     modifier: Modifier,
     color: Color,
     duration: Int = 1200,
@@ -412,7 +412,7 @@ fun Classic(
 // ─── ClassicV2 ─────────────────────────────────────────────────────────────────
 
 @Composable
-fun ClassicV2(
+public fun ClassicV2(
     modifier: Modifier,
     color: Color,
     duration: Int = 800,
@@ -472,7 +472,7 @@ internal fun directionVectorPointF(angleRadians: Float) =
     Offset(cos(angleRadians), sin(angleRadians))
 
 @Composable
-fun Clock(
+public fun Clock(
     modifier: Modifier,
     color: Color,
     duration: Int = 1200,
@@ -537,7 +537,7 @@ fun Clock(
 // ─── Comet ─────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Comet(
+public fun Comet(
     modifier: Modifier,
     color: Color,
     duration: Int = 700,
@@ -579,7 +579,7 @@ fun Comet(
 // ─── Compass ───────────────────────────────────────────────────────────────────
 
 @Composable
-fun Compass(
+public fun Compass(
     modifier: Modifier,
     color: Color,
     duration: Int = 500,
@@ -625,7 +625,7 @@ fun Compass(
 // ─── Dual ──────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Dual(
+public fun Dual(
     modifier: Modifier,
     color: Color,
     duration: Int = 1000,
@@ -691,7 +691,7 @@ fun Dual(
 // ─── Eclipse ───────────────────────────────────────────────────────────────────
 
 @Composable
-fun Eclipse(
+public fun Eclipse(
     modifier: Modifier,
     color: Color,
     duration: Int = 1200,
@@ -819,7 +819,7 @@ fun Eclipse(
 // ─── Flip ──────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Flip(
+public fun Flip(
     modifier: Modifier,
     color: Color,
     duration: Int = 1200,
@@ -853,7 +853,7 @@ fun Flip(
 // ─── Gather ────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Gather(
+public fun Gather(
     modifier: Modifier,
     color: Color,
     duration: Int = 1600,
@@ -934,7 +934,7 @@ fun Gather(
 // ─── Leap ──────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Leap(
+public fun Leap(
     modifier: Modifier,
     color: Color,
     duration: Int = 1800,
@@ -1026,7 +1026,7 @@ fun Leap(
 // ─── LinearDots ────────────────────────────────────────────────────────────────
 
 @Composable
-fun LinearDots(
+public fun LinearDots(
     modifier: Modifier,
     color: Color,
     duration: Int = 900,
@@ -1080,7 +1080,7 @@ fun LinearDots(
 // ─── Loading ───────────────────────────────────────────────────────────────────
 
 @Composable
-fun Loading(
+public fun Loading(
     modifier: Modifier,
     color: Color,
     duration: Int = 1000,
@@ -1124,7 +1124,7 @@ fun Loading(
 // ─── Morph ─────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Morph(
+public fun Morph(
     modifier: Modifier,
     color: Color,
     duration: Int = 1200,
@@ -1195,7 +1195,7 @@ fun Morph(
 // ─── Orbit ─────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Orbit(
+public fun Orbit(
     modifier: Modifier,
     color: Color,
     duration: Int = 750,
@@ -1235,7 +1235,7 @@ fun Orbit(
 // ─── Pulse ─────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Pulse(
+public fun Pulse(
     modifier: Modifier,
     color: Color,
     duration: Int = 1200,
@@ -1263,7 +1263,7 @@ fun Pulse(
 // ─── Radar ─────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Radar(
+public fun Radar(
     modifier: Modifier,
     color: Color,
     duration: Int = 1500,
@@ -1329,7 +1329,7 @@ fun Radar(
 // ─── Ring ──────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Ring(
+public fun Ring(
     modifier: Modifier,
     color: Color,
     duration: Int = 800,
@@ -1365,10 +1365,10 @@ fun Ring(
 
 // ─── Ripple ────────────────────────────────────────────────────────────────────
 
-enum class RippleDirection { In, Out }
+public enum class RippleDirection { In, Out }
 
 @Composable
-fun Ripple(
+public fun Ripple(
     modifier: Modifier,
     color: Color,
     duration: Int = 1200,
@@ -1396,7 +1396,7 @@ fun Ripple(
 // ─── Slide ─────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Slide(
+public fun Slide(
     modifier: Modifier,
     color: Color,
     duration: Int = 2400,
@@ -1494,7 +1494,7 @@ fun Slide(
 // ─── Snake ─────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Snake(
+public fun Snake(
     modifier: Modifier,
     color: Color,
     duration: Int = 1400,
@@ -1576,7 +1576,7 @@ fun Snake(
 // ─── Swirl ─────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Swirl(
+public fun Swirl(
     modifier: Modifier,
     color: Color,
     duration: Int = 1200,
@@ -1619,7 +1619,7 @@ fun Swirl(
 // ─── Trace ─────────────────────────────────────────────────────────────────────
 
 @Composable
-fun Trace(
+public fun Trace(
     modifier: Modifier,
     color: Color,
     duration: Int = 1200,
@@ -1666,10 +1666,10 @@ fun Trace(
 
 // ─── Wave ──────────────────────────────────────────────────────────────────────
 
-enum class WaveOrigin { Bottom, Center }
+public enum class WaveOrigin { Bottom, Center }
 
 @Composable
-fun Wave(
+public fun Wave(
     modifier: Modifier,
     color: Color,
     duration: Int = 900,
