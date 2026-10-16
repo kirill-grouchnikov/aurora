@@ -247,7 +247,7 @@ public class FormSpecParser private constructor(
         }
 
         private fun message(source: String?, index: Int, description: String?): String? {
-            val buffer = StringBuffer('\n'.code)
+            val buffer = StringBuilder('\n'.code)
             buffer.append('\n')
             buffer.append(source)
             buffer.append('\n')

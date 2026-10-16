@@ -22,7 +22,6 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.LayoutDirection
 import org.pushingpixels.aurora.layout.FormSpec.DefaultAlignment
-import java.util.*
 
 // This is a modified version of the original source code by Karsten Lentzsch
 // and JGoodies Software GmbH available under the BSD license. See the full
@@ -189,7 +188,7 @@ public data class CellConstraints(
      * @return    string representation of this constraints object
      */
     override fun toString(): String {
-        val buffer = StringBuffer("CellConstraints")
+        val buffer = StringBuilder("CellConstraints")
         buffer.append("[x=")
         buffer.append(gridX)
         buffer.append("; y=")
@@ -497,9 +496,9 @@ public data class CellConstraints(
          * @throws IllegalArgumentException if an alignment orientation is invalid
          */
         private fun parseAlignments(encodedAlignments: String, horizontalThenVertical: Boolean): Pair<Alignment, Alignment> {
-            val tokenizer = StringTokenizer(encodedAlignments, " ,")
-            val first: Alignment = decodeAlignment(tokenizer.nextToken())
-            val second: Alignment = decodeAlignment(tokenizer.nextToken())
+            val tokenizer = encodedAlignments.split(" ,")
+            val first: Alignment = decodeAlignment(tokenizer[0])
+            val second: Alignment = decodeAlignment(tokenizer[1])
             val hAlign = if (horizontalThenVertical) first else second
             val vAlign = if (horizontalThenVertical) second else first
             ensureValidOrientations(hAlign, vAlign)
@@ -656,28 +655,28 @@ public data class CellConstraints(
          * @param encodedConstraints	the constraints encoded as string
          */
         public fun fromConstraints(encodedConstraints: String): CellConstraints {
-            val tokenizer = StringTokenizer(encodedConstraints, " ,")
-            val argCount = tokenizer.countTokens()
+            val tokens = encodedConstraints.split(" ,")
+            val argCount = tokens.size
             require(argCount == 2 || argCount == 4 || argCount == 6) {
                 "You must provide 2, 4 or 6 arguments."
             }
-            var nextInt: Int? = decodeInt(tokenizer.nextToken())
+            var nextInt: Int? = decodeInt(tokens[0])
             require(nextInt != null) {
                 "First cell constraint element must be a number."
             }
             val gridX = nextInt
             require(gridX > 0) { "The grid x must be a positive number." }
-            nextInt = decodeInt(tokenizer.nextToken())
+            nextInt = decodeInt(tokens[1])
             require(nextInt != null) {
                 "Second cell constraint element must be a number."
             }
             val gridY = nextInt
             require(gridY > 0) { "The grid y must be a positive number." }
-            if (!tokenizer.hasMoreTokens()) {
+            if (tokens.size == 2) {
                 return CellConstraints(gridX, gridY)
             }
 
-            var token = tokenizer.nextToken()
+            var token = tokens[2]
             nextInt = decodeInt(token)
             var gridWidth = 0
             var gridHeight = 0
@@ -690,7 +689,7 @@ public data class CellConstraints(
                         "The grid width must be a positive number."
                     )
                 }
-                nextInt = decodeInt(tokenizer.nextToken())
+                nextInt = decodeInt(tokens[3])
                 requireNotNull(nextInt) { "Fourth cell constraint element must be like third." }
                 gridHeight = nextInt
                 if (gridHeight <= 0) {
@@ -699,14 +698,14 @@ public data class CellConstraints(
                     )
                 }
 
-                if (!tokenizer.hasMoreTokens()) {
+                if (tokens.size == 4) {
                     return CellConstraints(gridX, gridY, gridWidth, gridHeight)
                 }
-                token = tokenizer.nextToken()
+                token = tokens[4]
             }
 
             val hAlign = decodeAlignment(token)
-            val vAlign = decodeAlignment(tokenizer.nextToken())
+            val vAlign = decodeAlignment(tokens[5])
             ensureValidOrientations(hAlign, vAlign)
             return CellConstraints(gridX, gridY, gridWidth, gridHeight, hAlign, vAlign)
         }

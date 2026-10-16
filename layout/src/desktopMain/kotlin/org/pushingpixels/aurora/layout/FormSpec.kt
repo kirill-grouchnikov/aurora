@@ -291,7 +291,7 @@ public abstract class FormSpec protected constructor(
      * @return    a string representation of the form specification.
      */
     override fun toString(): String {
-        val buffer = StringBuffer()
+        val buffer = StringBuilder()
         buffer.append(defaultAlignment)
 
         buffer.append(":")
@@ -329,7 +329,7 @@ public abstract class FormSpec protected constructor(
      * @return  a string representation of the form specification.
      */
     public fun toShortString(): String {
-        val buffer = StringBuffer()
+        val buffer = StringBuilder()
         buffer.append(defaultAlignment.abbreviation())
 
         buffer.append(":")
@@ -361,7 +361,7 @@ public abstract class FormSpec protected constructor(
      * @see [toShortString]
      */
     public fun encode(): String {
-        val buffer = StringBuffer()
+        val buffer = StringBuilder()
         val alignmentDefault: DefaultAlignment = (if (this.isHorizontal)
             ColumnSpec.Default
         else

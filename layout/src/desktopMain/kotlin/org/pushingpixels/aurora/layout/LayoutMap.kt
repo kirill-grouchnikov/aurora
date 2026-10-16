@@ -353,7 +353,7 @@ public class LayoutMap(
      * @return a string representation
      */
     override fun toString(): String {
-        val buffer = StringBuffer(super.toString())
+        val buffer = StringBuilder(super.toString())
         buffer.append("\n  Column associations:")
         for ((key, value) in columnMap) {
             buffer.append("\n    ")
@@ -378,7 +378,7 @@ public class LayoutMap(
         if (start == -1) { // No variables
             return expression
         }
-        val buffer = StringBuffer()
+        val buffer = StringBuilder()
         do {
             buffer.append(expression.substring(cursor, start))
             val variableName: String = nextVariableName(expression, start)

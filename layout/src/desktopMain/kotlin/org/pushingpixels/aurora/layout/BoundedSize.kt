@@ -176,7 +176,7 @@ public class BoundedSize(public val basis: Size, public val lowerBound: Size?, p
      * @return a String that can be parsed by the Forms parser
      */
     override fun encode(): String {
-        val buffer = StringBuffer("[")
+        val buffer = StringBuilder("[")
         if (lowerBound != null) {
             buffer.append(lowerBound.encode())
             buffer.append(',')
