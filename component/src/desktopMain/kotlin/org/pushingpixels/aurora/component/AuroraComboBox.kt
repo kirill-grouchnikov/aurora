@@ -481,6 +481,9 @@ internal fun <E> AuroraComboBox(
                         .filter { !it.key.isDisabled && (it.key != ComponentState.Enabled) }
                         .values.sumOf { it.contribution.toDouble() }.toFloat()
                 } else 1.0f
+            val onContainerAlpha = if (currentState.value.isDisabled)
+                drawingCache.colorTokens.onContainerDisabledAlpha else
+                drawingCache.colorTokens.onContainerEnabledAlpha
 
             Canvas(Modifier.matchParentSize()) {
                 val width = this.size.width
@@ -556,7 +559,7 @@ internal fun <E> AuroraComboBox(
                             strokeWidth = ArrowSizingConstants.DefaultArrowStroke.toPx(),
                             popupPlacementStrategy = presentationModel.popupPlacementStrategy,
                             layoutDirection = layoutDirection,
-                            color = arrowColor.withAlpha(alpha)
+                            color = arrowColor.withAlpha(alpha * onContainerAlpha)
                         )
                     }
                 }
