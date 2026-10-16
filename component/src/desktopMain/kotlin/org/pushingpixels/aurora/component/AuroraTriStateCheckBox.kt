@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import org.pushingpixels.aurora.common.AuroraInternalApi
+import org.pushingpixels.aurora.common.hexadecimal
 import org.pushingpixels.aurora.common.withAlpha
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.component.utils.*
@@ -321,6 +322,10 @@ internal fun AuroraTriStateCheckBox(
                 .sumOf { it.contribution.toDouble() }
                 .toFloat()
 
+        val onContainerAlpha = if (currentState.value.isDisabled)
+            drawingCache.colorTokens.onContainerDisabledAlpha else
+            drawingCache.colorTokens.onContainerEnabledAlpha
+
         // Indeterminate strength ("flatness" of the checkmark) is the combined strength of all the
         // states that have the determinate bit turned off
         val selectedStrength = modelStateInfo.stateContributionMap
@@ -434,7 +439,7 @@ internal fun AuroraTriStateCheckBox(
                         cap = StrokeCap.Round,
                         join = StrokeJoin.Round
                     ),
-                    alpha = 1.0f
+                    alpha = onContainerAlpha
                 )
             }
         }
