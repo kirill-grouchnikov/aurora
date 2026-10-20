@@ -944,7 +944,7 @@ public fun Leap(
     val translate = List(3) { index ->
         t.animateFloat(
             initialValue = 0.0f,
-            targetValue = -2.0f,
+            targetValue = 2.0f,
             animationSpec = infiniteRepeatable(
                 animation = keyframes {
                     // Total duration of one full cycle
@@ -977,7 +977,7 @@ public fun Leap(
     val rotate = List(3) { index ->
         t.animateFloat(
             initialValue = 0.0f,
-            targetValue = 2.0f,
+            targetValue = 180.0f,
             animationSpec = infiniteRepeatable(
                 animation = keyframes {
                     // Total duration of one full cycle
@@ -1133,8 +1133,8 @@ public fun Morph(
 
     val cornerRadiusFactor =
         t.animateFloat(
-            initialValue = 0.12f,
-            targetValue = 0.12f,
+            initialValue = 0.08f,
+            targetValue = 0.08f,
             animationSpec = infiniteRepeatable(
                 animation = keyframes {
                     // Total duration of one full cycle
