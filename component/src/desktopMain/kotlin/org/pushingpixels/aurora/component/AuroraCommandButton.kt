@@ -553,6 +553,7 @@ private fun Modifier.commandButtonPopupModifier(
     }
 )
 
+@Suppress("UNCHECKED_CAST")
 @OptIn(ExperimentalComposeUiApi::class, AuroraInternalApi::class)
 @Composable
 internal fun <M : BaseCommandMenuContentModel,
