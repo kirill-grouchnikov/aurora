@@ -1328,6 +1328,47 @@ class SwizzleFilter(
 }
 
 /**
+ * A filter which applies a color transfer effect.
+ * Replicates the JH-Labs TransferFilter.
+ *
+ * @param targetColor target color to transfer toward (0-1 per channel)
+ * @param amount transfer amount (0-1)
+
+ */
+class TransferFilter(
+    val targetColor: FloatArray = floatArrayOf(1f, 0.8f, 0.6f),
+    val amount: Float = 0.5f
+) : Filter {
+    override val effect: RuntimeEffect by lazy {
+        @Language("GLSL")
+        val shaderDesc = """
+            uniform shader content;
+            uniform half3 targetColor;
+            uniform float amount;
+            half4 main(vec2 fragcoord) {
+                half4 c = content.eval(fragcoord);
+                half luma = dot(c.rgb, half3(0.299, 0.587, 0.114));
+                half3 transfer = targetColor * luma;
+                half3 rgb = mix(c.rgb, transfer, amount);
+                return half4(rgb, c.a);
+            }
+        """
+        RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
+        targetColor.forEach { dataBuffer.putFloat(it) }
+        dataBuffer.putFloat(amount)
+        return effect.makeShader(
+            uniforms = Data.makeFromBytes(dataBuffer.array()),
+            children = arrayOf(inputShader),
+            localMatrix = null
+        )
+    }
+}
+
+/**
  * A filter which performs a threshold operation on an image.
  * Replicates the JH-Labs ThresholdFilter.
  * Pixels below lowerThreshold become black, above upperThreshold become white,
