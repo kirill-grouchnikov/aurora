@@ -5,6 +5,7 @@ include(
     ":loading",
     ":layout",
     ":window",
+    ":filters",
     ":tools:svg-transcoder",
     ":tools:svg-transcoder-gradle-plugin",
     ":tools:screenshot",

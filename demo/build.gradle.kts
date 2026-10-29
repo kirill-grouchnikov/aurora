@@ -15,6 +15,7 @@ kotlin {
                 implementation(project(":component"))
                 implementation(project(":loading"))
                 implementation(project(":layout"))
+                implementation(project(":filters"))
                 implementation(project(":theming"))
                 implementation(project(":window"))
                 implementation(libs.ephemeral.chroma)
