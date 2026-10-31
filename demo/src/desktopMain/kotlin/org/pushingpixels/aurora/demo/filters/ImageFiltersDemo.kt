@@ -46,7 +46,7 @@ fun main() = application {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(600.dp, 500.dp)
+        size = DpSize(600.dp, 740.dp)
     )
 
     Window(
@@ -133,45 +133,30 @@ fun main() = application {
              )
              }
 
-            val plasmaShaderBuilder = RuntimeShaderBuilder(plasmaFilter.effect)
-            plasmaShaderBuilder.uniform("scaling", 2.0f)
-            plasmaShaderBuilder.uniform("turbulence", 0.3f)
-            plasmaShaderBuilder.uniform("seed", 2089)
-            plasmaShaderBuilder.uniform("useColormap", 1)
-            plasmaShaderBuilder.uniform("useImageColors", 0)
-            plasmaShaderBuilder.uniform("color1", 0.0f, 0.0f, 255.0f)
-            plasmaShaderBuilder.uniform("color2", 0.0f, 255.0f, 0.0f)
-            plasmaShaderBuilder.uniform("color3", 255.0f, 0.0f, 0.0f)
-            plasmaShaderBuilder.uniform("color4", 255.0f, 255.0f, 0.0f)
-//            item { ImageBox(modifier = Modifier.size(200.dp)
-//                .graphicsLayer(renderEffect = ImageFilter.makeRuntimeShader(
-//                    runtimeShaderBuilder = plasmaShaderBuilder,
-//                    shaderName = "content",
-//                    input = null
-//                ).asComposeRenderEffect(), clip = true))
-//            }
-
-            val colorHalftoneShaderBuilder = RuntimeShaderBuilder(colorHalftoneFilter.effect)
-            colorHalftoneShaderBuilder.uniform("dotRadius", 3.0f)
-            colorHalftoneShaderBuilder.uniform("turbulence", 0.5f)
-            colorHalftoneShaderBuilder.uniform("cyanAngle", 108f * 3.14159265f / 180f)
-            colorHalftoneShaderBuilder.uniform("magentaAngle", 162f * 3.14159265f / 180f)
-            colorHalftoneShaderBuilder.uniform("yellowAngle", 90f * 3.14159265f / 180f)
-            item { ImageBox(modifier = Modifier.size(200.dp)
-                .graphicsLayer(renderEffect = ImageFilter.makeRuntimeShader(
-                    runtimeShaderBuilder = colorHalftoneShaderBuilder,
-                    shaderName = "content",
-                    input = null
-                ).asComposeRenderEffect(), clip = true))
+            item {
+                ImageBox(modifier = Modifier.size(200.dp)
+                    .graphicsLayer(
+                        renderEffect = colorHalftoneFilter.renderEffect(dotRadius = 3.0f),
+                        clip = true))
             }
 
-            val solarizeShaderBuilder = RuntimeShaderBuilder(solarizeFilter.effect)
-            item { ImageBox(modifier = Modifier.size(200.dp)
-                .graphicsLayer(renderEffect = ImageFilter.makeRuntimeShader(
-                    runtimeShaderBuilder = solarizeShaderBuilder,
-                    shaderName = "content",
-                    input = null
-                ).asComposeRenderEffect(), clip = true))
+            item {
+                ImageBox(modifier = Modifier.size(200.dp)
+                    .graphicsLayer(
+                        renderEffect = solarizeFilter.renderEffect(),
+                        clip = true))
+            }
+
+            item {
+                ImageBox(modifier = Modifier.size(200.dp)
+                    .graphicsLayer(
+                        renderEffect = plasmaFilter.renderEffect(
+                            turbulence = 0.3f,
+                            scaling = 2.0f,
+                            seed = 2089,
+                            useColormap = true
+                        ),
+                        clip = true))
             }
         }
     }

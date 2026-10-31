@@ -15,12 +15,19 @@
  */
 package org.pushingpixels.aurora.filters.composite
 
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
+import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
+import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import kotlin.math.PI
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -99,6 +106,25 @@ class ColorHalftoneFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun renderEffect(
+        dotRadius: Float = 2.0f,
+        cyanAngle: Float = 108.0f * PI.toFloat() / 180.0f,
+        magentaAngle: Float = 162.0f * PI.toFloat() / 180.0f,
+        yellowAngle: Float = 90.0f * PI.toFloat() / 180.0f
+    ): RenderEffect {
+        val colorHalftoneShaderBuilder = RuntimeShaderBuilder(this.effect)
+        colorHalftoneShaderBuilder.uniform("dotRadius", dotRadius)
+        colorHalftoneShaderBuilder.uniform("cyanAngle", cyanAngle)
+        colorHalftoneShaderBuilder.uniform("magentaAngle", magentaAngle)
+        colorHalftoneShaderBuilder.uniform("yellowAngle", yellowAngle)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = colorHalftoneShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
     }
 }
 

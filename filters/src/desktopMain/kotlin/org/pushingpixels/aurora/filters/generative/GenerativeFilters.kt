@@ -15,12 +15,18 @@
  */
 package org.pushingpixels.aurora.filters.generative
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.asComposeRenderEffect
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
+import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
+import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import kotlin.math.PI
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -1103,6 +1109,35 @@ class PlasmaFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun renderEffect(
+        turbulence: Float = 1.0f,
+        scaling: Float = 0.0f,
+        seed: Int = 567,
+        useColormap: Boolean = false,
+        useImageColors: Boolean = false,
+        color1: Color = Color(0xFF0000FF),
+        color2: Color = Color(0xFF00FF00),
+        color3: Color = Color(0xFFFF0000),
+        color4: Color = Color(0xFFFFFF00),
+    ): RenderEffect {
+        val plasmaShaderBuilder = RuntimeShaderBuilder(this.effect)
+        plasmaShaderBuilder.uniform("turbulence", turbulence)
+        plasmaShaderBuilder.uniform("scaling", scaling)
+        plasmaShaderBuilder.uniform("seed", seed)
+        plasmaShaderBuilder.uniform("useColormap", if (useColormap) 1 else 0)
+        plasmaShaderBuilder.uniform("useImageColors", if (useImageColors) 1 else 0)
+        plasmaShaderBuilder.uniform("color1", color1.red, color1.green, color1.blue)
+        plasmaShaderBuilder.uniform("color2", color2.red, color2.green, color2.blue)
+        plasmaShaderBuilder.uniform("color3", color3.red, color3.green, color3.blue)
+        plasmaShaderBuilder.uniform("color4", color4.red, color4.green, color4.blue)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = plasmaShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
     }
 }
 
