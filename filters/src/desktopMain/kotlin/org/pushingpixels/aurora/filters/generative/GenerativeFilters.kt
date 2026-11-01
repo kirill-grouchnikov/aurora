@@ -16,14 +16,18 @@
 package org.pushingpixels.aurora.filters.generative
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.asSkiaColorFilter
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
+import org.pushingpixels.aurora.filters.utility.makeHorizontalGradientFilter
+import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.PI
@@ -1035,15 +1039,11 @@ class PlasmaFilter(
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
+            uniform shader colormap;
             uniform float scaling;
             uniform float turbulence;
             uniform int seed;
             uniform int useColormap;
-            uniform int useImageColors;
-            uniform half3 color1;
-            uniform half3 color2;
-            uniform half3 color3;
-            uniform half3 color4;
             $NOISE_FUNC
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
@@ -1061,23 +1061,20 @@ class PlasmaFilter(
                 }
                 // Normalize to 0..1 range
                 v = v * 0.5 + 0.5;
+                v = clamp(v, 0.0, 1.0);
                 half3 plasma;
-                if (useColormap == 1) {
-                    // Interpolate through 4-color colormap
-                    if (v < 0.333334) {
-                        plasma = mix(color1, color2, v * 3.0);
-                    } else if (v < 0.666667) {
-                        plasma = mix(color2, color3, (v - 0.333333) * 3.0);
-                    } else {
-                        plasma = mix(color3, color4, (v - 0.666666) * 3.0);
-                    }
-                } else if (useImageColors == 1) {
+                if (useColormap == 0) {
                     // Displace image colors
                     float dx = v * scaling;
                     float dy = (noise2(fragcoord * 0.02 + vec2(float(seed), float(seed * 2))) * 2.0 - 1.0) * scaling;
                     plasma = content.eval(fragcoord + vec2(dx, dy)).rgb;
                 } else {
-                    plasma = mix(color1, color2, v);
+                    half4 colormapEval = colormap.eval(vec2(v * 256, 0));
+                    plasma = half3(colormapEval.r, colormapEval.g, colormapEval.b);
+                    // TODO: figure out proper handling for alpha premultiplication
+                    if (colormapEval.a != 0.0) {
+                        plasma = plasma / colormapEval.a;
+                    }
                 }
                 return half4(plasma, c.a);
             }
@@ -1085,58 +1082,54 @@ class PlasmaFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader?): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(68).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(scaling)
-        dataBuffer.putFloat(turbulence)
-        dataBuffer.putInt(seed)
-        dataBuffer.putInt(if (useColormap) 1 else 0)
-        dataBuffer.putInt(if (useImageColors) 1 else 0)
-        dataBuffer.putFloat(((color1 shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color1 shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color1 and 0xff) / 255f)
-        dataBuffer.putFloat(((color2 shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color2 shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color2 and 0xff) / 255f)
-        dataBuffer.putFloat(((color3 shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color3 shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color3 and 0xff) / 255f)
-        dataBuffer.putFloat(((color4 shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color4 shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color4 and 0xff) / 255f)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
+//    fun makeShader(inputShader: org.jetbrains.skia.Shader?): org.jetbrains.skia.Shader {
+//        val dataBuffer = ByteBuffer.allocate(68).order(ByteOrder.LITTLE_ENDIAN)
+//        dataBuffer.putFloat(scaling)
+//        dataBuffer.putFloat(turbulence)
+//        dataBuffer.putInt(seed)
+//        dataBuffer.putInt(if (useColormap) 1 else 0)
+//        dataBuffer.putInt(if (useImageColors) 1 else 0)
+//        dataBuffer.putFloat(((color1 shr 16) and 0xff) / 255f)
+//        dataBuffer.putFloat(((color1 shr 8) and 0xff) / 255f)
+//        dataBuffer.putFloat((color1 and 0xff) / 255f)
+//        dataBuffer.putFloat(((color2 shr 16) and 0xff) / 255f)
+//        dataBuffer.putFloat(((color2 shr 8) and 0xff) / 255f)
+//        dataBuffer.putFloat((color2 and 0xff) / 255f)
+//        dataBuffer.putFloat(((color3 shr 16) and 0xff) / 255f)
+//        dataBuffer.putFloat(((color3 shr 8) and 0xff) / 255f)
+//        dataBuffer.putFloat((color3 and 0xff) / 255f)
+//        dataBuffer.putFloat(((color4 shr 16) and 0xff) / 255f)
+//        dataBuffer.putFloat(((color4 shr 8) and 0xff) / 255f)
+//        dataBuffer.putFloat((color4 and 0xff) / 255f)
+//        return effect.makeShader(
+//            uniforms = Data.makeFromBytes(dataBuffer.array()),
+//            children = arrayOf(inputShader),
+//            localMatrix = null
+//        )
+//    }
 
     fun renderEffect(
         turbulence: Float = 1.0f,
         scaling: Float = 0.0f,
         seed: Int = 567,
-        useColormap: Boolean = false,
-        useImageColors: Boolean = false,
-        color1: Color = Color(0xFF0000FF),
-        color2: Color = Color(0xFF00FF00),
-        color3: Color = Color(0xFFFF0000),
-        color4: Color = Color(0xFFFFFF00),
+        colors: List<Color>? = null
     ): RenderEffect {
         val plasmaShaderBuilder = RuntimeShaderBuilder(this.effect)
         plasmaShaderBuilder.uniform("turbulence", turbulence)
         plasmaShaderBuilder.uniform("scaling", scaling)
         plasmaShaderBuilder.uniform("seed", seed)
-        plasmaShaderBuilder.uniform("useColormap", if (useColormap) 1 else 0)
-        plasmaShaderBuilder.uniform("useImageColors", if (useImageColors) 1 else 0)
-        plasmaShaderBuilder.uniform("color1", color1.red, color1.green, color1.blue)
-        plasmaShaderBuilder.uniform("color2", color2.red, color2.green, color2.blue)
-        plasmaShaderBuilder.uniform("color3", color3.red, color3.green, color3.blue)
-        plasmaShaderBuilder.uniform("color4", color4.red, color4.green, color4.blue)
+        plasmaShaderBuilder.uniform("useColormap", if (colors != null) 1 else 0)
+
+        val gradientFilter: ImageFilter? = colors?.let {
+            makeMultiStopHorizontalGradientFilter(
+                stops = it,
+                width = 256)
+        }
 
         return ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = plasmaShaderBuilder,
-            shaderName = "content",
-            input = null
+            shaderNames = arrayOf("content", "colormap"),
+            inputs = arrayOf(null, gradientFilter)
         ).asComposeRenderEffect()
     }
 }

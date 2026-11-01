@@ -22,6 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -31,6 +33,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeShaderBuilder
@@ -152,17 +155,29 @@ fun main() = application {
                     .graphicsLayer(
                         renderEffect = plasmaFilter.renderEffect(
                             turbulence = 0.3f,
+                            scaling = 10.0f,
+                            seed = 2089,
+                        ),
+                        clip = true))
+            }
+
+            item {
+                ImageBox(modifier = Modifier.size(200.dp)
+                    .graphicsLayer(
+                        renderEffect = plasmaFilter.renderEffect(
+                            turbulence = 0.3f,
                             scaling = 2.0f,
                             seed = 2089,
-                            useColormap = true
+                            colors = listOf(Color(0xFF0000FF),
+                                Color(0xFF00FF00),
+                                Color(0xFFFF0000),
+                                Color(0xFFFFFF00))
                         ),
                         clip = true))
             }
         }
     }
 }
-
-
 
 @Composable
 fun ImageBox(modifier: Modifier) {

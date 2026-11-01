@@ -232,18 +232,6 @@ private fun Modifier.weaveBackground(filter: WeaveFilter) = this.then(
     }
 )
 
-private fun Modifier.plasmaBackground(filter: PlasmaFilter) = this.then(
-    Modifier.drawBehind {
-        // Apply the brushed metal shader filter to the base shader
-        val filteredShader = filter.makeShader(null)
-
-        // Draw the filtered result
-        drawRect(
-            brush = ShaderBrush(filteredShader.asComposeShader())
-        )
-    }
-)
-
 private fun Modifier.causticsBackground(filter: CausticsFilter) = this.then(
     Modifier.drawBehind {
         // Apply the brushed metal shader filter to the base shader
