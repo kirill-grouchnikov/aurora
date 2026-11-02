@@ -18,37 +18,30 @@ package org.pushingpixels.aurora.demo.filters
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.asComposeShader
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import org.jetbrains.skia.Color4f
-import org.jetbrains.skia.FilterTileMode
-import org.jetbrains.skia.Gradient
-import org.jetbrains.skia.Shader
-import org.pushingpixels.aurora.filters.composite.ChromeFilter
 import org.pushingpixels.aurora.filters.point.SparkleFilter
 import org.pushingpixels.aurora.filters.generative.BrushedMetalFilter
-import org.pushingpixels.aurora.filters.generative.CausticsFilter
 import org.pushingpixels.aurora.filters.generative.MarbleTexFilter
-import org.pushingpixels.aurora.filters.generative.PlasmaFilter
-import org.pushingpixels.aurora.filters.generative.SkyFilter
-import org.pushingpixels.aurora.filters.generative.WeaveFilter
 import org.pushingpixels.aurora.filters.generative.WoodFilter
-import kotlin.math.PI
 
 fun main() = androidx.compose.ui.window.application {
     val state = rememberWindowState(
@@ -60,7 +53,7 @@ fun main() = androidx.compose.ui.window.application {
     androidx.compose.ui.window.Window(
         onCloseRequest = ::exitApplication,
         state = state,
-        title = "Aurora Filters Demo"
+        title = "Aurora Generative Filters Demo"
     ) {
         val woodFilter = remember { WoodFilter() }
         val brushedMetalFilter = remember { BrushedMetalFilter() }
@@ -75,43 +68,58 @@ fun main() = androidx.compose.ui.window.application {
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 24.dp),
         ) {
             item {
-                Box(
-                    modifier = Modifier.size(200.dp).then(
-                        woodFilter.effectModifier(
-                            scale = 100.0f,
-                            rings = 0.4f, fibres = 0.3f, gain = 0.7f
-                        )
-                    )
-                )
-            }
-            item {
-                Box(
-                    modifier = Modifier.size(200.dp).then(
-                        woodFilter.effectModifier(
-                            scale = 80.0f, stretch = 15.0f, gain = 1.9f,
-                            angle = 1.5f * Math.PI.toFloat(),
-                            colors = listOf(Color(0xFFCD4A4A), Color(0xFF682523), Color(0xFF482029))
-                        )
-                    )
+                TexturedBox(
+                    effectModifier = woodFilter.effectModifier(
+                        scale = 100.0f,
+                        rings = 0.4f, fibres = 0.3f, gain = 0.7f
+                    ),
+                    renderEffectTitle = "Wood"
                 )
             }
 
-            item { Box(modifier = Modifier.size(200.dp).
-                then(brushedMetalFilter.effectModifier(
-                    radius = 8, amount = 1.0f, color = Color(0xFF800000)))) }
-
-            item { Box(modifier = Modifier.size(200.dp).
-                then(marbleTexFilter.effectModifier(
-                    colors = listOf(Color(0xFFB76E79), Color(0xFFFFC0CB)))))
+            item {
+                TexturedBox(
+                    effectModifier = woodFilter.effectModifier(
+                        scale = 80.0f, stretch = 15.0f, gain = 1.9f,
+                        angle = 1.5f * Math.PI.toFloat(),
+                        colors = listOf(Color(0xFFCD4A4A), Color(0xFF682523), Color(0xFF482029))
+                    ),
+                    renderEffectTitle = "Wood with colormap"
+                )
             }
 
             item {
-                Box(
-                    modifier = Modifier.size(200.dp).background(Color.DarkGray)
-                        .then(sparkleFilter.effectModifier(color = Color(0xFF208070),
-                            ))
+                TexturedBox(
+                    effectModifier = brushedMetalFilter.effectModifier(
+                        radius = 8, amount = 1.0f, color = Color(0xFF800000)
+                    ),
+                    renderEffectTitle = "Brushed Metal"
+                )
+            }
+
+            item {
+                TexturedBox(
+                    effectModifier = marbleTexFilter.effectModifier(
+                        colors = listOf(Color(0xFFB76E79), Color(0xFFFFC0CB))
+                    ),
+                    renderEffectTitle = "Marble"
+                )
+            }
+
+            item {
+                TexturedBox(
+                    effectModifier = sparkleFilter.effectModifier(color = Color(0xFF208070)),
+                    renderEffectTitle = "Sparkle"
                 )
             }
         }
+    }
+}
+
+@Composable
+fun TexturedBox(modifier: Modifier = Modifier, effectModifier: Modifier, renderEffectTitle: String) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(modifier = Modifier.fillMaxWidth().height(200.dp).background(Color.DarkGray).then(effectModifier))
+        BasicText(text = renderEffectTitle, modifier = Modifier.padding(all = 8.dp))
     }
 }
