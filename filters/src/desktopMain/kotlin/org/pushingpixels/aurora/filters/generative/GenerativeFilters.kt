@@ -16,12 +16,17 @@
 package org.pushingpixels.aurora.filters.generative
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.asComposeShader
 import androidx.compose.ui.graphics.asSkiaColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.ImageFilter
@@ -66,11 +71,11 @@ private val NOISE_FUNC = """
  * @param monochrome true for monochrome texture (default true)
  */
 class BrushedMetalFilter(
-    val radius: Int = 10,
-    val amount: Float = 0.1f,
-    val color: FloatArray = floatArrayOf(136f / 255f, 136f / 255f, 136f / 255f, 1f),
-    val shine: Float = 0.1f,
-    val monochrome: Boolean = true
+//    val radius: Int = 10,
+//    val amount: Float = 0.1f,
+//    val color: FloatArray = floatArrayOf(136f / 255f, 136f / 255f, 136f / 255f, 1f),
+//    val shine: Float = 0.1f,
+//    val monochrome: Boolean = true
 ) : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
@@ -81,7 +86,7 @@ class BrushedMetalFilter(
             uniform float color[4];
             uniform float shine;
             uniform int monochrome;
-            uniform float width;
+            uniform float contentWidth;
             $NOISE_FUNC
             half4 main(vec2 fragcoord) {
                 float r = color[0];
@@ -92,7 +97,7 @@ class BrushedMetalFilter(
                 float tb = b;
                 // Shine: sine wave based on x position
                 if (shine > 0.0) {
-                    float f = shine * sin(fragcoord.x / width * 3.14159265);
+                    float f = shine * sin(fragcoord.x / contentWidth * 3.14159265);
                     tr += f;
                     tg += f;
                     tb += f;
@@ -122,21 +127,30 @@ class BrushedMetalFilter(
                             break;
                         }
                         vec2 offset = vec2(float(i), 0.0);
-                        half4 c = content.eval(fragcoord + offset);
-                        half3 blurred = c.rgb;
-                        float n2 = noise2(fragcoord + offset) * 2.0 - 1.0;
-                        if (monochrome == 1) {
-                            blurred += n2 * amount;
-                        } else {
-                            blurred.r += (noise2(fragcoord + offset + vec2(17.0, 0.0)) * 2.0 - 1.0) * amount;
-                            blurred.g += (noise2(fragcoord + offset + vec2(0.0, 17.0)) * 2.0 - 1.0) * amount;
-                            blurred.b += (noise2(fragcoord + offset + vec2(17.0, 17.0)) * 2.0 - 1.0) * amount;
-                        }
+                        vec2 sampleCoord = fragcoord + offset;
+                        float sr = color[0];
+                        float sg = color[1];
+                        float sb = color[2];
+                        float str = sr;
+                        float stg = sg;
+                        float stb = sb;
                         if (shine > 0.0) {
-                            float f2 = shine * sin((fragcoord.x + float(i)) / width * 3.14159265);
-                            blurred += half3(f2, f2, f2);
+                            float f2 = shine * sin(sampleCoord.x / contentWidth * 3.14159265);
+                            str += f2;
+                            stg += f2;
+                            stb += f2;
                         }
-                        blurred = clamp(blurred, 0.0, 1.0);
+                        float n2 = noise2(sampleCoord) * 2.0 - 1.0;
+                        if (monochrome == 1) {
+                            str += n2 * amount;
+                            stg += n2 * amount;
+                            stb += n2 * amount;
+                        } else {
+                            str += (noise2(sampleCoord + vec2(17.0, 0.0)) * 2.0 - 1.0) * amount;
+                            stg += (noise2(sampleCoord + vec2(0.0, 17.0)) * 2.0 - 1.0) * amount;
+                            stb += (noise2(sampleCoord + vec2(17.0, 17.0)) * 2.0 - 1.0) * amount;
+                        }
+                        half3 blurred = clamp(half3(str, stg, stb), 0.0, 1.0);
                         sum.rgb += blurred;
                     }
                     return half4(sum.rgb / float(r2), 1.0);
@@ -147,19 +161,47 @@ class BrushedMetalFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader?, imageWidth: Float = 640f): org.jetbrains.skia.Shader {
+    fun makeShader(
+        radius: Int,
+        amount: Float,
+        color: Color,
+        shine: Float,
+        monochrome: Boolean,
+        contentWidth: Float
+    ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
+
         dataBuffer.putInt(radius)
         dataBuffer.putFloat(amount)
-        for (c in color) dataBuffer.putFloat(c)
+        dataBuffer.putFloat(color.red)
+        dataBuffer.putFloat(color.green)
+        dataBuffer.putFloat(color.blue)
+        dataBuffer.putFloat(color.alpha)
         dataBuffer.putFloat(shine)
         dataBuffer.putInt(if (monochrome) 1 else 0)
-        dataBuffer.putFloat(imageWidth)
+        dataBuffer.putFloat(contentWidth)
+
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(null),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(
+        radius: Int = 10,
+        amount: Float = 0.1f,
+        color: Color = Color(0xFF888888),
+        shine: Float = 0.1f,
+        monochrome: Boolean = true
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(radius, amount, color, shine, monochrome, size.width)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
     }
 }
 

@@ -67,9 +67,7 @@ fun main() = androidx.compose.ui.window.application {
                 scale = 100.0f, angle = PI.toFloat() / 2.0f, stretch = 10.0f, turbulence = 0.0f,
                 rings = 0.4f, fibres = 0.3f, gain = 0.7f)
         }
-        val brushedMetalFilter = remember {
-            BrushedMetalFilter(amount = 40.0f)
-        }
+        val brushedMetalFilter = remember { BrushedMetalFilter() }
         val chromeFilter = remember {
             ChromeFilter()
         }
@@ -97,7 +95,9 @@ fun main() = androidx.compose.ui.window.application {
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 24.dp),
         ) {
             item { Box(modifier = Modifier.size(200.dp).woodFilterBackground(woodFilter)) }
-            item { Box(modifier = Modifier.size(200.dp).brushedMetalBackground(brushedMetalFilter)) }
+            item { Box(modifier = Modifier.size(200.dp).
+                then(brushedMetalFilter.effectModifier(
+                    radius = 8, amount = 1.0f, color = Color(0xFF800000)))) }
             //item { Box(modifier = Modifier.size(200.dp).plasmaBackground(plasmaFilter)) }
             item { Box(modifier = Modifier.size(200.dp).marbleTexBackground(marbleTexFilter)) }
             item { Box(modifier = Modifier.size(200.dp).sparkleBackground(sparkleFilter)) }
@@ -105,49 +105,6 @@ fun main() = androidx.compose.ui.window.application {
             //item { Box(modifier = Modifier.size(200.dp).chromeBackground(chromeFilter)) }
 //            item { Box(modifier = Modifier.size(200.dp).causticsBackground(causticsFilter)) }
         }
-
-//        Column(modifier = Modifier.fillMaxSize()) {
-//            Row(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f)) {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth(0.5f)
-//                        .fillMaxHeight()
-//                        .woodFilterBackground(woodFilter)
-//                )
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth(1.0f)
-//                        .fillMaxHeight()
-//                        .brushedMetalBackground(brushedMetalFilter)
-//                )
-//            }
-//            Row(modifier = Modifier.fillMaxWidth().fillMaxHeight(1.0f)) {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth(0.5f)
-//                        .fillMaxHeight()
-//                        .plasmaBackground(plasmaFilter)
-//                )
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth(1.0f)
-//                        .fillMaxHeight()
-//                        .marbleBackground(marbleFilter)
-//                )
-////                Box(
-////                    modifier = Modifier
-////                        .fillMaxWidth(0.5f)
-////                        .fillMaxHeight()
-////                        .chromeBackground(chromeFilter)
-////                )
-////                Box(
-////                    modifier = Modifier
-////                        .fillMaxWidth(1.0f)
-////                        .fillMaxHeight()
-////                        .brushedMetalBackground(brushedMetalFilter)
-////                )
-//            }
-       // }
     }
 }
 
@@ -183,30 +140,6 @@ private fun Modifier.woodFilterBackground(filter: WoodFilter) = this.then(
         )
     }
 )
-
-private fun Modifier.brushedMetalBackground(filter: BrushedMetalFilter) = this.then(
-    Modifier.drawBehind {
-        // Apply the brushed metal shader filter to the base shader
-        val filteredShader = filter.makeShader(null)
-
-        // Draw the filtered result
-        drawRect(
-            brush = ShaderBrush(filteredShader.asComposeShader())
-        )
-    }
-)
-
-//private fun Modifier.chromeBackground(filter: ChromeFilter) = this.then(
-//    Modifier.drawBehind {
-//        // Apply the chrome shader filter with image dimensions
-//        val filteredShader = filter.makeShader(null, size.width, size.height)
-//
-//        // Draw the filtered result
-//        drawRect(
-//            brush = ShaderBrush(filteredShader.asComposeShader())
-//        )
-//    }
-//)
 
 private fun Modifier.marbleTexBackground(filter: MarbleTexFilter) = this.then(
     Modifier.drawBehind {
