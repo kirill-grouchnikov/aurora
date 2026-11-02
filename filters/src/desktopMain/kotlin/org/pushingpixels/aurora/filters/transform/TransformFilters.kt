@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.filters.transform
 
+import androidx.compose.ui.graphics.Color
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
@@ -663,33 +664,160 @@ class RotateFilter(
 }
 
 /**
- * A filter which applies a shape-based clip (ellipse).
- * @param centerX center X as proportion of image width (0-1)
- * @param centerY center Y as proportion of image height (0-1)
- * @param radiusX radius X as proportion of image width (0-1)
- * @param radiusY radius Y as proportion of image height (0-1)
+ * A filter that creates a shapeburst effect — a distance transform from pixel brightness/alpha,
+ * colored through a gradient colormap.
+ *
+ * Based on the original JH-Labs ShapeFilter (Stylize/Shapeburst).
+ *
+ * @param factor intensity factor for the distance mapping (0-1+)
+ * @param colors optional colormap colors; when null, uses grayscale
+ * @param useAlpha if true, uses pixel alpha as the source value; otherwise uses brightness
+ * @param invert if true, inverts the colormap colors
+ * @param merge if true, multiplies result with source pixels instead of replacing
+ * @param type shape type: 0=LINEAR, 1=CIRCLE_UP, 2=CIRCLE_DOWN, 3=SMOOTH
  */
 class ShapeFilter(
-    val centerX: Float = 0.5f,
-    val centerY: Float = 0.5f,
-    val radiusX: Float = 0.5f,
-    val radiusY: Float = 0.5f
+    val factor: Float = 1f,
+    val colors: List<Color>? = null,
+    val useAlpha: Boolean = true,
+    val invert: Boolean = false,
+    val merge: Boolean = false,
+    val type: Int = 0
 ) : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
-            uniform vec2 center;
-            uniform vec2 radius;
+            uniform shader colormap;
+            uniform float factor;
+            uniform int useAlpha;
+            uniform int invert;
+            uniform int merge;
+            uniform int type;
+            uniform int hasColormap;
             uniform vec2 imageSize;
-            half4 main(vec2 fragcoord) {
-                vec2 icenter = imageSize * center;
-                vec2 iradius = imageSize * radius;
-                vec2 delta = (fragcoord - icenter) / iradius;
-                if (dot(delta, delta) > 1.0) {
-                    return half4(0.0, 0.0, 0.0, 0.0);
+            uniform float maxDist;
+
+            // Chamfer distance constants (scaled by 41)
+            const float one = 41.0;
+            const float sqrt2 = 57.98;  // 41 * sqrt(2)
+            const float sqrt5 = 91.49;  // 41 * sqrt(5)
+
+            half getMapValue(half4 c, int useAlpha) {
+                if (useAlpha == 1) {
+                    return c.a * 255.0 * 4.1;  // alpha (0-255) * one / 10
+                } else {
+                    return dot(c.rgb, half3(0.299, 0.587, 0.114)) * 255.0 * 4.1;
                 }
-                return content.eval(fragcoord);
+            }
+
+            half getMin(half a, half b) {
+                return a < b ? a : b;
+            }
+
+            half computeDistance(vec2 fragcoord, int useAlpha) {
+                // Sample a 9x9 neighborhood to approximate the distance transform
+                // by finding the minimum weighted distance to a zero-value pixel
+                half minDist = 9999.0;
+
+                for (int dy = -4; dy <= 4; dy++) {
+                    for (int dx = -4; dx <= 4; dx++) {
+                        if (dx == 0 && dy == 0) continue;
+                        half4 c = content.eval(fragcoord + vec2(float(dx), float(dy)));
+                        half val = getMapValue(c, useAlpha);
+                        if (val <= 0.0) {
+                            // Found a zero-value pixel; compute weighted distance
+                            float dist;
+                            int adx = abs(dx);
+                            int ady = abs(dy);
+                            int maxD = max(adx, ady);
+                            int minD = min(adx, ady);
+                            // Chamfer 3-distance: use max for axis-aligned, sqrt2 for diagonal steps
+                            if (minD == 0) {
+                                dist = float(maxD) * one;
+                            } else {
+                                // Diagonal component + straight component
+                                dist = float(minD) * sqrt2 + float(maxD - minD) * one;
+                            }
+                            minDist = getMin(minDist, half(dist));
+                        }
+                    }
+                }
+                return minDist;
+            }
+
+            half applyType(half v, int type) {
+                if (type == 1) {
+                    // CIRCLE_UP: sin(acos(1 - 2*v) / 2)
+                    return sin(acos(1.0 - 2.0 * v) * 0.5);
+                } else if (type == 2) {
+                    // CIRCLE_DOWN: 1 - sin(acos(2*v - 1) / 2)
+                    return 1.0 - sin(acos(2.0 * v - 1.0) * 0.5);
+                } else if (type == 3) {
+                    // SMOOTH: smoothstep(0, 1, v) = v * v * (3 - 2*v)
+                    return v * v * (3.0 - 2.0 * v);
+                }
+                // LINEAR: no change
+                return v;
+            }
+
+            half4 main(vec2 fragcoord) {
+                half4 src = content.eval(fragcoord);
+                half mapVal = getMapValue(src, useAlpha);
+
+                if (mapVal <= 0.0) {
+                    // Background — keep original or clear
+                    if (merge == 1) {
+                        return src;
+                    }
+                    return half4(0.0, 0.0, 0.0, src.a);
+                }
+
+                // Compute distance to nearest zero-value pixel
+                half dist = computeDistance(fragcoord, useAlpha);
+                if (dist >= 9999.0) {
+                    // No zero pixel found in neighborhood; use the source value
+                    return src;
+                }
+
+                // Normalize distance by maxDist and apply factor
+                float v = clamp(factor * float(dist) / maxDist, 0.0, 1.0);
+
+                // Apply type transformation
+                v = applyType(half(v), type);
+
+                // Get color from colormap or use grayscale
+                half4 col;
+                if (hasColormap == 1) {
+                    col = colormap.eval(vec2(v * 255.0, 0.0));
+                } else {
+                    col = half4(v, v, v, 1.0);
+                }
+
+                // Invert if needed
+                if (invert == 1) {
+                    col.rgb = 1.0 - col.rgb;
+                }
+
+                // Alpha from source
+                half sa;
+                if (useAlpha == 1) {
+                    sa = src.a;
+                } else {
+                    sa = dot(src.rgb, half3(0.299, 0.587, 0.114));
+                }
+
+                if (merge == 1) {
+                    // Multiply colormap color with source
+                    col.r = col.r * src.r;
+                    col.g = col.g * src.g;
+                    col.b = col.b * src.b;
+                    col.a = src.a;
+                } else {
+                    col.a = sa;
+                }
+
+                return col;
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
@@ -700,16 +828,33 @@ class ShapeFilter(
         imageWidth: Float,
         imageHeight: Float
     ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
+        // Estimate maxDist: for a typical image, the max chamfer distance in a 9x9 window
+        // is roughly sqrt2 * 4 * 41 ≈ 232 (diagonal corner)
+        val maxDist = 232f
+
+        val hasColormap = if (colors != null) 1 else 0
+
+        val dataBuffer = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN)
+        dataBuffer.putFloat(factor)
+        dataBuffer.putInt(if (useAlpha) 1 else 0)
+        dataBuffer.putInt(if (invert) 1 else 0)
+        dataBuffer.putInt(if (merge) 1 else 0)
+        dataBuffer.putInt(type)
+        dataBuffer.putInt(hasColormap)
         dataBuffer.putFloat(imageWidth)
         dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(centerX)
-        dataBuffer.putFloat(centerY)
-        dataBuffer.putFloat(radiusX)
-        dataBuffer.putFloat(radiusY)
+        dataBuffer.putFloat(maxDist)
+
+        val colormapShader: org.jetbrains.skia.Shader? = colors?.let { c ->
+            org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader(
+                stops = c,
+                width = 256f
+            )
+        }
+
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(inputShader, colormapShader),
             localMatrix = null
         )
     }

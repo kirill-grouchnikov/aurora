@@ -275,45 +275,6 @@ class DiffusionFilter(val iterations: Int = 3) : Filter {
 }
 
 /**
-
- * A dilation filter (morphological operation) — replaces each pixel with the maximum in its neighborhood.
- * @param radius neighborhood radius
- */
-class DilateFilter(val radius: Int = 1) : Filter {
-    override val effect: RuntimeEffect by lazy {
-        @Language("GLSL")
-        val shaderDesc = """
-            uniform shader content;
-            uniform int radius;
-            half4 main(vec2 fragcoord) {
-                half4 maxVal = content.eval(fragcoord);
-                for (int dy = -radius; dy <= radius; dy++) {
-                    for (int dx = -radius; dx <= radius; dx++) {
-                        half4 c = content.eval(fragcoord + vec2(float(dx), float(dy)));
-                        if (length(c.rgb) > length(maxVal.rgb)) {
-                            maxVal = c;
-                        }
-                    }
-                }
-                return maxVal;
-            }
-        """
-        RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(radius)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-}
-
-/**
-
  * A Difference of Gaussians filter for feature enhancement.
  * @param sigma1 first Gaussian sigma
  * @param sigma2 second Gaussian sigma
@@ -529,45 +490,6 @@ class ErodeAlphaFilter(val radius: Int = 1) : Filter {
 }
 
 /**
-
- * An erosion filter (morphological operation) — replaces each pixel with the minimum in its neighborhood.
- * @param radius neighborhood radius
- */
-class ErodeFilter(val radius: Int = 1) : Filter {
-    override val effect: RuntimeEffect by lazy {
-        @Language("GLSL")
-        val shaderDesc = """
-            uniform shader content;
-            uniform int radius;
-            half4 main(vec2 fragcoord) {
-                half4 minVal = content.eval(fragcoord);
-                for (int dy = -radius; dy <= radius; dy++) {
-                    for (int dx = -radius; dx <= radius; dx++) {
-                        half4 c = content.eval(fragcoord + vec2(float(dx), float(dy)));
-                        if (length(c.rgb) < length(minVal.rgb)) {
-                            minVal = c;
-                        }
-                    }
-                }
-                return minVal;
-            }
-        """
-        RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(radius)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-}
-
-/**
-
  * A Gaussian blur filter.
  * @param radius blur radius in pixels
  */
@@ -959,45 +881,6 @@ class MotionBlurFilter(
 }
 
 /**
-
- * An outline filter that extracts edges and renders them as outlines.
- * @param threshold edge detection threshold
- */
-class OutlineFilter(val threshold: Float = 0.2f) : Filter {
-    override val effect: RuntimeEffect by lazy {
-        @Language("GLSL")
-        val shaderDesc = """
-            uniform shader content;
-            uniform float threshold;
-            half4 main(vec2 fragcoord) {
-                half center = length(content.eval(fragcoord).rgb);
-                half sum = 0.0;
-                sum += length(content.eval(fragcoord + vec2(-1.0, 0.0)).rgb);
-                sum += length(content.eval(fragcoord + vec2(1.0, 0.0)).rgb);
-                sum += length(content.eval(fragcoord + vec2(0.0, -1.0)).rgb);
-                sum += length(content.eval(fragcoord + vec2(0.0, 1.0)).rgb);
-                half avg = sum / 4.0;
-                half edge = abs(center - avg);
-                half val = edge > threshold ? 1.0 : 0.0;
-                return half4(val, val, val, 1.0);
-            }
-        """
-        RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(threshold)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-}
-
-/**
-
  * A noise reduction filter using bilateral-like smoothing.
  * @param radius neighborhood radius
  * @param sigma color similarity threshold
@@ -1071,56 +954,6 @@ object SharpenFilter : Filter {
 }
 
 /**
-
- * A skeleton filter that extracts the skeleton/medial axis of shapes.
- * Uses iterative erosion to find the skeleton.
- * @param iterations number of erosion iterations
- */
-class SkeletonFilter(val iterations: Int = 5) : Filter {
-    override val effect: RuntimeEffect by lazy {
-        @Language("GLSL")
-        val shaderDesc = """
-            uniform shader content;
-            uniform int iterations;
-            half4 main(vec2 fragcoord) {
-                half4 c = content.eval(fragcoord);
-                half brightness = length(c.rgb);
-                
-                // Approximate skeleton by checking if pixel is on an edge
-                // after iterative thinning
-                half sum = 0.0;
-                int count = 0;
-                for (int dy = -1; dy <= 1; dy++) {
-                    for (int dx = -1; dx <= 1; dx++) {
-                        half b = length(content.eval(fragcoord + vec2(float(dx), float(dy))).rgb);
-                        sum += b;
-                        count++;
-                    }
-                }
-                half avg = sum / float(count);
-                half edge = abs(brightness - avg);
-                
-                // Skeleton approximation: thin edges
-                half skeleton = edge > 0.1 ? 1.0 : 0.0;
-                return half4(skeleton, skeleton, skeleton, 1.0);
-            }
-        """
-        RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(iterations)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-}
-
-/**
-
  * A filter which performs a "smart blur" — blurs smooth parts while preserving edges.
  * Replicates the JH-Labs SmartBlurFilter.
  *

@@ -35,37 +35,6 @@ import java.nio.ByteOrder
 // available under the MIT license. See the full license under resources/Filters.license.
 
 /**
- * A filter which converts an image to binary (black and white) using a threshold.
- * @param threshold brightness threshold (0-1)
- */
-class BinaryFilter(val threshold: Float = 0.5f) : Filter {
-    override val effect: RuntimeEffect by lazy {
-        @Language("GLSL")
-        val shaderDesc = """
-            uniform shader content;
-            uniform float threshold;
-            half4 main(vec2 fragcoord) {
-                half4 c = content.eval(fragcoord);
-                half luma = dot(c.rgb, half3(0.299, 0.587, 0.114));
-                half val = luma > threshold ? 1.0 : 0.0;
-                return half4(val, val, val, c.a);
-            }
-        """
-        RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(threshold)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-}
-
-/**
  * A filter to pixellate/mosaic images.
  * Replicates the JH-Labs BlockFilter.
  *

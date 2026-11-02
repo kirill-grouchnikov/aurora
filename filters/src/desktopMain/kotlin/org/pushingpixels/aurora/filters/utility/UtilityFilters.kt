@@ -83,57 +83,6 @@ class JavaLnFFilter(
 }
 
 /**
- * A filter which simulates Conway's Game of Life overlay.
- * @param scale cell size in pixels
- * @param amount overlay intensity (0-1)
- */
-class LifeFilter(
-    val scale: Float = 8f,
-    val amount: Float = 0.5f
-) : Filter {
-    override val effect: RuntimeEffect by lazy {
-        @Language("GLSL")
-        val shaderDesc = """
-            uniform shader content;
-            uniform float scale;
-            uniform float amount;
-            half4 main(vec2 fragcoord) {
-                half4 c = content.eval(fragcoord);
-                vec2 p = floor(fragcoord / scale);
-                // Deterministic "life-like" pattern
-                float v = 0.0;
-                for (int dy = -1; dy <= 1; dy++) {
-                    for (int dx = -1; dx <= 1; dx++) {
-                        vec2 n = p + vec2(float(dx), float(dy));
-                        float h = fract(sin(dot(n, vec2(127.1, 311.7))) * 43758.5453);
-                        v += step(0.5, h);
-                    }
-                }
-                // Life-like rule approximation
-                float cell = fract(sin(dot(p, vec2(269.5, 183.3))) * 43758.5453);
-                cell = step(0.5, cell);
-                float life = (v > 2.0 && v < 5.0) ? 1.0 : 0.0;
-                half3 lifeColor = half3(life);
-                half3 rgb = mix(c.rgb, lifeColor, amount);
-                return half4(rgb, c.a);
-            }
-        """
-        RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(scale)
-        dataBuffer.putFloat(amount)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-}
-
-/**
  * A filter which applies a shade/gradient overlay.
  * @param angle shade angle in degrees
  * @param amount shade intensity (0-1)

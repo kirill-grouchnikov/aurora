@@ -241,6 +241,193 @@ class GlintFilter(
 }
 
 /**
+ * A filter which produces the effect of light rays shining out of an image.
+ * Replicates the JH-Labs RaysFilter and its MotionBlurOp superclass.
+ *
+ * @param centreX center of the effect in X as proportion of image width (default 0.5)
+ * @param centreY center of the effect in Y as proportion of image height (default 0.5)
+ * @param distance the distance of blur (default 10.0f)
+ * @param angle the angle of blur in radians (default 0.0f)
+ * @param rotation the rotation amount (default 0.0f)
+ * @param zoom the zoom factor (default 0.0f)
+ * @param opacity the opacity of the rays overlay (default 1.0f)
+ * @param threshold brightness threshold for ray detection (default 0.0f)
+ * @param strength the strength/intensity of the rays (default 0.5f)
+ * @param raysOnly true to render only rays, false to overlay on source (default false)
+ * @param colors optional colormap colors; when provided, the ray brightness maps through the gradient
+ */
+class RaysFilter(
+    val centreX: Float = 0.5f,
+    val centreY: Float = 0.5f,
+    val distance: Float = 10.0f,
+    val angle: Float = 0.0f,
+    val rotation: Float = 0.0f,
+    val zoom: Float = 0.0f,
+    val opacity: Float = 1.0f,
+    val threshold: Float = 0.0f,
+    val strength: Float = 0.5f,
+    val raysOnly: Boolean = false,
+    val colors: List<Color>? = null
+) : Filter {
+    override val effect: RuntimeEffect by lazy {
+        @Language("GLSL")
+        val shaderDesc = """
+            uniform shader content;
+            uniform shader colormap;
+            uniform vec2 center;
+            uniform float distance;
+            uniform float blurAngle;
+            uniform float rotation;
+            uniform float zoom;
+            uniform float opacity;
+            uniform float threshold;
+            uniform float strength;
+            uniform int raysOnly;
+            uniform int useColormap;
+            uniform vec2 imageSize;
+            half4 main(vec2 fragcoord) {
+                half4 c = content.eval(fragcoord);
+                vec2 icenter = imageSize * center;
+                float cx = icenter.x;
+                float cy = icenter.y;
+                float imageRadius = length(icenter);
+
+                // Compute maxDistance for multi-step blur
+                float maxDistance = distance + abs(rotation * imageRadius) + abs(zoom * imageRadius);
+                if (maxDistance < 1.0) maxDistance = 1.0;
+
+                // Multi-step motion blur to create ray effect
+                // Each step halves the transform and accumulates
+                float translateX = (distance / maxDistance) * cos(blurAngle);
+                float translateY = (distance / maxDistance) * (-sin(blurAngle));
+                float scale = zoom / maxDistance;
+                float rotate = rotation / maxDistance;
+
+                // Number of steps (log2 of maxDistance, clamped)
+                int steps = 0;
+                float m = 1.0;
+                while (m < maxDistance) {
+                    m *= 2.0;
+                    steps++;
+                }
+                if (steps < 1) steps = 1;
+                if (steps > 16) steps = 16;
+
+                // Accumulate blurred samples along radial direction from center
+                half4 rays = half4(0);
+                float totalWeight = 0.0;
+
+                for (int i = 0; i < steps; i++) {
+                    float fi = float(i);
+                    // Compute cumulative transform for this step
+                    float stepTranslateX = translateX * pow(2.0, fi);
+                    float stepTranslateY = translateY * pow(2.0, fi);
+                    float stepScale = 1.0 + scale * pow(2.0, fi);
+                    float stepRotate = rotate * pow(2.0, fi);
+
+                    // Radial offset from center
+                    vec2 delta = fragcoord - icenter;
+                    float dist = length(delta);
+                    float radialAngle = atan(delta.y, delta.x);
+
+                    // Apply rotation
+                    float cosR = cos(stepRotate);
+                    float sinR = sin(stepRotate);
+                    vec2 rotatedDelta = vec2(
+                        delta.x * cosR - delta.y * sinR,
+                        delta.x * sinR + delta.y * cosR
+                    );
+
+                    // Apply scale
+                    vec2 scaledDelta = rotatedDelta * stepScale;
+
+                    // Apply translate offset along the blur angle
+                    vec2 offset = vec2(stepTranslateX, stepTranslateY) * dist;
+
+                    // Sample position
+                    vec2 samplePos = icenter + scaledDelta + offset;
+
+                    // Threshold and grayscale the sampled pixel
+                    half4 s = content.eval(samplePos);
+                    float l = s.r + s.g + s.b;
+                    float thresh3 = threshold * 3.0 * 255.0 / 255.0;
+                    if (l < thresh3) {
+                        s = half4(0, 0, 0, 1);
+                    } else {
+                        float gray = l / 3.0;
+                        s = half4(gray, gray, gray, s.a);
+                    }
+
+                    rays += s;
+                    totalWeight += 1.0;
+                }
+                rays /= totalWeight;
+
+                // Apply strength
+                half3 rgb;
+                if (useColormap == 1) {
+                    float l = rays.r + rays.g + rays.b;
+                    float t = l * strength / 3.0;
+                    t = clamp(t, 0.0, 1.0);
+                    half4 colormapEval = colormap.eval(vec2(t * 256.0, 0.0));
+                    rgb = colormapEval.rgb;
+                    if (colormapEval.a != 0.0) {
+                        rgb = rgb / colormapEval.a;
+                    }
+                } else {
+                    rgb = rays.rgb * strength;
+                }
+                rgb = clamp(rgb, 0.0, 1.0);
+
+                // Composite: ADD rays over source with opacity
+                if (raysOnly == 1) {
+                    return half4(rgb, opacity);
+                } else {
+                    half3 finalRgb = c.rgb + rgb * opacity;
+                    finalRgb = clamp(finalRgb, 0.0, 1.0);
+                    return half4(finalRgb, c.a);
+                }
+            }
+        """
+        RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader,
+        imageWidth: Float = 640f,
+        imageHeight: Float = 480f
+    ): org.jetbrains.skia.Shader {
+        val dataBuffer = ByteBuffer.allocate(60).order(ByteOrder.LITTLE_ENDIAN)
+        dataBuffer.putFloat(centreX)
+        dataBuffer.putFloat(centreY)
+        dataBuffer.putFloat(distance)
+        dataBuffer.putFloat(angle)
+        dataBuffer.putFloat(rotation)
+        dataBuffer.putFloat(zoom)
+        dataBuffer.putFloat(opacity)
+        dataBuffer.putFloat(threshold)
+        dataBuffer.putFloat(strength)
+        dataBuffer.putInt(if (raysOnly) 1 else 0)
+        dataBuffer.putInt(if (colors != null) 1 else 0)
+        dataBuffer.putFloat(imageWidth)
+        dataBuffer.putFloat(imageHeight)
+
+        val gradientShader = colors?.let {
+            makeMultiStopHorizontalGradientShader(
+                stops = it,
+                width = 256.0f
+            )
+        }
+
+        return effect.makeShader(
+            uniforms = Data.makeFromBytes(dataBuffer.array()),
+            children = arrayOf(inputShader, gradientShader),
+            localMatrix = null
+        )
+    }
+}
+
+/**
  * A filter which adds a drop shadow effect.
  * @param offsetX shadow offset X in pixels
  * @param offsetY shadow offset Y in pixels
