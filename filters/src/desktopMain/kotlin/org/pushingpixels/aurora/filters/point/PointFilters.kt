@@ -15,18 +15,19 @@
  */
 package org.pushingpixels.aurora.filters.point
 
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
-import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -1224,14 +1225,7 @@ object SolarizeFilter : Filter {
  * @param seed random seed for ray length generation (default 371)
 
  */
-class SparkleFilter(
-    val rays: Int = 50,
-    val radius: Int = 25,
-    val amount: Int = 50,
-    val color: Int = -1, // 0xFFFFFFFF (white)
-    val randomness: Int = 25,
-    val seed: Long = 371L
-) : Filter {
+class SparkleFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1242,21 +1236,27 @@ class SparkleFilter(
             uniform half3 color;
             uniform int randomness;
             uniform float seed;
-            uniform vec2 imageSize;
+            uniform vec2 contentSize;
 
             // Simple hash-based noise for ray length generation
             float hash(float n) {
                 return fract(sin(n) * 43758.5453);
             }
 
-            // Box-Muller transform for Gaussian distribution
-            float gaussian(float u1, float u2) {
-                return sqrt(-2.0 * log(u1)) * cos(6.28318 * u2);
+            // Bounded Gaussian similar to Java's Random.nextGaussian()
+            // Uses Central Limit Theorem: sum of 12 uniform randoms minus 6
+            // This produces a bounded range of approximately [-6, +6]
+            float gaussian(float index, float seed) {
+                float sum = 0.0;
+                for (int j = 0; j < 12; j++) {
+                    sum += hash(index + seed + float(j) * 100.0);
+                }
+                return sum - 6.0;
             }
 
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
-                vec2 center = imageSize * 0.5;
+                vec2 center = contentSize * 0.5;
                 float dx = fragcoord.x - center.x;
                 float dy = fragcoord.y - center.y;
                 float distance = dx * dx + dy * dy;
@@ -1292,14 +1292,24 @@ class SparkleFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader?, imageWidth: Float = 640f, imageHeight: Float = 480f): org.jetbrains.skia.Shader {
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader? = null,
+        rays: Int = 50,
+        radius: Int = 25,
+        amount: Int = 50,
+        color: Color = Color.White,
+        randomness: Int = 25,
+        seed: Long = 371L,
+        imageWidth: Float = 640f,
+        imageHeight: Float = 480f
+    ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putInt(rays)
         dataBuffer.putInt(radius)
         dataBuffer.putFloat(amount.toFloat())
-        dataBuffer.putFloat(((color shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color and 0xff) / 255f)
+        dataBuffer.putFloat(color.red)
+        dataBuffer.putFloat(color.green)
+        dataBuffer.putFloat(color.blue)
         dataBuffer.putInt(randomness)
         dataBuffer.putFloat(seed.toFloat())
         dataBuffer.putFloat(imageWidth)
@@ -1310,7 +1320,42 @@ class SparkleFilter(
             localMatrix = null
         )
     }
+
+    @Composable
+    fun effectModifier(
+        rays: Int = 50,
+        radius: Int = 25,
+        amount: Int = 50,
+        color: Color = Color.White,
+        randomness: Int = 25,
+        seed: Long = 371L
+    ): Modifier {
+        var contentSize by remember { mutableStateOf<Pair<Float, Float>?>(null) }
+
+        val sizeChangedModifier = Modifier.onSizeChanged { newSize ->
+            contentSize = Pair(newSize.width.toFloat(), newSize.height.toFloat())
+        }
+
+        return sizeChangedModifier.graphicsLayer {
+            val size = contentSize ?: return@graphicsLayer
+            val sparkleShaderBuilder = RuntimeShaderBuilder(this@SparkleFilter.effect)
+            sparkleShaderBuilder.uniform("contentSize", size.first, size.second)
+            sparkleShaderBuilder.uniform("rays", rays)
+            sparkleShaderBuilder.uniform("radius", radius)
+            sparkleShaderBuilder.uniform("amount", amount.toFloat())
+            sparkleShaderBuilder.uniform("color", color.red, color.green, color.blue)
+            sparkleShaderBuilder.uniform("randomness", randomness)
+            sparkleShaderBuilder.uniform("seed", seed.toFloat())
+            renderEffect = ImageFilter.makeRuntimeShader(
+                runtimeShaderBuilder = sparkleShaderBuilder,
+                shaderName = "content",
+                input = null
+            ).asComposeRenderEffect()
+            clip = true
+        }
+    }
 }
+
 
 /**
  * A filter which rearranges (swizzles) the RGB channels.

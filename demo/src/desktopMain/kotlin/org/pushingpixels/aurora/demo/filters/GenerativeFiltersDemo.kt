@@ -64,10 +64,8 @@ fun main() = androidx.compose.ui.window.application {
     ) {
         val woodFilter = remember { WoodFilter() }
         val brushedMetalFilter = remember { BrushedMetalFilter() }
-        val marbleTexFilter = remember {
-            MarbleTexFilter(color1 = 0xB76E79, color2 = 0xFFC0CB)
-        }
-        val sparkleFilter = remember { SparkleFilter(color = 0x208070, amount = 75, rays = 35) }
+        val marbleTexFilter = remember { MarbleTexFilter() }
+        val sparkleFilter = remember { SparkleFilter() }
 
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
@@ -99,32 +97,18 @@ fun main() = androidx.compose.ui.window.application {
             item { Box(modifier = Modifier.size(200.dp).
                 then(brushedMetalFilter.effectModifier(
                     radius = 8, amount = 1.0f, color = Color(0xFF800000)))) }
-            item { Box(modifier = Modifier.size(200.dp).marbleTexBackground(marbleTexFilter)) }
-            item { Box(modifier = Modifier.size(200.dp).sparkleBackground(sparkleFilter)) }
+            item { Box(modifier = Modifier.size(200.dp).
+                then(marbleTexFilter.effectModifier(
+                    colors = listOf(Color(0xFFB76E79), Color(0xFFFFC0CB)))))
+            }
+
+            item {
+                Box(
+                    modifier = Modifier.size(200.dp).background(Color.DarkGray)
+                        .then(sparkleFilter.effectModifier(color = Color(0xFF208070),
+                            ))
+                )
+            }
         }
     }
 }
-
-private fun Modifier.marbleTexBackground(filter: MarbleTexFilter) = this.then(
-    Modifier.drawBehind {
-        // Apply the brushed metal shader filter to the base shader
-        val filteredShader = filter.makeShader(null)
-
-        // Draw the filtered result
-        drawRect(
-            brush = ShaderBrush(filteredShader.asComposeShader())
-        )
-    }
-)
-
-private fun Modifier.sparkleBackground(filter: SparkleFilter) = this.background(Color.DarkGray).then(
-    Modifier.drawBehind {
-        // Apply the brushed metal shader filter to the base shader
-        val filteredShader = filter.makeShader(null, size.width, size.height)
-
-        // Draw the filtered result
-        drawRect(
-            brush = ShaderBrush(filteredShader.asComposeShader())
-        )
-    }
-)

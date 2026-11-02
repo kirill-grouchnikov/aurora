@@ -823,29 +823,17 @@ class MarbleFilter(
  * @param angle the rotation angle in radians (default 0.0f)
  * @param turbulence the turbulence amount (default 1.0f)
  * @param turbulenceFactor the turbulence factor (default 0.5f)
- * @param color1 the first colormap color as 0xRRGGBB (default brown)
- * @param color2 the second colormap color as 0xRRGGBB (default green)
  */
-class MarbleTexFilter(
-    val scale: Float = 32f,
-    val stretch: Float = 1f,
-    val angle: Float = 0f,
-    val turbulence: Float = 1f,
-    val turbulenceFactor: Float = 0.5f,
-    val color1: Int = 0xff8B4513.toInt(),
-    val color2: Int = 0xff228B22.toInt()
-) : Filter {
+class MarbleTexFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
-            uniform shader content;
+            uniform shader colormap;
             uniform float scale;
             uniform float stretch;
             uniform float angle;
             uniform float turbulence;
             uniform float turbulenceFactor;
-            uniform half3 color1;
-            uniform half3 color2;
             $NOISE_FUNC
             float noise2t(vec2 p, float t) {
                 // Turbulence noise with time offset
@@ -888,7 +876,7 @@ class MarbleTexFilter(
                 grn *= max(brownLayer, greenLayer) * grnPerturb;
 
                 // Blend with colormap colors
-                half3 rgb = mix(color1, color2, grn);
+                half3 rgb = colormap.eval(vec2(grn * 256, 0)).rgb;
                 rgb.r *= red;
                 rgb.g *= grn;
                 rgb.b *= blu;
@@ -899,24 +887,48 @@ class MarbleTexFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader? = null): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN)
+    fun makeShader(
+        scale: Float = 32f,
+        stretch: Float = 1f,
+        angle: Float = 0f,
+        turbulence: Float = 1f,
+        turbulenceFactor: Float = 0.5f,
+        colors: List<Color> = listOf(Color(0xFF8B4513), Color(0xFF228B22)),
+    ): org.jetbrains.skia.Shader {
+        // 5 floats = 20 bytes
+        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(scale)
         dataBuffer.putFloat(stretch)
         dataBuffer.putFloat(angle)
         dataBuffer.putFloat(turbulence)
         dataBuffer.putFloat(turbulenceFactor)
-        dataBuffer.putFloat(((color1 shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color1 shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color1 and 0xff) / 255f)
-        dataBuffer.putFloat(((color2 shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color2 shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color2 and 0xff) / 255f)
+
+        val gradientShader = makeMultiStopHorizontalGradientShader(
+            stops = colors,
+            width = 256.0f)
+
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(gradientShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(
+        scale: Float = 32f,
+        stretch: Float = 1f,
+        angle: Float = 0f,
+        turbulence: Float = 1f,
+        turbulenceFactor: Float = 0.5f,
+        colors: List<Color> = listOf(Color(0xFF8B4513), Color(0xFF228B22))
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(scale, stretch, angle, turbulence, turbulenceFactor, colors)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
     }
 }
 
