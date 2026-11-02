@@ -16,6 +16,7 @@
 package org.pushingpixels.aurora.filters.composite
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
@@ -25,6 +26,7 @@ import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
+import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.PI
@@ -35,18 +37,8 @@ import kotlin.math.PI
 /**
  * A filter which produces a color halftone effect with CMYK-style screen angles.
  * Replicates the JH-Labs ColorHalftoneFilter.
- *
- * @param dotRadius the radius of halftone dots (default 2)
- * @param cyanScreenAngle cyan screen angle in radians (default 108°)
- * @param magentaScreenAngle magenta screen angle in radians (default 162°)
- * @param yellowScreenAngle yellow screen angle in radians (default 90°)
  */
-class ColorHalftoneFilter(
-    val dotRadius: Float = 2f,
-    val cyanScreenAngle: Float = 108f * 3.14159265f / 180f,
-    val magentaScreenAngle: Float = 162f * 3.14159265f / 180f,
-    val yellowScreenAngle: Float = 90f * 3.14159265f / 180f
-) : Filter {
+class ColorHalftoneFilter() : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -95,18 +87,18 @@ class ColorHalftoneFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(dotRadius)
-        dataBuffer.putFloat(cyanScreenAngle)
-        dataBuffer.putFloat(magentaScreenAngle)
-        dataBuffer.putFloat(yellowScreenAngle)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
+//    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+//        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
+//        dataBuffer.putFloat(dotRadius)
+//        dataBuffer.putFloat(cyanScreenAngle)
+//        dataBuffer.putFloat(magentaScreenAngle)
+//        dataBuffer.putFloat(yellowScreenAngle)
+//        return effect.makeShader(
+//            uniforms = Data.makeFromBytes(dataBuffer.array()),
+//            children = arrayOf(inputShader),
+//            localMatrix = null
+//        )
+//    }
 
     fun renderEffect(
         dotRadius: Float = 2.0f,
@@ -125,6 +117,27 @@ class ColorHalftoneFilter(
             shaderName = "content",
             input = null
         ).asComposeRenderEffect()
+    }
+
+    fun effectModifier(
+        dotRadius: Float = 2.0f,
+        cyanAngle: Float = 108.0f * PI.toFloat() / 180.0f,
+        magentaAngle: Float = 162.0f * PI.toFloat() / 180.0f,
+        yellowAngle: Float = 90.0f * PI.toFloat() / 180.0f
+    ): Modifier {
+        val colorHalftoneShaderBuilder = RuntimeShaderBuilder(this.effect)
+        colorHalftoneShaderBuilder.uniform("dotRadius", dotRadius)
+        colorHalftoneShaderBuilder.uniform("cyanAngle", cyanAngle)
+        colorHalftoneShaderBuilder.uniform("magentaAngle", magentaAngle)
+        colorHalftoneShaderBuilder.uniform("yellowAngle", yellowAngle)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = colorHalftoneShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 

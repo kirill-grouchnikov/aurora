@@ -15,15 +15,18 @@
  */
 package org.pushingpixels.aurora.filters.point
 
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
+import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -1194,6 +1197,18 @@ object SolarizeFilter : Filter {
             shaderName = "content",
             input = null
         ).asComposeRenderEffect()
+    }
+
+    fun effectModifier(): Modifier {
+        val solarizeShaderBuilder = RuntimeShaderBuilder(this.effect)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = solarizeShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 

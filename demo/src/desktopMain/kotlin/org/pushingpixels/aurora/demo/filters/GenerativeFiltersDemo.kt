@@ -196,17 +196,17 @@ private fun Modifier.brushedMetalBackground(filter: BrushedMetalFilter) = this.t
     }
 )
 
-private fun Modifier.chromeBackground(filter: ChromeFilter) = this.then(
-    Modifier.drawBehind {
-        // Apply the chrome shader filter with image dimensions
-        val filteredShader = filter.makeShader(null, size.width, size.height)
-
-        // Draw the filtered result
-        drawRect(
-            brush = ShaderBrush(filteredShader.asComposeShader())
-        )
-    }
-)
+//private fun Modifier.chromeBackground(filter: ChromeFilter) = this.then(
+//    Modifier.drawBehind {
+//        // Apply the chrome shader filter with image dimensions
+//        val filteredShader = filter.makeShader(null, size.width, size.height)
+//
+//        // Draw the filtered result
+//        drawRect(
+//            brush = ShaderBrush(filteredShader.asComposeShader())
+//        )
+//    }
+//)
 
 private fun Modifier.marbleTexBackground(filter: MarbleTexFilter) = this.then(
     Modifier.drawBehind {

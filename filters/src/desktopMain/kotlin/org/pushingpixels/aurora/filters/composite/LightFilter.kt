@@ -214,7 +214,7 @@ internal val phongShadeFn = """
                     if (i >= lightCount) {
                         break;
                     }
-                    int lightType = lightTypes[i];
+                    int lightType = int(lightTypes[i]);
                     half3 lightColor = half3(lightColorRGB[i*3], lightColorRGB[i*3+1], lightColorRGB[i*3+2]);
                     half3 lightDir = half3(lightDirections[i*3], lightDirections[i*3+1], lightDirections[i*3+2]);
                     half3 lightPos = half3(lightPositions[i*3], lightPositions[i*3+1], lightPositions[i*3+2]);
@@ -307,7 +307,7 @@ class LightFilter(
             uniform float reflectivity;
             uniform float opacity;
             uniform int lightCount;
-            uniform int lightTypes[4];
+            uniform float lightTypes[4];  // easier to pass floats in
             uniform float lightColorRGB[4*3];
             uniform float lightDirections[4*3];
             uniform float lightPositions[4*3];

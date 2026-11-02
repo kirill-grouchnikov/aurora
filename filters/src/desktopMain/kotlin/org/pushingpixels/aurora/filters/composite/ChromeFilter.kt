@@ -15,10 +15,19 @@
  */
 package org.pushingpixels.aurora.filters.composite
 
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
+import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
+import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
+import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -174,17 +183,7 @@ data class Light(
  * @param viewDistance viewer distance from surface for specular calculations (default 10000.0)
  * @param useImageColors if true, use image colors as diffuse; if false, use material diffuseColor
  */
-class ChromeFilter(
-    val amount: Float = 0.5f,
-    val exposure: Float = 1f,
-    val material: Material = Material(),
-    val lights: List<Light> = listOf(Light(type = LightType.DISTANT)),
-    val bumpHeight: Float = 1.0f,
-    val bumpSoftness: Float = 0f,
-    val bumpShape: BumpShape = BumpShape.NONE,
-    val viewDistance: Float = 10000.0f,
-    val useImageColors: Boolean = false
-) : Filter {
+class ChromeFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -200,7 +199,7 @@ class ChromeFilter(
             uniform float reflectivity;
             uniform float opacity;
             uniform int lightCount;
-            uniform int lightTypes[4];
+            uniform float lightTypes[4]; // should be int, but easier to pass floats
             uniform float lightColorRGB[4*3];
             uniform float lightDirections[4*3];
             uniform float lightPositions[4*3];
@@ -211,7 +210,7 @@ class ChromeFilter(
             uniform int bumpShape;
             uniform float viewDistance;
             uniform int useImageColors;
-            uniform float2 imageSize;
+            uniform float2 contentSize;
 
             $applyBumpShapeFn
 
@@ -237,12 +236,12 @@ class ChromeFilter(
                 half4 c = content.eval(fragcoord);
 
                 // Compute surface normal from bump map using the original LightFilter algorithm
-                half3 normal = computeNormal(fragcoord, imageSize.x, imageSize.y);
+                half3 normal = computeNormal(fragcoord, contentSize.x, contentSize.y);
 
                 // Viewpoint for specular calculations
                 half3 viewpoint = half3(
-                    imageSize.x * 0.5 - fragcoord.x,
-                    imageSize.y * 0.5 - fragcoord.y,
+                    contentSize.x * 0.5 - fragcoord.x,
+                    contentSize.y * 0.5 - fragcoord.y,
                     viewDistance
                 );
 
@@ -275,98 +274,207 @@ class ChromeFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader?,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        // Maximum 4 lights supported in the shader
-        val lightCount = lights.size.coerceAtMost(4)
+//    fun makeShader(
+//        inputShader: org.jetbrains.skia.Shader?,
+//        imageWidth: Float,
+//        imageHeight: Float
+//    ): org.jetbrains.skia.Shader {
+//        // Maximum 4 lights supported in the shader
+//        val lightCount = lights.size.coerceAtMost(4)
+//
+//        // Calculate buffer size:
+//        // amount(4) + exposure(4) + materialDiffuseRGB(12) + materialSpecularRGB(12) +
+//        // ambientIntensity(4) + diffuseReflectivity(4) + specularReflectivity(4) + highlight(4) +
+//        // reflectivity(4) + opacity(4) + lightCount(4) +
+//        // lightTypes(16) + lightColorRGB(48) + lightDirections(48) + lightPositions(48) +
+//        // lightCosConeAngles(16) + lightFocus(16) +
+//        // bumpHeight(4) + bumpSoftness(4) + bumpShape(4) + viewDistance(4) + useImageColors(4) + imageSize(8) = 300 bytes
+//        val bufferSize = 300
+//        val dataBuffer = ByteBuffer.allocate(bufferSize).order(ByteOrder.LITTLE_ENDIAN)
+//
+//        // Chrome parameters
+//        dataBuffer.putFloat(amount)
+//        dataBuffer.putFloat(exposure)
+//
+//        // Material properties
+//        val diffuseRGB = material.diffuseRGB
+//        dataBuffer.putFloat(diffuseRGB[0])
+//        dataBuffer.putFloat(diffuseRGB[1])
+//        dataBuffer.putFloat(diffuseRGB[2])
+//
+//        val specularRGB = material.specularRGB
+//        dataBuffer.putFloat(specularRGB[0])
+//        dataBuffer.putFloat(specularRGB[1])
+//        dataBuffer.putFloat(specularRGB[2])
+//
+//        dataBuffer.putFloat(material.ambientIntensity)
+//        dataBuffer.putFloat(material.diffuseReflectivity)
+//        dataBuffer.putFloat(material.specularReflectivity)
+//        dataBuffer.putFloat(material.highlight)
+//        dataBuffer.putFloat(material.reflectivity)
+//        dataBuffer.putFloat(material.opacity)
+//
+//        // Light count
+//        dataBuffer.putInt(lightCount)
+//
+//        // Light arrays (pad to 4)
+//        for (i in 0 until 4) {
+//            if (i < lightCount) {
+//                val light = lights[i]
+//                dataBuffer.putInt(light.type.ordinal)
+//                val c = light.colorRGB
+//                dataBuffer.putFloat(c[0])
+//                dataBuffer.putFloat(c[1])
+//                dataBuffer.putFloat(c[2])
+//                val d = light.direction
+//                dataBuffer.putFloat(d[0])
+//                dataBuffer.putFloat(d[1])
+//                dataBuffer.putFloat(d[2])
+//                val p = light.position(imageWidth, imageHeight)
+//                dataBuffer.putFloat(p[0])
+//                dataBuffer.putFloat(p[1])
+//                dataBuffer.putFloat(p[2])
+//                dataBuffer.putFloat(light.cosConeAngle)
+//                dataBuffer.putFloat(light.focus)
+//            } else {
+//                dataBuffer.putInt(0)
+//                dataBuffer.putFloat(0f)
+//                dataBuffer.putFloat(0f)
+//                dataBuffer.putFloat(0f)
+//                dataBuffer.putFloat(0f)
+//                dataBuffer.putFloat(0f)
+//                dataBuffer.putFloat(0f)
+//                dataBuffer.putFloat(0f)
+//                dataBuffer.putFloat(0f)
+//                dataBuffer.putFloat(0f)
+//                dataBuffer.putFloat(0f)
+//                dataBuffer.putFloat(0f)
+//                dataBuffer.putFloat(0f)
+//            }
+//        }
+//
+//        // Bump and view parameters
+//        dataBuffer.putFloat(bumpHeight)
+//        dataBuffer.putFloat(bumpSoftness)
+//        dataBuffer.putInt(bumpShape.ordinal)
+//        dataBuffer.putFloat(viewDistance)
+//        dataBuffer.putInt(if (useImageColors) 1 else 0)
+//        dataBuffer.putFloat(imageWidth)
+//        dataBuffer.putFloat(imageHeight)
+//
+//        return effect.makeShader(
+//            uniforms = Data.makeFromBytes(dataBuffer.array()),
+//            children = arrayOf(inputShader),
+//            localMatrix = null
+//        )
+//    }
 
-        // Calculate buffer size:
-        // amount(4) + exposure(4) + materialDiffuseRGB(12) + materialSpecularRGB(12) +
-        // ambientIntensity(4) + diffuseReflectivity(4) + specularReflectivity(4) + highlight(4) +
-        // reflectivity(4) + opacity(4) + lightCount(4) +
-        // lightTypes(16) + lightColorRGB(48) + lightDirections(48) + lightPositions(48) +
-        // lightCosConeAngles(16) + lightFocus(16) +
-        // bumpHeight(4) + bumpSoftness(4) + bumpShape(4) + viewDistance(4) + useImageColors(4) + imageSize(8) = 300 bytes
-        val bufferSize = 300
-        val dataBuffer = ByteBuffer.allocate(bufferSize).order(ByteOrder.LITTLE_ENDIAN)
+    fun effectModifier(
+        amount: Float = 0.5f,
+        exposure: Float = 1f,
+        chromeMaterial: Material = Material(),
+        lights: List<Light> = listOf(Light(type = LightType.DISTANT)),
+        bumpHeight: Float = 1.0f,
+        bumpSoftness: Float = 0f,
+        bumpShape: BumpShape = BumpShape.NONE,
+        viewDistance: Float = 10000.0f,
+        useImageColors: Boolean = false
+    ): Modifier {
+        val chromeShaderBuilder = RuntimeShaderBuilder(this.effect)
 
-        // Chrome parameters
-        dataBuffer.putFloat(amount)
-        dataBuffer.putFloat(exposure)
+        val maxLights = 4
 
-        // Material properties
-        val diffuseRGB = material.diffuseRGB
-        dataBuffer.putFloat(diffuseRGB[0])
-        dataBuffer.putFloat(diffuseRGB[1])
-        dataBuffer.putFloat(diffuseRGB[2])
+        val sizeChangedModifier = Modifier.onSizeChanged { newSize ->
+            chromeShaderBuilder.uniform(
+                "contentSize",
+                newSize.width.toFloat(),
+                newSize.height.toFloat()
+            )
 
-        val specularRGB = material.specularRGB
-        dataBuffer.putFloat(specularRGB[0])
-        dataBuffer.putFloat(specularRGB[1])
-        dataBuffer.putFloat(specularRGB[2])
-
-        dataBuffer.putFloat(material.ambientIntensity)
-        dataBuffer.putFloat(material.diffuseReflectivity)
-        dataBuffer.putFloat(material.specularReflectivity)
-        dataBuffer.putFloat(material.highlight)
-        dataBuffer.putFloat(material.reflectivity)
-        dataBuffer.putFloat(material.opacity)
-
-        // Light count
-        dataBuffer.putInt(lightCount)
-
-        // Light arrays (pad to 4)
-        for (i in 0 until 4) {
-            if (i < lightCount) {
-                val light = lights[i]
-                dataBuffer.putInt(light.type.ordinal)
-                val c = light.colorRGB
-                dataBuffer.putFloat(c[0])
-                dataBuffer.putFloat(c[1])
-                dataBuffer.putFloat(c[2])
-                val d = light.direction
-                dataBuffer.putFloat(d[0])
-                dataBuffer.putFloat(d[1])
-                dataBuffer.putFloat(d[2])
-                val p = light.position(imageWidth, imageHeight)
-                dataBuffer.putFloat(p[0])
-                dataBuffer.putFloat(p[1])
-                dataBuffer.putFloat(p[2])
-                dataBuffer.putFloat(light.cosConeAngle)
-                dataBuffer.putFloat(light.focus)
-            } else {
-                dataBuffer.putInt(0)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
+            val lightPositions = FloatArray(maxLights * 3) { 0.0f }
+            var lIndex = 0
+            for (light in lights) {
+                val lightPosition = light.position(newSize.width.toFloat(), newSize.height.toFloat())
+                lightPositions[lIndex++] = lightPosition[0]
+                lightPositions[lIndex++] = lightPosition[1]
+                lightPositions[lIndex++] = lightPosition[2]
             }
+            chromeShaderBuilder.uniform("lightPositions", lightPositions)
         }
 
-        // Bump and view parameters
-        dataBuffer.putFloat(bumpHeight)
-        dataBuffer.putFloat(bumpSoftness)
-        dataBuffer.putInt(bumpShape.ordinal)
-        dataBuffer.putFloat(viewDistance)
-        dataBuffer.putInt(if (useImageColors) 1 else 0)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
+        chromeShaderBuilder.uniform("amount", amount)
+        chromeShaderBuilder.uniform("exposure", exposure)
+        chromeShaderBuilder.uniform(
+            "materialDiffuseRGB",
+            chromeMaterial.diffuseRGB[0], chromeMaterial.diffuseRGB[1], chromeMaterial.diffuseRGB[2]
         )
+        chromeShaderBuilder.uniform(
+            "materialSpecularRGB",
+            chromeMaterial.specularRGB[0], chromeMaterial.specularRGB[1], chromeMaterial.specularRGB[2]
+        )
+
+        chromeShaderBuilder.uniform("ambientIntensity", chromeMaterial.ambientIntensity)
+        chromeShaderBuilder.uniform("diffuseReflectivity", chromeMaterial.diffuseReflectivity)
+        chromeShaderBuilder.uniform("specularReflectivity", chromeMaterial.specularReflectivity)
+        chromeShaderBuilder.uniform("highlight", chromeMaterial.highlight)
+        chromeShaderBuilder.uniform("reflectivity", chromeMaterial.reflectivity)
+        chromeShaderBuilder.uniform("opacity", chromeMaterial.opacity)
+
+        chromeShaderBuilder.uniform("lightCount", lights.size)
+
+        val lightTypes = FloatArray(maxLights) { 0.0f }
+        val lightColorRGB = FloatArray(maxLights * 3) { 0.0f }
+        val lightDirections = FloatArray(maxLights * 3) { 0.0f }
+        val lightCosConeAngles = FloatArray(maxLights) { 0.0f }
+        val lightFocus = FloatArray(maxLights) { 0.0f }
+
+        var lIndex = 0
+        for (light in lights) {
+            lightTypes[lIndex++] = light.type.ordinal.toFloat()
+        }
+
+        lIndex = 0
+        for (light in lights) {
+            lightColorRGB[lIndex++] = light.colorRGB[0]
+            lightColorRGB[lIndex++] = light.colorRGB[1]
+            lightColorRGB[lIndex++] = light.colorRGB[2]
+        }
+
+        lIndex = 0
+        for (light in lights) {
+            lightDirections[lIndex++] = light.direction[0]
+            lightDirections[lIndex++] = light.direction[1]
+            lightDirections[lIndex++] = light.direction[2]
+        }
+
+        lIndex = 0
+        for (light in lights) {
+            lightCosConeAngles[lIndex++] = light.cosConeAngle
+        }
+
+        lIndex = 0
+        for (light in lights) {
+            lightFocus[lIndex++] = light.focus
+        }
+
+        chromeShaderBuilder.uniform("lightTypes", lightTypes)
+        chromeShaderBuilder.uniform("lightColorRGB", lightColorRGB)
+        chromeShaderBuilder.uniform("lightDirections", lightDirections)
+        chromeShaderBuilder.uniform("lightCosConeAngles", lightCosConeAngles)
+        chromeShaderBuilder.uniform("lightFocus", lightFocus)
+
+        chromeShaderBuilder.uniform("bumpHeight", bumpHeight)
+        chromeShaderBuilder.uniform("bumpSoftness", bumpSoftness)
+        chromeShaderBuilder.uniform("bumpShape", bumpShape.ordinal)
+        chromeShaderBuilder.uniform("viewDistance", viewDistance)
+        chromeShaderBuilder.uniform("useImageColors", if (useImageColors) 1 else 0)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = chromeShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return sizeChangedModifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }

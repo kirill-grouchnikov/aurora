@@ -104,7 +104,9 @@ fun main() = application {
 
             val light = Light(type = LightType.DISTANT)
             chromeShaderBuilder.uniform("lightCount", 1)
-            chromeShaderBuilder.uniform("lightTypes", light.type.ordinal, 0, 0, 0)
+            chromeShaderBuilder.uniform("lightTypes", floatArrayOf(
+                light.type.ordinal.toFloat(), 0.0f, 0.0f, 0.0f
+            ))
             chromeShaderBuilder.uniform("lightColorRGB", floatArrayOf(
                 light.colorRGB[0], light.colorRGB[1], light.colorRGB[2],
                 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f
@@ -132,7 +134,7 @@ fun main() = application {
 
              item { CheckeredBox(modifier = Modifier.size(200.dp)
                  .onSizeChanged { newSize ->
-                     chromeShaderBuilder.uniform("imageSize", newSize.width.toFloat(), newSize.height.toFloat())
+                     chromeShaderBuilder.uniform("contentSize", newSize.width.toFloat(), newSize.height.toFloat())
                  }
                  .graphicsLayer(renderEffect = ImageFilter.makeRuntimeShader(
                      runtimeShaderBuilder = chromeShaderBuilder,

@@ -15,11 +15,13 @@
  */
 package org.pushingpixels.aurora.filters.generative
 
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.asSkiaColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
 import org.jetbrains.skia.ImageFilter
@@ -1013,28 +1015,8 @@ class OilFilter(
 /**
  * A filter which generates a plasma texture overlay.
  * Replicates the JH-Labs PlasmaFilter.
- *
- * @param scaling the scaling factor (default 0.0f)
- * @param turbulence the turbulence amount (default 0.0f)
- * @param seed the random seed (default 567)
- * @param useColormap true to use colormap colors (default false)
- * @param useImageColors true to use image colors (default false)
- * @param color1 the first colormap color as 0xRRGGBB (default blue)
- * @param color2 the second colormap color as 0xRRGGBB (default green)
- * @param color3 the third colormap color as 0xRRGGBB (default red)
- * @param color4 the fourth colormap color as 0xRRGGBB (default yellow)
  */
-class PlasmaFilter(
-    val scaling: Float = 0f,
-    val turbulence: Float = 0f,
-    val seed: Int = 567,
-    val useColormap: Boolean = false,
-    val useImageColors: Boolean = false,
-    val color1: Int = 0xff0000ff.toInt(),
-    val color2: Int = 0xff00ff00.toInt(),
-    val color3: Int = 0xffff0000.toInt(),
-    val color4: Int = 0xffffff00.toInt()
-) : Filter {
+class PlasmaFilter() : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1131,6 +1113,33 @@ class PlasmaFilter(
             shaderNames = arrayOf("content", "colormap"),
             inputs = arrayOf(null, gradientFilter)
         ).asComposeRenderEffect()
+    }
+
+    fun effectModifier(
+        turbulence: Float = 1.0f,
+        scaling: Float = 0.0f,
+        seed: Int = 567,
+        colors: List<Color>? = null
+    ): Modifier {
+        val plasmaShaderBuilder = RuntimeShaderBuilder(this.effect)
+        plasmaShaderBuilder.uniform("turbulence", turbulence)
+        plasmaShaderBuilder.uniform("scaling", scaling)
+        plasmaShaderBuilder.uniform("seed", seed)
+        plasmaShaderBuilder.uniform("useColormap", if (colors != null) 1 else 0)
+
+        val gradientFilter: ImageFilter? = colors?.let {
+            makeMultiStopHorizontalGradientFilter(
+                stops = it,
+                width = 256)
+        }
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = plasmaShaderBuilder,
+            shaderNames = arrayOf("content", "colormap"),
+            inputs = arrayOf(null, gradientFilter)
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
