@@ -88,15 +88,18 @@ fun main() = androidx.compose.ui.window.application {
                 Box(
                     modifier = Modifier.size(200.dp).then(
                         woodFilter.effectModifier(
-                            scale = 80.0f, stretch = 15.0f, gain = 1.9f, angle = 1.5f * Math.PI.toFloat(),
+                            scale = 80.0f, stretch = 15.0f, gain = 1.9f,
+                            angle = 1.5f * Math.PI.toFloat(),
                             colors = listOf(Color(0xFFCD4A4A), Color(0xFF682523), Color(0xFF482029))
                         )
                     )
                 )
             }
+
             item { Box(modifier = Modifier.size(200.dp).
                 then(brushedMetalFilter.effectModifier(
                     radius = 8, amount = 1.0f, color = Color(0xFF800000)))) }
+
             item { Box(modifier = Modifier.size(200.dp).
                 then(marbleTexFilter.effectModifier(
                     colors = listOf(Color(0xFFB76E79), Color(0xFFFFC0CB)))))

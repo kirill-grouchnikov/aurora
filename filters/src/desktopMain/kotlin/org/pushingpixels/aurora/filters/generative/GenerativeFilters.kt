@@ -331,6 +331,7 @@ class CausticsFilter(
  * @param gradientCoefficient the gradient coefficient (default 0.0f)
  * @param randomness the randomness amount (default 0.0f)
  * @param amount the overlay intensity (default 1.0f)
+ * @param colors optional colormap colors; when provided, the cellular value is mapped through the gradient
  */
 class CellularFilter(
     val scale: Float = 32f,
@@ -344,12 +345,14 @@ class CellularFilter(
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
+            uniform shader colormap;
             uniform float scale;
             uniform float stretch;
             uniform float angle;
             uniform float gradientCoefficient;
             uniform float randomness;
             uniform float amount;
+            uniform int useColormap;
             $NOISE_FUNC
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
@@ -381,25 +384,49 @@ class CellularFilter(
                 if (gradientCoefficient > 0.0) {
                     minDist *= gradientCoefficient * noise2(fragcoord / scale);
                 }
-                half3 cellular = half3(minDist);
-                half3 rgb = mix(c.rgb, cellular, amount);
+                // Normalize to 0..1
+                minDist = clamp(minDist, 0.0, 1.0);
+                half3 rgb;
+                if (useColormap == 1) {
+                    half4 colormapEval = colormap.eval(vec2(minDist * 256.0, 0.0));
+                    rgb = colormapEval.rgb;
+                    if (colormapEval.a != 0.0) {
+                        rgb = rgb / colormapEval.a;
+                    }
+                    rgb = mix(c.rgb, rgb, amount);
+                } else {
+                    half3 cellular = half3(minDist);
+                    rgb = mix(c.rgb, cellular, amount);
+                }
                 return half4(rgb, c.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader,
+        colors: List<Color>? = null
+    ): org.jetbrains.skia.Shader {
+        val dataBuffer = ByteBuffer.allocate(28).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(scale)
         dataBuffer.putFloat(stretch)
         dataBuffer.putFloat(angle)
         dataBuffer.putFloat(gradientCoefficient)
         dataBuffer.putFloat(randomness)
         dataBuffer.putFloat(amount)
+        dataBuffer.putInt(if (colors != null) 1 else 0)
+
+        val gradientShader = colors?.let {
+            makeMultiStopHorizontalGradientShader(
+                stops = it,
+                width = 256.0f
+            )
+        }
+
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(inputShader, gradientShader),
             localMatrix = null
         )
     }
@@ -561,6 +588,7 @@ class CrystallizeFilter(
  * @param bias the FBM bias (default 0.5f)
  * @param operation the blend operation: 0=ADD, 1=SUBTRACT, 2=MULTIPLY (default 0)
  * @param ridged true for ridged FBM (default false)
+ * @param colors optional colormap colors; when provided, the FBM value is mapped through the gradient
  */
 class FBMFilter(
     val scale: Float = 32f,
@@ -579,6 +607,7 @@ class FBMFilter(
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
+            uniform shader colormap;
             uniform float scale;
             uniform float stretch;
             uniform float angle;
@@ -590,6 +619,7 @@ class FBMFilter(
             uniform float bias;
             uniform int operation;
             uniform int ridged;
+            uniform int useColormap;
             $NOISE_FUNC
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
@@ -620,14 +650,26 @@ class FBMFilter(
                     }
                     amplitude *= gain;
                 }
-                half3 fbm = half3(value);
+                // Normalize to 0..1
+                value = value * 0.5 + 0.5;
+                value = clamp(value, 0.0, 1.0);
                 half3 rgb;
-                if (operation == 0) {
-                    rgb = mix(c.rgb, fbm, amount);
-                } else if (operation == 1) {
-                    rgb = c.rgb - fbm * amount;
+                if (useColormap == 1) {
+                    half4 colormapEval = colormap.eval(vec2(value * 256.0, 0.0));
+                    rgb = colormapEval.rgb;
+                    if (colormapEval.a != 0.0) {
+                        rgb = rgb / colormapEval.a;
+                    }
+                    rgb = mix(c.rgb, rgb, amount);
                 } else {
-                    rgb = c.rgb * fbm * amount;
+                    half3 fbm = half3(value);
+                    if (operation == 0) {
+                        rgb = mix(c.rgb, fbm, amount);
+                    } else if (operation == 1) {
+                        rgb = c.rgb - fbm * amount;
+                    } else {
+                        rgb = c.rgb * fbm * amount;
+                    }
                 }
                 rgb = clamp(rgb, 0.0, 1.0);
                 return half4(rgb, c.a);
@@ -636,8 +678,11 @@ class FBMFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN)
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader,
+        colors: List<Color>? = null
+    ): org.jetbrains.skia.Shader {
+        val dataBuffer = ByteBuffer.allocate(52).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(scale)
         dataBuffer.putFloat(stretch)
         dataBuffer.putFloat(angle)
@@ -649,9 +694,18 @@ class FBMFilter(
         dataBuffer.putFloat(bias)
         dataBuffer.putInt(operation)
         dataBuffer.putInt(if (ridged) 1 else 0)
+        dataBuffer.putInt(if (colors != null) 1 else 0)
+
+        val gradientShader = colors?.let {
+            makeMultiStopHorizontalGradientShader(
+                stops = it,
+                width = 256.0f
+            )
+        }
+
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(inputShader, gradientShader),
             localMatrix = null
         )
     }
@@ -662,8 +716,7 @@ class FBMFilter(
  * Replicates the JH-Labs GradientFilter.
  *
  * @param angle the angle of the gradient in radians (default 0)
- * @param color1 the first color as 0xRRGGBB (default black)
- * @param color2 the second color as 0xRRGGBB (default white)
+ * @param colors the colormap colors (default black to white)
  * @param repeat whether to repeat the gradient (default false)
  * @param type the gradient type: 0=LINEAR, 1=RADIAL, 2=SQUARE, 3=CONICAL (default 0)
  * @param interpolation the interpolation mode: 0=LINEAR, 1=GAUSSIAN (default 0)
@@ -671,8 +724,7 @@ class FBMFilter(
  */
 class GradientFilter(
     val angle: Float = 0f,
-    val color1: Int = 0xff000000.toInt(),
-    val color2: Int = 0xffffffff.toInt(),
+    val colors: List<Color> = listOf(Color(0xFF000000), Color(0xFFFFFFFF)),
     val repeat: Boolean = false,
     val type: Int = 0,
     val interpolation: Int = 0,
@@ -682,9 +734,8 @@ class GradientFilter(
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
+            uniform shader colormap;
             uniform float angle;
-            uniform half3 color1;
-            uniform half3 color2;
             uniform int repeat;
             uniform int type;
             uniform int interpolation;
@@ -720,7 +771,9 @@ class GradientFilter(
                 if (interpolation == 1) {
                     t = exp(-0.5 * (t - 0.5) * (t - 0.5) / 0.04);
                 }
-                half3 rgb = mix(color1, color2, t);
+                t = clamp(t, 0.0, 1.0);
+                half4 gradient = colormap.eval(vec2(t * 256.0, 0.0));
+                half3 rgb = gradient.rgb;
                 // Paint mode
                 if (paintMode != 0) {
                     half4 c = content.eval(fragcoord);
@@ -738,23 +791,23 @@ class GradientFilter(
     }
 
     fun makeShader(inputShader: org.jetbrains.skia.Shader? = null, imageWidth: Float = 640f, imageHeight: Float = 480f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(52).order(ByteOrder.LITTLE_ENDIAN)
+        val dataBuffer = ByteBuffer.allocate(28).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(((color1 shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color1 shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color1 and 0xff) / 255f)
-        dataBuffer.putFloat(((color2 shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color2 shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color2 and 0xff) / 255f)
         dataBuffer.putInt(if (repeat) 1 else 0)
         dataBuffer.putInt(type)
         dataBuffer.putInt(interpolation)
         dataBuffer.putInt(paintMode)
         dataBuffer.putFloat(imageWidth)
         dataBuffer.putFloat(imageHeight)
+
+        val gradientShader = makeMultiStopHorizontalGradientShader(
+            stops = colors,
+            width = 256.0f
+        )
+
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(inputShader, gradientShader),
             localMatrix = null
         )
     }
@@ -1270,8 +1323,7 @@ class PointillizeFilter(
  * @param c the IFS coefficient c (default 0.1f)
  * @param d the IFS coefficient d (default 0.0f)
  * @param k the IFS coefficient k (default 0)
- * @param color1 the first colormap color as 0xRRGGBB (default green)
- * @param color2 the second colormap color as 0xRRGGBB (default dark green)
+ * @param colors the colormap colors (default green to dark green)
  */
 class QuiltFilter(
     val seed: Int = 567,
@@ -1281,13 +1333,12 @@ class QuiltFilter(
     val c: Float = 0.1f,
     val d: Float = 0f,
     val k: Int = 0,
-    val color1: Int = 0xff00ff00.toInt(),
-    val color2: Int = 0xff006400.toInt()
+    val colors: List<Color> = listOf(Color(0xFF00FF00), Color(0xFF006400))
 ) : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
-            uniform shader content;
+            uniform shader colormap;
             uniform int seed;
             uniform int iterations;
             uniform float a;
@@ -1295,8 +1346,6 @@ class QuiltFilter(
             uniform float c;
             uniform float d;
             uniform int k;
-            uniform half3 color1;
-            uniform half3 color2;
             uniform vec2 imageSize;
             float hash(int n) {
                 return fract(sin(float(n)) * 43758.5453);
@@ -1346,15 +1395,14 @@ class QuiltFilter(
                 density /= 100.0;
                 density = clamp(density, 0.0, 1.0);
 
-                half3 rgb = mix(color1, color2, density);
-                return half4(rgb, 1.0);
+                return colormap.eval(vec2(density * 256.0, 0.0));
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader? = null, imageWidth: Float = 640f, imageHeight: Float = 480f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(60).order(ByteOrder.LITTLE_ENDIAN)
+    fun makeShader(imageWidth: Float = 640f, imageHeight: Float = 480f): org.jetbrains.skia.Shader {
+        val dataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putInt(seed)
         dataBuffer.putInt(iterations)
         dataBuffer.putFloat(a)
@@ -1362,19 +1410,32 @@ class QuiltFilter(
         dataBuffer.putFloat(c)
         dataBuffer.putFloat(d)
         dataBuffer.putInt(k)
-        dataBuffer.putFloat(((color1 shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color1 shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color1 and 0xff) / 255f)
-        dataBuffer.putFloat(((color2 shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color2 shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color2 and 0xff) / 255f)
         dataBuffer.putFloat(imageWidth)
         dataBuffer.putFloat(imageHeight)
+
+        val gradientShader = makeMultiStopHorizontalGradientShader(
+            stops = colors,
+            width = 256.0f
+        )
+
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(gradientShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(
+        imageWidth: Float = 640f,
+        imageHeight: Float = 480f
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(imageWidth, imageHeight)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
     }
 }
 
@@ -1809,6 +1870,7 @@ class StampFilter(
  * @param angle the rotation angle in radians (default 0.0f)
  * @param amount the overlay intensity (default 1.0f)
  * @param turbulence the turbulence amount (default 0.0f)
+ * @param colors optional colormap colors; when provided, the texture value is mapped through the gradient
  */
 class TextureFilter(
     val scale: Float = 32f,
@@ -1821,11 +1883,13 @@ class TextureFilter(
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
+            uniform shader colormap;
             uniform float scale;
             uniform float stretch;
             uniform float angle;
             uniform float amount;
             uniform float turbulence;
+            uniform int useColormap;
             $NOISE_FUNC
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
@@ -1843,24 +1907,47 @@ class TextureFilter(
                     n += turbulence * (noise2(vec2(nx * 5.0, ny * 5.0)) * 2.0 - 1.0);
                 }
                 n = n * 0.5 + 0.5;
-                half3 tex = half3(n);
-                half3 rgb = mix(c.rgb, tex, amount);
+                n = clamp(n, 0.0, 1.0);
+                half3 rgb;
+                if (useColormap == 1) {
+                    half4 colormapEval = colormap.eval(vec2(n * 256.0, 0.0));
+                    rgb = colormapEval.rgb;
+                    if (colormapEval.a != 0.0) {
+                        rgb = rgb / colormapEval.a;
+                    }
+                    rgb = mix(c.rgb, rgb, amount);
+                } else {
+                    half3 tex = half3(n);
+                    rgb = mix(c.rgb, tex, amount);
+                }
                 return half4(rgb, c.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader,
+        colors: List<Color>? = null
+    ): org.jetbrains.skia.Shader {
+        val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(scale)
         dataBuffer.putFloat(stretch)
         dataBuffer.putFloat(angle)
         dataBuffer.putFloat(amount)
         dataBuffer.putFloat(turbulence)
+        dataBuffer.putInt(if (colors != null) 1 else 0)
+
+        val gradientShader = colors?.let {
+            makeMultiStopHorizontalGradientShader(
+                stops = it,
+                width = 256.0f
+            )
+        }
+
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(inputShader, gradientShader),
             localMatrix = null
         )
     }

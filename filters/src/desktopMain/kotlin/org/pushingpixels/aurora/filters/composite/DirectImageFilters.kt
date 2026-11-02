@@ -27,6 +27,7 @@ import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
+import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.PI
@@ -150,23 +151,27 @@ class ColorHalftoneFilter() : Filter {
  * @param blur glint blur amount (default 0.0f)
  * @param amount glint intensity (default 0.1f)
  * @param glintOnly true to show only glint, false to overlay (default false)
+ * @param colors optional colormap colors for glint gradient (default white to black)
  */
 class GlintFilter(
     val threshold: Float = 1.0f,
     val length: Int = 5,
     val blur: Float = 0.0f,
     val amount: Float = 0.1f,
-    val glintOnly: Boolean = false
+    val glintOnly: Boolean = false,
+    val colors: List<Color>? = null
 ) : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
+            uniform shader colormap;
             uniform float threshold;
             uniform int length;
             uniform float blur;
             uniform float amount;
             uniform int glintOnly;
+            uniform int useColormap;
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
                 float brightness = dot(c.rgb, half3(0.299, 0.587, 0.114));
@@ -183,10 +188,26 @@ class GlintFilter(
                 }
                 glint /= float(length);
                 half3 rgb;
-                if (glintOnly == 1) {
-                    rgb = glint.rgb * amount;
+                if (useColormap == 1) {
+                    // Use colormap for glint color based on position
+                    float t = fragcoord.x / 256.0;
+                    t = clamp(t, 0.0, 1.0);
+                    half4 colormapEval = colormap.eval(vec2(t * 256.0, 0.0));
+                    half3 glintColor = colormapEval.rgb;
+                    if (colormapEval.a != 0.0) {
+                        glintColor = glintColor / colormapEval.a;
+                    }
+                    if (glintOnly == 1) {
+                        rgb = glintColor * amount;
+                    } else {
+                        rgb = c.rgb + glintColor * amount;
+                    }
                 } else {
-                    rgb = c.rgb + glint.rgb * amount;
+                    if (glintOnly == 1) {
+                        rgb = glint.rgb * amount;
+                    } else {
+                        rgb = c.rgb + glint.rgb * amount;
+                    }
                 }
                 rgb = clamp(rgb, 0.0, 1.0);
                 return half4(rgb, c.a);
@@ -196,15 +217,24 @@ class GlintFilter(
     }
 
     fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
+        val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(threshold)
         dataBuffer.putInt(length)
         dataBuffer.putFloat(blur)
         dataBuffer.putFloat(amount)
         dataBuffer.putInt(if (glintOnly) 1 else 0)
+        dataBuffer.putInt(if (colors != null) 1 else 0)
+
+        val gradientShader = colors?.let {
+            makeMultiStopHorizontalGradientShader(
+                stops = it,
+                width = 256.0f
+            )
+        }
+
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(inputShader, gradientShader),
             localMatrix = null
         )
     }

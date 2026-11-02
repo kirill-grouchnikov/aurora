@@ -889,32 +889,40 @@ class LevelsFilter(
 }
 
 /**
- * A filter to apply a lookup table (LUT) transformation.
- * Uses a simple 3D LUT approximation with a uniform array.
- * @param lutSize size of the LUT dimension
-
+ * A filter which uses the brightness of each pixel to lookup a color from a colormap.
+ * Replicates the JH-Labs LookupFilter.
+ *
+ * @param colors the colormap colors (default grayscale gradient)
  */
-class LookupFilter(val lutSize: Int = 64) : Filter {
+class LookupFilter(
+    val colors: List<Color> = listOf(Color(0xFF000000), Color(0xFFFFFFFF))
+) : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
+            uniform shader colormap;
             uniform shader content;
-            uniform float lutSize;
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
-                // Simple identity LUT - in practice, the LUT data would be passed as a texture
-                return half4(c.rgb, c.a);
+                // Compute brightness as average of RGB
+                float brightness = (c.r + c.g + c.b) / 3.0;
+                brightness = clamp(brightness, 0.0, 1.0);
+                // Lookup color from colormap
+                half4 colormapEval = colormap.eval(vec2(brightness * 256.0, 0.0));
+                return half4(colormapEval.rgb, c.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
     fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(lutSize.toFloat())
+        val gradientShader = org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader(
+            stops = colors,
+            width = 256.0f
+        )
         return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            uniforms = Data.makeFromBytes(byteArrayOf()),
+            children = arrayOf(gradientShader, inputShader),
             localMatrix = null
         )
     }
