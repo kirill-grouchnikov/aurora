@@ -35,6 +35,7 @@ import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import org.pushingpixels.aurora.filters.utility.makeHorizontalGradientFilter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
+import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.PI
@@ -70,13 +71,7 @@ private val NOISE_FUNC = """
  * @param shine the shine amount (default 0.1f)
  * @param monochrome true for monochrome texture (default true)
  */
-class BrushedMetalFilter(
-//    val radius: Int = 10,
-//    val amount: Float = 0.1f,
-//    val color: FloatArray = floatArrayOf(136f / 255f, 136f / 255f, 136f / 255f, 1f),
-//    val shine: Float = 0.1f,
-//    val monochrome: Boolean = true
-) : Filter {
+class BrushedMetalFilter: Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1986,21 +1981,11 @@ class WeaveFilter(
  * @param color1 the first colormap color as RGBA float4 (default light tan)
  * @param color2 the second colormap color as RGBA float4 (default dark brown)
  */
-class WoodFilter(
-    val scale: Float = 200f,
-    val stretch: Float = 10.0f,
-    val angle: Float = (Math.PI / 2.0).toFloat(),
-    val rings: Float = 0.5f,
-    val turbulence: Float = 0.0f,
-    val fibres: Float = 0.5f,
-    val gain: Float = 0.8f,
-    val color1: FloatArray = floatArrayOf(229f / 255f, 196f / 255f, 148f / 255f, 1f),
-    val color2: FloatArray = floatArrayOf(152f / 255f, 123f / 255f, 81f / 255f, 1f)
-) : Filter {
+class WoodFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
-            uniform shader content;
+            uniform shader colormap;
             uniform float scale;
             uniform float stretch;
             uniform float angle;
@@ -2008,8 +1993,6 @@ class WoodFilter(
             uniform float turbulence;
             uniform float fibres;
             uniform float gain;
-            uniform float color1[4];
-            uniform float color2[4];
             $NOISE_FUNC
             float smoothStep(float a, float b, float x) {
                 if (x < a) return 0.0;
@@ -2051,18 +2034,24 @@ class WoodFilter(
                 f = clamp(f, 0.0, 1.0);
 
                 // Linear colormap interpolation
-                half3 rgb = mix(half3(color1[0], color1[1], color1[2]),
-                                half3(color2[0], color2[1], color2[2]), f);
-
-                return half4(rgb, 1.0);
+                return colormap.eval(vec2(f * 256, 0));
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader?): org.jetbrains.skia.Shader {
-        // 7 floats + 2x4 floats for colors = 15 floats = 60 bytes
-        val dataBuffer = ByteBuffer.allocate(60).order(ByteOrder.LITTLE_ENDIAN)
+    fun makeShader(
+        scale: Float = 200f,
+        stretch: Float = 10.0f,
+        angle: Float = (Math.PI / 2.0).toFloat(),
+        rings: Float = 0.5f,
+        turbulence: Float = 0.0f,
+        fibres: Float = 0.5f,
+        gain: Float = 0.8f,
+        colors: List<Color> = listOf(Color(0xFFE5C494), Color(0xFF987B51)),
+    ): org.jetbrains.skia.Shader {
+        // 7 floats = 28 bytes
+        val dataBuffer = ByteBuffer.allocate(28).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(scale)
         dataBuffer.putFloat(stretch)
         dataBuffer.putFloat(angle)
@@ -2070,12 +2059,34 @@ class WoodFilter(
         dataBuffer.putFloat(turbulence)
         dataBuffer.putFloat(fibres)
         dataBuffer.putFloat(gain)
-        for (c in color1) dataBuffer.putFloat(c)
-        for (c in color2) dataBuffer.putFloat(c)
+
+        val gradientShader = makeMultiStopHorizontalGradientShader(
+            stops = colors,
+            width = 256.0f)
+
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(gradientShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(
+        scale: Float = 200f,
+        stretch: Float = 10.0f,
+        angle: Float = (Math.PI / 2.0).toFloat(),
+        rings: Float = 0.5f,
+        turbulence: Float = 0.0f,
+        fibres: Float = 0.5f,
+        gain: Float = 0.8f,
+        colors: List<Color> = listOf(Color(0xFFE5C494), Color(0xFF987B51))
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(scale, stretch, angle, rings, turbulence, fibres, gain, colors)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
     }
 }

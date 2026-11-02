@@ -17,9 +17,12 @@ package org.pushingpixels.aurora.filters.utility
 
 import androidx.compose.ui.graphics.Color
 import org.intellij.lang.annotations.Language
+import org.jetbrains.skia.Data
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 /**
  * Creates an [ImageFilter] that produces a horizontal linear gradient
@@ -129,5 +132,68 @@ fun makeMultiStopHorizontalGradientFilter(stops: List<Color>, width: Int): Image
         runtimeShaderBuilder = builder,
         shaderName = "content",
         input = null
+    )
+}
+
+fun makeMultiStopHorizontalGradientShader(stops: List<Color>, width: Float): org.jetbrains.skia.Shader {
+    require(stops.size >= 2) { "At least two color stops are required" }
+
+    val stopCount = stops.size
+    val maxStops = 16
+    @Language("GLSL")
+    val shaderSource = """
+        uniform shader content;
+        uniform int numStops;
+        uniform half4 stops[${maxStops}];
+        uniform float width;
+
+        half4 main(vec2 fragCoord) {
+            float t = fragCoord.x / width;
+            t = clamp(t, 0.0, 1.0);
+            float segPos = t * float(numStops - 1);
+            half4 c0 = stops[0];
+            half4 c1 = stops[0];
+            float segStart = 0.0;
+            for (int i = 0; i < $maxStops - 1; i++) {
+                if (i >= numStops) {
+                    break;
+                }
+                float nextSeg = float(i + 1);
+                if (segPos <= nextSeg) {
+                    c0 = stops[i];
+                    c1 = stops[i + 1];
+                    segStart = float(i);
+                    break;
+                }
+            }
+            float localT = segPos - segStart;
+            half4 gradient = mix(c0, c1, localT);
+            return gradient;
+        }
+    """
+
+    val effect = RuntimeEffect.makeForShader(shaderSource)
+
+    val dataBuffer = ByteBuffer.allocate(8 + maxStops * 16).order(ByteOrder.LITTLE_ENDIAN)
+    dataBuffer.putInt(stopCount)
+    for (i in 0..<maxStops) {
+        if (i < stopCount) {
+            dataBuffer.putFloat(stops[i].red)
+            dataBuffer.putFloat(stops[i].green)
+            dataBuffer.putFloat(stops[i].blue)
+            dataBuffer.putFloat(stops[i].alpha)
+        } else {
+            dataBuffer.putFloat(0.0f)
+            dataBuffer.putFloat(0.0f)
+            dataBuffer.putFloat(0.0f)
+            dataBuffer.putFloat(0.0f)
+        }
+    }
+    dataBuffer.putFloat(width)
+
+    return effect.makeShader(
+        uniforms = Data.makeFromBytes(dataBuffer.array()),
+        children = arrayOf(null),
+        localMatrix = null
     )
 }

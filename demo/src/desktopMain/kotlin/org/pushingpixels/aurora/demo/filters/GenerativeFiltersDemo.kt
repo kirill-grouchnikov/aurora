@@ -54,7 +54,7 @@ fun main() = androidx.compose.ui.window.application {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(600.dp, 600.dp)
+        size = DpSize(1200.dp, 900.dp)
     )
 
     androidx.compose.ui.window.Window(
@@ -62,125 +62,53 @@ fun main() = androidx.compose.ui.window.application {
         state = state,
         title = "Aurora Filters Demo"
     ) {
-        val woodFilter = remember {
-            WoodFilter(
-                scale = 100.0f, angle = PI.toFloat() / 2.0f, stretch = 10.0f, turbulence = 0.0f,
-                rings = 0.4f, fibres = 0.3f, gain = 0.7f)
-        }
+        val woodFilter = remember { WoodFilter() }
         val brushedMetalFilter = remember { BrushedMetalFilter() }
-        val chromeFilter = remember {
-            ChromeFilter()
-        }
-        val weaveFilter = remember {
-            WeaveFilter()
-        }
         val marbleTexFilter = remember {
             MarbleTexFilter(color1 = 0xB76E79, color2 = 0xFFC0CB)
         }
-        val causticsFilter = remember {
-            CausticsFilter()
-        }
-        val plasmaFilter = remember {
-            PlasmaFilter()
-        }
-
-        val skyFilter = remember { SkyFilter() }
         val sparkleFilter = remember { SparkleFilter(color = 0x208070, amount = 75, rays = 35) }
 
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
-            columns = GridCells.Adaptive(minSize = 200.dp),
+            columns = GridCells.Fixed(4),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(32.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 24.dp),
         ) {
-            item { Box(modifier = Modifier.size(200.dp).woodFilterBackground(woodFilter)) }
+            item {
+                Box(
+                    modifier = Modifier.size(200.dp).then(
+                        woodFilter.effectModifier(
+                            scale = 100.0f,
+                            rings = 0.4f, fibres = 0.3f, gain = 0.7f
+                        )
+                    )
+                )
+            }
+            item {
+                Box(
+                    modifier = Modifier.size(200.dp).then(
+                        woodFilter.effectModifier(
+                            scale = 80.0f, stretch = 15.0f, gain = 1.9f, angle = 1.5f * Math.PI.toFloat(),
+                            colors = listOf(Color(0xFFCD4A4A), Color(0xFF682523), Color(0xFF482029))
+                        )
+                    )
+                )
+            }
             item { Box(modifier = Modifier.size(200.dp).
                 then(brushedMetalFilter.effectModifier(
                     radius = 8, amount = 1.0f, color = Color(0xFF800000)))) }
-            //item { Box(modifier = Modifier.size(200.dp).plasmaBackground(plasmaFilter)) }
             item { Box(modifier = Modifier.size(200.dp).marbleTexBackground(marbleTexFilter)) }
             item { Box(modifier = Modifier.size(200.dp).sparkleBackground(sparkleFilter)) }
-            //item { Box(modifier = Modifier.size(200.dp).skyBackground(skyFilter)) }
-            //item { Box(modifier = Modifier.size(200.dp).chromeBackground(chromeFilter)) }
-//            item { Box(modifier = Modifier.size(200.dp).causticsBackground(causticsFilter)) }
         }
     }
 }
-
-private fun Modifier.woodFilterBackground(filter: WoodFilter) = this.then(
-    Modifier.drawBehind {
-        // Create a solid color base shader (warm brown background) using a linear gradient
-        // with identical colors at both stops
-        val baseColor = Color(0xFF8B6914)
-        val color4f = Color4f(
-            baseColor.red / 255f,
-            baseColor.green / 255f,
-            baseColor.blue / 255f,
-            baseColor.alpha / 255f
-        )
-        val baseShader: Shader = Shader.makeLinearGradient(
-            x0 = 0f, y0 = 0f, x1 = 0f, y1 = 0f,
-            gradient = Gradient(
-                colors = Gradient.Colors(
-                    colors = arrayOf(color4f, color4f),
-                    positions = floatArrayOf(0f, 1f),
-                    tileMode = FilterTileMode.CLAMP
-                )
-            ),
-            localMatrix = null
-        )
-
-        // Apply the wood filter to the base shader
-        val filteredShader = filter.makeShader(null)
-
-        // Draw the filtered result
-        drawRect(
-            brush = ShaderBrush(filteredShader.asComposeShader())
-        )
-    }
-)
 
 private fun Modifier.marbleTexBackground(filter: MarbleTexFilter) = this.then(
     Modifier.drawBehind {
         // Apply the brushed metal shader filter to the base shader
         val filteredShader = filter.makeShader(null)
-
-        // Draw the filtered result
-        drawRect(
-            brush = ShaderBrush(filteredShader.asComposeShader())
-        )
-    }
-)
-
-private fun Modifier.weaveBackground(filter: WeaveFilter) = this.then(
-    Modifier.drawBehind {
-        // Apply the brushed metal shader filter to the base shader
-        val filteredShader = filter.makeShader(null)
-
-        // Draw the filtered result
-        drawRect(
-            brush = ShaderBrush(filteredShader.asComposeShader())
-        )
-    }
-)
-
-private fun Modifier.causticsBackground(filter: CausticsFilter) = this.then(
-    Modifier.drawBehind {
-        // Apply the brushed metal shader filter to the base shader
-        val filteredShader = filter.makeShader(null)
-
-        // Draw the filtered result
-        drawRect(
-            brush = ShaderBrush(filteredShader.asComposeShader())
-        )
-    }
-)
-
-private fun Modifier.skyBackground(filter: SkyFilter) = this.then(
-    Modifier.drawBehind {
-        // Apply the brushed metal shader filter to the base shader
-        val filteredShader = filter.makeShader(null, size.width, size.height)
 
         // Draw the filtered result
         drawRect(
