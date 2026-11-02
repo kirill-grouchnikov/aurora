@@ -433,40 +433,74 @@ class FillFilter(
 }
 
 /**
- * A filter which adds a lens flare effect.
+ * An experimental filter for rendering lens flares.
  * Replicates the JH-Labs FlareFilter (extends PointFilter).
  *
  * @param centerX flare center X as proportion of image width (0-1)
  * @param centerY flare center Y as proportion of image height (0-1)
- * @param intensity flare intensity (0-1)
-
+ * @param radius radius of the flare effect
+ * @param baseAmount amount of the base glow (0-1+)
+ * @param ringAmount amount of the ring effect (0-1+)
+ * @param rayAmount amount of the ray effect (0-1+)
+ * @param color the flare color (default white)
+ * @param ringWidth width of the ring around the radius
+ * @param linear linear falloff coefficient for the base glow
+ * @param gauss Gaussian falloff coefficient for the base glow
+ * @param mixFactor mix between Gaussian and linear falloff (0=linear, 1=Gaussian)
+ * @param falloff falloff rate for the ring edge transition
  */
-class FlareFilter(
-    val centerX: Float = 0.5f,
-    val centerY: Float = 0.5f,
-    val intensity: Float = 0.5f
-) : Filter {
+class FlareFilter() : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
-            uniform vec2 center;
-            uniform float intensity;
-            uniform vec2 imageSize;
+            uniform vec2 icenter;
+            uniform float radius;
+            uniform float baseAmount;
+            uniform float ringAmount;
+            uniform float rayAmount;
+            uniform half3 flareColor;
+            uniform float ringWidth;
+            uniform float linearCoeff;
+            uniform float gaussCoeff;
+            uniform float mixFactor;
+            uniform float falloff;
+
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
-                vec2 icenter = imageSize * center;
-                vec2 delta = fragcoord - icenter;
-                float dist = length(delta);
-                float maxDist = length(imageSize * 0.5);
-                float t = dist / maxDist;
-                // Radial flare
-                float flare = exp(-t * 3.0) * intensity;
-                float angle = atan(delta.y, delta.x);
-                // Anamorphic streak
-                float streak = exp(-abs(sin(angle * 3.0)) * 5.0) * flare;
-                half3 flareColor = half3(1.0, 0.9, 0.7) * flare + half3(0.5, 0.7, 1.0) * streak;
-                half3 rgb = c.rgb + flareColor;
+                float dx = fragcoord.x - icenter.x;
+                float dy = fragcoord.y - icenter.y;
+                float distance = sqrt(dx*dx + dy*dy);
+
+                // Base glow: mixFactor of Gaussian and exponential falloff
+                float a = exp(-distance*distance*gaussCoeff)*mixFactor + exp(-distance*linearCoeff)*(1.0-mixFactor);
+                a *= baseAmount;
+
+                // Fade out beyond ring
+                if (distance > radius + ringWidth) {
+                    float fade = (distance - (radius + ringWidth))/falloff;
+                    a = mix(a, 0.0, clamp(fade, 0.0, 1.0));
+                }
+
+                // Ring effect: smooth ring at radius
+                if (distance >= radius - ringWidth && distance <= radius + ringWidth) {
+                    float ring = abs(distance - radius)/ringWidth;
+                    ring = 1.0 - ring*ring*(3.0 - 2.0*ring);
+                    a += ring * ringAmount;
+                }
+
+                // Ray effect: angle-based rays
+                float angle = atan(dx, dy) + 3.14159265359;
+                // Approximate the 17-ray pattern with noise-like variation
+                float rayAngle = mod(angle/3.14159265359*17.0 + 1.0, 1.0);
+                rayAngle = abs((rayAngle - 0.5)*2.0);
+                rayAngle = pow(rayAngle, 5.0);
+                float b = rayAmount * rayAngle / (1.0 + distance*0.1);
+                a += b;
+
+                // Clamp and blend with flare color
+                a = clamp(a, 0.0, 1.0);
+                half3 rgb = c.rgb + flareColor * a;
                 rgb = clamp(rgb, 0.0, 1.0);
                 return half4(rgb, c.a);
             }
@@ -475,21 +509,92 @@ class FlareFilter(
     }
 
     fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
+        inputShader: org.jetbrains.skia.Shader? = null,
+        centerX: Float = 0.5f,
+        centerY: Float = 0.5f,
+        radius: Float = 50f,
+        baseAmount: Float = 1f,
+        ringAmount: Float = 0.2f,
+        rayAmount: Float = 0.1f,
+        color: Color = Color.White,
+        ringWidth: Float = 1.6f,
+        linear: Float = 0.03f,
+        gauss: Float = 0.006f,
+        mixFactor: Float = 0.5f,
+        falloff: Float = 6f,
+        imageWidth: Float = 640f,
+        imageHeight: Float = 480f
     ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(centerX)
-        dataBuffer.putFloat(centerY)
-        dataBuffer.putFloat(intensity)
+        val icenterX = centerX * imageWidth
+        val icenterY = centerY * imageHeight
+
+        val dataBuffer = ByteBuffer.allocate(68).order(ByteOrder.LITTLE_ENDIAN)
+        dataBuffer.putFloat(icenterX)
+        dataBuffer.putFloat(icenterY)
+        dataBuffer.putFloat(radius)
+        dataBuffer.putFloat(baseAmount)
+        dataBuffer.putFloat(ringAmount)
+        dataBuffer.putFloat(rayAmount)
+        dataBuffer.putFloat(color.red)
+        dataBuffer.putFloat(color.green)
+        dataBuffer.putFloat(color.blue)
+        dataBuffer.putFloat(ringWidth)
+        dataBuffer.putFloat(linear)
+        dataBuffer.putFloat(gauss)
+        dataBuffer.putFloat(mixFactor)
+        dataBuffer.putFloat(falloff)
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    @Composable
+    fun effectModifier(
+        centerX: Float = 0.5f,
+        centerY: Float = 0.5f,
+        radius: Float = 50f,
+        baseAmount: Float = 1f,
+        ringAmount: Float = 0.2f,
+        rayAmount: Float = 0.1f,
+        color: Color = Color.White,
+        ringWidth: Float = 1.6f,
+        linear: Float = 0.03f,
+        gauss: Float = 0.006f,
+        mixFactor: Float = 0.5f,
+        falloff: Float = 6f
+    ): Modifier {
+        var contentSize by remember { mutableStateOf<Pair<Float, Float>?>(null) }
+
+        val sizeChangedModifier = Modifier.onSizeChanged { newSize ->
+            contentSize = Pair(newSize.width.toFloat(), newSize.height.toFloat())
+        }
+
+        return sizeChangedModifier.graphicsLayer {
+            val size = contentSize ?: return@graphicsLayer
+            val icenterX = centerX * size.first
+            val icenterY = centerY * size.second
+
+            val flareShaderBuilder = RuntimeShaderBuilder(this@FlareFilter.effect)
+            flareShaderBuilder.uniform("icenter", icenterX, icenterY)
+            flareShaderBuilder.uniform("radius", radius)
+            flareShaderBuilder.uniform("baseAmount", baseAmount)
+            flareShaderBuilder.uniform("ringAmount", ringAmount)
+            flareShaderBuilder.uniform("rayAmount", rayAmount)
+            flareShaderBuilder.uniform("flareColor", color.red, color.green, color.blue)
+            flareShaderBuilder.uniform("ringWidth", ringWidth)
+            flareShaderBuilder.uniform("linearCoeff", linear)
+            flareShaderBuilder.uniform("gaussCoeff", gauss)
+            flareShaderBuilder.uniform("mixFactor", mixFactor)
+            flareShaderBuilder.uniform("falloff", falloff)
+            renderEffect = ImageFilter.makeRuntimeShader(
+                runtimeShaderBuilder = flareShaderBuilder,
+                shaderName = "content",
+                input = null
+            ).asComposeRenderEffect()
+            clip = true
+        }
     }
 }
 

@@ -212,19 +212,9 @@ class BrushedMetalFilter: Filter {
  * @param dispersion the dispersion amount (default 0.0f)
  * @param time the time offset for animation (default 0.0f)
  * @param samples the number of samples (default 2)
- * @param bgColor the background color as 0xRRGGBB (default 0xff799fff)
+ * @param bgColor the background color (default light blue)
  */
-class CausticsFilter(
-    val scale: Float = 32f,
-    val angle: Float = 0f,
-    val brightness: Int = 10,
-    val amount: Float = 1f,
-    val turbulence: Float = 1f,
-    val dispersion: Float = 0f,
-    val time: Float = 0f,
-    val samples: Int = 2,
-    val bgColor: Int = 0xff799fff.toInt()
-) : Filter {
+class CausticsFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -237,87 +227,284 @@ class CausticsFilter(
             uniform float dispersion;
             uniform float time;
             uniform int samples;
-            uniform half3 bgColor;
+            uniform float bgColor[3];
             $NOISE_FUNC
+            // Perlin noise3 matching JH-Labs Noise.noise3
+            vec3 perm3(int i) {
+                float n = float(i) + 1.0;
+                float x = fract(sin(n * 127.1 + 311.7) * 43758.5453) * 2.0 - 1.0;
+                float y = fract(sin(n * 269.5 + 183.3) * 43758.5453) * 2.0 - 1.0;
+                float z = fract(sin(n * 419.2 + 73.7) * 43758.5453) * 2.0 - 1.0;
+                float len = sqrt(x*x + y*y + z*z);
+                return vec3(x/len, y/len, z/len);
+            }
+            int permute(int i) {
+                return int(mod(float(i) + mod(float(i * 13), 113.0), 256.0));
+            }
             float noise3(vec3 p) {
-                vec3 i = floor(p);
-                vec3 f = fract(p);
-                f = f * f * (3.0 - 2.0 * f);
-                float n = i.x + i.y * 157.0 + 113.0 * i.z;
-                float a = fract(sin(n) * 43758.5453);
-                float b = fract(sin(n + 1.0) * 43758.5453);
-                float c = fract(sin(n + 157.0) * 43758.5453);
-                float d = fract(sin(n + 158.0) * 43758.5453);
-                float e = fract(sin(n + 113.0) * 43758.5453);
-                float f2 = fract(sin(n + 114.0) * 43758.5453);
-                float g = fract(sin(n + 270.0) * 43758.5453);
-                float h = fract(sin(n + 271.0) * 43758.5453);
-                float v1 = mix(mix(mix(a, b, f.x), mix(c, d, f.x), f.y), mix(mix(e, f2, f.x), mix(g, h, f.x), f.y), f.z);
-                return v1;
+                vec3 t = p + 4096.0;
+                ivec3 bx = ivec3(floor(t));
+                vec3 rx = fract(t);
+                vec3 sx = rx * rx * (3.0 - 2.0 * rx);
+                int bx0 = int(mod(float(bx.x), 256.0));
+                int bx1 = int(mod(float(bx0 + 1), 256.0));
+                int by0 = int(mod(float(bx.y), 256.0));
+                int by1 = int(mod(float(by0 + 1), 256.0));
+                int bz0 = int(mod(float(bx.z), 256.0));
+                int bz1 = int(mod(float(bz0 + 1), 256.0));
+                int b00 = permute(permute(bx0) + by0);
+                int b10 = permute(permute(bx1) + by0);
+                int b01 = permute(permute(bx0) + by1);
+                int b11 = permute(permute(bx1) + by1);
+                vec3 q = perm3(b00 + bz0);
+                float u = rx.x * q.x + rx.y * q.y + rx.z * q.z;
+                q = perm3(b10 + bz0);
+                float v = (rx.x - 1.0) * q.x + rx.y * q.y + rx.z * q.z;
+                float a = u + sx.x * (v - u);
+                q = perm3(b01 + bz0);
+                u = rx.x * q.x + (rx.y - 1.0) * q.y + rx.z * q.z;
+                q = perm3(b11 + bz0);
+                v = (rx.x - 1.0) * q.x + (rx.y - 1.0) * q.y + rx.z * q.z;
+                float b = u + sx.x * (v - u);
+                float c = a + sx.y * (b - a);
+                q = perm3(b00 + bz1);
+                u = rx.x * q.x + rx.y * q.y + (rx.z - 1.0) * q.z;
+                q = perm3(b10 + bz1);
+                v = (rx.x - 1.0) * q.x + rx.y * q.y + (rx.z - 1.0) * q.z;
+                a = u + sx.x * (v - u);
+                q = perm3(b01 + bz1);
+                u = rx.x * q.x + (rx.y - 1.0) * q.y + (rx.z - 1.0) * q.z;
+                q = perm3(b11 + bz1);
+                v = (rx.x - 1.0) * q.x + (rx.y - 1.0) * q.y + (rx.z - 1.0) * q.z;
+                b = u + sx.x * (v - u);
+                float d = a + sx.y * (b - a);
+                return 1.5 * (c + sx.z * (d - c));
             }
             float turbulence2(float x, float y, float t, float octaves) {
-                float f = 0.0;
-                float c = cos(t);
-                float s = sin(t);
-                float xt = x * c - t;
-                float yt = y * s - t;
+                float value = 0.0;
+                float lacunarity = 2.0;
+                float f = 1.0;
+                x += 371.0;
+                y += 529.0;
+                int intOctaves = int(octaves);
+                for (int i = 0; i < 8; i++) {
+                    if (i >= intOctaves) break;
+                    value += noise3(vec3(x, y, t)) / f;
+                    x *= lacunarity;
+                    y *= lacunarity;
+                    f *= 2.0;
+                }
+                float remainder = octaves - float(intOctaves);
+                if (remainder > 0.0) {
+                    value += remainder * noise3(vec3(x, y, t)) / f;
+                }
+                return value;
+            }
+            float evaluate(float x, float y, float t) {
+                float s = sin(0.1);
+                float c = cos(0.1);
+                float xt = s * x + c * t;
                 float tt = c * x - c * t;
-                f = noise3(vec3(xt, y, tt));
-                return f;
+                if (turbulence <= 0.001) {
+                    return noise3(vec3(xt, y, tt));
+                }
+                return turbulence2(xt, y, tt, turbulence);
             }
             half4 main(vec2 fragcoord) {
-                // Rotation matrix from angle
-                float cosA = cos(angle);
-                float sinA = sin(angle);
-                float nx = cosA * fragcoord.x + sinA * fragcoord.y;
-                float ny = -sinA * fragcoord.x + cosA * fragcoord.y;
+                // Original JH-Labs CausticsFilter algorithm:
+                // 1. Fill output buffer with bgColor
+                // 2. For each source pixel (x,y), for each sample with random jitter,
+                //    compute noise gradient displacement, add brightness at displaced destination
+                // 3. Pixels where many displacements converge become bright (caustic lines).
+                //
+                // Single-pass approximation:
+                // Each output pixel checks nearby source pixels to see if their displacement
+                // would scatter brightness to this pixel. Accumulate brightness for matches.
+                //
+                // Dispersion: when dispersion > 0, each color channel scatters at a different
+                // displacement scale, creating chromatic aberration.
 
-                float x = nx / scale;
-                float y = ny / scale;
+                float rs = 1.0 / scale;
+                float dd = 0.95;
+                float focus = 0.1 + amount;
+                float v = brightness / max(float(samples), 1.0);
+                if (v < 0.0) v = 0.0;
 
-                // Evaluate caustics with samples
-                float sum = 0.0;
-                for (int i = 0; i < 8; i++) {
-                    if (i >= samples) break;
-                    float fi = float(i);
-                    float dx = dispersion * (noise2(vec2(fi, 0.0)) * 2.0 - 1.0);
-                    float dy = dispersion * (noise2(vec2(0.0, fi)) * 2.0 - 1.0);
-                    float f = turbulence2(x + dx, y + dy, time + fi, turbulence);
-                    sum += f;
+                // This output pixel coordinates
+                float ox = fragcoord.x;
+                float oy = fragcoord.y;
+
+                // Search radius: displacement magnitude is roughly scale*focus*noiseGradient
+                // noise gradient is at most ~2 (difference of two noise values in [-1,1])
+                float searchRadius = scale * focus * 4.0;
+
+                // Accumulate brightness for source pixels that scatter to this output pixel
+                float brightnessR = 0.0;
+                float brightnessG = 0.0;
+                float brightnessB = 0.0;
+
+                // Outer loop: samples (matching original's random jitter per sample)
+                for (int s = 0; s < 8; s++) {
+                    if (s >= samples) break;
+                    float fs = float(s);
+
+                    // Deterministic jitter per sample, matching original's random.nextFloat()
+                    float jitterX = fract(sin(fs * 12.9898 + ox * 0.01) * 43758.5453);
+                    float jitterY = fract(sin(fs * 78.233 + oy * 0.01) * 43758.5453);
+
+                    // Grid search around this output pixel for source pixels
+                    // The grid covers the search radius where displaced destinations could land here
+                    int grid = 6;
+                    float step = searchRadius / float(grid);
+
+                    for (int gy = 0; gy < 6; gy++) {
+                        for (int gx = 0; gx < 6; gx++) {
+                            // Source pixel position (offset from output pixel + jitter)
+                            float sx = ox + jitterX + (float(gx) - float(grid) * 0.5) * step;
+                            float sy = oy + jitterY + (float(gy) - float(grid) * 0.5) * step;
+
+                            // Noise coordinates for this source pixel
+                            float snx = sx * rs;
+                            float sny = sy * rs;
+
+                            // Compute displacement at this source pixel (noise gradient)
+                            float xDisp = evaluate(snx - dd, sny, time) - evaluate(snx + dd, sny, time);
+                            float yDisp = evaluate(snx, sny + dd, time) - evaluate(snx, sny - dd, time);
+
+                            if (dispersion > 0.0) {
+                                // Per-channel dispersion: each channel scatters at a different position
+                                // Original: c=0 (blue) uses base displacement, c=1 (green) uses 1+dispersion,
+                                // c=2 (red) uses 1+2*dispersion
+                                // Blue channel (c=0, ca=1.0)
+                                {
+                                    float ca = 1.0;
+                                    float destX = sx + scale * focus * xDisp * ca;
+                                    float destY = sy + scale * focus * yDisp * ca;
+                                    float dx = destX - ox;
+                                    float dy = destY - oy;
+                                    float dist = sqrt(dx * dx + dy * dy);
+                                    // Smooth falloff: contribute more when closer
+                                    if (dist < step) {
+                                        float contrib = 1.0 - dist / step;
+                                        brightnessB += contrib * v;
+                                    }
+                                }
+                                // Green channel (c=1, ca=1+dispersion)
+                                {
+                                    float ca = 1.0 + dispersion;
+                                    float destX = sx + scale * focus * xDisp * ca;
+                                    float destY = sy + scale * focus * yDisp * ca;
+                                    float dx = destX - ox;
+                                    float dy = destY - oy;
+                                    float dist = sqrt(dx * dx + dy * dy);
+                                    if (dist < step) {
+                                        float contrib = 1.0 - dist / step;
+                                        brightnessG += contrib * v;
+                                    }
+                                }
+                                // Red channel (c=2, ca=1+2*dispersion)
+                                {
+                                    float ca = 1.0 + 2.0 * dispersion;
+                                    float destX = sx + scale * focus * xDisp * ca;
+                                    float destY = sy + scale * focus * yDisp * ca;
+                                    float dx = destX - ox;
+                                    float dy = destY - oy;
+                                    float dist = sqrt(dx * dx + dy * dy);
+                                    if (dist < step) {
+                                        float contrib = 1.0 - dist / step;
+                                        brightnessR += contrib * v;
+                                    }
+                                }
+                            } else {
+                                // No dispersion: all channels scatter at the same position
+                                float destX = sx + scale * focus * xDisp;
+                                float destY = sy + scale * focus * yDisp;
+
+                                // Distance from displaced destination to this output pixel
+                                float dx = destX - ox;
+                                float dy = destY - oy;
+                                float dist = sqrt(dx * dx + dy * dy);
+
+                                // Smooth falloff: contribute more when closer
+                                if (dist < step) {
+                                    float contrib = 1.0 - dist / step;
+                                    brightnessR += contrib * v;
+                                    brightnessG += contrib * v;
+                                    brightnessB += contrib * v;
+                                }
+                            }
+                        }
+                    }
                 }
-                float v = sum / max(float(samples), 1.0);
-                // Normalize to 0..1
-                v = v * 0.5 + 0.5;
-                // Apply brightness
-                v *= brightness / 10.0;
-                v = clamp(v, 0.0, 1.0);
 
-                // Background + caustics overlay
-                half3 rgb = bgColor * (1.0 - amount) + half3(v, v, v) * amount;
+                // Normalize brightness per channel to [0, 1] range
+                // The original accumulates up to brightness per sample, clamped at 255
+                brightnessR = clamp(brightnessR, 0.0, 255.0) / 255.0;
+                brightnessG = clamp(brightnessG, 0.0, 255.0) / 255.0;
+                brightnessB = clamp(brightnessB, 0.0, 255.0) / 255.0;
+
+                // Blend with background color
+                half3 rgb = half3(bgColor[0], bgColor[1], bgColor[2]);
+                rgb.r += brightnessR * amount;
+                rgb.g += brightnessG * amount;
+                rgb.b += brightnessB * amount;
+                rgb = clamp(rgb, 0.0, 1.0);
                 return half4(rgb, 1.0);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader?): org.jetbrains.skia.Shader {
+    fun makeShader(
+        scale: Float = 32f,
+        angle: Float = 0f,
+        brightness: Int = 10,
+        amount: Float = 1f,
+        turbulence: Float = 1f,
+        dispersion: Float = 0f,
+        time: Float = 0f,
+        samples: Int = 2,
+        bgColor: Color = Color(0xFF799FFF)
+    ): org.jetbrains.skia.Shader {
+        // Uniforms: 7 floats (scale, angle, brightness, amount, turbulence, dispersion, time)
+        // + 1 int (samples) + 3 floats (bgColor) = 44 bytes
         val dataBuffer = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(scale)
         dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(brightness / 10f)
+        dataBuffer.putFloat(brightness.toFloat())
         dataBuffer.putFloat(amount)
         dataBuffer.putFloat(turbulence)
         dataBuffer.putFloat(dispersion)
         dataBuffer.putFloat(time)
         dataBuffer.putInt(samples)
-        dataBuffer.putFloat(((bgColor shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((bgColor shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((bgColor and 0xff) / 255f)
+        dataBuffer.putFloat(bgColor.red)
+        dataBuffer.putFloat(bgColor.green)
+        dataBuffer.putFloat(bgColor.blue)
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(null),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(
+        scale: Float = 32f,
+        angle: Float = 0f,
+        brightness: Int = 10,
+        amount: Float = 1f,
+        turbulence: Float = 1f,
+        dispersion: Float = 0f,
+        time: Float = 0f,
+        samples: Int = 2,
+        bgColor: Color = Color(0xFF799FFF)
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(scale, angle, brightness, amount, turbulence, dispersion, time, samples, bgColor)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
     }
 }
 

@@ -40,8 +40,10 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import org.pushingpixels.aurora.filters.point.SparkleFilter
 import org.pushingpixels.aurora.filters.generative.BrushedMetalFilter
+import org.pushingpixels.aurora.filters.generative.CausticsFilter
 import org.pushingpixels.aurora.filters.generative.MarbleTexFilter
 import org.pushingpixels.aurora.filters.generative.WoodFilter
+import org.pushingpixels.aurora.filters.point.FlareFilter
 
 fun main() = androidx.compose.ui.window.application {
     val state = rememberWindowState(
@@ -59,6 +61,8 @@ fun main() = androidx.compose.ui.window.application {
         val brushedMetalFilter = remember { BrushedMetalFilter() }
         val marbleTexFilter = remember { MarbleTexFilter() }
         val sparkleFilter = remember { SparkleFilter() }
+        val flareFilter = remember { FlareFilter() }
+        val causticsFilter = remember { CausticsFilter() }
 
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
@@ -110,6 +114,21 @@ fun main() = androidx.compose.ui.window.application {
                 TexturedBox(
                     effectModifier = sparkleFilter.effectModifier(color = Color(0xFF208070)),
                     renderEffectTitle = "Sparkle"
+                )
+            }
+
+            item {
+                TexturedBox(
+                    effectModifier = flareFilter.effectModifier(
+                        color = Color(0xFFE0FFFF), radius = 100.0f, ringAmount = 0.2f, rayAmount = 0.15f),
+                    renderEffectTitle = "Flare"
+                )
+            }
+
+            item {
+                TexturedBox(
+                    effectModifier = causticsFilter.effectModifier(),
+                    renderEffectTitle = "Caustics"
                 )
             }
         }
