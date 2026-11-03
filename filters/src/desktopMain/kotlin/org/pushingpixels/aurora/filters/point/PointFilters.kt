@@ -41,7 +41,7 @@ import java.nio.ByteOrder
  * @param blockSize the number of pixels along each block edge (default 2)
 
  */
-class BlockFilter(val blockSize: Int = 2) : Filter {
+class BlockFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -58,7 +58,7 @@ class BlockFilter(val blockSize: Int = 2) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, blockSize: Int = 2): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(blockSize.toFloat())
         return effect.makeShader(
@@ -66,6 +66,19 @@ class BlockFilter(val blockSize: Int = 2) : Filter {
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(blockSize: Int = 2): Modifier {
+        val blockShaderBuilder = RuntimeShaderBuilder(this.effect)
+        blockShaderBuilder.uniform("blockSize", blockSize.toFloat())
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = blockShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -79,12 +92,7 @@ class BlockFilter(val blockSize: Int = 2) : Filter {
  * @param color the key color as 0xRRGGBB (default green 0x00ff00)
 
  */
-class ChromaKeyFilter(
-    val hTolerance: Float = 0f,
-    val sTolerance: Float = 0f,
-    val bTolerance: Float = 0f,
-    val color: Int = 0x00ff00
-) : Filter {
+class ChromaKeyFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -125,7 +133,7 @@ class ChromaKeyFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, hTolerance: Float = 0f, sTolerance: Float = 0f, bTolerance: Float = 0f, color: Int = 0x00ff00): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(hTolerance)
         dataBuffer.putFloat(sTolerance)
@@ -139,6 +147,22 @@ class ChromaKeyFilter(
             localMatrix = null
         )
     }
+
+    fun effectModifier(hTolerance: Float = 0f, sTolerance: Float = 0f, bTolerance: Float = 0f, color: Int = 0x00ff00): Modifier {
+        val chromaKeyShaderBuilder = RuntimeShaderBuilder(this.effect)
+        chromaKeyShaderBuilder.uniform("hTolerance", hTolerance)
+        chromaKeyShaderBuilder.uniform("sTolerance", sTolerance)
+        chromaKeyShaderBuilder.uniform("bTolerance", bTolerance)
+        chromaKeyShaderBuilder.uniform("color", ((color shr 16) and 0xff) / 255f, ((color shr 8) and 0xff) / 255f, (color and 0xff) / 255f)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = chromaKeyShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**
@@ -151,14 +175,7 @@ class ChromaKeyFilter(
  * @param bControlY y control point for blue channel
 
  */
-class CurvesFilter(
-    val rControlX: Float = 0.5f,
-    val rControlY: Float = 0.5f,
-    val gControlX: Float = 0.5f,
-    val gControlY: Float = 0.5f,
-    val bControlX: Float = 0.5f,
-    val bControlY: Float = 0.5f
-) : Filter {
+class CurvesFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -183,7 +200,7 @@ class CurvesFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, rControlX: Float = 0.5f, rControlY: Float = 0.5f, gControlX: Float = 0.5f, gControlY: Float = 0.5f, bControlX: Float = 0.5f, bControlY: Float = 0.5f): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(rControlX)
         dataBuffer.putFloat(rControlY)
@@ -196,6 +213,24 @@ class CurvesFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(rControlX: Float = 0.5f, rControlY: Float = 0.5f, gControlX: Float = 0.5f, gControlY: Float = 0.5f, bControlX: Float = 0.5f, bControlY: Float = 0.5f): Modifier {
+        val curvesShaderBuilder = RuntimeShaderBuilder(this.effect)
+        curvesShaderBuilder.uniform("rControlX", rControlX)
+        curvesShaderBuilder.uniform("rControlY", rControlY)
+        curvesShaderBuilder.uniform("gControlX", gControlX)
+        curvesShaderBuilder.uniform("gControlY", gControlY)
+        curvesShaderBuilder.uniform("bControlX", bControlX)
+        curvesShaderBuilder.uniform("bControlY", bControlY)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = curvesShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -238,7 +273,7 @@ object DespeckleFilter : Filter {
  * @param amount dissolve amount (0-1)
 
  */
-class DissolveFilter(val amount: Float = 0.5f) : Filter {
+class DissolveFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -254,7 +289,7 @@ class DissolveFilter(val amount: Float = 0.5f) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, amount: Float = 0.5f): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(amount)
         return effect.makeShader(
@@ -262,6 +297,19 @@ class DissolveFilter(val amount: Float = 0.5f) : Filter {
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(amount: Float = 0.5f): Modifier {
+        val dissolveShaderBuilder = RuntimeShaderBuilder(this.effect)
+        dissolveShaderBuilder.uniform("amount", amount)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = dissolveShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -327,7 +375,7 @@ object EqualizeFilter : Filter {
  * @param exposure the exposure level (default 1.0, range 0..5+)
 
  */
-class ExposureFilter(val exposure: Float = 1f) : Filter {
+class ExposureFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -345,7 +393,7 @@ class ExposureFilter(val exposure: Float = 1f) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, exposure: Float = 1f): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(exposure)
         return effect.makeShader(
@@ -353,6 +401,19 @@ class ExposureFilter(val exposure: Float = 1f) : Filter {
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(exposure: Float = 1f): Modifier {
+        val exposureShaderBuilder = RuntimeShaderBuilder(this.effect)
+        exposureShaderBuilder.uniform("exposure", exposure)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = exposureShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -362,10 +423,7 @@ class ExposureFilter(val exposure: Float = 1f) : Filter {
  * @param fadeColor RGB color to fade toward (0-1 range per channel)
 
  */
-class FadeFilter(
-    val fadeAmount: Float = 0.5f,
-    val fadeColor: FloatArray = floatArrayOf(1f, 1f, 1f)
-) : Filter {
+class FadeFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -381,7 +439,7 @@ class FadeFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, fadeAmount: Float = 0.5f, fadeColor: FloatArray = floatArrayOf(1f, 1f, 1f)): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(fadeAmount)
         fadeColor.forEach { dataBuffer.putFloat(it) }
@@ -390,6 +448,20 @@ class FadeFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(fadeAmount: Float = 0.5f, fadeColor: FloatArray = floatArrayOf(1f, 1f, 1f)): Modifier {
+        val fadeShaderBuilder = RuntimeShaderBuilder(this.effect)
+        fadeShaderBuilder.uniform("fadeAmount", fadeAmount)
+        fadeShaderBuilder.uniform("fadeColor", fadeColor[0], fadeColor[1], fadeColor[2])
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = fadeShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -401,10 +473,7 @@ class FadeFilter(
  * @param opacity fill opacity (0-1)
 
  */
-class FillFilter(
-    val color: FloatArray = floatArrayOf(0f, 0f, 0f),
-    val opacity: Float = 1f
-) : Filter {
+class FillFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -420,7 +489,7 @@ class FillFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, color: FloatArray = floatArrayOf(0f, 0f, 0f), opacity: Float = 1f): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
         color.forEach { dataBuffer.putFloat(it) }
         dataBuffer.putFloat(opacity)
@@ -429,6 +498,20 @@ class FillFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(color: FloatArray = floatArrayOf(0f, 0f, 0f), opacity: Float = 1f): Modifier {
+        val fillShaderBuilder = RuntimeShaderBuilder(this.effect)
+        fillShaderBuilder.uniform("color", color[0], color[1], color[2])
+        fillShaderBuilder.uniform("opacity", opacity)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = fillShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -605,7 +688,7 @@ class FlareFilter() : Filter {
  * @param flipType the flip type: 0=HORIZONTAL, 1=VERTICAL, 2=90CW, 3=90CCW, 4=180
 
  */
-class FlipFilter(val flipType: Int = 0) : Filter {
+class FlipFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -637,7 +720,7 @@ class FlipFilter(val flipType: Int = 0) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, imageWidth: Float = 640f, imageHeight: Float = 480f): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, flipType: Int = 0, imageWidth: Float = 640f, imageHeight: Float = 480f): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putInt(flipType)
         dataBuffer.putFloat(imageWidth)
@@ -647,6 +730,29 @@ class FlipFilter(val flipType: Int = 0) : Filter {
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    @Composable
+    fun effectModifier(flipType: Int = 0): Modifier {
+        var contentSize by remember { mutableStateOf<Pair<Float, Float>?>(null) }
+
+        val sizeChangedModifier = Modifier.onSizeChanged { newSize ->
+            contentSize = Pair(newSize.width.toFloat(), newSize.height.toFloat())
+        }
+
+        return sizeChangedModifier.graphicsLayer {
+            val size = contentSize ?: return@graphicsLayer
+            val flipShaderBuilder = RuntimeShaderBuilder(this@FlipFilter.effect)
+            flipShaderBuilder.uniform("flipType", flipType)
+            flipShaderBuilder.uniform("imageSize", size.first, size.second)
+
+            renderEffect = ImageFilter.makeRuntimeShader(
+                runtimeShaderBuilder = flipShaderBuilder,
+                shaderName = "content",
+                input = null
+            ).asComposeRenderEffect()
+            clip = true
+        }
     }
 }
 
@@ -658,12 +764,7 @@ class FlipFilter(val flipType: Int = 0) : Filter {
  * @param highlightColor color for brightest pixels
 
  */
-class FourColorFilter(
-    val shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f),
-    val midShadowColor: FloatArray = floatArrayOf(0.33f, 0.33f, 0.33f),
-    val midHighlightColor: FloatArray = floatArrayOf(0.66f, 0.66f, 0.66f),
-    val highlightColor: FloatArray = floatArrayOf(1f, 1f, 1f)
-) : Filter {
+class FourColorFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -689,7 +790,7 @@ class FourColorFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f), midShadowColor: FloatArray = floatArrayOf(0.33f, 0.33f, 0.33f), midHighlightColor: FloatArray = floatArrayOf(0.66f, 0.66f, 0.66f), highlightColor: FloatArray = floatArrayOf(1f, 1f, 1f)): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(48).order(ByteOrder.LITTLE_ENDIAN)
         shadowColor.forEach { dataBuffer.putFloat(it) }
         midShadowColor.forEach { dataBuffer.putFloat(it) }
@@ -701,6 +802,22 @@ class FourColorFilter(
             localMatrix = null
         )
     }
+
+    fun effectModifier(shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f), midShadowColor: FloatArray = floatArrayOf(0.33f, 0.33f, 0.33f), midHighlightColor: FloatArray = floatArrayOf(0.66f, 0.66f, 0.66f), highlightColor: FloatArray = floatArrayOf(1f, 1f, 1f)): Modifier {
+        val fourColorShaderBuilder = RuntimeShaderBuilder(this.effect)
+        fourColorShaderBuilder.uniform("shadowColor", shadowColor[0], shadowColor[1], shadowColor[2])
+        fourColorShaderBuilder.uniform("midShadowColor", midShadowColor[0], midShadowColor[1], midShadowColor[2])
+        fourColorShaderBuilder.uniform("midHighlightColor", midHighlightColor[0], midHighlightColor[1], midHighlightColor[2])
+        fourColorShaderBuilder.uniform("highlightColor", highlightColor[0], highlightColor[1], highlightColor[2])
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = fourColorShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**
@@ -710,10 +827,7 @@ class FourColorFilter(
  * @param bias the bias (0-1, default 0.5)
 
  */
-class GainFilter(
-    val gain: Float = 0.5f,
-    val bias: Float = 0.5f
-) : Filter {
+class GainFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -745,7 +859,7 @@ class GainFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, gain: Float = 0.5f, bias: Float = 0.5f): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(gain)
         dataBuffer.putFloat(bias)
@@ -754,6 +868,20 @@ class GainFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(gain: Float = 0.5f, bias: Float = 0.5f): Modifier {
+        val gainShaderBuilder = RuntimeShaderBuilder(this.effect)
+        gainShaderBuilder.uniform("gain", gain)
+        gainShaderBuilder.uniform("bias", bias)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = gainShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -765,11 +893,7 @@ class GainFilter(
  * @param bFactor brightness shift (default 0, additive, clamped 0-1)
 
  */
-class HSBAdjustFilter(
-    val hFactor: Float = 0f,
-    val sFactor: Float = 0f,
-    val bFactor: Float = 0f
-) : Filter {
+class HSBAdjustFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -806,7 +930,7 @@ class HSBAdjustFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, hFactor: Float = 0f, sFactor: Float = 0f, bFactor: Float = 0f): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(hFactor)
         dataBuffer.putFloat(sFactor)
@@ -816,6 +940,21 @@ class HSBAdjustFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(hFactor: Float = 0f, sFactor: Float = 0f, bFactor: Float = 0f): Modifier {
+        val hsbShaderBuilder = RuntimeShaderBuilder(this.effect)
+        hsbShaderBuilder.uniform("hFactor", hFactor)
+        hsbShaderBuilder.uniform("sFactor", sFactor)
+        hsbShaderBuilder.uniform("bFactor", bFactor)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = hsbShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -828,11 +967,7 @@ class HSBAdjustFilter(
  * @param monochrome whether to do monochrome halftoning (default false)
 
  */
-class HalftoneFilter(
-    val softness: Float = 0.1f,
-    val invert: Boolean = false,
-    val monochrome: Boolean = false
-) : Filter {
+class HalftoneFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -878,7 +1013,7 @@ class HalftoneFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, softness: Float = 0.1f, invert: Boolean = false, monochrome: Boolean = false): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(softness)
         dataBuffer.putInt(if (invert) 1 else 0)
@@ -888,6 +1023,21 @@ class HalftoneFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(softness: Float = 0.1f, invert: Boolean = false, monochrome: Boolean = false): Modifier {
+        val halftoneShaderBuilder = RuntimeShaderBuilder(this.effect)
+        halftoneShaderBuilder.uniform("softness", softness)
+        halftoneShaderBuilder.uniform("invert", if (invert) 1 else 0)
+        halftoneShaderBuilder.uniform("monochrome", if (monochrome) 1 else 0)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = halftoneShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -917,12 +1067,7 @@ object InvertAlphaFilter : Filter {
  * @param highOutputLevel output high level (0-1, default 1)
 
  */
-class LevelsFilter(
-    val lowLevel: Float = 0f,
-    val highLevel: Float = 1f,
-    val lowOutputLevel: Float = 0f,
-    val highOutputLevel: Float = 1f
-) : Filter {
+class LevelsFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -948,7 +1093,7 @@ class LevelsFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, lowLevel: Float = 0f, highLevel: Float = 1f, lowOutputLevel: Float = 0f, highOutputLevel: Float = 1f): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(lowLevel)
         dataBuffer.putFloat(highLevel)
@@ -960,6 +1105,22 @@ class LevelsFilter(
             localMatrix = null
         )
     }
+
+    fun effectModifier(lowLevel: Float = 0f, highLevel: Float = 1f, lowOutputLevel: Float = 0f, highOutputLevel: Float = 1f): Modifier {
+        val levelsShaderBuilder = RuntimeShaderBuilder(this.effect)
+        levelsShaderBuilder.uniform("lowLevel", lowLevel)
+        levelsShaderBuilder.uniform("highLevel", highLevel)
+        levelsShaderBuilder.uniform("lowOutputLevel", lowOutputLevel)
+        levelsShaderBuilder.uniform("highOutputLevel", highOutputLevel)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = levelsShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**
@@ -968,9 +1129,7 @@ class LevelsFilter(
  *
  * @param colors the colormap colors (default grayscale gradient)
  */
-class LookupFilter(
-    val colors: List<Color> = listOf(Color(0xFF000000), Color(0xFFFFFFFF))
-) : Filter {
+class LookupFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -989,7 +1148,7 @@ class LookupFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, colors: List<Color> = listOf(Color(0xFF000000), Color(0xFFFFFFFF))): org.jetbrains.skia.Shader {
         val gradientShader = org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader(
             stops = colors,
             width = 256.0f
@@ -1008,10 +1167,7 @@ class LookupFilter(
  * @param destColors array of destination colors to map to
 
  */
-class MapColorsFilter(
-    val sourceColors: FloatArray = floatArrayOf(0f, 0f, 0f, 1f, 1f, 1f),
-    val destColors: FloatArray = floatArrayOf(1f, 1f, 1f, 0f, 0f, 0f)
-) : Filter {
+class MapColorsFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1032,7 +1188,7 @@ class MapColorsFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, sourceColors: FloatArray = floatArrayOf(0f, 0f, 0f, 1f, 1f, 1f), destColors: FloatArray = floatArrayOf(1f, 1f, 1f, 0f, 0f, 0f)): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
         for (i in 0 until 3) dataBuffer.putFloat(sourceColors[i])
         for (i in 0 until 3) dataBuffer.putFloat(sourceColors[i + 3])
@@ -1044,6 +1200,22 @@ class MapColorsFilter(
             localMatrix = null
         )
     }
+
+    fun effectModifier(sourceColors: FloatArray = floatArrayOf(0f, 0f, 0f, 1f, 1f, 1f), destColors: FloatArray = floatArrayOf(1f, 1f, 1f, 0f, 0f, 0f)): Modifier {
+        val mapColorsShaderBuilder = RuntimeShaderBuilder(this.effect)
+        mapColorsShaderBuilder.uniform("sourceColor0", sourceColors[0], sourceColors[1], sourceColors[2])
+        mapColorsShaderBuilder.uniform("sourceColor1", sourceColors[3], sourceColors[4], sourceColors[5])
+        mapColorsShaderBuilder.uniform("destColor0", destColors[0], destColors[1], destColors[2])
+        mapColorsShaderBuilder.uniform("destColor1", destColors[3], destColors[4], destColors[5])
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = mapColorsShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**
@@ -1054,10 +1226,7 @@ class MapColorsFilter(
  * @param invert if true, invert the mask
 
  */
-class MaskFilter(
-    val threshold: Float = 0.5f,
-    val invert: Boolean = false
-) : Filter {
+class MaskFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1079,7 +1248,7 @@ class MaskFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, threshold: Float = 0.5f, invert: Boolean = false): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(threshold)
         dataBuffer.putInt(if (invert) 1 else 0)
@@ -1089,6 +1258,20 @@ class MaskFilter(
             localMatrix = null
         )
     }
+
+    fun effectModifier(threshold: Float = 0.5f, invert: Boolean = false): Modifier {
+        val maskShaderBuilder = RuntimeShaderBuilder(this.effect)
+        maskShaderBuilder.uniform("threshold", threshold)
+        maskShaderBuilder.uniform("invert", if (invert) 1 else 0)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = maskShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**
@@ -1096,7 +1279,7 @@ class MaskFilter(
  * @param opacity opacity value (0.0 = fully transparent, 1.0 = fully opaque)
 
  */
-class OpacityFilter(val opacity: Float = 1f) : Filter {
+class OpacityFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1110,7 +1293,7 @@ class OpacityFilter(val opacity: Float = 1f) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, opacity: Float = 1f): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(opacity)
         return effect.makeShader(
@@ -1119,6 +1302,19 @@ class OpacityFilter(val opacity: Float = 1f) : Filter {
             localMatrix = null
         )
     }
+
+    fun effectModifier(opacity: Float = 1f): Modifier {
+        val opacityShaderBuilder = RuntimeShaderBuilder(this.effect)
+        opacityShaderBuilder.uniform("opacity", opacity)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = opacityShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**
@@ -1126,7 +1322,7 @@ class OpacityFilter(val opacity: Float = 1f) : Filter {
  * @param numLevels number of discrete levels per channel (default 6)
 
  */
-class PosterizeFilter(val numLevels: Int = 6) : Filter {
+class PosterizeFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1143,7 +1339,7 @@ class PosterizeFilter(val numLevels: Int = 6) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, numLevels: Int = 6): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putInt(numLevels)
         return effect.makeShader(
@@ -1151,6 +1347,19 @@ class PosterizeFilter(val numLevels: Int = 6) : Filter {
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(numLevels: Int = 6): Modifier {
+        val posterizeShaderBuilder = RuntimeShaderBuilder(this.effect)
+        posterizeShaderBuilder.uniform("numLevels", numLevels)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = posterizeShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -1177,7 +1386,7 @@ object PremultiplyFilter : Filter {
  * @param numColors target number of colors
 
  */
-class QuantizeFilter(val numColors: Int = 16) : Filter {
+class QuantizeFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1197,7 +1406,7 @@ class QuantizeFilter(val numColors: Int = 16) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, numColors: Int = 16): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putInt(numColors)
         return effect.makeShader(
@@ -1205,6 +1414,19 @@ class QuantizeFilter(val numColors: Int = 16) : Filter {
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(numColors: Int = 16): Modifier {
+        val quantizeShaderBuilder = RuntimeShaderBuilder(this.effect)
+        quantizeShaderBuilder.uniform("numColors", numColors)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = quantizeShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -1216,11 +1438,7 @@ class QuantizeFilter(val numColors: Int = 16) : Filter {
  * @param bFactor blue channel adjustment (default 0, stored as 1+factor)
 
  */
-class RGBAdjustFilter(
-    val rFactor: Float = 0f,
-    val gFactor: Float = 0f,
-    val bFactor: Float = 0f
-) : Filter {
+class RGBAdjustFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1238,7 +1456,7 @@ class RGBAdjustFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, rFactor: Float = 0f, gFactor: Float = 0f, bFactor: Float = 0f): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(rFactor)
         dataBuffer.putFloat(gFactor)
@@ -1248,6 +1466,21 @@ class RGBAdjustFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(rFactor: Float = 0f, gFactor: Float = 0f, bFactor: Float = 0f): Modifier {
+        val rgbShaderBuilder = RuntimeShaderBuilder(this.effect)
+        rgbShaderBuilder.uniform("rFactor", rFactor)
+        rgbShaderBuilder.uniform("gFactor", gFactor)
+        rgbShaderBuilder.uniform("bFactor", bFactor)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = rgbShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -1446,11 +1679,7 @@ class SparkleFilter : Filter {
  * @param bChannel source channel for blue (0=R, 1=G, 2=B)
 
  */
-class SwizzleFilter(
-    val rChannel: Int = 0,
-    val gChannel: Int = 1,
-    val bChannel: Int = 2
-) : Filter {
+class SwizzleFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1471,7 +1700,7 @@ class SwizzleFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, rChannel: Int = 0, gChannel: Int = 1, bChannel: Int = 2): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putInt(rChannel)
         dataBuffer.putInt(gChannel)
@@ -1481,6 +1710,21 @@ class SwizzleFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(rChannel: Int = 0, gChannel: Int = 1, bChannel: Int = 2): Modifier {
+        val swizzleShaderBuilder = RuntimeShaderBuilder(this.effect)
+        swizzleShaderBuilder.uniform("rChannel", rChannel)
+        swizzleShaderBuilder.uniform("gChannel", gChannel)
+        swizzleShaderBuilder.uniform("bChannel", bChannel)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = swizzleShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -1492,10 +1736,7 @@ class SwizzleFilter(
  * @param amount transfer amount (0-1)
 
  */
-class TransferFilter(
-    val targetColor: FloatArray = floatArrayOf(1f, 0.8f, 0.6f),
-    val amount: Float = 0.5f
-) : Filter {
+class TransferFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1513,7 +1754,7 @@ class TransferFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, targetColor: FloatArray = floatArrayOf(1f, 0.8f, 0.6f), amount: Float = 0.5f): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
         targetColor.forEach { dataBuffer.putFloat(it) }
         dataBuffer.putFloat(amount)
@@ -1522,6 +1763,20 @@ class TransferFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(targetColor: FloatArray = floatArrayOf(1f, 0.8f, 0.6f), amount: Float = 0.5f): Modifier {
+        val transferShaderBuilder = RuntimeShaderBuilder(this.effect)
+        transferShaderBuilder.uniform("targetColor", targetColor[0], targetColor[1], targetColor[2])
+        transferShaderBuilder.uniform("amount", amount)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = transferShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -1536,12 +1791,7 @@ class TransferFilter(
  * @param black color for pixels below lower threshold (0xRRGGBB int)
 
  */
-class ThresholdFilter(
-    val lowerThreshold: Int = 127,
-    val upperThreshold: Int = 127,
-    val white: Int = 0xffffff,
-    val black: Int = 0x000000
-) : Filter {
+class ThresholdFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1561,7 +1811,7 @@ class ThresholdFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, lowerThreshold: Int = 127, upperThreshold: Int = 127, white: Int = 0xffffff, black: Int = 0x000000): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(lowerThreshold / 255f)
         dataBuffer.putFloat(upperThreshold / 255f)
@@ -1577,6 +1827,22 @@ class ThresholdFilter(
             localMatrix = null
         )
     }
+
+    fun effectModifier(lowerThreshold: Int = 127, upperThreshold: Int = 127, white: Int = 0xffffff, black: Int = 0x000000): Modifier {
+        val thresholdShaderBuilder = RuntimeShaderBuilder(this.effect)
+        thresholdShaderBuilder.uniform("lowerThreshold", lowerThreshold / 255f)
+        thresholdShaderBuilder.uniform("upperThreshold", upperThreshold / 255f)
+        thresholdShaderBuilder.uniform("white", ((white shr 16) and 0xff) / 255f, ((white shr 8) and 0xff) / 255f, (white and 0xff) / 255f)
+        thresholdShaderBuilder.uniform("black", ((black shr 16) and 0xff) / 255f, ((black shr 8) and 0xff) / 255f, (black and 0xff) / 255f)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = thresholdShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**
@@ -1587,11 +1853,7 @@ class ThresholdFilter(
  * @param highColor RGB color for highlights (0-1 range per channel)
 
  */
-class TritoneFilter(
-    val shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f),
-    val midColor: FloatArray = floatArrayOf(0.533f, 0.533f, 0.533f),
-    val highColor: FloatArray = floatArrayOf(1f, 1f, 1f)
-) : Filter {
+class TritoneFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1616,7 +1878,7 @@ class TritoneFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(inputShader: org.jetbrains.skia.Shader, shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f), midColor: FloatArray = floatArrayOf(0.533f, 0.533f, 0.533f), highColor: FloatArray = floatArrayOf(1f, 1f, 1f)): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
         shadowColor.forEach { dataBuffer.putFloat(it) }
         midColor.forEach { dataBuffer.putFloat(it) }
@@ -1626,6 +1888,21 @@ class TritoneFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f), midColor: FloatArray = floatArrayOf(0.533f, 0.533f, 0.533f), highColor: FloatArray = floatArrayOf(1f, 1f, 1f)): Modifier {
+        val tritoneShaderBuilder = RuntimeShaderBuilder(this.effect)
+        tritoneShaderBuilder.uniform("shadowColor", shadowColor[0], shadowColor[1], shadowColor[2])
+        tritoneShaderBuilder.uniform("midColor", midColor[0], midColor[1], midColor[2])
+        tritoneShaderBuilder.uniform("highColor", highColor[0], highColor[1], highColor[2])
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = tritoneShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 

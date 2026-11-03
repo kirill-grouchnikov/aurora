@@ -40,6 +40,7 @@ import org.pushingpixels.aurora.filters.generative.GridType
 import org.pushingpixels.aurora.filters.generative.PlasmaFilter
 import org.pushingpixels.aurora.filters.generative.PointillizeFilter
 import org.pushingpixels.aurora.filters.generative.SkyFilter
+import org.pushingpixels.aurora.filters.point.BlockFilter
 import org.pushingpixels.aurora.filters.point.SolarizeFilter
 
 private object ResourceLoader
@@ -48,7 +49,7 @@ fun main() = application {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(1200.dp, 740.dp)
+        size = DpSize(1200.dp, 900.dp)
     )
 
     Window(
@@ -63,6 +64,7 @@ fun main() = application {
         val plasmaFilter = remember { PlasmaFilter() }
         val colorHalftoneFilter = remember { ColorHalftoneFilter() }
         val skyFilter = remember { SkyFilter() }
+        val blockFilter = remember { BlockFilter() }
         val solarizeFilter = SolarizeFilter
 
         LazyVerticalGrid(
@@ -146,6 +148,13 @@ fun main() = application {
                         fuzziness = 0.1f
                     ),
                     renderEffectTitle = "Pointillize"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = blockFilter.effectModifier(blockSize = 10),
+                    renderEffectTitle = "Block"
                 )
             }
         }
