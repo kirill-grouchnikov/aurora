@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.filters.generative
 
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
@@ -615,6 +616,7 @@ class CrystallizeFilter : Filter {
         )
     }
 
+    @Composable
     fun effectModifier(
         scale: Float = 16f,
         stretch: Float = 1f,
@@ -634,44 +636,46 @@ class CrystallizeFilter : Filter {
         fadeEdges: Boolean = false,
         edgeColor: Color = Color.Black
     ): Modifier {
-        val crystallizeShaderBuilder = RuntimeShaderBuilder(this.effect)
-
-        crystallizeShaderBuilder.uniform("scale", scale)
-        crystallizeShaderBuilder.uniform("stretch", stretch)
-        crystallizeShaderBuilder.uniform("angle", angle)
-        crystallizeShaderBuilder.uniform("randomness", randomness)
-        crystallizeShaderBuilder.uniform("gridType", gridType.ordinal)
-        crystallizeShaderBuilder.uniform("distancePower", distancePower)
-        crystallizeShaderBuilder.uniform("gradientCoefficient", gradientCoefficient)
-        crystallizeShaderBuilder.uniform("angleCoefficient", angleCoefficient)
-        crystallizeShaderBuilder.uniform("f1", f1)
-        crystallizeShaderBuilder.uniform("f2", f2)
-        crystallizeShaderBuilder.uniform("f3", f3)
-        crystallizeShaderBuilder.uniform("f4", f4)
-        crystallizeShaderBuilder.uniform("turbulence", turbulence)
-        crystallizeShaderBuilder.uniform("amount", amount)
-        crystallizeShaderBuilder.uniform("edgeThickness", edgeThickness)
-        crystallizeShaderBuilder.uniform("fadeEdges", if (fadeEdges) 1 else 0)
-        crystallizeShaderBuilder.uniform(
-            "edgeColor", edgeColor.red, edgeColor.green, edgeColor.blue
-        )
-        crystallizeShaderBuilder.uniform(
-            "contentSize", 560.0f, 385.0f
-        )
+        var contentSize by remember { mutableStateOf<Pair<Float, Float>?>(null) }
 
         val sizeChangedModifier = Modifier.onSizeChanged { newSize ->
-//            crystallizeShaderBuilder.uniform(
-//                "contentSize", newSize.width.toFloat(), newSize.height.toFloat()
-//            )
+            contentSize = Pair(newSize.width.toFloat(), newSize.height.toFloat())
         }
 
-        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
-            runtimeShaderBuilder = crystallizeShaderBuilder,
-            shaderName = "content",
-            input = null
-        ).asComposeRenderEffect()
+        return sizeChangedModifier.graphicsLayer {
+            val size = contentSize ?: return@graphicsLayer
+            val crystallizeShaderBuilder = RuntimeShaderBuilder(this@CrystallizeFilter.effect)
 
-        return sizeChangedModifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+            crystallizeShaderBuilder.uniform("scale", scale)
+            crystallizeShaderBuilder.uniform("stretch", stretch)
+            crystallizeShaderBuilder.uniform("angle", angle)
+            crystallizeShaderBuilder.uniform("randomness", randomness)
+            crystallizeShaderBuilder.uniform("gridType", gridType.ordinal)
+            crystallizeShaderBuilder.uniform("distancePower", distancePower)
+            crystallizeShaderBuilder.uniform("gradientCoefficient", gradientCoefficient)
+            crystallizeShaderBuilder.uniform("angleCoefficient", angleCoefficient)
+            crystallizeShaderBuilder.uniform("f1", f1)
+            crystallizeShaderBuilder.uniform("f2", f2)
+            crystallizeShaderBuilder.uniform("f3", f3)
+            crystallizeShaderBuilder.uniform("f4", f4)
+            crystallizeShaderBuilder.uniform("turbulence", turbulence)
+            crystallizeShaderBuilder.uniform("amount", amount)
+            crystallizeShaderBuilder.uniform("edgeThickness", edgeThickness)
+            crystallizeShaderBuilder.uniform("fadeEdges", if (fadeEdges) 1 else 0)
+            crystallizeShaderBuilder.uniform(
+                "edgeColor", edgeColor.red, edgeColor.green, edgeColor.blue
+            )
+            crystallizeShaderBuilder.uniform(
+                "contentSize", size.first, size.second
+            )
+
+            renderEffect = ImageFilter.makeRuntimeShader(
+                runtimeShaderBuilder = crystallizeShaderBuilder,
+                shaderName = "content",
+                input = null
+            ).asComposeRenderEffect()
+            clip = true
+        }
     }
 }
 
