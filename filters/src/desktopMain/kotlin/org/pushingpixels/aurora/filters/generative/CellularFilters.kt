@@ -31,6 +31,7 @@ import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
+import org.pushingpixels.aurora.filters.utility.makePassthroughShader
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -82,8 +83,6 @@ private val NOISE_FUNC = """
  * @param angle the rotation angle in radians (default 0.0f)
  * @param amount the effect intensity (default 1.0f)
  * @param turbulence turbulence frequency for fractal noise; 1.0 means single evaluation (default 1.0f)
- * @param gain gain applied to the cellular value (default 0.5f)
- * @param bias bias added to the cellular value (default 0.5f)
  * @param distancePower the distance metric power: 1=Manhattan, 2=Euclidean (default 2.0f)
  * @param gridType the grid type for cell point arrangement (default [GridType.Hexagonal])
  * @param randomness the randomness amount perturbing cell points (default 0.0f)
@@ -93,7 +92,6 @@ private val NOISE_FUNC = """
  * @param f4 coefficient for fourth-nearest cell distance (default 0.0f)
  * @param angleCoefficient angle coefficient for angular variation (default 0.0f)
  * @param gradientCoefficient gradient noise coefficient (default 0.0f)
- * @param useColor when true, samples source image color at nearest cell position (default false)
  * @param colors optional colormap colors; when provided, the cellular value is mapped through the gradient
  */
 class CellularFilter : Filter {
@@ -107,8 +105,6 @@ class CellularFilter : Filter {
             uniform float angle;
             uniform float amount;
             uniform float turbulence;
-            uniform float gain;
-            uniform float bias;
             uniform float distancePower;
             uniform int gridType;
             uniform float randomness;
@@ -118,7 +114,6 @@ class CellularFilter : Filter {
             uniform float f4;
             uniform float angleCoefficient;
             uniform float gradientCoefficient;
-            uniform int useColor;
             uniform int useColormap;
             $NOISE_FUNC
             $CELL_HASH_FUNC
@@ -150,24 +145,14 @@ class CellularFilter : Filter {
                     }
                 }
 
-                // Apply gain, bias, and amount
-                f = f * gain + bias;
+                // Apply amount scaling
                 f *= amount;
                 f = clamp(f, 0.0, 1.0);
 
                 half4 c = content.eval(fragcoord);
                 half3 rgb;
 
-                if (useColor == 1) {
-                    // Sample source image color at nearest cell position
-                    mat3 result = evaluate(nx, ny, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-                    float r0x = result[0][1];
-                    float r0y = result[1][1];
-                    float srcX = (r0x - 1000.0) * scale * stretch;
-                    float srcY = (r0y - 1000.0) * scale;
-                    half4 cellColor = content.eval(vec2(srcX, srcY));
-                    rgb = cellColor.rgb;
-                } else if (useColormap == 1) {
+                if (useColormap == 1) {
                     half4 colormapEval = colormap.eval(vec2(f * 256.0, 0.0));
                     rgb = colormapEval.rgb;
                     if (colormapEval.a != 0.0) {
@@ -189,8 +174,6 @@ class CellularFilter : Filter {
         angle: Float = 0f,
         amount: Float = 1f,
         turbulence: Float = 1f,
-        gain: Float = 0.5f,
-        bias: Float = 0.5f,
         distancePower: Float = 2f,
         gridType: GridType = GridType.Hexagonal,
         randomness: Float = 0f,
@@ -200,8 +183,7 @@ class CellularFilter : Filter {
         f4: Float = 0f,
         angleCoefficient: Float = 0f,
         gradientCoefficient: Float = 0f,
-        useColor: Boolean = false,
-        colors: List<Color>? = null
+        colors: List<Color>
     ): Modifier {
         return Modifier.drawWithCache {
             val builder = RuntimeShaderBuilder(effect)
@@ -210,8 +192,6 @@ class CellularFilter : Filter {
             builder.uniform("angle", angle)
             builder.uniform("amount", amount)
             builder.uniform("turbulence", turbulence)
-            builder.uniform("gain", gain)
-            builder.uniform("bias", bias)
             builder.uniform("distancePower", distancePower)
             builder.uniform("gridType", gridType.ordinal)
             builder.uniform("randomness", randomness)
@@ -221,11 +201,11 @@ class CellularFilter : Filter {
             builder.uniform("f4", f4)
             builder.uniform("angleCoefficient", angleCoefficient)
             builder.uniform("gradientCoefficient", gradientCoefficient)
-            builder.uniform("useColor", if (useColor) 1 else 0)
-            builder.uniform("useColormap", if (colors != null) 1 else 0)
-            colors?.let { c ->
-                builder.child("colormap", makeMultiStopHorizontalGradientShader(c, 256f))
-            }
+            builder.uniform("useColormap", if (colors.isNotEmpty()) 1 else 0)
+            builder.child("colormap",
+                if (colors.isNotEmpty())
+                    makeMultiStopHorizontalGradientShader(colors, 256f) else makePassthroughShader()
+            )
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
@@ -672,6 +652,7 @@ class PointillizeFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    @Composable
     fun effectModifier(
         scale: Float = 16f,
         stretch: Float = 1f,
@@ -692,44 +673,46 @@ class PointillizeFilter : Filter {
         edgeColor: Color = Color.Black,
         fuzziness: Float = 0.1f
     ): Modifier {
-        val pointillizeShaderBuilder = RuntimeShaderBuilder(this.effect)
-
-        pointillizeShaderBuilder.uniform("scale", scale)
-        pointillizeShaderBuilder.uniform("stretch", stretch)
-        pointillizeShaderBuilder.uniform("angle", angle)
-        pointillizeShaderBuilder.uniform("randomness", randomness)
-        pointillizeShaderBuilder.uniform("gridType", gridType.ordinal)
-        pointillizeShaderBuilder.uniform("distancePower", distancePower)
-        pointillizeShaderBuilder.uniform("gradientCoefficient", gradientCoefficient)
-        pointillizeShaderBuilder.uniform("angleCoefficient", angleCoefficient)
-        pointillizeShaderBuilder.uniform("f1", f1)
-        pointillizeShaderBuilder.uniform("f2", f2)
-        pointillizeShaderBuilder.uniform("f3", f3)
-        pointillizeShaderBuilder.uniform("f4", f4)
-        pointillizeShaderBuilder.uniform("turbulence", turbulence)
-        pointillizeShaderBuilder.uniform("amount", amount)
-        pointillizeShaderBuilder.uniform("edgeThickness", edgeThickness)
-        pointillizeShaderBuilder.uniform("fadeEdges", if (fadeEdges) 1 else 0)
-        pointillizeShaderBuilder.uniform(
-            "edgeColor", edgeColor.red, edgeColor.green, edgeColor.blue
-        )
-        pointillizeShaderBuilder.uniform("fuzziness", fuzziness)
-        pointillizeShaderBuilder.uniform(
-            "contentSize", 560.0f, 385.0f
-        )
+        var contentSize by remember { mutableStateOf<Pair<Float, Float>?>(null) }
 
         val sizeChangedModifier = Modifier.onSizeChanged { newSize ->
-//            pointillizeShaderBuilder.uniform(
-//                "contentSize", newSize.width.toFloat(), newSize.height.toFloat()
-//            )
+            contentSize = Pair(newSize.width.toFloat(), newSize.height.toFloat())
         }
 
-        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
-            runtimeShaderBuilder = pointillizeShaderBuilder,
-            shaderName = "content",
-            input = null
-        ).asComposeRenderEffect()
+        return sizeChangedModifier.graphicsLayer {
+            val size = contentSize ?: return@graphicsLayer
+            val pointillizeShaderBuilder = RuntimeShaderBuilder(this@PointillizeFilter.effect)
 
-        return sizeChangedModifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+            pointillizeShaderBuilder.uniform("scale", scale)
+            pointillizeShaderBuilder.uniform("stretch", stretch)
+            pointillizeShaderBuilder.uniform("angle", angle)
+            pointillizeShaderBuilder.uniform("randomness", randomness)
+            pointillizeShaderBuilder.uniform("gridType", gridType.ordinal)
+            pointillizeShaderBuilder.uniform("distancePower", distancePower)
+            pointillizeShaderBuilder.uniform("gradientCoefficient", gradientCoefficient)
+            pointillizeShaderBuilder.uniform("angleCoefficient", angleCoefficient)
+            pointillizeShaderBuilder.uniform("f1", f1)
+            pointillizeShaderBuilder.uniform("f2", f2)
+            pointillizeShaderBuilder.uniform("f3", f3)
+            pointillizeShaderBuilder.uniform("f4", f4)
+            pointillizeShaderBuilder.uniform("turbulence", turbulence)
+            pointillizeShaderBuilder.uniform("amount", amount)
+            pointillizeShaderBuilder.uniform("edgeThickness", edgeThickness)
+            pointillizeShaderBuilder.uniform("fadeEdges", if (fadeEdges) 1 else 0)
+            pointillizeShaderBuilder.uniform(
+                "edgeColor", edgeColor.red, edgeColor.green, edgeColor.blue
+            )
+            pointillizeShaderBuilder.uniform("fuzziness", fuzziness)
+            pointillizeShaderBuilder.uniform(
+                "contentSize", size.first, size.second
+            )
+
+            renderEffect = ImageFilter.makeRuntimeShader(
+                runtimeShaderBuilder = pointillizeShaderBuilder,
+                shaderName = "content",
+                input = null
+            ).asComposeRenderEffect()
+            clip = true
+        }
     }
 }

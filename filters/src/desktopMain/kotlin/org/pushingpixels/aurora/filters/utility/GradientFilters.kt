@@ -135,6 +135,26 @@ fun makeMultiStopHorizontalGradientFilter(stops: List<Color>, width: Int): Image
     )
 }
 
+fun makePassthroughShader(): org.jetbrains.skia.Shader {
+    @Language("GLSL")
+    val shaderSource = """
+        uniform shader content;
+
+        half4 main(vec2 fragCoord) {
+            return content.eval(fragCoord);
+        }
+    """
+
+    val effect = RuntimeEffect.makeForShader(shaderSource)
+
+    val dataBuffer = ByteBuffer.allocate(0).order(ByteOrder.LITTLE_ENDIAN)
+    return effect.makeShader(
+        uniforms = Data.makeFromBytes(dataBuffer.array()),
+        children = arrayOf(null),
+        localMatrix = null
+    )
+}
+
 fun makeMultiStopHorizontalGradientShader(stops: List<Color>, width: Float): org.jetbrains.skia.Shader {
     require(stops.size >= 2) { "At least two color stops are required" }
 
