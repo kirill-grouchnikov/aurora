@@ -509,117 +509,6 @@ class CausticsFilter : Filter {
 }
 
 /**
- * A filter which generates a cellular/Worley noise texture overlay.
- * Replicates the JH-Labs CellularFilter (extends TextureFilter).
- *
- * @param scale the scale of the texture (default 32.0f)
- * @param stretch the stretch factor (default 1.0f)
- * @param angle the rotation angle in radians (default 0.0f)
- * @param gradientCoefficient the gradient coefficient (default 0.0f)
- * @param randomness the randomness amount (default 0.0f)
- * @param amount the overlay intensity (default 1.0f)
- * @param colors optional colormap colors; when provided, the cellular value is mapped through the gradient
- */
-class CellularFilter(
-    val scale: Float = 32f,
-    val stretch: Float = 1f,
-    val angle: Float = 0f,
-    val gradientCoefficient: Float = 0f,
-    val randomness: Float = 0f,
-    val amount: Float = 1f
-) : Filter {
-    override val effect: RuntimeEffect by lazy {
-        @Language("GLSL")
-        val shaderDesc = """
-            uniform shader content;
-            uniform shader colormap;
-            uniform float scale;
-            uniform float stretch;
-            uniform float angle;
-            uniform float gradientCoefficient;
-            uniform float randomness;
-            uniform float amount;
-            uniform int useColormap;
-            $NOISE_FUNC
-            half4 main(vec2 fragcoord) {
-                half4 c = content.eval(fragcoord);
-                // Rotation matrix from angle
-                float cosA = cos(angle);
-                float sinA = sin(angle);
-                float nx = cosA * fragcoord.x + sinA * fragcoord.y;
-                float ny = -sinA * fragcoord.x + cosA * fragcoord.y;
-                nx /= scale * stretch;
-                ny /= scale;
-
-                vec2 p = vec2(nx, ny);
-                vec2 i = floor(p);
-                vec2 f = fract(p);
-                float minDist = 1.0;
-                for (int dy = -1; dy <= 1; dy++) {
-                    for (int dx = -1; dx <= 1; dx++) {
-                        vec2 neighbor = vec2(float(dx), float(dy));
-                        vec2 point = neighbor + hash(i + neighbor);
-                        // Add randomness
-                        if (randomness > 0.0) {
-                            point += randomness * (vec2(hash(point * 17.0), hash(point * 31.0)) - 0.5);
-                        }
-                        float dist = length(f - point);
-                        if (dist < minDist) minDist = dist;
-                    }
-                }
-                // Apply gradient coefficient
-                if (gradientCoefficient > 0.0) {
-                    minDist *= gradientCoefficient * noise2(fragcoord / scale);
-                }
-                // Normalize to 0..1
-                minDist = clamp(minDist, 0.0, 1.0);
-                half3 rgb;
-                if (useColormap == 1) {
-                    half4 colormapEval = colormap.eval(vec2(minDist * 256.0, 0.0));
-                    rgb = colormapEval.rgb;
-                    if (colormapEval.a != 0.0) {
-                        rgb = rgb / colormapEval.a;
-                    }
-                    rgb = mix(c.rgb, rgb, amount);
-                } else {
-                    half3 cellular = half3(minDist);
-                    rgb = mix(c.rgb, cellular, amount);
-                }
-                return half4(rgb, c.a);
-            }
-        """
-        RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        colors: List<Color>? = null
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(28).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(scale)
-        dataBuffer.putFloat(stretch)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(gradientCoefficient)
-        dataBuffer.putFloat(randomness)
-        dataBuffer.putFloat(amount)
-        dataBuffer.putInt(if (colors != null) 1 else 0)
-
-        val gradientShader = colors?.let {
-            makeMultiStopHorizontalGradientShader(
-                stops = it,
-                width = 256.0f
-            )
-        }
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader, gradientShader),
-            localMatrix = null
-        )
-    }
-}
-
-/**
  * A filter which generates a checkered pattern overlay.
  * Replicates the JH-Labs CheckFilter.
  *
@@ -630,14 +519,7 @@ class CellularFilter(
  * @param fuzziness the edge fuzziness (default 0)
  * @param angle the rotation angle in radians (default 0.0f)
  */
-class CheckFilter(
-    val xScale: Int = 8,
-    val yScale: Int = 8,
-    val foreground: Int = 0xffffffff.toInt(),
-    val background: Int = 0xff000000.toInt(),
-    val fuzziness: Int = 0,
-    val angle: Float = 0f
-) : Filter {
+class CheckFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -678,16 +560,24 @@ class CheckFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader? = null): org.jetbrains.skia.Shader {
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader? = null,
+        xScale: Int = 8,
+        yScale: Int = 8,
+        foreground: Color = Color.White,
+        background: Color = Color.Black,
+        fuzziness: Int = 0,
+        angle: Float = 0f
+    ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(xScale.toFloat())
         dataBuffer.putFloat(yScale.toFloat())
-        dataBuffer.putFloat(((foreground shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((foreground shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((foreground and 0xff) / 255f)
-        dataBuffer.putFloat(((background shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((background shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((background and 0xff) / 255f)
+        dataBuffer.putFloat(foreground.red)
+        dataBuffer.putFloat(foreground.green)
+        dataBuffer.putFloat(foreground.blue)
+        dataBuffer.putFloat(background.red)
+        dataBuffer.putFloat(background.green)
+        dataBuffer.putFloat(background.blue)
         dataBuffer.putFloat(fuzziness.toFloat())
         dataBuffer.putFloat(angle)
         return effect.makeShader(
@@ -696,67 +586,22 @@ class CheckFilter(
             localMatrix = null
         )
     }
-}
 
-/**
- * A filter which creates a crystallize/faceted effect.
- * Replicates the JH-Labs CrystallizeFilter.
- *
- * @param size the crystal size in pixels (default 10)
- * @param edgeThickness the edge line thickness 0-1 (default 0.4f)
- * @param fadeEdges true to fade edges (default false)
- * @param edgeColor the edge color as 0xRRGGBB (default black)
- */
-class CrystallizeFilter(
-    val size: Float = 10f,
-    val edgeThickness: Float = 0.4f,
-    val fadeEdges: Boolean = false,
-    val edgeColor: Int = 0xff000000.toInt()
-) : Filter {
-    override val effect: RuntimeEffect by lazy {
-        @Language("GLSL")
-        val shaderDesc = """
-            uniform shader content;
-            uniform float size;
-            uniform float edgeThickness;
-            uniform int fadeEdges;
-            uniform half3 edgeColor;
-            half4 main(vec2 fragcoord) {
-                // Hexagonal grid approximation
-                vec2 p = fragcoord / size;
-                vec2 a = floor(p);
-                vec2 f = fract(p);
-                vec2 b = fract(a * size + vec2(0.0, mod(a.x, 2.0) * 0.5) * size) - 0.5;
-                vec2 c = f - b;
-                float d = length(c);
-                vec2 center = a * size + b * size;
-                half4 cellColor = content.eval(center);
-
-                // Edge detection
-                float edge = 1.0 - smoothstep(edgeThickness * size * 0.5, size * 0.5, d);
-                if (fadeEdges == 1) {
-                    edge *= (d / (size * 0.5));
-                }
-                half3 rgb = mix(cellColor.rgb, edgeColor, edge);
-                return half4(rgb, cellColor.a);
+    fun effectModifier(
+        xScale: Int = 8,
+        yScale: Int = 8,
+        foreground: Color = Color.White,
+        background: Color = Color.Black,
+        fuzziness: Int = 0,
+        angle: Float = 0f
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(null, xScale, yScale, foreground, background, fuzziness, angle)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
             }
-        """
-        RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(size)
-        dataBuffer.putFloat(edgeThickness)
-        dataBuffer.putInt(if (fadeEdges) 1 else 0)
-        dataBuffer.putFloat(((edgeColor shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((edgeColor shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((edgeColor and 0xff) / 255f)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
+        }
     }
 }
 
@@ -777,19 +622,7 @@ class CrystallizeFilter(
  * @param ridged true for ridged FBM (default false)
  * @param colors optional colormap colors; when provided, the FBM value is mapped through the gradient
  */
-class FBMFilter(
-    val scale: Float = 32f,
-    val stretch: Float = 1f,
-    val angle: Float = 0f,
-    val amount: Float = 1f,
-    val H: Float = 1f,
-    val octaves: Float = 4f,
-    val lacunarity: Float = 2f,
-    val gain: Float = 0.5f,
-    val bias: Float = 0.5f,
-    val operation: Int = 0,
-    val ridged: Boolean = false
-) : Filter {
+class FBMFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -866,7 +699,18 @@ class FBMFilter(
     }
 
     fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
+        inputShader: org.jetbrains.skia.Shader? = null,
+        scale: Float = 32f,
+        stretch: Float = 1f,
+        angle: Float = 0f,
+        amount: Float = 1f,
+        H: Float = 1f,
+        octaves: Float = 4f,
+        lacunarity: Float = 2f,
+        gain: Float = 0.5f,
+        bias: Float = 0.5f,
+        operation: Int = 0,
+        ridged: Boolean = false,
         colors: List<Color>? = null
     ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(52).order(ByteOrder.LITTLE_ENDIAN)
@@ -896,6 +740,29 @@ class FBMFilter(
             localMatrix = null
         )
     }
+
+    fun effectModifier(
+        scale: Float = 32f,
+        stretch: Float = 1f,
+        angle: Float = 0f,
+        amount: Float = 1f,
+        H: Float = 1f,
+        octaves: Float = 4f,
+        lacunarity: Float = 2f,
+        gain: Float = 0.5f,
+        bias: Float = 0.5f,
+        operation: Int = 0,
+        ridged: Boolean = false,
+        colors: List<Color>? = null
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(inputShader = null, scale = scale, stretch = stretch, angle = angle, amount = amount, H = H, octaves = octaves, lacunarity = lacunarity, gain = gain, bias = bias, operation = operation, ridged = ridged, colors = colors)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
+    }
 }
 
 /**
@@ -909,14 +776,7 @@ class FBMFilter(
  * @param interpolation the interpolation mode: 0=LINEAR, 1=GAUSSIAN (default 0)
  * @param paintMode the paint mode: 0=NORMAL, 1=ADD, 2=SUBTRACT (default 0)
  */
-class GradientFilter(
-    val angle: Float = 0f,
-    val colors: List<Color> = listOf(Color(0xFF000000), Color(0xFFFFFFFF)),
-    val repeat: Boolean = false,
-    val type: Int = 0,
-    val interpolation: Int = 0,
-    val paintMode: Int = 0
-) : Filter {
+class GradientFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -977,7 +837,17 @@ class GradientFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader? = null, imageWidth: Float = 640f, imageHeight: Float = 480f): org.jetbrains.skia.Shader {
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader? = null,
+        angle: Float = 0f,
+        colors: List<Color> = listOf(Color(0xFF000000), Color(0xFFFFFFFF)),
+        repeat: Boolean = false,
+        type: Int = 0,
+        interpolation: Int = 0,
+        paintMode: Int = 0,
+        imageWidth: Float = 640f,
+        imageHeight: Float = 480f
+    ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(28).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(angle)
         dataBuffer.putInt(if (repeat) 1 else 0)
@@ -998,6 +868,25 @@ class GradientFilter(
             localMatrix = null
         )
     }
+
+    fun effectModifier(
+        angle: Float = 0f,
+        colors: List<Color> = listOf(Color(0xFF000000), Color(0xFFFFFFFF)),
+        repeat: Boolean = false,
+        type: Int = 0,
+        interpolation: Int = 0,
+        paintMode: Int = 0,
+        imageWidth: Float = 640f,
+        imageHeight: Float = 480f
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(null, angle, colors, repeat, type, interpolation, paintMode, imageWidth, imageHeight)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
+    }
 }
 
 /**
@@ -1009,12 +898,7 @@ class GradientFilter(
  * @param amount the overlay intensity (default 1.0f)
  * @param turbulence the turbulence amount (default 1.0f)
  */
-class MarbleFilter(
-    val xScale: Float = 4f,
-    val yScale: Float = 4f,
-    val amount: Float = 1f,
-    val turbulence: Float = 1f
-) : Filter {
+class MarbleFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1040,7 +924,13 @@ class MarbleFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader?): org.jetbrains.skia.Shader {
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader?,
+        xScale: Float = 4f,
+        yScale: Float = 4f,
+        amount: Float = 1f,
+        turbulence: Float = 1f
+    ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(xScale)
         dataBuffer.putFloat(yScale)
@@ -1051,6 +941,21 @@ class MarbleFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(
+        xScale: Float = 4f,
+        yScale: Float = 4f,
+        amount: Float = 1f,
+        turbulence: Float = 1f
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(null, xScale, yScale, amount, turbulence)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
     }
 }
 
@@ -1181,12 +1086,7 @@ class MarbleTexFilter : Filter {
  * @param monochrome true for grayscale noise (default false)
  * @param density the noise density 0-1 (default 1.0)
  */
-class NoiseFilter(
-    val amount: Int = 25,
-    val distribution: Int = 0,
-    val monochrome: Boolean = false,
-    val density: Float = 1f
-) : Filter {
+class NoiseFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1222,7 +1122,13 @@ class NoiseFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader? = null,
+        amount: Int = 25,
+        distribution: Int = 0,
+        monochrome: Boolean = false,
+        density: Float = 1f
+    ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(amount / 255f)
         dataBuffer.putInt(distribution)
@@ -1234,6 +1140,21 @@ class NoiseFilter(
             localMatrix = null
         )
     }
+
+    fun effectModifier(
+        amount: Int = 25,
+        distribution: Int = 0,
+        monochrome: Boolean = false,
+        density: Float = 1f
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(inputShader = null, amount = amount, distribution = distribution, monochrome = monochrome, density = density)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
+    }
 }
 
 /**
@@ -1243,10 +1164,7 @@ class NoiseFilter(
  * @param range the neighborhood range (default 3)
  * @param levels the number of color levels (default 256)
  */
-class OilFilter(
-    val range: Int = 3,
-    val levels: Int = 256
-) : Filter {
+class OilFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1289,7 +1207,11 @@ class OilFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader? = null,
+        range: Int = 3,
+        levels: Int = 256
+    ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putInt(range)
         dataBuffer.putInt(levels)
@@ -1298,6 +1220,19 @@ class OilFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(
+        range: Int = 3,
+        levels: Int = 256
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(inputShader = null, range = range, levels = levels)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
     }
 }
 
@@ -1433,73 +1368,6 @@ class PlasmaFilter() : Filter {
 }
 
 /**
- * A filter which creates a pointillism effect.
- * Replicates the JH-Labs PointillizeFilter.
- *
- * @param size the dot size in pixels (default 5)
- * @param edgeThickness the edge line thickness 0-1 (default 0.4f)
- * @param fadeEdges true to fade edges (default false)
- * @param edgeColor the edge color as 0xRRGGBB (default black)
- * @param fuzziness the fuzziness amount 0-1 (default 0.1f)
- */
-class PointillizeFilter(
-    val size: Float = 5f,
-    val edgeThickness: Float = 0.4f,
-    val fadeEdges: Boolean = false,
-    val edgeColor: Int = 0xff000000.toInt(),
-    val fuzziness: Float = 0.1f
-) : Filter {
-    override val effect: RuntimeEffect by lazy {
-        @Language("GLSL")
-        val shaderDesc = """
-            uniform shader content;
-            uniform float size;
-            uniform float edgeThickness;
-            uniform int fadeEdges;
-            uniform half3 edgeColor;
-            uniform float fuzziness;
-            $NOISE_FUNC
-            half4 main(vec2 fragcoord) {
-                vec2 cell = floor(fragcoord / size) * size;
-                half4 avg = content.eval(cell + size * 0.5);
-                vec2 local = fragcoord - cell;
-                float dist = length(local - size * 0.5);
-                // Add fuzziness to dot edges
-                float fuzz = fuzziness * (noise2(fragcoord * 0.1) * 2.0 - 1.0);
-                float circle = 1.0 - smoothstep(size * 0.3 + fuzz, size * 0.5 + fuzz, dist);
-                half4 c = content.eval(fragcoord);
-                half3 rgb = mix(c.rgb, avg.rgb, circle);
-
-                // Edge lines
-                float edge = 1.0 - smoothstep(edgeThickness * size * 0.5, size * 0.5, dist);
-                if (fadeEdges == 1) {
-                    edge *= (dist / (size * 0.5));
-                }
-                rgb = mix(rgb, edgeColor, edge * (1.0 - circle));
-                return half4(rgb, c.a);
-            }
-        """
-        RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(28).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(size)
-        dataBuffer.putFloat(edgeThickness)
-        dataBuffer.putInt(if (fadeEdges) 1 else 0)
-        dataBuffer.putFloat(((edgeColor shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((edgeColor shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((edgeColor and 0xff) / 255f)
-        dataBuffer.putFloat(fuzziness)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-}
-
-/**
  * A filter which generates a Barnsley fern fractal texture.
  * Replicates the JH-Labs QuiltFilter.
  *
@@ -1512,16 +1380,7 @@ class PointillizeFilter(
  * @param k the IFS coefficient k (default 0)
  * @param colors the colormap colors (default green to dark green)
  */
-class QuiltFilter(
-    val seed: Int = 567,
-    val iterations: Int = 25000,
-    val a: Float = -0.59f,
-    val b: Float = 0.2f,
-    val c: Float = 0.1f,
-    val d: Float = 0f,
-    val k: Int = 0,
-    val colors: List<Color> = listOf(Color(0xFF00FF00), Color(0xFF006400))
-) : Filter {
+class QuiltFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1588,7 +1447,18 @@ class QuiltFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(imageWidth: Float = 640f, imageHeight: Float = 480f): org.jetbrains.skia.Shader {
+    fun makeShader(
+        seed: Int = 567,
+        iterations: Int = 25000,
+        a: Float = -0.59f,
+        b: Float = 0.2f,
+        c: Float = 0.1f,
+        d: Float = 0f,
+        k: Int = 0,
+        colors: List<Color> = listOf(Color(0xFF00FF00), Color(0xFF006400)),
+        imageWidth: Float = 640f,
+        imageHeight: Float = 480f
+    ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putInt(seed)
         dataBuffer.putInt(iterations)
@@ -1613,11 +1483,19 @@ class QuiltFilter(
     }
 
     fun effectModifier(
+        seed: Int = 567,
+        iterations: Int = 25000,
+        a: Float = -0.59f,
+        b: Float = 0.2f,
+        c: Float = 0.1f,
+        d: Float = 0f,
+        k: Int = 0,
+        colors: List<Color> = listOf(Color(0xFF00FF00), Color(0xFF006400)),
         imageWidth: Float = 640f,
         imageHeight: Float = 480f
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(imageWidth, imageHeight)
+            val shader = makeShader(seed, iterations, a, b, c, d, k, colors, imageWidth, imageHeight)
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -1638,15 +1516,7 @@ class QuiltFilter(
  * @param color the scratch color as 0xRRGGBB (default white)
  * @param seed the random seed (default 0)
  */
-class ScratchFilter(
-    val density: Float = 0.1f,
-    val angle: Float = 0f,
-    val angleVariation: Float = 1.0f,
-    val width: Float = 0.5f,
-    val length: Float = 0.5f,
-    val color: Int = 0xffffff,
-    val seed: Int = 0
-) : Filter {
+class ScratchFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1700,22 +1570,49 @@ class ScratchFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader? = null,
+        density: Float = 0.1f,
+        angle: Float = 0f,
+        angleVariation: Float = 1.0f,
+        width: Float = 0.5f,
+        length: Float = 0.5f,
+        color: Color = Color(0xFFFFFF),
+        seed: Int = 0
+    ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(density)
         dataBuffer.putFloat(angle)
         dataBuffer.putFloat(angleVariation)
         dataBuffer.putFloat(width)
         dataBuffer.putFloat(length)
-        dataBuffer.putFloat(((color shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color and 0xff) / 255f)
+        dataBuffer.putFloat(color.red)
+        dataBuffer.putFloat(color.green)
+        dataBuffer.putFloat(color.blue)
         dataBuffer.putInt(seed)
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(
+        density: Float = 0.1f,
+        angle: Float = 0f,
+        angleVariation: Float = 1.0f,
+        width: Float = 0.5f,
+        length: Float = 0.5f,
+        color: Color = Color(0xFFFFFF),
+        seed: Int = 0
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(inputShader = null, density = density, angle = angle, angleVariation = angleVariation, width = width, length = length, color = color, seed = seed)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
     }
 }
 
@@ -1747,31 +1644,7 @@ class ScratchFilter(
  * @param cameraElevation the camera elevation angle (default 0.0f)
  * @param fov the field of view (default 1.0f)
  */
-class SkyFilter(
-    val scale: Float = 0.1f,
-    val stretch: Float = 1.0f,
-    val angle: Float = 0.0f,
-    val amount: Float = 1.0f,
-    val H: Float = 1.0f,
-    val octaves: Float = 8.0f,
-    val lacunarity: Float = 2.0f,
-    val gain: Float = 1.0f,
-    val bias: Float = 0.6f,
-    val cloudCover: Float = 0.5f,
-    val cloudSharpness: Float = 0.5f,
-    val time: Float = 0.3f,
-    val glow: Float = 0.5f,
-    val glowFalloff: Float = 0.5f,
-    val haziness: Float = 0.96f,
-    val t: Float = 0.0f,
-    val sunColor: Int = -1,
-    val sunAzimuth: Float = 0.5f,
-    val sunElevation: Float = 0.5f,
-    val windSpeed: Float = 0.0f,
-    val cameraAzimuth: Float = 0.0f,
-    val cameraElevation: Float = 0.0f,
-    val fov: Float = 1.0f
-) : Filter {
+class SkyFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1941,8 +1814,31 @@ class SkyFilter(
 
     fun makeShader(
         inputShader: org.jetbrains.skia.Shader?,
-        imageWidth: Float,
-        imageHeight: Float
+        scale: Float = 0.1f,
+        stretch: Float = 1.0f,
+        angle: Float = 0.0f,
+        amount: Float = 1.0f,
+        H: Float = 1.0f,
+        octaves: Float = 8.0f,
+        lacunarity: Float = 2.0f,
+        gain: Float = 1.0f,
+        bias: Float = 0.6f,
+        cloudCover: Float = 0.5f,
+        cloudSharpness: Float = 0.5f,
+        time: Float = 0.3f,
+        glow: Float = 0.5f,
+        glowFalloff: Float = 0.5f,
+        haziness: Float = 0.96f,
+        t: Float = 0.0f,
+        sunColor: Int = -1,
+        sunAzimuth: Float = 0.5f,
+        sunElevation: Float = 0.5f,
+        windSpeed: Float = 0.0f,
+        cameraAzimuth: Float = 0.0f,
+        cameraElevation: Float = 0.0f,
+        fov: Float = 1.0f,
+        imageWidth: Float = 640f,
+        imageHeight: Float = 480f
     ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(108).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(imageWidth)
@@ -1982,6 +1878,42 @@ class SkyFilter(
             localMatrix = null
         )
     }
+
+    fun effectModifier(
+        scale: Float = 0.1f,
+        stretch: Float = 1.0f,
+        angle: Float = 0.0f,
+        amount: Float = 1.0f,
+        H: Float = 1.0f,
+        octaves: Float = 8.0f,
+        lacunarity: Float = 2.0f,
+        gain: Float = 1.0f,
+        bias: Float = 0.6f,
+        cloudCover: Float = 0.5f,
+        cloudSharpness: Float = 0.5f,
+        time: Float = 0.3f,
+        glow: Float = 0.5f,
+        glowFalloff: Float = 0.5f,
+        haziness: Float = 0.96f,
+        t: Float = 0.0f,
+        sunColor: Int = -1,
+        sunAzimuth: Float = 0.5f,
+        sunElevation: Float = 0.5f,
+        windSpeed: Float = 0.0f,
+        cameraAzimuth: Float = 0.0f,
+        cameraElevation: Float = 0.0f,
+        fov: Float = 1.0f,
+        imageWidth: Float = 640f,
+        imageHeight: Float = 480f
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(null, scale, stretch, angle, amount, H, octaves, lacunarity, gain, bias, cloudCover, cloudSharpness, time, glow, glowFalloff, haziness, t, sunColor, sunAzimuth, sunElevation, windSpeed, cameraAzimuth, cameraElevation, fov, imageWidth, imageHeight)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
+    }
 }
 
 /**
@@ -1994,13 +1926,7 @@ class SkyFilter(
  * @param white the white color as 0xRRGGBB (default white)
  * @param black the black color as 0xRRGGBB (default black)
  */
-class StampFilter(
-    val threshold: Float = 0f,
-    val softness: Float = 0f,
-    val radius: Float = 5f,
-    val white: Int = 0xffffffff.toInt(),
-    val black: Int = 0xff000000.toInt()
-) : Filter {
+class StampFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -2029,22 +1955,45 @@ class StampFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader? = null,
+        threshold: Float = 0f,
+        softness: Float = 0f,
+        radius: Float = 5f,
+        white: Color = Color.White,
+        black: Color = Color.Black
+    ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(threshold)
         dataBuffer.putFloat(softness)
         dataBuffer.putFloat(radius)
-        dataBuffer.putFloat(((white shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((white shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((white and 0xff) / 255f)
-        dataBuffer.putFloat(((black shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((black shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((black and 0xff) / 255f)
+        dataBuffer.putFloat(white.red)
+        dataBuffer.putFloat(white.green)
+        dataBuffer.putFloat(white.blue)
+        dataBuffer.putFloat(black.red)
+        dataBuffer.putFloat(black.green)
+        dataBuffer.putFloat(black.blue)
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(
+        threshold: Float = 0f,
+        softness: Float = 0f,
+        radius: Float = 5f,
+        white: Color = Color.White,
+        black: Color = Color.Black
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(inputShader = null, threshold = threshold, softness = softness, radius = radius, white = white, black = black)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
     }
 }
 
@@ -2059,13 +2008,7 @@ class StampFilter(
  * @param turbulence the turbulence amount (default 0.0f)
  * @param colors optional colormap colors; when provided, the texture value is mapped through the gradient
  */
-class TextureFilter(
-    val scale: Float = 32f,
-    val stretch: Float = 1f,
-    val angle: Float = 0f,
-    val amount: Float = 1f,
-    val turbulence: Float = 0f
-) : Filter {
+class TextureFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -2114,7 +2057,12 @@ class TextureFilter(
     }
 
     fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
+        inputShader: org.jetbrains.skia.Shader? = null,
+        scale: Float = 32f,
+        stretch: Float = 1f,
+        angle: Float = 0f,
+        amount: Float = 1f,
+        turbulence: Float = 0f,
         colors: List<Color>? = null
     ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
@@ -2138,6 +2086,23 @@ class TextureFilter(
             localMatrix = null
         )
     }
+
+    fun effectModifier(
+        scale: Float = 32f,
+        stretch: Float = 1f,
+        angle: Float = 0f,
+        amount: Float = 1f,
+        turbulence: Float = 0f,
+        colors: List<Color>? = null
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(inputShader = null, scale = scale, stretch = stretch, angle = angle, amount = amount, turbulence = turbulence, colors = colors)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
+    }
 }
 
 /**
@@ -2156,19 +2121,7 @@ class TextureFilter(
  * @param roundThreads true for rounded threads (default false)
  * @param shadeCrossings true to shade thread crossings (default true)
  */
-class WeaveFilter(
-    val xWidth: Float = 16f,
-    val yWidth: Float = 16f,
-    val xGap: Float = 6f,
-    val yGap: Float = 6f,
-    val rows: Int = 4,
-    val cols: Int = 4,
-    val rgbX: Int = 0xffff8080.toInt(),
-    val rgbY: Int = 0xff8080ff.toInt(),
-    val useImageColors: Boolean = true,
-    val roundThreads: Boolean = false,
-    val shadeCrossings: Boolean = true
-) : Filter {
+class WeaveFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -2228,7 +2181,20 @@ class WeaveFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader?): org.jetbrains.skia.Shader {
+    fun makeShader(
+        inputShader: org.jetbrains.skia.Shader?,
+        xWidth: Float = 16f,
+        yWidth: Float = 16f,
+        xGap: Float = 6f,
+        yGap: Float = 6f,
+        rows: Int = 4,
+        cols: Int = 4,
+        rgbX: Color = Color(0xFFFF8080),
+        rgbY: Color = Color(0xFF8080FF),
+        useImageColors: Boolean = true,
+        roundThreads: Boolean = false,
+        shadeCrossings: Boolean = true
+    ): org.jetbrains.skia.Shader {
         val dataBuffer = ByteBuffer.allocate(60).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(xWidth)
         dataBuffer.putFloat(yWidth)
@@ -2236,12 +2202,12 @@ class WeaveFilter(
         dataBuffer.putFloat(yGap)
         dataBuffer.putInt(rows)
         dataBuffer.putInt(cols)
-        dataBuffer.putFloat(((rgbX shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((rgbX shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((rgbX and 0xff) / 255f)
-        dataBuffer.putFloat(((rgbY shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((rgbY shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((rgbY and 0xff) / 255f)
+        dataBuffer.putFloat(rgbX.red)
+        dataBuffer.putFloat(rgbX.green)
+        dataBuffer.putFloat(rgbX.blue)
+        dataBuffer.putFloat(rgbY.red)
+        dataBuffer.putFloat(rgbY.green)
+        dataBuffer.putFloat(rgbY.blue)
         dataBuffer.putInt(if (useImageColors) 1 else 0)
         dataBuffer.putInt(if (roundThreads) 1 else 0)
         dataBuffer.putInt(if (shadeCrossings) 1 else 0)
@@ -2250,6 +2216,28 @@ class WeaveFilter(
             children = arrayOf(inputShader),
             localMatrix = null
         )
+    }
+
+    fun effectModifier(
+        xWidth: Float = 16f,
+        yWidth: Float = 16f,
+        xGap: Float = 6f,
+        yGap: Float = 6f,
+        rows: Int = 4,
+        cols: Int = 4,
+        rgbX: Color = Color(0xFFFF8080),
+        rgbY: Color = Color(0xFF8080FF),
+        useImageColors: Boolean = true,
+        roundThreads: Boolean = false,
+        shadeCrossings: Boolean = true
+    ): Modifier {
+        return Modifier.drawWithCache {
+            val shader = makeShader(null, xWidth, yWidth, xGap, yGap, rows, cols, rgbX, rgbY, useImageColors, roundThreads, shadeCrossings)
+            val shaderBrush = ShaderBrush(shader.asComposeShader())
+            onDrawBehind {
+                drawRect(brush = shaderBrush)
+            }
+        }
     }
 }
 

@@ -35,6 +35,7 @@ import org.pushingpixels.aurora.filters.composite.BumpShape
 import org.pushingpixels.aurora.filters.composite.ChromeFilter
 import org.pushingpixels.aurora.filters.composite.ColorHalftoneFilter
 import org.pushingpixels.aurora.filters.generative.CausticsFilter
+import org.pushingpixels.aurora.filters.generative.CrystallizeFilter
 import org.pushingpixels.aurora.filters.generative.PlasmaFilter
 import org.pushingpixels.aurora.filters.generative.SkyFilter
 import org.pushingpixels.aurora.filters.point.SolarizeFilter
@@ -55,6 +56,7 @@ fun main() = application {
     ) {
         val chromeFilter = remember { ChromeFilter() }
         val causticsFilter = remember { CausticsFilter() }
+        val crystallizeFilter = remember { CrystallizeFilter() }
         val plasmaFilter = remember { PlasmaFilter() }
         val colorHalftoneFilter = remember { ColorHalftoneFilter() }
         val skyFilter = remember { SkyFilter() }
@@ -114,6 +116,15 @@ fun main() = application {
                             Color(0xFFFF0000),
                             Color(0xFFFFFF00))),
                     renderEffectTitle = "Plasma with colormap")
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = crystallizeFilter.effectModifier(
+                        size = 15.0f, edgeThickness = 2.0f
+                    ),
+                    renderEffectTitle = "Crystallize"
+                )
             }
         }
     }
