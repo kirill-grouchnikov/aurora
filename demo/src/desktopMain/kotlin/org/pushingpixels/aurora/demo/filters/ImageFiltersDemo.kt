@@ -36,7 +36,9 @@ import org.pushingpixels.aurora.filters.composite.ChromeFilter
 import org.pushingpixels.aurora.filters.composite.ColorHalftoneFilter
 import org.pushingpixels.aurora.filters.generative.CausticsFilter
 import org.pushingpixels.aurora.filters.generative.CrystallizeFilter
+import org.pushingpixels.aurora.filters.generative.GridType
 import org.pushingpixels.aurora.filters.generative.PlasmaFilter
+import org.pushingpixels.aurora.filters.generative.PointillizeFilter
 import org.pushingpixels.aurora.filters.generative.SkyFilter
 import org.pushingpixels.aurora.filters.point.SolarizeFilter
 
@@ -57,6 +59,7 @@ fun main() = application {
         val chromeFilter = remember { ChromeFilter() }
         val causticsFilter = remember { CausticsFilter() }
         val crystallizeFilter = remember { CrystallizeFilter() }
+        val pointillizeFilter = remember { PointillizeFilter() }
         val plasmaFilter = remember { PlasmaFilter() }
         val colorHalftoneFilter = remember { ColorHalftoneFilter() }
         val skyFilter = remember { SkyFilter() }
@@ -123,16 +126,26 @@ fun main() = application {
                     effectModifier = crystallizeFilter.effectModifier(
                         scale = 20.0f, edgeThickness = 0.4f, fadeEdges = false
                     ),
-                    renderEffectTitle = "Crystallize no edge fade"
+                    renderEffectTitle = "Crystallize hexagons"
                 )
             }
 
             item {
                 FilterBox(
                     effectModifier = crystallizeFilter.effectModifier(
-                        scale = 20.0f, edgeThickness = 0.4f, fadeEdges = true
+                        scale = 30.0f, edgeThickness = 0.4f, fadeEdges = false,
+                        gridType = GridType.Octagonal),
+                    renderEffectTitle = "Crystallize octagons"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = pointillizeFilter.effectModifier(
+                        scale = 10.0f, edgeThickness = 0.4f, fadeEdges = false,
+                        fuzziness = 0.1f
                     ),
-                    renderEffectTitle = "Crystallize edge fade"
+                    renderEffectTitle = "Pointillize"
                 )
             }
         }
