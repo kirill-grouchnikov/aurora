@@ -23,13 +23,10 @@ import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import org.intellij.lang.annotations.Language
-import org.jetbrains.skia.Data
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -56,16 +53,6 @@ class BlockFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, blockSize: Int = 2): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(blockSize.toFloat())
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(blockSize: Int = 2): Modifier {
@@ -133,21 +120,6 @@ class ChromaKeyFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, hTolerance: Float = 0f, sTolerance: Float = 0f, bTolerance: Float = 0f, color: Int = 0x00ff00): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(hTolerance)
-        dataBuffer.putFloat(sTolerance)
-        dataBuffer.putFloat(bTolerance)
-        dataBuffer.putFloat(((color shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((color shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((color and 0xff) / 255f)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(hTolerance: Float = 0f, sTolerance: Float = 0f, bTolerance: Float = 0f, color: Int = 0x00ff00): Modifier {
         val chromaKeyShaderBuilder = RuntimeShaderBuilder(this.effect)
         chromaKeyShaderBuilder.uniform("hTolerance", hTolerance)
@@ -198,21 +170,6 @@ class CurvesFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, rControlX: Float = 0.5f, rControlY: Float = 0.5f, gControlX: Float = 0.5f, gControlY: Float = 0.5f, bControlX: Float = 0.5f, bControlY: Float = 0.5f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(rControlX)
-        dataBuffer.putFloat(rControlY)
-        dataBuffer.putFloat(gControlX)
-        dataBuffer.putFloat(gControlY)
-        dataBuffer.putFloat(bControlX)
-        dataBuffer.putFloat(bControlY)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(rControlX: Float = 0.5f, rControlY: Float = 0.5f, gControlX: Float = 0.5f, gControlY: Float = 0.5f, bControlX: Float = 0.5f, bControlY: Float = 0.5f): Modifier {
@@ -287,16 +244,6 @@ class DissolveFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, amount: Float = 0.5f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(amount)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(amount: Float = 0.5f): Modifier {
@@ -393,16 +340,6 @@ class ExposureFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, exposure: Float = 1f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(exposure)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(exposure: Float = 1f): Modifier {
         val exposureShaderBuilder = RuntimeShaderBuilder(this.effect)
         exposureShaderBuilder.uniform("exposure", exposure)
@@ -437,17 +374,6 @@ class FadeFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, fadeAmount: Float = 0.5f, fadeColor: FloatArray = floatArrayOf(1f, 1f, 1f)): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(fadeAmount)
-        fadeColor.forEach { dataBuffer.putFloat(it) }
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(fadeAmount: Float = 0.5f, fadeColor: FloatArray = floatArrayOf(1f, 1f, 1f)): Modifier {
@@ -487,17 +413,6 @@ class FillFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, color: FloatArray = floatArrayOf(0f, 0f, 0f), opacity: Float = 1f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
-        color.forEach { dataBuffer.putFloat(it) }
-        dataBuffer.putFloat(opacity)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(color: FloatArray = floatArrayOf(0f, 0f, 0f), opacity: Float = 1f): Modifier {
@@ -591,48 +506,6 @@ class FlareFilter() : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader? = null,
-        centerX: Float = 0.5f,
-        centerY: Float = 0.5f,
-        radius: Float = 50f,
-        baseAmount: Float = 1f,
-        ringAmount: Float = 0.2f,
-        rayAmount: Float = 0.1f,
-        color: Color = Color.White,
-        ringWidth: Float = 1.6f,
-        linear: Float = 0.03f,
-        gauss: Float = 0.006f,
-        mixFactor: Float = 0.5f,
-        falloff: Float = 6f,
-        imageWidth: Float = 640f,
-        imageHeight: Float = 480f
-    ): org.jetbrains.skia.Shader {
-        val icenterX = centerX * imageWidth
-        val icenterY = centerY * imageHeight
-
-        val dataBuffer = ByteBuffer.allocate(68).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(icenterX)
-        dataBuffer.putFloat(icenterY)
-        dataBuffer.putFloat(radius)
-        dataBuffer.putFloat(baseAmount)
-        dataBuffer.putFloat(ringAmount)
-        dataBuffer.putFloat(rayAmount)
-        dataBuffer.putFloat(color.red)
-        dataBuffer.putFloat(color.green)
-        dataBuffer.putFloat(color.blue)
-        dataBuffer.putFloat(ringWidth)
-        dataBuffer.putFloat(linear)
-        dataBuffer.putFloat(gauss)
-        dataBuffer.putFloat(mixFactor)
-        dataBuffer.putFloat(falloff)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     @Composable
     fun effectModifier(
         centerX: Float = 0.5f,
@@ -720,18 +593,6 @@ class FlipFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, flipType: Int = 0, imageWidth: Float = 640f, imageHeight: Float = 480f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(flipType)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     @Composable
     fun effectModifier(flipType: Int = 0): Modifier {
         var contentSize by remember { mutableStateOf<Pair<Float, Float>?>(null) }
@@ -790,19 +651,6 @@ class FourColorFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f), midShadowColor: FloatArray = floatArrayOf(0.33f, 0.33f, 0.33f), midHighlightColor: FloatArray = floatArrayOf(0.66f, 0.66f, 0.66f), highlightColor: FloatArray = floatArrayOf(1f, 1f, 1f)): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(48).order(ByteOrder.LITTLE_ENDIAN)
-        shadowColor.forEach { dataBuffer.putFloat(it) }
-        midShadowColor.forEach { dataBuffer.putFloat(it) }
-        midHighlightColor.forEach { dataBuffer.putFloat(it) }
-        highlightColor.forEach { dataBuffer.putFloat(it) }
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f), midShadowColor: FloatArray = floatArrayOf(0.33f, 0.33f, 0.33f), midHighlightColor: FloatArray = floatArrayOf(0.66f, 0.66f, 0.66f), highlightColor: FloatArray = floatArrayOf(1f, 1f, 1f)): Modifier {
         val fourColorShaderBuilder = RuntimeShaderBuilder(this.effect)
         fourColorShaderBuilder.uniform("shadowColor", shadowColor[0], shadowColor[1], shadowColor[2])
@@ -857,17 +705,6 @@ class GainFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, gain: Float = 0.5f, bias: Float = 0.5f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(gain)
-        dataBuffer.putFloat(bias)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(gain: Float = 0.5f, bias: Float = 0.5f): Modifier {
@@ -928,18 +765,6 @@ class HSBAdjustFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, hFactor: Float = 0f, sFactor: Float = 0f, bFactor: Float = 0f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(hFactor)
-        dataBuffer.putFloat(sFactor)
-        dataBuffer.putFloat(bFactor)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(hFactor: Float = 0f, sFactor: Float = 0f, bFactor: Float = 0f): Modifier {
@@ -1013,18 +838,6 @@ class HalftoneFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, softness: Float = 0.1f, invert: Boolean = false, monochrome: Boolean = false): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(softness)
-        dataBuffer.putInt(if (invert) 1 else 0)
-        dataBuffer.putInt(if (monochrome) 1 else 0)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(softness: Float = 0.1f, invert: Boolean = false, monochrome: Boolean = false): Modifier {
         val halftoneShaderBuilder = RuntimeShaderBuilder(this.effect)
         halftoneShaderBuilder.uniform("softness", softness)
@@ -1093,19 +906,6 @@ class LevelsFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, lowLevel: Float = 0f, highLevel: Float = 1f, lowOutputLevel: Float = 0f, highOutputLevel: Float = 1f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(lowLevel)
-        dataBuffer.putFloat(highLevel)
-        dataBuffer.putFloat(lowOutputLevel)
-        dataBuffer.putFloat(highOutputLevel)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(lowLevel: Float = 0f, highLevel: Float = 1f, lowOutputLevel: Float = 0f, highOutputLevel: Float = 1f): Modifier {
         val levelsShaderBuilder = RuntimeShaderBuilder(this.effect)
         levelsShaderBuilder.uniform("lowLevel", lowLevel)
@@ -1148,17 +948,6 @@ class LookupFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, colors: List<Color> = listOf(Color(0xFF000000), Color(0xFFFFFFFF))): org.jetbrains.skia.Shader {
-        val gradientShader = org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader(
-            stops = colors,
-            width = 256.0f
-        )
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(byteArrayOf()),
-            children = arrayOf(gradientShader, inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -1186,19 +975,6 @@ class MapColorsFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, sourceColors: FloatArray = floatArrayOf(0f, 0f, 0f, 1f, 1f, 1f), destColors: FloatArray = floatArrayOf(1f, 1f, 1f, 0f, 0f, 0f)): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
-        for (i in 0 until 3) dataBuffer.putFloat(sourceColors[i])
-        for (i in 0 until 3) dataBuffer.putFloat(sourceColors[i + 3])
-        for (i in 0 until 3) dataBuffer.putFloat(destColors[i])
-        for (i in 0 until 3) dataBuffer.putFloat(destColors[i + 3])
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(sourceColors: FloatArray = floatArrayOf(0f, 0f, 0f, 1f, 1f, 1f), destColors: FloatArray = floatArrayOf(1f, 1f, 1f, 0f, 0f, 0f)): Modifier {
@@ -1248,17 +1024,6 @@ class MaskFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, threshold: Float = 0.5f, invert: Boolean = false): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(threshold)
-        dataBuffer.putInt(if (invert) 1 else 0)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(threshold: Float = 0.5f, invert: Boolean = false): Modifier {
         val maskShaderBuilder = RuntimeShaderBuilder(this.effect)
         maskShaderBuilder.uniform("threshold", threshold)
@@ -1291,16 +1056,6 @@ class OpacityFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, opacity: Float = 1f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(opacity)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(opacity: Float = 1f): Modifier {
@@ -1337,16 +1092,6 @@ class PosterizeFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, numLevels: Int = 6): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(numLevels)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(numLevels: Int = 6): Modifier {
@@ -1406,16 +1151,6 @@ class QuantizeFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, numColors: Int = 16): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(numColors)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(numColors: Int = 16): Modifier {
         val quantizeShaderBuilder = RuntimeShaderBuilder(this.effect)
         quantizeShaderBuilder.uniform("numColors", numColors)
@@ -1454,18 +1189,6 @@ class RGBAdjustFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, rFactor: Float = 0f, gFactor: Float = 0f, bFactor: Float = 0f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(rFactor)
-        dataBuffer.putFloat(gFactor)
-        dataBuffer.putFloat(bFactor)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(rFactor: Float = 0f, gFactor: Float = 0f, bFactor: Float = 0f): Modifier {
@@ -1607,35 +1330,6 @@ class SparkleFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader? = null,
-        rays: Int = 50,
-        radius: Int = 25,
-        amount: Int = 50,
-        color: Color = Color.White,
-        randomness: Int = 25,
-        seed: Long = 371L,
-        imageWidth: Float = 640f,
-        imageHeight: Float = 480f
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(rays)
-        dataBuffer.putInt(radius)
-        dataBuffer.putFloat(amount.toFloat())
-        dataBuffer.putFloat(color.red)
-        dataBuffer.putFloat(color.green)
-        dataBuffer.putFloat(color.blue)
-        dataBuffer.putInt(randomness)
-        dataBuffer.putFloat(seed.toFloat())
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     @Composable
     fun effectModifier(
         rays: Int = 50,
@@ -1700,18 +1394,6 @@ class SwizzleFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, rChannel: Int = 0, gChannel: Int = 1, bChannel: Int = 2): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(rChannel)
-        dataBuffer.putInt(gChannel)
-        dataBuffer.putInt(bChannel)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(rChannel: Int = 0, gChannel: Int = 1, bChannel: Int = 2): Modifier {
         val swizzleShaderBuilder = RuntimeShaderBuilder(this.effect)
         swizzleShaderBuilder.uniform("rChannel", rChannel)
@@ -1752,17 +1434,6 @@ class TransferFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, targetColor: FloatArray = floatArrayOf(1f, 0.8f, 0.6f), amount: Float = 0.5f): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        targetColor.forEach { dataBuffer.putFloat(it) }
-        dataBuffer.putFloat(amount)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(targetColor: FloatArray = floatArrayOf(1f, 0.8f, 0.6f), amount: Float = 0.5f): Modifier {
@@ -1809,23 +1480,6 @@ class ThresholdFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, lowerThreshold: Int = 127, upperThreshold: Int = 127, white: Int = 0xffffff, black: Int = 0x000000): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(lowerThreshold / 255f)
-        dataBuffer.putFloat(upperThreshold / 255f)
-        dataBuffer.putFloat(((white shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((white shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((white and 0xff) / 255f)
-        dataBuffer.putFloat(((black shr 16) and 0xff) / 255f)
-        dataBuffer.putFloat(((black shr 8) and 0xff) / 255f)
-        dataBuffer.putFloat((black and 0xff) / 255f)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(lowerThreshold: Int = 127, upperThreshold: Int = 127, white: Int = 0xffffff, black: Int = 0x000000): Modifier {
@@ -1876,18 +1530,6 @@ class TritoneFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader, shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f), midColor: FloatArray = floatArrayOf(0.533f, 0.533f, 0.533f), highColor: FloatArray = floatArrayOf(1f, 1f, 1f)): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
-        shadowColor.forEach { dataBuffer.putFloat(it) }
-        midColor.forEach { dataBuffer.putFloat(it) }
-        highColor.forEach { dataBuffer.putFloat(it) }
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 
     fun effectModifier(shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f), midColor: FloatArray = floatArrayOf(0.533f, 0.533f, 0.533f), highColor: FloatArray = floatArrayOf(1f, 1f, 1f)): Modifier {

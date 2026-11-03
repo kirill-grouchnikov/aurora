@@ -16,11 +16,8 @@
 package org.pushingpixels.aurora.filters.scale
 
 import org.intellij.lang.annotations.Language
-import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.pushingpixels.aurora.filters.Filter
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -65,23 +62,6 @@ class BicubicScaleFilter(
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
-
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float = 640f,
-        imageHeight: Float = 480f
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(scaleX)
-        dataBuffer.putFloat(scaleY)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -109,16 +89,6 @@ class DeinterlaceFilter(val field: Int = 0) : Filter {
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(field)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -143,16 +113,6 @@ class InterpolateFilter(val amount: Float = 0.5f) : Filter {
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(amount)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -176,22 +136,5 @@ class RescaleFilter(
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(scaleX)
-        dataBuffer.putFloat(scaleY)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 }

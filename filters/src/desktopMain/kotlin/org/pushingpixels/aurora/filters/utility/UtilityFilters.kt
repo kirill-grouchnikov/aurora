@@ -16,11 +16,8 @@
 package org.pushingpixels.aurora.filters.utility
 
 import org.intellij.lang.annotations.Language
-import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.pushingpixels.aurora.filters.Filter
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -64,22 +61,6 @@ class JavaLnFFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putInt(if (raised) 1 else 0)
-        dataBuffer.putFloat(depth)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -112,20 +93,4 @@ class ShadeFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(amount)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }

@@ -16,11 +16,8 @@
 package org.pushingpixels.aurora.filters.composite
 
 import org.intellij.lang.annotations.Language
-import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.pushingpixels.aurora.filters.Filter
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -367,95 +364,4 @@ class LightFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader?,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        // Maximum 4 lights supported in the shader
-        val lightCount = lights.size.coerceAtMost(4)
-
-        // Calculate buffer size:
-        // materialDiffuseRGB(12) + materialSpecularRGB(12) +
-        // ambientIntensity(4) + diffuseReflectivity(4) + specularReflectivity(4) + highlight(4) +
-        // reflectivity(4) + opacity(4) + lightCount(4) +
-        // lightTypes(16) + lightColorRGB(48) + lightDirections(48) + lightPositions(48) +
-        // lightCosConeAngles(16) + lightFocus(16) +
-        // bumpHeight(4) + bumpSoftness(4) + bumpShape(4) + viewDistance(4) + useImageColors(4) + imageSize(8) = 292 bytes
-        val bufferSize = 292
-        val dataBuffer = ByteBuffer.allocate(bufferSize).order(ByteOrder.LITTLE_ENDIAN)
-
-        // Material properties
-        val diffuseRGB = material.diffuseRGB
-        dataBuffer.putFloat(diffuseRGB[0])
-        dataBuffer.putFloat(diffuseRGB[1])
-        dataBuffer.putFloat(diffuseRGB[2])
-
-        val specularRGB = material.specularRGB
-        dataBuffer.putFloat(specularRGB[0])
-        dataBuffer.putFloat(specularRGB[1])
-        dataBuffer.putFloat(specularRGB[2])
-
-        dataBuffer.putFloat(material.ambientIntensity)
-        dataBuffer.putFloat(material.diffuseReflectivity)
-        dataBuffer.putFloat(material.specularReflectivity)
-        dataBuffer.putFloat(material.highlight)
-        dataBuffer.putFloat(material.reflectivity)
-        dataBuffer.putFloat(material.opacity)
-
-        // Light count
-        dataBuffer.putInt(lightCount)
-
-        // Light arrays (pad to 4)
-        for (i in 0 until 4) {
-            if (i < lightCount) {
-                val light = lights[i]
-                dataBuffer.putInt(light.type.ordinal)
-                val c = light.colorRGB
-                dataBuffer.putFloat(c[0])
-                dataBuffer.putFloat(c[1])
-                dataBuffer.putFloat(c[2])
-                val d = light.direction
-                dataBuffer.putFloat(d[0])
-                dataBuffer.putFloat(d[1])
-                dataBuffer.putFloat(d[2])
-                val p = light.position(imageWidth, imageHeight)
-                dataBuffer.putFloat(p[0])
-                dataBuffer.putFloat(p[1])
-                dataBuffer.putFloat(p[2])
-                dataBuffer.putFloat(light.cosConeAngle)
-                dataBuffer.putFloat(light.focus)
-            } else {
-                dataBuffer.putInt(0)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-                dataBuffer.putFloat(0f)
-            }
-        }
-
-        // Bump and view parameters
-        dataBuffer.putFloat(bumpHeight)
-        dataBuffer.putFloat(bumpSoftness)
-        dataBuffer.putInt(bumpShape.ordinal)
-        dataBuffer.putFloat(viewDistance)
-        dataBuffer.putInt(if (useImageColors) 1 else 0)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }

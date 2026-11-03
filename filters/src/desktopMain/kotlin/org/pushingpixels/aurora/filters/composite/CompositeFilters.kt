@@ -16,11 +16,8 @@
 package org.pushingpixels.aurora.filters.composite
 
 import org.intellij.lang.annotations.Language
-import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.pushingpixels.aurora.filters.Filter
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -64,16 +61,6 @@ class GlowFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(radius)
-        dataBuffer.putFloat(intensity)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 
@@ -104,16 +91,6 @@ class SmearFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(distance)
-        dataBuffer.putFloat(angle)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 

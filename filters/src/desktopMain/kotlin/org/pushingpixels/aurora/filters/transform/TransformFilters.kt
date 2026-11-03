@@ -17,11 +17,8 @@ package org.pushingpixels.aurora.filters.transform
 
 import androidx.compose.ui.graphics.Color
 import org.intellij.lang.annotations.Language
-import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.pushingpixels.aurora.filters.Filter
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -57,23 +54,6 @@ class CircleFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(centerX)
-        dataBuffer.putFloat(centerY)
-        dataBuffer.putFloat(radius)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -96,15 +76,6 @@ class ContourFilter(val level: Float = 0.5f) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(level)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -134,21 +105,6 @@ class CurlFilter(val radius: Float = 30f) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(radius)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -173,16 +129,6 @@ class DisplaceFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(deltaX)
-        dataBuffer.putFloat(deltaY)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -210,16 +156,6 @@ class FieldWarpFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(amplitude)
-        dataBuffer.putFloat(frequency)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -248,21 +184,6 @@ class Flush3DFilter(val angle: Float = 45f) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(angle)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -290,21 +211,6 @@ class KaleidoscopeFilter(val segments: Int = 8) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putInt(segments)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -327,15 +233,6 @@ class MapFilter(val scale: Float = 10f) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(scale)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -360,16 +257,6 @@ class OffsetFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(deltaX)
-        dataBuffer.putFloat(deltaY)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -414,28 +301,6 @@ class PerspectiveFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(tlTopLeftX)
-        dataBuffer.putFloat(tlTopLeftY)
-        dataBuffer.putFloat(trTopRightX)
-        dataBuffer.putFloat(trTopRightY)
-        dataBuffer.putFloat(brBottomRightX)
-        dataBuffer.putFloat(brBottomRightY)
-        dataBuffer.putFloat(blBottomLeftX)
-        dataBuffer.putFloat(blBottomLeftY)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -470,23 +335,6 @@ class PinchFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(scale)
-        dataBuffer.putFloat(centerX)
-        dataBuffer.putFloat(centerY)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -527,22 +375,6 @@ class PolarFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(radius)
-        dataBuffer.putInt(if (polar) 1 else 0)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -598,19 +430,6 @@ class RippleFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(xAmplitude)
-        dataBuffer.putFloat(yAmplitude)
-        dataBuffer.putFloat(xWavelength)
-        dataBuffer.putFloat(yWavelength)
-        dataBuffer.putInt(waveType)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -644,23 +463,6 @@ class RotateFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(centerX)
-        dataBuffer.putFloat(centerY)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -823,41 +625,6 @@ class ShapeFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        // Estimate maxDist: for a typical image, the max chamfer distance in a 9x9 window
-        // is roughly sqrt2 * 4 * 41 ≈ 232 (diagonal corner)
-        val maxDist = 232f
-
-        val hasColormap = if (colors != null) 1 else 0
-
-        val dataBuffer = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(factor)
-        dataBuffer.putInt(if (useAlpha) 1 else 0)
-        dataBuffer.putInt(if (invert) 1 else 0)
-        dataBuffer.putInt(if (merge) 1 else 0)
-        dataBuffer.putInt(type)
-        dataBuffer.putInt(hasColormap)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(maxDist)
-
-        val colormapShader: org.jetbrains.skia.Shader? = colors?.let { c ->
-            org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader(
-                stops = c,
-                width = 256f
-            )
-        }
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader, colormapShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -886,22 +653,6 @@ class ShearFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(xShear)
-        dataBuffer.putFloat(yShear)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -932,21 +683,6 @@ class SphereFilter(val radius: Float = 0.5f) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(radius)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -974,16 +710,6 @@ class SwimFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(amplitude)
-        dataBuffer.putFloat(wavelength)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -1028,24 +754,6 @@ class TwirlFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(centerX)
-        dataBuffer.putFloat(centerY)
-        dataBuffer.putFloat(radius)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -1073,21 +781,6 @@ class WarpFilter(val amount: Float = 0.5f) : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(12).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(amount)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -1142,24 +835,4 @@ class WaterFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float = 640f,
-        imageHeight: Float = 480f
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(wavelength)
-        dataBuffer.putFloat(amplitude)
-        dataBuffer.putFloat(phase)
-        dataBuffer.putFloat(centerX)
-        dataBuffer.putFloat(centerY)
-        dataBuffer.putFloat(radius)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }

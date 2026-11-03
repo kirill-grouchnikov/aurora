@@ -21,15 +21,12 @@ import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import org.intellij.lang.annotations.Language
-import org.jetbrains.skia.Data
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import kotlin.math.PI
 
 // This is a modified version of the original source code by Jerry Huxtable
@@ -216,28 +213,6 @@ class GlintFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(threshold)
-        dataBuffer.putInt(length)
-        dataBuffer.putFloat(blur)
-        dataBuffer.putFloat(amount)
-        dataBuffer.putInt(if (glintOnly) 1 else 0)
-        dataBuffer.putInt(if (colors != null) 1 else 0)
-
-        val gradientShader = colors?.let {
-            makeMultiStopHorizontalGradientShader(
-                stops = it,
-                width = 256.0f
-            )
-        }
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader, gradientShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -392,39 +367,6 @@ class RaysFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float = 640f,
-        imageHeight: Float = 480f
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(60).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(centreX)
-        dataBuffer.putFloat(centreY)
-        dataBuffer.putFloat(distance)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(rotation)
-        dataBuffer.putFloat(zoom)
-        dataBuffer.putFloat(opacity)
-        dataBuffer.putFloat(threshold)
-        dataBuffer.putFloat(strength)
-        dataBuffer.putInt(if (raysOnly) 1 else 0)
-        dataBuffer.putInt(if (colors != null) 1 else 0)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-
-        val gradientShader = colors?.let {
-            makeMultiStopHorizontalGradientShader(
-                stops = it,
-                width = 256.0f
-            )
-        }
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader, gradientShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -474,19 +416,6 @@ class ShadowFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(offsetX)
-        dataBuffer.putFloat(offsetY)
-        dataBuffer.putFloat(blur)
-        dataBuffer.putFloat(opacity)
-        color.forEach { dataBuffer.putFloat(it) }
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -523,21 +452,4 @@ class ShineFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader,
-        imageWidth: Float,
-        imageHeight: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(centerX)
-        dataBuffer.putFloat(centerY)
-        dataBuffer.putFloat(intensity)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }

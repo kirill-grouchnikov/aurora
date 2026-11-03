@@ -17,11 +17,8 @@ package org.pushingpixels.aurora.filters.point
 
 import androidx.compose.ui.graphics.Color
 import org.intellij.lang.annotations.Language
-import org.jetbrains.skia.Data
 import org.jetbrains.skia.RuntimeEffect
 import org.pushingpixels.aurora.filters.Filter
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -45,19 +42,6 @@ class BinaryFilter(val threshold: Float = 0.5f, val newColor: Color = Color.Blac
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(threshold)
-        dataBuffer.putFloat(newColor.red)
-        dataBuffer.putFloat(newColor.green)
-        dataBuffer.putFloat(newColor.blue)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 }
 
@@ -102,20 +86,6 @@ class DilateFilter(val threshold: Int = 2, val newColor: Color = Color.Black, va
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(threshold)
-        dataBuffer.putFloat(newColor.red)
-        dataBuffer.putFloat(newColor.green)
-        dataBuffer.putFloat(newColor.blue)
-        dataBuffer.putFloat(pixelBlackLumaThreshold)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -158,20 +128,6 @@ class ErodeFilter(val threshold: Int = 2, val newColor: Color = Color.White, val
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(threshold)
-        dataBuffer.putFloat(newColor.red)
-        dataBuffer.putFloat(newColor.green)
-        dataBuffer.putFloat(newColor.blue)
-        dataBuffer.putFloat(pixelBlackLumaThreshold)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -211,19 +167,6 @@ class OutlineFilter(val newColor: Color = Color.White, val pixelBlackLumaThresho
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(newColor.red)
-        dataBuffer.putFloat(newColor.green)
-        dataBuffer.putFloat(newColor.blue)
-        dataBuffer.putFloat(pixelBlackLumaThreshold)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 }
 
@@ -307,19 +250,6 @@ class SkeletonFilter(val newColor: Color = Color.White, val pixelBlackLumaThresh
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(newColor.red)
-        dataBuffer.putFloat(newColor.green)
-        dataBuffer.putFloat(newColor.blue)
-        dataBuffer.putFloat(pixelBlackLumaThreshold)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
 }
 
 /**
@@ -376,15 +306,5 @@ class LifeFilter(val pixelBlackLumaThreshold: Float = 0f) : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(inputShader: org.jetbrains.skia.Shader): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(pixelBlackLumaThreshold)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
     }
 }

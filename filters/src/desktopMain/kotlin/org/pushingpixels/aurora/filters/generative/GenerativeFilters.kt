@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.asSkiaColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import org.intellij.lang.annotations.Language
-import org.jetbrains.skia.Data
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
@@ -38,8 +37,6 @@ import org.pushingpixels.aurora.filters.Filter
 import org.pushingpixels.aurora.filters.utility.makeHorizontalGradientFilter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import kotlin.math.PI
 
 // This is a modified version of the original source code by Jerry Huxtable
@@ -158,33 +155,6 @@ class BrushedMetalFilter: Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        radius: Int,
-        amount: Float,
-        color: Color,
-        shine: Float,
-        monochrome: Boolean,
-        contentWidth: Float
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
-
-        dataBuffer.putInt(radius)
-        dataBuffer.putFloat(amount)
-        dataBuffer.putFloat(color.red)
-        dataBuffer.putFloat(color.green)
-        dataBuffer.putFloat(color.blue)
-        dataBuffer.putFloat(color.alpha)
-        dataBuffer.putFloat(shine)
-        dataBuffer.putInt(if (monochrome) 1 else 0)
-        dataBuffer.putFloat(contentWidth)
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(null),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         radius: Int = 10,
         amount: Float = 0.1f,
@@ -193,7 +163,14 @@ class BrushedMetalFilter: Filter {
         monochrome: Boolean = true
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(radius, amount, color, shine, monochrome, size.width)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("radius", radius)
+            builder.uniform("amount", amount)
+            builder.uniform("color", color.red, color.green, color.blue, 1f)
+            builder.uniform("shine", shine)
+            builder.uniform("monochrome", if (monochrome) 1 else 0)
+            builder.uniform("contentWidth", size.width)
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -457,38 +434,6 @@ class CausticsFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        scale: Float = 32f,
-        angle: Float = 0f,
-        brightness: Int = 10,
-        amount: Float = 1f,
-        turbulence: Float = 1f,
-        dispersion: Float = 0f,
-        time: Float = 0f,
-        samples: Int = 2,
-        bgColor: Color = Color(0xFF799FFF)
-    ): org.jetbrains.skia.Shader {
-        // Uniforms: 7 floats (scale, angle, brightness, amount, turbulence, dispersion, time)
-        // + 1 int (samples) + 3 floats (bgColor) = 44 bytes
-        val dataBuffer = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(scale)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(brightness.toFloat())
-        dataBuffer.putFloat(amount)
-        dataBuffer.putFloat(turbulence)
-        dataBuffer.putFloat(dispersion)
-        dataBuffer.putFloat(time)
-        dataBuffer.putInt(samples)
-        dataBuffer.putFloat(bgColor.red)
-        dataBuffer.putFloat(bgColor.green)
-        dataBuffer.putFloat(bgColor.blue)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(null),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         scale: Float = 32f,
         angle: Float = 0f,
@@ -501,7 +446,17 @@ class CausticsFilter : Filter {
         bgColor: Color = Color(0xFF799FFF)
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(scale, angle, brightness, amount, turbulence, dispersion, time, samples, bgColor)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("scale", scale)
+            builder.uniform("angle", angle)
+            builder.uniform("brightness", brightness.toFloat())
+            builder.uniform("amount", amount)
+            builder.uniform("turbulence", turbulence)
+            builder.uniform("dispersion", dispersion)
+            builder.uniform("time", time)
+            builder.uniform("samples", samples)
+            builder.uniform("bgColor", bgColor.red, bgColor.green, bgColor.blue)
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -562,33 +517,6 @@ class CheckFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader? = null,
-        xScale: Int = 8,
-        yScale: Int = 8,
-        foreground: Color = Color.White,
-        background: Color = Color.Black,
-        fuzziness: Int = 0,
-        angle: Float = 0f
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(xScale.toFloat())
-        dataBuffer.putFloat(yScale.toFloat())
-        dataBuffer.putFloat(foreground.red)
-        dataBuffer.putFloat(foreground.green)
-        dataBuffer.putFloat(foreground.blue)
-        dataBuffer.putFloat(background.red)
-        dataBuffer.putFloat(background.green)
-        dataBuffer.putFloat(background.blue)
-        dataBuffer.putFloat(fuzziness.toFloat())
-        dataBuffer.putFloat(angle)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         xScale: Int = 8,
         yScale: Int = 8,
@@ -598,7 +526,14 @@ class CheckFilter : Filter {
         angle: Float = 0f
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(null, xScale, yScale, foreground, background, fuzziness, angle)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("xScale", xScale.toFloat())
+            builder.uniform("yScale", yScale.toFloat())
+            builder.uniform("foreground", foreground.red, foreground.green, foreground.blue)
+            builder.uniform("background", background.red, background.green, background.blue)
+            builder.uniform("fuzziness", fuzziness.toFloat())
+            builder.uniform("angle", angle)
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -700,49 +635,6 @@ class FBMFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader? = null,
-        scale: Float = 32f,
-        stretch: Float = 1f,
-        angle: Float = 0f,
-        amount: Float = 1f,
-        H: Float = 1f,
-        octaves: Float = 4f,
-        lacunarity: Float = 2f,
-        gain: Float = 0.5f,
-        bias: Float = 0.5f,
-        operation: Int = 0,
-        ridged: Boolean = false,
-        colors: List<Color>? = null
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(52).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(scale)
-        dataBuffer.putFloat(stretch)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(amount)
-        dataBuffer.putFloat(H)
-        dataBuffer.putFloat(octaves)
-        dataBuffer.putFloat(lacunarity)
-        dataBuffer.putFloat(gain)
-        dataBuffer.putFloat(bias)
-        dataBuffer.putInt(operation)
-        dataBuffer.putInt(if (ridged) 1 else 0)
-        dataBuffer.putInt(if (colors != null) 1 else 0)
-
-        val gradientShader = colors?.let {
-            makeMultiStopHorizontalGradientShader(
-                stops = it,
-                width = 256.0f
-            )
-        }
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader, gradientShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         scale: Float = 32f,
         stretch: Float = 1f,
@@ -755,10 +647,24 @@ class FBMFilter : Filter {
         bias: Float = 0.5f,
         operation: Int = 0,
         ridged: Boolean = false,
-        colors: List<Color>? = null
+        colors: List<Color>
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(inputShader = null, scale = scale, stretch = stretch, angle = angle, amount = amount, H = H, octaves = octaves, lacunarity = lacunarity, gain = gain, bias = bias, operation = operation, ridged = ridged, colors = colors)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("scale", scale)
+            builder.uniform("stretch", stretch)
+            builder.uniform("angle", angle)
+            builder.uniform("amount", amount)
+            builder.uniform("H", H)
+            builder.uniform("octaves", octaves)
+            builder.uniform("lacunarity", lacunarity)
+            builder.uniform("gain", gain)
+            builder.uniform("bias", bias)
+            builder.uniform("operation", operation)
+            builder.uniform("ridged", if (ridged) 1 else 0)
+            builder.uniform("useColormap", if (colors != null) 1 else 0)
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -839,38 +745,6 @@ class GradientFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader? = null,
-        angle: Float = 0f,
-        colors: List<Color> = listOf(Color(0xFF000000), Color(0xFFFFFFFF)),
-        repeat: Boolean = false,
-        type: Int = 0,
-        interpolation: Int = 0,
-        paintMode: Int = 0,
-        imageWidth: Float = 640f,
-        imageHeight: Float = 480f
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(28).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putInt(if (repeat) 1 else 0)
-        dataBuffer.putInt(type)
-        dataBuffer.putInt(interpolation)
-        dataBuffer.putInt(paintMode)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-
-        val gradientShader = makeMultiStopHorizontalGradientShader(
-            stops = colors,
-            width = 256.0f
-        )
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader, gradientShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         angle: Float = 0f,
         colors: List<Color> = listOf(Color(0xFF000000), Color(0xFFFFFFFF)),
@@ -882,7 +756,15 @@ class GradientFilter : Filter {
         imageHeight: Float = 480f
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(null, angle, colors, repeat, type, interpolation, paintMode, imageWidth, imageHeight)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("angle", angle)
+            builder.uniform("repeat", if (repeat) 1 else 0)
+            builder.uniform("type", type)
+            builder.uniform("interpolation", interpolation)
+            builder.uniform("paintMode", paintMode)
+            builder.uniform("imageSize", size.width, size.height)
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -926,25 +808,6 @@ class MarbleFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader?,
-        xScale: Float = 4f,
-        yScale: Float = 4f,
-        amount: Float = 1f,
-        turbulence: Float = 1f
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(xScale)
-        dataBuffer.putFloat(yScale)
-        dataBuffer.putFloat(amount)
-        dataBuffer.putFloat(turbulence)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         xScale: Float = 4f,
         yScale: Float = 4f,
@@ -952,7 +815,12 @@ class MarbleFilter : Filter {
         turbulence: Float = 1f
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(null, xScale, yScale, amount, turbulence)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("xScale", xScale.toFloat())
+            builder.uniform("yScale", yScale.toFloat())
+            builder.uniform("amount", amount)
+            builder.uniform("turbulence", turbulence)
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -1034,33 +902,6 @@ class MarbleTexFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        scale: Float = 32f,
-        stretch: Float = 1f,
-        angle: Float = 0f,
-        turbulence: Float = 1f,
-        turbulenceFactor: Float = 0.5f,
-        colors: List<Color> = listOf(Color(0xFF8B4513), Color(0xFF228B22)),
-    ): org.jetbrains.skia.Shader {
-        // 5 floats = 20 bytes
-        val dataBuffer = ByteBuffer.allocate(20).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(scale)
-        dataBuffer.putFloat(stretch)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(turbulence)
-        dataBuffer.putFloat(turbulenceFactor)
-
-        val gradientShader = makeMultiStopHorizontalGradientShader(
-            stops = colors,
-            width = 256.0f)
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(gradientShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         scale: Float = 32f,
         stretch: Float = 1f,
@@ -1070,7 +911,14 @@ class MarbleTexFilter : Filter {
         colors: List<Color> = listOf(Color(0xFF8B4513), Color(0xFF228B22))
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(scale, stretch, angle, turbulence, turbulenceFactor, colors)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("scale", scale)
+            builder.uniform("stretch", stretch)
+            builder.uniform("angle", angle)
+            builder.uniform("turbulence", turbulence)
+            builder.uniform("turbulenceFactor", turbulenceFactor)
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -1124,25 +972,6 @@ class NoiseFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader? = null,
-        amount: Int = 25,
-        distribution: Int = 0,
-        monochrome: Boolean = false,
-        density: Float = 1f
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(amount / 255f)
-        dataBuffer.putInt(distribution)
-        dataBuffer.putInt(if (monochrome) 1 else 0)
-        dataBuffer.putFloat(density)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         amount: Int = 25,
         distribution: Int = 0,
@@ -1150,7 +979,12 @@ class NoiseFilter : Filter {
         density: Float = 1f
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(inputShader = null, amount = amount, distribution = distribution, monochrome = monochrome, density = density)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("amount", amount)
+            builder.uniform("distribution", distribution)
+            builder.uniform("monochrome", if (monochrome) 1 else 0)
+            builder.uniform("density", density)
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -1209,27 +1043,15 @@ class OilFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader? = null,
-        range: Int = 3,
-        levels: Int = 256
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(range)
-        dataBuffer.putInt(levels)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         range: Int = 3,
         levels: Int = 256
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(inputShader = null, range = range, levels = levels)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("range", range)
+            builder.uniform("levels", levels)
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -1449,41 +1271,6 @@ class QuiltFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        seed: Int = 567,
-        iterations: Int = 25000,
-        a: Float = -0.59f,
-        b: Float = 0.2f,
-        c: Float = 0.1f,
-        d: Float = 0f,
-        k: Int = 0,
-        colors: List<Color> = listOf(Color(0xFF00FF00), Color(0xFF006400)),
-        imageWidth: Float = 640f,
-        imageHeight: Float = 480f
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(40).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putInt(seed)
-        dataBuffer.putInt(iterations)
-        dataBuffer.putFloat(a)
-        dataBuffer.putFloat(b)
-        dataBuffer.putFloat(c)
-        dataBuffer.putFloat(d)
-        dataBuffer.putInt(k)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-
-        val gradientShader = makeMultiStopHorizontalGradientShader(
-            stops = colors,
-            width = 256.0f
-        )
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(gradientShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         seed: Int = 567,
         iterations: Int = 25000,
@@ -1497,7 +1284,17 @@ class QuiltFilter : Filter {
         imageHeight: Float = 480f
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(seed, iterations, a, b, c, d, k, colors, imageWidth, imageHeight)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("seed", seed)
+            builder.uniform("iterations", iterations)
+            builder.uniform("a", a)
+            builder.uniform("b", b)
+            builder.uniform("c", c)
+            builder.uniform("d", d)
+            builder.uniform("k", k)
+            builder.uniform("imageSize", size.width, size.height)
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -1572,33 +1369,6 @@ class ScratchFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader? = null,
-        density: Float = 0.1f,
-        angle: Float = 0f,
-        angleVariation: Float = 1.0f,
-        width: Float = 0.5f,
-        length: Float = 0.5f,
-        color: Color = Color(0xFFFFFF),
-        seed: Int = 0
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(density)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(angleVariation)
-        dataBuffer.putFloat(width)
-        dataBuffer.putFloat(length)
-        dataBuffer.putFloat(color.red)
-        dataBuffer.putFloat(color.green)
-        dataBuffer.putFloat(color.blue)
-        dataBuffer.putInt(seed)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         density: Float = 0.1f,
         angle: Float = 0f,
@@ -1609,7 +1379,16 @@ class ScratchFilter : Filter {
         seed: Int = 0
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(inputShader = null, density = density, angle = angle, angleVariation = angleVariation, width = width, length = length, color = color, seed = seed)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("density", density)
+            builder.uniform("angle", angle)
+            builder.uniform("angleVariation", angleVariation)
+            builder.uniform("width", width)
+            builder.uniform("length", length)
+            builder.uniform("color", color.red, color.green, color.blue)
+            builder.uniform("seed", seed)
+            builder.uniform("imageSize", size.width, size.height)
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -1814,73 +1593,6 @@ class SkyFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader?,
-        scale: Float = 0.1f,
-        stretch: Float = 1.0f,
-        angle: Float = 0.0f,
-        amount: Float = 1.0f,
-        H: Float = 1.0f,
-        octaves: Float = 8.0f,
-        lacunarity: Float = 2.0f,
-        gain: Float = 1.0f,
-        bias: Float = 0.6f,
-        cloudCover: Float = 0.5f,
-        cloudSharpness: Float = 0.5f,
-        time: Float = 0.3f,
-        glow: Float = 0.5f,
-        glowFalloff: Float = 0.5f,
-        haziness: Float = 0.96f,
-        t: Float = 0.0f,
-        sunColor: Int = -1,
-        sunAzimuth: Float = 0.5f,
-        sunElevation: Float = 0.5f,
-        windSpeed: Float = 0.0f,
-        cameraAzimuth: Float = 0.0f,
-        cameraElevation: Float = 0.0f,
-        fov: Float = 1.0f,
-        imageWidth: Float = 640f,
-        imageHeight: Float = 480f
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(108).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(imageWidth)
-        dataBuffer.putFloat(imageHeight)
-        dataBuffer.putFloat(scale)
-        dataBuffer.putFloat(stretch)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(amount)
-        dataBuffer.putFloat(H)
-        dataBuffer.putFloat(octaves)
-        dataBuffer.putFloat(lacunarity)
-        dataBuffer.putFloat(gain)
-        dataBuffer.putFloat(bias)
-        dataBuffer.putFloat(cloudCover)
-        dataBuffer.putFloat(cloudSharpness)
-        dataBuffer.putFloat(time)
-        dataBuffer.putFloat(glow)
-        dataBuffer.putFloat(glowFalloff)
-        dataBuffer.putFloat(haziness)
-        dataBuffer.putFloat(t)
-        // sunColor as half3 (RR/255, GG/255, BB/255)
-        val sunR = ((sunColor shr 16) and 0xFF) / 255.0f
-        val sunG = ((sunColor shr 8) and 0xFF) / 255.0f
-        val sunB = (sunColor and 0xFF) / 255.0f
-        dataBuffer.putFloat(sunR)
-        dataBuffer.putFloat(sunG)
-        dataBuffer.putFloat(sunB)
-        dataBuffer.putFloat(sunAzimuth)
-        dataBuffer.putFloat(sunElevation)
-        dataBuffer.putFloat(windSpeed)
-        dataBuffer.putFloat(cameraAzimuth)
-        dataBuffer.putFloat(cameraElevation)
-        dataBuffer.putFloat(fov)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         scale: Float = 0.1f,
         stretch: Float = 1.0f,
@@ -1909,7 +1621,32 @@ class SkyFilter : Filter {
         imageHeight: Float = 480f
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(null, scale, stretch, angle, amount, H, octaves, lacunarity, gain, bias, cloudCover, cloudSharpness, time, glow, glowFalloff, haziness, t, sunColor, sunAzimuth, sunElevation, windSpeed, cameraAzimuth, cameraElevation, fov, imageWidth, imageHeight)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("scale", scale)
+            builder.uniform("stretch", stretch)
+            builder.uniform("angle", angle)
+            builder.uniform("amount", amount)
+            builder.uniform("H", H)
+            builder.uniform("octaves", octaves)
+            builder.uniform("lacunarity", lacunarity)
+            builder.uniform("gain", gain)
+            builder.uniform("bias", bias)
+            builder.uniform("cloudCover", cloudCover)
+            builder.uniform("cloudSharpness", cloudSharpness)
+            builder.uniform("time", time)
+            builder.uniform("glow", glow)
+            builder.uniform("glowFalloff", glowFalloff)
+            builder.uniform("haziness", haziness)
+            builder.uniform("t", t)
+            builder.uniform("sunColor", ((sunColor shr 16) and 0xFF) / 255f, ((sunColor shr 8) and 0xFF) / 255f, (sunColor and 0xFF) / 255f)
+            builder.uniform("sunAzimuth", sunAzimuth)
+            builder.uniform("sunElevation", sunElevation)
+            builder.uniform("windSpeed", windSpeed)
+            builder.uniform("cameraAzimuth", cameraAzimuth)
+            builder.uniform("cameraElevation", cameraElevation)
+            builder.uniform("fov", fov)
+            builder.uniform("imageSize", size.width, size.height)
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -1934,44 +1671,6 @@ class SkyFilter : Filter {
  * @param black the color for pixels below the lower threshold (default black)
  */
 class StampFilter : Filter {
-    // Blur effect used to create the blurred child shader
-    private val blurEffect: RuntimeEffect by lazy {
-        @Language("GLSL")
-        val shaderDesc = """
-            uniform shader content;
-            uniform float sigmaX;
-            uniform float sigmaY;
-            uniform half2 imageSize;
-            half4 main(vec2 fragcoord) {
-                half sigma = (sigmaX + sigmaY) / 2.0;
-                half sigma2 = sigma * sigma;
-                half pi2 = 6.28318530718;
-                half gaussSelf = 1.0 / (pi2 * sigma2);
-                int r = int(sigma * 3.0 + 0.5);
-                half blurR = 0.0, blurG = 0.0, blurB = 0.0;
-                half totalWeight = 0.0;
-                half2 px = 1.0 / imageSize;
-                for (int y = -r; y <= r; y++) {
-                    for (int x = -r; x <= r; x++) {
-                        half2 offset = half2(x, y);
-                        half dist2 = offset.x * offset.x + offset.y * offset.y;
-                        half weight = exp(-dist2 / (2.0 * sigma2)) * gaussSelf;
-                        half3 sample = content.eval(fragcoord + offset * px).rgb;
-                        blurR += sample.r * weight;
-                        blurG += sample.g * weight;
-                        blurB += sample.b * weight;
-                        totalWeight += weight;
-                    }
-                }
-                blurR /= totalWeight;
-                blurG /= totalWeight;
-                blurB /= totalWeight;
-                return half4(blurR, blurG, blurB, 1.0);
-            }
-        """
-        RuntimeEffect.makeForShader(shaderDesc)
-    }
-
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1999,43 +1698,6 @@ class StampFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader? = null,
-        threshold: Float = 0.5f,
-        softness: Float = 0f,
-        radius: Float = 5f,
-        white: Color = Color.White,
-        black: Color = Color.Black,
-        contentSize: FloatArray = floatArrayOf(560f, 385f)
-    ): org.jetbrains.skia.Shader {
-        // Create the blurred child shader using the blur effect
-        val blurUniforms = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
-        blurUniforms.putFloat(radius)
-        blurUniforms.putFloat(radius)
-        blurUniforms.putFloat(contentSize[0])
-        blurUniforms.putFloat(contentSize[1])
-        val blurredShader = blurEffect.makeShader(
-            uniforms = Data.makeFromBytes(blurUniforms.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-        
-        val dataBuffer = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(threshold)
-        dataBuffer.putFloat(softness)
-        dataBuffer.putFloat(white.red)
-        dataBuffer.putFloat(white.green)
-        dataBuffer.putFloat(white.blue)
-        dataBuffer.putFloat(black.red)
-        dataBuffer.putFloat(black.green)
-        dataBuffer.putFloat(black.blue)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader, blurredShader),
-            localMatrix = null
-        )
     }
 
     @Composable
@@ -2127,47 +1789,24 @@ class TextureFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader? = null,
-        scale: Float = 32f,
-        stretch: Float = 1f,
-        angle: Float = 0f,
-        amount: Float = 1f,
-        turbulence: Float = 0f,
-        colors: List<Color>? = null
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(scale)
-        dataBuffer.putFloat(stretch)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(amount)
-        dataBuffer.putFloat(turbulence)
-        dataBuffer.putInt(if (colors != null) 1 else 0)
-
-        val gradientShader = colors?.let {
-            makeMultiStopHorizontalGradientShader(
-                stops = it,
-                width = 256.0f
-            )
-        }
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader, gradientShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         scale: Float = 32f,
         stretch: Float = 1f,
         angle: Float = 0f,
         amount: Float = 1f,
         turbulence: Float = 0f,
-        colors: List<Color>? = null
+        colors: List<Color>
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(inputShader = null, scale = scale, stretch = stretch, angle = angle, amount = amount, turbulence = turbulence, colors = colors)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("scale", scale)
+            builder.uniform("stretch", stretch)
+            builder.uniform("angle", angle)
+            builder.uniform("amount", amount)
+            builder.uniform("turbulence", turbulence)
+            builder.uniform("useColormap", if (colors != null) 1 else 0)
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -2252,43 +1891,6 @@ class WeaveFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        inputShader: org.jetbrains.skia.Shader?,
-        xWidth: Float = 16f,
-        yWidth: Float = 16f,
-        xGap: Float = 6f,
-        yGap: Float = 6f,
-        rows: Int = 4,
-        cols: Int = 4,
-        rgbX: Color = Color(0xFFFF8080),
-        rgbY: Color = Color(0xFF8080FF),
-        useImageColors: Boolean = true,
-        roundThreads: Boolean = false,
-        shadeCrossings: Boolean = true
-    ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(60).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(xWidth)
-        dataBuffer.putFloat(yWidth)
-        dataBuffer.putFloat(xGap)
-        dataBuffer.putFloat(yGap)
-        dataBuffer.putInt(rows)
-        dataBuffer.putInt(cols)
-        dataBuffer.putFloat(rgbX.red)
-        dataBuffer.putFloat(rgbX.green)
-        dataBuffer.putFloat(rgbX.blue)
-        dataBuffer.putFloat(rgbY.red)
-        dataBuffer.putFloat(rgbY.green)
-        dataBuffer.putFloat(rgbY.blue)
-        dataBuffer.putInt(if (useImageColors) 1 else 0)
-        dataBuffer.putInt(if (roundThreads) 1 else 0)
-        dataBuffer.putInt(if (shadeCrossings) 1 else 0)
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         xWidth: Float = 16f,
         yWidth: Float = 16f,
@@ -2303,7 +1905,19 @@ class WeaveFilter : Filter {
         shadeCrossings: Boolean = true
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(null, xWidth, yWidth, xGap, yGap, rows, cols, rgbX, rgbY, useImageColors, roundThreads, shadeCrossings)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("xWidth", xWidth)
+            builder.uniform("yWidth", yWidth)
+            builder.uniform("xGap", xGap)
+            builder.uniform("yGap", yGap)
+            builder.uniform("rows", rows)
+            builder.uniform("cols", cols)
+            builder.uniform("rgbX", rgbX.red, rgbX.green, rgbX.blue)
+            builder.uniform("rgbY", rgbY.red, rgbY.green, rgbY.blue)
+            builder.uniform("useImageColors", if (useImageColors) 1 else 0)
+            builder.uniform("roundThreads", if (roundThreads) 1 else 0)
+            builder.uniform("shadeCrossings", if (shadeCrossings) 1 else 0)
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
@@ -2385,37 +1999,6 @@ class WoodFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
-    fun makeShader(
-        scale: Float = 200f,
-        stretch: Float = 10.0f,
-        angle: Float = (Math.PI / 2.0).toFloat(),
-        rings: Float = 0.5f,
-        turbulence: Float = 0.0f,
-        fibres: Float = 0.5f,
-        gain: Float = 0.8f,
-        colors: List<Color> = listOf(Color(0xFFE5C494), Color(0xFF987B51)),
-    ): org.jetbrains.skia.Shader {
-        // 7 floats = 28 bytes
-        val dataBuffer = ByteBuffer.allocate(28).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(scale)
-        dataBuffer.putFloat(stretch)
-        dataBuffer.putFloat(angle)
-        dataBuffer.putFloat(rings)
-        dataBuffer.putFloat(turbulence)
-        dataBuffer.putFloat(fibres)
-        dataBuffer.putFloat(gain)
-
-        val gradientShader = makeMultiStopHorizontalGradientShader(
-            stops = colors,
-            width = 256.0f)
-
-        return effect.makeShader(
-            uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(gradientShader),
-            localMatrix = null
-        )
-    }
-
     fun effectModifier(
         scale: Float = 200f,
         stretch: Float = 10.0f,
@@ -2427,7 +2010,16 @@ class WoodFilter : Filter {
         colors: List<Color> = listOf(Color(0xFFE5C494), Color(0xFF987B51))
     ): Modifier {
         return Modifier.drawWithCache {
-            val shader = makeShader(scale, stretch, angle, rings, turbulence, fibres, gain, colors)
+            val builder = RuntimeShaderBuilder(effect)
+            builder.uniform("scale", scale)
+            builder.uniform("stretch", stretch)
+            builder.uniform("angle", angle)
+            builder.uniform("rings", rings)
+            builder.uniform("turbulence", turbulence)
+            builder.uniform("fibres", fibres)
+            builder.uniform("gain", gain)
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
                 drawRect(brush = shaderBrush)
