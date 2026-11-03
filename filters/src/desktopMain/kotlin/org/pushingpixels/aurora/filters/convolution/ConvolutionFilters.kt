@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import org.intellij.lang.annotations.Language
+import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
@@ -475,12 +476,6 @@ class GaussianFilter(val radius: Float = 2f) : Filter {
 }
 
 /**
- * Maximum radius for the HighPassFilter shader loop.
- * SkSL doesn't support dynamic loop bounds, so this is hardcoded.
- */
-private const val HIGH_PASS_MAX_R = 25
-
-/**
  * A high-pass filter that emphasizes high-frequency details.
  */
 object HighPassFilter : Filter {
@@ -488,24 +483,12 @@ object HighPassFilter : Filter {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
-            uniform float radius;
+            uniform shader blurred;
             half4 main(vec2 fragcoord) {
                 half4 center = content.eval(fragcoord);
-                int maxR = $HIGH_PASS_MAX_R;
-                int r = int(ceil(radius));
-                if (r < 1) r = 1;
-                half4 sum = half4(0);
-                int count = 0;
-                for (int dy = -maxR; dy <= maxR; dy++) {
-                    for (int dx = -maxR; dx <= maxR; dx++) {
-                        if (abs(float(dx)) > radius || abs(float(dy)) > radius) continue;
-                        sum += content.eval(fragcoord + vec2(float(dx), float(dy)));
-                        count++;
-                    }
-                }
-                half4 avg = sum / float(count);
+                half4 blurredContent = blurred.eval(fragcoord);
                 // High pass: original - low frequency
-                half3 rgb = center.rgb - avg.rgb + 0.5;
+                half3 rgb = center.rgb - blurredContent.rgb + 0.5;
                 rgb = clamp(rgb, 0.0, 1.0);
                 return half4(rgb, center.a);
             }
@@ -522,44 +505,21 @@ object HighPassFilter : Filter {
     fun effectModifier(
         radius: Float = 10f
     ): Modifier {
-        val highPassShaderBuilder = RuntimeShaderBuilder(RuntimeEffect.makeForShader(
-            @Language("GLSL")
-            """
-            uniform shader content;
-            uniform float radius;
-            half4 main(vec2 fragcoord) {
-                half4 center = content.eval(fragcoord);
-                int r = int(ceil(radius));
-                if (r < 1) r = 1;
-                half4 sum = half4(0);
-                int count = 0;
-                for (int dy = -$HIGH_PASS_MAX_R; dy <= $HIGH_PASS_MAX_R; dy++) {
-                    for (int dx = -$HIGH_PASS_MAX_R; dx <= $HIGH_PASS_MAX_R; dx++) {
-                        if (abs(float(dx)) > radius || abs(float(dy)) > radius) continue;
-                        sum += content.eval(fragcoord + vec2(float(dx), float(dy)));
-                        count++;
-                    }
-                }
-                half4 avg = sum / float(count);
-                // High pass: original - low frequency
-                half3 rgb = center.rgb - avg.rgb + 0.5;
-                rgb = clamp(rgb, 0.0, 1.0);
-                return half4(rgb, center.a);
-            }
-            """
-        ))
+        val highPassShaderBuilder = RuntimeShaderBuilder(this.effect)
         highPassShaderBuilder.uniform("radius", radius)
+
+        val blurImageFilter = ImageFilter.makeBlur(
+            sigmaX = radius, sigmaY = radius, mode = FilterTileMode.DECAL)
 
         return Modifier.graphicsLayer {
             renderEffect = ImageFilter.makeRuntimeShader(
                 runtimeShaderBuilder = highPassShaderBuilder,
-                shaderName = "content",
-                input = null
+                shaderNames = arrayOf("content", "blurred"),
+                inputs = arrayOf(null, blurImageFilter)
             ).asComposeRenderEffect()
             clip = true
         }
     }
-
 }
 
 /**
@@ -999,12 +959,6 @@ class SmartBlurFilter(
 }
 
 /**
- * Maximum radius for the UnsharpFilter shader loop.
- * SkSL doesn't support dynamic loop bounds, so this is hardcoded.
- */
-private const val UNSHARP_MAX_R = 25
-
-/**
  * A filter which subtracts Gaussian blur from an image, sharpening it.
  * Replicates the JH-Labs UnsharpFilter.
  */
@@ -1013,29 +967,18 @@ object UnsharpFilter : Filter {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
-            uniform float radius;
+            uniform shader blurred;
             uniform float amount;
             uniform float threshold;
             half4 main(vec2 fragcoord) {
                 half4 original = content.eval(fragcoord);
-                int r = int(ceil(radius));
-                if (r < 1) r = 1;
-                half4 sum = half4(0);
-                int count = 0;
-                for (int dy = -$UNSHARP_MAX_R; dy <= $UNSHARP_MAX_R; dy++) {
-                    for (int dx = -$UNSHARP_MAX_R; dx <= $UNSHARP_MAX_R; dx++) {
-                        if (abs(float(dx)) > radius || abs(float(dy)) > radius) continue;
-                        sum += content.eval(fragcoord + vec2(float(dx), float(dy)));
-                        count++;
-                    }
-                }
-                half4 blurred = sum / float(count);
+                half4 blurredContent = blurred.eval(fragcoord);
                 float a = 4.0 * amount;
                 half3 rgb;
                 for (int i = 0; i < 3; i++) {
-                    float diff = original.rgb[i] - blurred.rgb[i];
+                    float diff = original.rgb[i] - blurredContent.rgb[i];
                     if (abs(diff) >= threshold / 255.0) {
-                        rgb[i] = clamp((a + 1.0) * diff + blurred.rgb[i], 0.0, 1.0);
+                        rgb[i] = clamp((a + 1.0) * diff + blurredContent.rgb[i], 0.0, 1.0);
                     } else {
                         rgb[i] = original.rgb[i];
                     }
@@ -1060,15 +1003,17 @@ object UnsharpFilter : Filter {
         threshold: Float = 1f
     ): Modifier {
         val unsharpShaderBuilder = RuntimeShaderBuilder(this.effect)
-        unsharpShaderBuilder.uniform("radius", radius)
         unsharpShaderBuilder.uniform("amount", amount)
         unsharpShaderBuilder.uniform("threshold", threshold)
+
+        val blurImageFilter = ImageFilter.makeBlur(
+            sigmaX = radius, sigmaY = radius, mode = FilterTileMode.DECAL)
 
         return Modifier.graphicsLayer {
             renderEffect = ImageFilter.makeRuntimeShader(
                 runtimeShaderBuilder = unsharpShaderBuilder,
-                shaderName = "content",
-                input = null
+                shaderNames = arrayOf("content", "blurred"),
+                inputs = arrayOf(null, blurImageFilter)
             ).asComposeRenderEffect()
             clip = true
         }
