@@ -18,11 +18,17 @@ package org.pushingpixels.aurora.filters.generative
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.asComposeShader
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
+import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
+import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
 import java.nio.ByteBuffer
@@ -179,54 +185,106 @@ class CellularFilter : Filter {
 
 /**
  * A filter which creates a crystallize/faceted effect.
- * Replicates the JH-Labs CrystallizeFilter.
+ * Replicates the JH-Labs CrystallizeFilter (extends CellularFilter).
  *
- * @param size the crystal size in pixels (default 10)
- * @param edgeThickness the edge line thickness 0-1 (default 0.4f)
- * @param fadeEdges true to fade edges (default false)
- * @param edgeColor the edge color as 0xRRGGBB (default black)
+ * Inherits CellularFilter parameters: scale, stretch, angle, randomness, gridType,
+ * distancePower, gradientCoefficient, angleCoefficient, coefficients (F1-F4), turbulence, amount.
+ *
+ * @param scale the scale of the cells (default 16, matching original CrystallizeFilter constructor)
+ * @param stretch the stretch factor (default 1.0f)
+ * @param angle the rotation angle in radians (default 0.0f)
+ * @param randomness the randomness amount perturbing cell points (default 0.0f)
+ * @param gridType the grid type: 0=RANDOM, 1=SQUARE, 2=HEXAGONAL, 3=OCTAGONAL, 4=TRIANGULAR (default 2=HEXAGONAL)
+ * @param distancePower the distance metric power: 1=Manhattan, 2=Euclidean (default 2.0f)
+ * @param gradientCoefficient gradient noise coefficient (default 0.0f)
+ * @param angleCoefficient angle coefficient for angular variation (default 0.0f)
+ * @param f1 coefficient for nearest cell distance (default 1.0f)
+ * @param f2 coefficient for second-nearest cell distance (default 0.0f)
+ * @param f3 coefficient for third-nearest cell distance (default 0.0f)
+ * @param f4 coefficient for fourth-nearest cell distance (default 0.0f)
+ * @param turbulence turbulence frequency for fractal noise (default 1.0f)
+ * @param amount the effect intensity (default 1.0f)
+ * @param edgeThickness the edge line thickness (default 0.4f)
+ * @param fadeEdges true to fade edges by blending adjacent cells (default false)
+ * @param edgeColor the edge color (default black)
  */
 class CrystallizeFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
-            uniform float size;
+            uniform float scale;
+            uniform float stretch;
+            uniform float angle;
+            uniform float randomness;
+            uniform int gridType;
+            uniform float distancePower;
+            uniform float gradientCoefficient;
+            uniform float angleCoefficient;
+            uniform float f1;
+            uniform float f2;
+            uniform float f3;
+            uniform float f4;
+            uniform float turbulence;
+            uniform float amount;
             uniform float edgeThickness;
             uniform int fadeEdges;
             uniform half3 edgeColor;
-            uniform float width;
-            uniform float height;
+            uniform vec2 contentSize;
 
-            // Simple hash for deterministic point placement
-            float hash(float n) {
-                return fract(sin(n) * 43758.5453123);
+            $NOISE_FUNC
+
+            // Hash function for deterministic point placement per cell
+            float cellHash(int cubeX, int cubeY) {
+                return hash(vec2(float(cubeX) * 127.1 + float(cubeY) * 311.7, float(cubeX) * 269.5 + float(cubeY) * 183.3));
             }
 
-            half4 main(vec2 fragcoord) {
-                // Scale coordinates, offset by 1000 to reduce artifacts around 0,0 (matching original)
-                vec2 p = fragcoord / size + 1000.0;
+            // Compute distance using configurable power metric (matching original Java)
+            float computeDistance(float dx, float dy) {
+                if (distancePower == 1.0)
+                    return dx + dy;
+                else if (distancePower == 2.0)
+                    return sqrt(dx * dx + dy * dy);
+                else
+                    return pow(pow(dx, distancePower) + pow(dy, distancePower), 1.0 / distancePower);
+            }
 
-                // Grid cell containing this point
-                vec2 grid = floor(p);
-                vec2 frac = p - grid;
+            // Check a single cell and update the three nearest results (matching original checkCube)
+            // Returns the third-nearest distance for early termination
+            float checkCube(float fx, float fy, int cubeX, int cubeY,
+                           inout float r0d, inout float r0x, inout float r0y,
+                           inout float r1d, inout float r1x, inout float r1y,
+                           inout float r2d, inout float r2x, inout float r2y) {
+                int numPoints;
+                if (gridType == 0 || gridType > 4) { // RANDOM
+                    // Simplified Poisson distribution lookup
+                    numPoints = 3; // Average for Poisson(lambda=2.5)
+                } else if (gridType == 1) { // SQUARE
+                    numPoints = 1;
+                } else if (gridType == 2) { // HEXAGONAL
+                    numPoints = 1;
+                } else if (gridType == 3) { // OCTAGONAL
+                    numPoints = 2;
+                } else { // TRIANGULAR
+                    numPoints = 2;
+                }
 
-                // Track the two nearest points
-                float d1 = 1e10; // nearest distance
-                float d2 = 1e10; // second nearest distance
-                vec2 p1 = vec2(0.0); // nearest point location (in grid coords)
-                vec2 p2 = vec2(0.0); // second nearest point location
+                for (int pt = 0; pt < 2; pt++) {
+                    if (pt >= numPoints) break;
+                    float px = 0.0, py = 0.0;
+                    float weight = 1.0;
 
-                // Check 3x3 neighborhood of cells
-                for (int j = -1; j <= 1; j++) {
-                    for (int i = -1; i <= 1; i++) {
-                        int cubeX = int(grid.x) + i;
-                        int cubeY = int(grid.y) + j;
-
-                        // Hexagonal point placement: one point per cell
-                        // Even cubeX: point at (0.75, 0)
-                        // Odd cubeX: point at (0.75, 0.5)
-                        float px, py;
+                    if (gridType == 0 || gridType > 4) { // RANDOM
+                        px = cellHash(cubeX, cubeY);
+                        py = hash(vec2(float(cubeX) * 173.1 + float(cubeY) * 293.7, float(cubeX) * 137.3 + float(cubeY) * 211.1));
+                    } else if (gridType == 1) { // SQUARE
+                        px = 0.5;
+                        py = 0.5;
+                        if (randomness > 0.0) {
+                            px += randomness * (hash(vec2(float(cubeX) * 17.0, float(cubeY) * 31.0)) - 0.5);
+                            py += randomness * (hash(vec2(float(cubeX) * 37.0, float(cubeY) * 53.0)) - 0.5);
+                        }
+                    } else if (gridType == 2) { // HEXAGONAL
                         if (mod(float(cubeX), 2.0) == 0.0) {
                             px = 0.75;
                             py = 0.0;
@@ -234,47 +292,169 @@ class CrystallizeFilter : Filter {
                             px = 0.75;
                             py = 0.5;
                         }
-
-                        // Absolute point position in grid space
-                        vec2 pointPos = vec2(float(cubeX) + px, float(cubeY) + py);
-
-                        // Distance from fragment to this point
-                        vec2 diff = p - pointPos;
-                        float dist = length(diff);
-
-                        // Insertion sort: keep track of two nearest
-                        if (dist < d1) {
-                            d2 = d1;
-                            p2 = p1;
-                            d1 = dist;
-                            p1 = pointPos;
-                        } else if (dist < d2) {
-                            d2 = dist;
-                            p2 = pointPos;
+                        if (randomness > 0.0) {
+                            px += randomness * noise2(vec2(271.0 * (float(cubeX) + px), 271.0 * (float(cubeY) + py)));
+                            py += randomness * noise2(vec2(271.0 * (float(cubeX) + px) + 89.0, 271.0 * (float(cubeY) + py) + 137.0));
+                        }
+                    } else if (gridType == 3) { // OCTAGONAL
+                        if (pt == 0) { px = 0.207; py = 0.207; }
+                        else { px = 0.707; py = 0.707; weight = 1.6; }
+                        if (randomness > 0.0) {
+                            px += randomness * noise2(vec2(271.0 * (float(cubeX) + px), 271.0 * (float(cubeY) + py)));
+                            py += randomness * noise2(vec2(271.0 * (float(cubeX) + px) + 89.0, 271.0 * (float(cubeY) + py) + 137.0));
+                        }
+                    } else { // TRIANGULAR
+                        if (mod(float(cubeY), 2.0) == 0.0) {
+                            if (pt == 0) { px = 0.25; py = 0.35; }
+                            else { px = 0.75; py = 0.65; }
+                        } else {
+                            if (pt == 0) { px = 0.75; py = 0.35; }
+                            else { px = 0.25; py = 0.65; }
+                        }
+                        if (randomness > 0.0) {
+                            px += randomness * noise2(vec2(271.0 * (float(cubeX) + px), 271.0 * (float(cubeY) + py)));
+                            py += randomness * noise2(vec2(271.0 * (float(cubeX) + px) + 89.0, 271.0 * (float(cubeY) + py) + 137.0));
                         }
                     }
+
+                    float dx = abs(fx - px);
+                    float dy = abs(fy - py);
+                    dx *= weight;
+                    dy *= weight;
+
+                    float d = computeDistance(dx, dy);
+
+                    // Insertion sort into top 3 results (matching original Java)
+                    if (d < r0d) {
+                        r2d = r1d; r2x = r1x; r2y = r1y;
+                        r1d = r0d; r1x = r0x; r1y = r0y;
+                        r0d = d; r0x = float(cubeX) + px; r0y = float(cubeY) + py;
+                    } else if (d < r1d) {
+                        r2d = r1d; r2x = r1x; r2y = r1y;
+                        r1d = d; r1x = float(cubeX) + px; r1y = float(cubeY) + py;
+                    } else if (d < r2d) {
+                        r2d = d; r2x = float(cubeX) + px; r2y = float(cubeY) + py;
+                    }
+                }
+                return r2d;
+            }
+
+            // Evaluate cellular noise at (nx, ny) with given scale (matching original evaluate method)
+            float evaluate(float nx, float ny, float evalScale,
+                          inout float r0d, inout float r0x, inout float r0y,
+                          inout float r1d, inout float r1x, inout float r1y,
+                          inout float r2d, inout float r2x, inout float r2y) {
+                // Reset results
+                r0d = 1e10; r1d = 1e10; r2d = 1e10;
+
+                vec2 p = vec2(nx, ny);
+                vec2 grid = floor(p);
+                float fx = p.x - grid.x;
+                float fy = p.y - grid.y;
+
+                // Check center cell first
+                float d = checkCube(fx, fy, int(grid.x), int(grid.y),
+                                   r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
+
+                // Early termination checks (matching original Java evaluate method)
+                if (d > fy)
+                    d = checkCube(fx, fy + 1.0, int(grid.x), int(grid.y) - 1,
+                                 r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
+                if (d > 1.0 - fy)
+                    d = checkCube(fx, fy - 1.0, int(grid.x), int(grid.y) + 1,
+                                 r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
+                if (d > fx) {
+                    checkCube(fx + 1.0, fy, int(grid.x) - 1, int(grid.y),
+                             r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
+                    if (d > fy)
+                        d = checkCube(fx + 1.0, fy + 1.0, int(grid.x) - 1, int(grid.y) - 1,
+                                     r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
+                    if (d > 1.0 - fy)
+                        d = checkCube(fx + 1.0, fy - 1.0, int(grid.x) - 1, int(grid.y) + 1,
+                                     r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
+                }
+                if (d > 1.0 - fx) {
+                    d = checkCube(fx - 1.0, fy, int(grid.x) + 1, int(grid.y),
+                                 r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
+                    if (d > fy)
+                        d = checkCube(fx - 1.0, fy + 1.0, int(grid.x) + 1, int(grid.y) - 1,
+                                     r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
+                    if (d > 1.0 - fy)
+                        d = checkCube(fx - 1.0, fy - 1.0, int(grid.x) + 1, int(grid.y) + 1,
+                                     r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
                 }
 
-                // Sample the input image at the nearest point's source location
-                // Map from grid space back to fragment coordinates: (p1 - 1000) * size
-                vec2 srcCoord = (p1 - 1000.0) * size;
+                // Combine distances with coefficients (matching original Java)
+                float t = f1 * r0d + f2 * r1d + f3 * r2d;
+
+                // Angle coefficient (matching original Java)
+                if (angleCoefficient != 0.0) {
+                    float ang = atan(ny - r0y, nx - r0x);
+                    if (ang < 0.0) ang += 2.0 * 3.14159265358979323846;
+                    ang /= 4.0 * 3.14159265358979323846;
+                    t += angleCoefficient * ang;
+                }
+
+                // Gradient coefficient (matching original Java: 1/(dy+dx))
+                if (gradientCoefficient != 0.0) {
+                    float a = 1.0 / (abs(r0y - ny) + abs(r0x - nx) + 0.001);
+                    t += gradientCoefficient * a;
+                }
+
+                return t;
+            }
+
+            half4 main(vec2 fragcoord) {
+                // Rotation matrix from angle (matching original CellularFilter.setAngle)
+                float cosA = cos(angle);
+                float sinA = sin(angle);
+                // Apply rotation: nx = m00*x + m01*y, ny = m10*x + m11*y
+                float nx = cosA * fragcoord.x + sinA * fragcoord.y;
+                float ny = -sinA * fragcoord.x + cosA * fragcoord.y;
+                // Scale (matching original getPixel: nx /= scale; ny /= scale * stretch)
+                nx /= scale;
+                ny /= scale * stretch;
+                nx += 1000.0;
+                ny += 1000.0; // Reduce artifacts around 0,0 (matching original)
+
+                float r0d, r0x, r0y;
+                float r1d, r1x, r1y;
+                float r2d, r2x, r2y;
+
+                // Evaluate cellular noise once (matching original CrystallizeFilter.getPixel)
+                // The original does NOT use turbulence in CrystallizeFilter
+                evaluate(nx, ny, 1.0,
+                         r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
+
+                // Sample source image at nearest cell point location
+                // Original Java: srcx = clamp((int)((results[0].x - 1000) * scale), 0, width-1)
+                float srcX = (r0x - 1000.0) * scale;
+                float srcY = (r0y - 1000.0) * scale;
+                vec2 srcCoord = clamp(vec2(srcX, srcY), vec2(0.0), contentSize - 1.0);
                 half4 cellColor = content.eval(srcCoord);
+                
+                return cellColor;
 
-                // Edge detection: (f2 - f1) / edgeThickness, then smoothstep
-                float f = (d2 - d1) / edgeThickness;
-                float edge = smoothstep(0.0, edgeThickness, f);
-
-                if (fadeEdges == 1) {
-                    // Blend between nearest cell color and second-nearest cell color
-                    vec2 srcCoord2 = (p2 - 1000.0) * size;
-                    half4 cellColor2 = content.eval(srcCoord2);
-                    half3 blended = mix(cellColor2.rgb, cellColor.rgb, 0.5);
-                    half3 rgb = mix(blended, cellColor.rgb, edge);
-                    return half4(rgb, cellColor.a);
-                } else {
-                    half3 rgb = mix(edgeColor, cellColor.rgb, edge);
-                    return half4(rgb, cellColor.a);
-                }
+//                // Edge detection (matching original CrystallizeFilter.getPixel)
+//                // Original: f = (f2 - f1) / edgeThickness; f = ImageMath.smoothStep(0, edgeThickness, f)
+//                float edgeF = (r1d - r0d) / edgeThickness;
+//                float edge = smoothstep(0.0, edgeThickness, edgeF);
+//
+//                if (fadeEdges == 1) {
+//                    // Blend between nearest and second-nearest cell colors
+//                    // Original: v2 = mixColors(0.5f, v2, v); v = mixColors(f, v2, v)
+//                    float srcX2 = (r1x - 1000.0) * scale;
+//                    float srcY2 = (r1y - 1000.0) * scale;
+//                    vec2 srcCoord2 = clamp(vec2(srcX2, srcY2), vec2(0.0), contentSize - 1.0);
+//                    half4 cellColor2 = content.eval(srcCoord2);
+//                    half3 blended = mix(cellColor2.rgb, cellColor.rgb, 0.5);
+//                    half3 rgb = mix(blended, cellColor.rgb, edge);
+//                    return half4(rgb, cellColor.a);
+//                } else {
+//                    // Original: v = mixColors(f, edgeColor, v)
+//                    half3 rgb = mix(edgeColor, cellColor.rgb, edge);
+//                    return half4(rgb, cellColor.a);
+//                }
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
@@ -282,22 +462,48 @@ class CrystallizeFilter : Filter {
 
     fun makeShader(
         inputShader: org.jetbrains.skia.Shader? = null,
-        size: Float = 10f,
+        scale: Float = 16f,
+        stretch: Float = 1f,
+        angle: Float = 0f,
+        randomness: Float = 0f,
+        gridType: Int = 2, // HEXAGONAL
+        distancePower: Float = 2f,
+        gradientCoefficient: Float = 0f,
+        angleCoefficient: Float = 0f,
+        f1: Float = 1f,
+        f2: Float = 0f,
+        f3: Float = 0f,
+        f4: Float = 0f,
+        turbulence: Float = 1f,
+        amount: Float = 1f,
         edgeThickness: Float = 0.4f,
         fadeEdges: Boolean = false,
         edgeColor: Color = Color.Black,
-        width: Int = 1,
-        height: Int = 1
+        contentSize: FloatArray
     ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN)
-        dataBuffer.putFloat(size)
+        // 19 floats + 2 ints = 84 bytes
+        val dataBuffer = ByteBuffer.allocate(84).order(ByteOrder.LITTLE_ENDIAN)
+        dataBuffer.putFloat(scale)
+        dataBuffer.putFloat(stretch)
+        dataBuffer.putFloat(angle)
+        dataBuffer.putFloat(randomness)
+        dataBuffer.putInt(gridType)
+        dataBuffer.putFloat(distancePower)
+        dataBuffer.putFloat(gradientCoefficient)
+        dataBuffer.putFloat(angleCoefficient)
+        dataBuffer.putFloat(f1)
+        dataBuffer.putFloat(f2)
+        dataBuffer.putFloat(f3)
+        dataBuffer.putFloat(f4)
+        dataBuffer.putFloat(turbulence)
+        dataBuffer.putFloat(amount)
         dataBuffer.putFloat(edgeThickness)
         dataBuffer.putInt(if (fadeEdges) 1 else 0)
         dataBuffer.putFloat(edgeColor.red)
         dataBuffer.putFloat(edgeColor.green)
         dataBuffer.putFloat(edgeColor.blue)
-        dataBuffer.putFloat(width.toFloat())
-        dataBuffer.putFloat(height.toFloat())
+        dataBuffer.putFloat(contentSize[0])
+        dataBuffer.putFloat(contentSize[1])
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
             children = arrayOf(inputShader),
@@ -306,18 +512,62 @@ class CrystallizeFilter : Filter {
     }
 
     fun effectModifier(
-        size: Float = 10f,
+        scale: Float = 16f,
+        stretch: Float = 1f,
+        angle: Float = 0f,
+        randomness: Float = 0f,
+        gridType: Int = 2,
+        distancePower: Float = 2f,
+        gradientCoefficient: Float = 0f,
+        angleCoefficient: Float = 0f,
+        f1: Float = 1f,
+        f2: Float = 0f,
+        f3: Float = 0f,
+        f4: Float = 0f,
+        turbulence: Float = 1f,
+        amount: Float = 1f,
         edgeThickness: Float = 0.4f,
         fadeEdges: Boolean = false,
         edgeColor: Color = Color.Black
     ): Modifier {
-        return Modifier.drawWithCache {
-            val shader = makeShader(inputShader = null, size = size, edgeThickness = edgeThickness, fadeEdges = fadeEdges, edgeColor = edgeColor, width = this.size.width.toInt(), height = this.size.height.toInt())
-            val shaderBrush = ShaderBrush(shader.asComposeShader())
-            onDrawBehind {
-                drawRect(brush = shaderBrush)
-            }
+        val crystallizeShaderBuilder = RuntimeShaderBuilder(this.effect)
+
+        crystallizeShaderBuilder.uniform("scale", scale)
+        crystallizeShaderBuilder.uniform("stretch", stretch)
+        crystallizeShaderBuilder.uniform("angle", angle)
+        crystallizeShaderBuilder.uniform("randomness", randomness)
+        crystallizeShaderBuilder.uniform("gridType", gridType)
+        crystallizeShaderBuilder.uniform("distancePower", distancePower)
+        crystallizeShaderBuilder.uniform("gradientCoefficient", gradientCoefficient)
+        crystallizeShaderBuilder.uniform("angleCoefficient", angleCoefficient)
+        crystallizeShaderBuilder.uniform("f1", f1)
+        crystallizeShaderBuilder.uniform("f2", f2)
+        crystallizeShaderBuilder.uniform("f3", f3)
+        crystallizeShaderBuilder.uniform("f4", f4)
+        crystallizeShaderBuilder.uniform("turbulence", turbulence)
+        crystallizeShaderBuilder.uniform("amount", amount)
+        crystallizeShaderBuilder.uniform("edgeThickness", edgeThickness)
+        crystallizeShaderBuilder.uniform("fadeEdges", if (fadeEdges) 1 else 0)
+        crystallizeShaderBuilder.uniform(
+            "edgeColor", edgeColor.red, edgeColor.green, edgeColor.blue
+        )
+        crystallizeShaderBuilder.uniform(
+            "contentSize", 560.0f, 385.0f
+        )
+
+        val sizeChangedModifier = Modifier.onSizeChanged { newSize ->
+//            crystallizeShaderBuilder.uniform(
+//                "contentSize", newSize.width.toFloat(), newSize.height.toFloat()
+//            )
         }
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = crystallizeShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return sizeChangedModifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
