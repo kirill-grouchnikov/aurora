@@ -34,6 +34,9 @@ import org.jetbrains.skia.Image
 import org.pushingpixels.aurora.filters.composite.BumpShape
 import org.pushingpixels.aurora.filters.composite.ChromeFilter
 import org.pushingpixels.aurora.filters.composite.ColorHalftoneFilter
+import org.pushingpixels.aurora.filters.convolution.EmbossFilter
+import org.pushingpixels.aurora.filters.convolution.LensBlurFilter
+import org.pushingpixels.aurora.filters.convolution.MotionBlurFilter
 import org.pushingpixels.aurora.filters.generative.CausticsFilter
 import org.pushingpixels.aurora.filters.generative.CrystallizeFilter
 import org.pushingpixels.aurora.filters.generative.GridType
@@ -67,6 +70,7 @@ fun main() = application {
         val skyFilter = remember { SkyFilter() }
         val blockFilter = remember { BlockFilter() }
         val solarizeFilter = SolarizeFilter
+        // EmbossFilter is an object, no need to remember
         val stampFilter = remember { StampFilter() }
 
         LazyVerticalGrid(
@@ -165,6 +169,41 @@ fun main() = application {
                     effectModifier = stampFilter.effectModifier(
                         radius = 3f, softness = 0.35f),
                     renderEffectTitle = "Stamp"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = EmbossFilter.effectModifier(),
+                    renderEffectTitle = "Emboss"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = LensBlurFilter.effectModifier(),
+                    renderEffectTitle = "Lens blur"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = MotionBlurFilter.effectModifier(
+                        angle = 0.785f,
+                        distanceAmount = 40f
+                    ),
+                    renderEffectTitle = "Motion blur"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = MotionBlurFilter.effectModifier(
+                        angle = 0.785f,
+                        distanceAmount = 10f,
+                        zoom = 0.2f
+                    ),
+                    renderEffectTitle = "Motion blur with zoom"
                 )
             }
         }

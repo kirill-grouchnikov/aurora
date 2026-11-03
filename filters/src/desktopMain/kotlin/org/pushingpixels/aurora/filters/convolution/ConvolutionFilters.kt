@@ -15,8 +15,18 @@
  */
 package org.pushingpixels.aurora.filters.convolution
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
 import org.intellij.lang.annotations.Language
+import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
+import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 
 // This is a modified version of the original source code by Jerry Huxtable
@@ -307,20 +317,10 @@ object EdgeFilter : Filter {
 }
 
 /**
-
  * An emboss filter that simulates 3D embossing with directional lighting.
  * Replicates the JH-Labs EmbossFilter.
- * @param azimuth light azimuth angle in radians
- * @param elevation light elevation angle in radians
- * @param bumpHeight bump height factor (default 1.0)
- * @param emboss if true, color the emboss; if false, grayscale relief
  */
-class EmbossFilter(
-    val azimuth: Float = (135.0 * Math.PI / 180.0).toFloat(),
-    val elevation: Float = (30.0 * Math.PI / 180.0).toFloat(),
-    val bumpHeight: Float = 1f,
-    val emboss: Boolean = false
-) : Filter {
+object EmbossFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -333,29 +333,30 @@ class EmbossFilter(
                 float width45 = 3.0 * bumpHeight;
                 float pixelScale = 255.9;
                 
-                // Sample 3x3 grid for bump mapping
-                half tl = length(content.eval(fragcoord + vec2(-1.0, -1.0)).rgb);
-                half t  = length(content.eval(fragcoord + vec2(0.0, -1.0)).rgb);
-                half tr = length(content.eval(fragcoord + vec2(1.0, -1.0)).rgb);
-                half l  = length(content.eval(fragcoord + vec2(-1.0, 0.0)).rgb);
-                half r  = length(content.eval(fragcoord + vec2(1.0, 0.0)).rgb);
-                half bl = length(content.eval(fragcoord + vec2(-1.0, 1.0)).rgb);
-                half b  = length(content.eval(fragcoord + vec2(0.0, 1.0)).rgb);
-                half br = length(content.eval(fragcoord + vec2(1.0, 1.0)).rgb);
+                // Sample 3x3 grid for bump mapping (brightness in 0-255 range, matching original Java)
+                half tl = length(content.eval(fragcoord + vec2(-1.0, -1.0)).rgb) * 255.0;
+                half t  = length(content.eval(fragcoord + vec2(0.0, -1.0)).rgb) * 255.0;
+                half tr = length(content.eval(fragcoord + vec2(1.0, -1.0)).rgb) * 255.0;
+                half l  = length(content.eval(fragcoord + vec2(-1.0, 0.0)).rgb) * 255.0;
+                half r  = length(content.eval(fragcoord + vec2(1.0, 0.0)).rgb) * 255.0;
+                half bl = length(content.eval(fragcoord + vec2(-1.0, 1.0)).rgb) * 255.0;
+                half b  = length(content.eval(fragcoord + vec2(0.0, 1.0)).rgb) * 255.0;
+                half br = length(content.eval(fragcoord + vec2(1.0, 1.0)).rgb) * 255.0;
                 
                 float Nx = float(tl + t + bl - tr - r - br);
                 float Ny = float(bl + b + br - tl - t - tr);
                 float Nz = 6.0 * 255.0 / width45;
                 float Nz2 = Nz * Nz;
-                float NzLz = Nz * (sin(elevation) * pixelScale);
                 
                 float Lx = cos(azimuth) * cos(elevation) * pixelScale;
                 float Ly = sin(azimuth) * cos(elevation) * pixelScale;
                 float Lz = sin(elevation) * pixelScale;
+                float NzLz = Nz * Lz;
                 
+                float background = Lz;
                 float shade;
                 if (Nx == 0.0 && Ny == 0.0) {
-                    shade = Lz;
+                    shade = background;
                 } else {
                     float NdotL = Nx * Lx + Ny * Ly + NzLz;
                     if (NdotL < 0.0) {
@@ -378,6 +379,26 @@ class EmbossFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun effectModifier(
+        azimuth: Float = (135.0 * Math.PI / 180.0).toFloat(),
+        elevation: Float = (30.0 * Math.PI / 180.0).toFloat(),
+        bumpHeight: Float = 1f,
+        emboss: Boolean = false
+    ): Modifier {
+        val embossShaderBuilder = RuntimeShaderBuilder(this.effect)
+        embossShaderBuilder.uniform("azimuth", azimuth)
+        embossShaderBuilder.uniform("elevation", elevation)
+        embossShaderBuilder.uniform("bumpHeight", bumpHeight)
+        embossShaderBuilder.uniform("emboss", if (emboss) 1 else 0)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = embossShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**
@@ -518,45 +539,112 @@ object LaplaceFilter : Filter {
 }
 
 /**
-
- * A lens blur filter that simics out-of-focus lens bokeh.
- * @param radius blur radius
- * @param threshold brightness threshold for blur masking
+ * Maximum radius for the LensBlurFilter shader loop.
+ * SkSL doesn't support dynamic loop bounds, so this is hardcoded.
  */
-class LensBlurFilter(
-    val radius: Float = 5f,
-    val threshold: Float = 0.5f
-) : Filter {
+private const val LENS_BLUR_MAX_R = 25
+
+/**
+ * A lens blur filter that simulates out-of-focus lens bokeh.
+ * Replicates the JH-Labs LensBlurFilter using a spatial-domain approximation
+ * of the original FFT-based polygonal aperture convolution.
+ */
+object LensBlurFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
             uniform float radius;
-            uniform float threshold;
+            uniform float bloom;
+            uniform float bloomThreshold;
+            uniform float angle;
+            uniform int sides;
+
             half4 main(vec2 fragcoord) {
                 half4 center = content.eval(fragcoord);
+
+                // Apply bloom: amplify bright pixels above the threshold
+                // (threshold is in 0-255 range, matching original Java)
+                half3 rgb = center.rgb * 255.0;
+                if (rgb.r > bloomThreshold) rgb.r *= bloom;
+                if (rgb.g > bloomThreshold) rgb.g *= bloom;
+                if (rgb.b > bloomThreshold) rgb.b *= bloom;
+                rgb /= 255.0;
+
+                // Compute blur amount based on brightness (brighter = more blur)
+                // brightness is in 0-1 range (length of normalized RGB), so use a fixed smoothstep
                 float brightness = length(center.rgb);
-                float blurAmount = smoothstep(threshold - 0.2, threshold + 0.2, brightness);
-                half4 sum = center;
-                int r = int(ceil(radius));
-                int count = 0;
-                for (int dy = -r; dy <= r; dy++) {
-                    for (int dx = -r; dx <= r; dx++) {
-                        float d = sqrt(float(dx*dx + dy*dy));
-                        if (d <= float(r)) {
-                            sum += content.eval(fragcoord + vec2(float(dx), float(dy)));
-                            count++;
+                float blurAmount = smoothstep(0.0, 1.0, brightness);
+
+                half4 sum = half4(rgb, center.a);
+                int count = 1;
+
+                // Polygonal aperture parameters (matching original Java algorithm)
+                float polyAngle = 3.14159265 / float(sides);
+                float polyScale = 1.0 / cos(polyAngle);
+                float rAngle = angle;
+                float r2 = radius * radius;
+
+                for (int dy = -$LENS_BLUR_MAX_R; dy <= $LENS_BLUR_MAX_R; dy++) {
+                    for (int dx = -$LENS_BLUR_MAX_R; dx <= $LENS_BLUR_MAX_R; dx++) {
+                        float d2 = float(dx*dx + dy*dy);
+                        if (d2 <= r2) {
+                            // Check polygonal aperture shape
+                            float f = 1.0;
+                            if (sides > 0) {
+                                float d = sqrt(d2);
+                                float a = atan(float(dy), float(dx)) + rAngle;
+                                // mod(a, polyAngle*2) - polyAngle
+                                a = mod(a, polyAngle * 2.0) - polyAngle;
+                                f = cos(a) * polyScale;
+                                if (f * d > radius) f = 0.0;
+                            }
+                            if (f > 0.0) {
+                                half4 sample = content.eval(fragcoord + vec2(float(dx), float(dy)));
+                                // Apply bloom to sample
+                                half3 srgb = sample.rgb * 255.0;
+                                if (srgb.r > bloomThreshold) srgb.r *= bloom;
+                                if (srgb.g > bloomThreshold) srgb.g *= bloom;
+                                if (srgb.b > bloomThreshold) srgb.b *= bloom;
+                                srgb /= 255.0;
+                                sum += half4(srgb, sample.a);
+                                count++;
+                            }
                         }
                     }
                 }
+
                 half4 blurred = sum / float(count);
-                half3 rgb = mix(center.rgb, blurred.rgb, blurAmount);
-                return half4(rgb, center.a);
+                half3 result = mix(rgb, blurred.rgb, blurAmount);
+                return half4(result, center.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    @Composable
+    fun effectModifier(
+        radius: Float = 10f,
+        bloom: Float = 2f,
+        bloomThreshold: Float = 255f,
+        angle: Float = 0f,
+        sides: Int = 5
+    ): Modifier {
+        val lensBlurShaderBuilder = RuntimeShaderBuilder(this.effect)
+        lensBlurShaderBuilder.uniform("radius", radius)
+        lensBlurShaderBuilder.uniform("bloom", bloom)
+        lensBlurShaderBuilder.uniform("bloomThreshold", bloomThreshold)
+        lensBlurShaderBuilder.uniform("angle", angle)
+        lensBlurShaderBuilder.uniform("sides", sides)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = lensBlurShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**
@@ -664,46 +752,35 @@ class MinimumFilter(val radius: Int = 1) : Filter {
 }
 
 /**
-
- * A motion blur filter.
+ * A motion blur filter that simulates linear motion, spin, and zoom blur.
  * Replicates the JH-Labs MotionBlurFilter.
- * @param angle blur angle in radians
- * @param distance blur distance in pixels
- * @param rotation rotation angle in radians
- * @param zoom zoom factor (0 = no zoom)
  */
-class MotionBlurFilter(
-    val angle: Float = 0f,
-    val distance: Float = 1f,
-    val rotation: Float = 0f,
-    val zoom: Float = 0f
-) : Filter {
+object MotionBlurFilter : Filter {
+    private const val MOTION_BLUR_MAX_REPETITIONS = 64
+
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
             uniform float angle;
-            uniform float distance;
+            uniform float distanceAmount;
             uniform float rotation;
             uniform float zoom;
-            uniform vec2 imageSize;
+            uniform vec2 center;
             half4 main(vec2 fragcoord) {
                 half4 sum = half4(0);
-                float cx = imageSize.x * 0.5;
-                float cy = imageSize.y * 0.5;
-                float translateX = distance * cos(angle);
-                float translateY = -distance * sin(angle);
-                int repetitions = int(ceil(distance));
+                float translateX = distanceAmount * cos(angle);
+                float translateY = -distanceAmount * sin(angle);
+                int repetitions = int(ceil(distanceAmount));
                 if (repetitions < 1) repetitions = 1;
-                for (int i = 0; i < repetitions; i++) {
+                for (int i = 0; i < $MOTION_BLUR_MAX_REPETITIONS; i++) {
+                    if (i >= repetitions) break;
                     float f = float(i) / float(repetitions);
                     float s = 1.0 - zoom * f;
                     float rx = -rotation * f;
-                    // Transform point
-                    float px = fragcoord.x + cx + f * translateX;
-                    float py = fragcoord.y + cy + f * translateY;
-                    px -= cx;
-                    py -= cy;
+                    // Transform point relative to center
+                    float px = fragcoord.x - center.x + f * translateX;
+                    float py = fragcoord.y - center.y + f * translateY;
                     float sx = px * s;
                     float sy = py * s;
                     if (rx != 0.0) {
@@ -714,8 +791,8 @@ class MotionBlurFilter(
                         sx = rpx;
                         sy = rpy;
                     }
-                    px = sx + cx;
-                    py = sy + cy;
+                    px = sx + center.x;
+                    py = sy + center.y;
                     sum += content.eval(vec2(px, py));
                 }
                 return sum / float(repetitions);
@@ -724,6 +801,40 @@ class MotionBlurFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    @Composable
+    fun effectModifier(
+        angle: Float = 0f,
+        distanceAmount: Float = 1f,
+        rotation: Float = 0f,
+        zoom: Float = 0f,
+        centreX: Float = 0.5f,
+        centreY: Float = 0.5f
+    ): Modifier {
+        val contentSize = remember { mutableStateOf<Pair<Float, Float>?>(null) }
+
+        val sizeChangedModifier = Modifier.onSizeChanged { newSize ->
+            contentSize.value = Pair(newSize.width.toFloat(), newSize.height.toFloat())
+        }
+
+        return sizeChangedModifier.graphicsLayer {
+            val size = contentSize.value ?: return@graphicsLayer
+            val cx = centreX * size.first
+            val cy = centreY * size.second
+
+            val motionBlurShaderBuilder = RuntimeShaderBuilder(this@MotionBlurFilter.effect)
+            motionBlurShaderBuilder.uniform("angle", angle)
+            motionBlurShaderBuilder.uniform("distanceAmount", distanceAmount)
+            motionBlurShaderBuilder.uniform("rotation", rotation)
+            motionBlurShaderBuilder.uniform("zoom", zoom)
+            motionBlurShaderBuilder.uniform("center", cx, cy)
+            renderEffect = ImageFilter.makeRuntimeShader(
+                runtimeShaderBuilder = motionBlurShaderBuilder,
+                shaderName = "content",
+                input = null
+            ).asComposeRenderEffect()
+            clip = true
+        }
+    }
 }
 
 /**
