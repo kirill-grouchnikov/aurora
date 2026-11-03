@@ -442,7 +442,7 @@ class CrystallizeFilter : Filter {
                 // Original Java: srcx = clamp((int)((results[0].x - 1000) * scale), 0, width-1)
                 float srcX = (r0x - 1000.0) * scale;
                 float srcY = (r0y - 1000.0) * scale;
-                vec2 srcCoord = clamp(vec2(srcX, srcY), vec2(0.0), contentSize - 1.0);
+                vec2 srcCoord = clamp(vec2(srcX, srcY), vec2(1.0), contentSize - 1.0);
                 half4 cellColor = content.eval(srcCoord);
                 
                 // Edge detection (matching original CrystallizeFilter.getPixel)
@@ -455,7 +455,7 @@ class CrystallizeFilter : Filter {
                     // Original: v2 = mixColors(0.5f, v2, v); v = mixColors(f, v2, v)
                     float srcX2 = (r1x - 1000.0) * scale;
                     float srcY2 = (r1y - 1000.0) * scale;
-                    vec2 srcCoord2 = clamp(vec2(srcX2, srcY2), vec2(0.0), contentSize - 1.0);
+                    vec2 srcCoord2 = clamp(vec2(srcX2, srcY2), vec2(1.0), contentSize - 1.0);
                     half4 cellColor2 = content.eval(srcCoord2);
                     half3 blended = mix(cellColor2.rgb, cellColor.rgb, 0.5);
                     half3 rgb = mix(blended, cellColor.rgb, edge);

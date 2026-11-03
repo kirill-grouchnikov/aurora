@@ -123,7 +123,16 @@ fun main() = application {
                     effectModifier = crystallizeFilter.effectModifier(
                         scale = 20.0f, edgeThickness = 0.4f, fadeEdges = false
                     ),
-                    renderEffectTitle = "Crystallize"
+                    renderEffectTitle = "Crystallize no edge fade"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = crystallizeFilter.effectModifier(
+                        scale = 20.0f, edgeThickness = 0.4f, fadeEdges = true
+                    ),
+                    renderEffectTitle = "Crystallize edge fade"
                 )
             }
         }
