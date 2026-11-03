@@ -34,7 +34,10 @@ import org.jetbrains.skia.Image
 import org.pushingpixels.aurora.filters.composite.BumpShape
 import org.pushingpixels.aurora.filters.composite.ChromeFilter
 import org.pushingpixels.aurora.filters.composite.ColorHalftoneFilter
+import org.pushingpixels.aurora.filters.composite.GlowFilter
 import org.pushingpixels.aurora.filters.convolution.EmbossFilter
+import org.pushingpixels.aurora.filters.convolution.HighPassFilter
+import org.pushingpixels.aurora.filters.convolution.UnsharpFilter
 import org.pushingpixels.aurora.filters.convolution.LensBlurFilter
 import org.pushingpixels.aurora.filters.convolution.MotionBlurFilter
 import org.pushingpixels.aurora.filters.generative.CausticsFilter
@@ -204,6 +207,27 @@ fun main() = application {
                         zoom = 0.2f
                     ),
                     renderEffectTitle = "Motion blur with zoom"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = HighPassFilter.effectModifier(radius = 2f),
+                    renderEffectTitle = "High pass"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = GlowFilter.effectModifier(radius = 5f, amount = 0.2f),
+                    renderEffectTitle = "Glow"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = UnsharpFilter.effectModifier(radius = 2f, amount = 0.5f),
+                    renderEffectTitle = "Unsharp mask"
                 )
             }
         }

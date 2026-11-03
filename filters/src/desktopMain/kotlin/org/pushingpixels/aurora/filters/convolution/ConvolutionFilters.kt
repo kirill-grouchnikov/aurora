@@ -475,11 +475,15 @@ class GaussianFilter(val radius: Float = 2f) : Filter {
 }
 
 /**
-
- * A high-pass filter that emphasizes high-frequency details.
- * @param radius kernel radius
+ * Maximum radius for the HighPassFilter shader loop.
+ * SkSL doesn't support dynamic loop bounds, so this is hardcoded.
  */
-class HighPassFilter(val radius: Float = 2f) : Filter {
+private const val HIGH_PASS_MAX_R = 25
+
+/**
+ * A high-pass filter that emphasizes high-frequency details.
+ */
+object HighPassFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -487,12 +491,14 @@ class HighPassFilter(val radius: Float = 2f) : Filter {
             uniform float radius;
             half4 main(vec2 fragcoord) {
                 half4 center = content.eval(fragcoord);
+                int maxR = $HIGH_PASS_MAX_R;
                 int r = int(ceil(radius));
                 if (r < 1) r = 1;
                 half4 sum = half4(0);
                 int count = 0;
-                for (int dy = -r; dy <= r; dy++) {
-                    for (int dx = -r; dx <= r; dx++) {
+                for (int dy = -maxR; dy <= maxR; dy++) {
+                    for (int dx = -maxR; dx <= maxR; dx++) {
+                        if (abs(float(dx)) > radius || abs(float(dy)) > radius) continue;
                         sum += content.eval(fragcoord + vec2(float(dx), float(dy)));
                         count++;
                     }
@@ -505,6 +511,53 @@ class HighPassFilter(val radius: Float = 2f) : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    /**
+     * Returns a Compose Modifier that applies the high-pass filter effect.
+     *
+     * @param radius kernel radius for the blur (default 10.0f)
+     */
+    @Composable
+    fun effectModifier(
+        radius: Float = 10f
+    ): Modifier {
+        val highPassShaderBuilder = RuntimeShaderBuilder(RuntimeEffect.makeForShader(
+            @Language("GLSL")
+            """
+            uniform shader content;
+            uniform float radius;
+            half4 main(vec2 fragcoord) {
+                half4 center = content.eval(fragcoord);
+                int r = int(ceil(radius));
+                if (r < 1) r = 1;
+                half4 sum = half4(0);
+                int count = 0;
+                for (int dy = -$HIGH_PASS_MAX_R; dy <= $HIGH_PASS_MAX_R; dy++) {
+                    for (int dx = -$HIGH_PASS_MAX_R; dx <= $HIGH_PASS_MAX_R; dx++) {
+                        if (abs(float(dx)) > radius || abs(float(dy)) > radius) continue;
+                        sum += content.eval(fragcoord + vec2(float(dx), float(dy)));
+                        count++;
+                    }
+                }
+                half4 avg = sum / float(count);
+                // High pass: original - low frequency
+                half3 rgb = center.rgb - avg.rgb + 0.5;
+                rgb = clamp(rgb, 0.0, 1.0);
+                return half4(rgb, center.a);
+            }
+            """
+        ))
+        highPassShaderBuilder.uniform("radius", radius)
+
+        return Modifier.graphicsLayer {
+            renderEffect = ImageFilter.makeRuntimeShader(
+                runtimeShaderBuilder = highPassShaderBuilder,
+                shaderName = "content",
+                input = null
+            ).asComposeRenderEffect()
+            clip = true
+        }
     }
 
 }
@@ -946,17 +999,16 @@ class SmartBlurFilter(
 }
 
 /**
- * An unsharp mask filter for sharpening.
- * Replicates the JH-Labs UnsharpFilter.
- * @param radius blur radius for the mask (default 2)
- * @param amount sharpening strength (0-1, default 0.5)
- * @param threshold threshold for applying sharpening (default 1)
+ * Maximum radius for the UnsharpFilter shader loop.
+ * SkSL doesn't support dynamic loop bounds, so this is hardcoded.
  */
-class UnsharpFilter(
-    val radius: Float = 2f,
-    val amount: Float = 0.5f,
-    val threshold: Float = 1f
-) : Filter {
+private const val UNSHARP_MAX_R = 25
+
+/**
+ * A filter which subtracts Gaussian blur from an image, sharpening it.
+ * Replicates the JH-Labs UnsharpFilter.
+ */
+object UnsharpFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -970,8 +1022,9 @@ class UnsharpFilter(
                 if (r < 1) r = 1;
                 half4 sum = half4(0);
                 int count = 0;
-                for (int dy = -r; dy <= r; dy++) {
-                    for (int dx = -r; dx <= r; dx++) {
+                for (int dy = -$UNSHARP_MAX_R; dy <= $UNSHARP_MAX_R; dy++) {
+                    for (int dx = -$UNSHARP_MAX_R; dx <= $UNSHARP_MAX_R; dx++) {
+                        if (abs(float(dx)) > radius || abs(float(dy)) > radius) continue;
                         sum += content.eval(fragcoord + vec2(float(dx), float(dy)));
                         count++;
                     }
@@ -991,6 +1044,34 @@ class UnsharpFilter(
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    /**
+     * Returns a Compose Modifier that applies the unsharp mask filter effect.
+     *
+     * @param radius blur radius for the mask (default 2.0f)
+     * @param amount sharpening strength 0-1 (default 0.5f)
+     * @param threshold threshold for applying sharpening (default 1.0f)
+     */
+    @Composable
+    fun effectModifier(
+        radius: Float = 2f,
+        amount: Float = 0.5f,
+        threshold: Float = 1f
+    ): Modifier {
+        val unsharpShaderBuilder = RuntimeShaderBuilder(this.effect)
+        unsharpShaderBuilder.uniform("radius", radius)
+        unsharpShaderBuilder.uniform("amount", amount)
+        unsharpShaderBuilder.uniform("threshold", threshold)
+
+        return Modifier.graphicsLayer {
+            renderEffect = ImageFilter.makeRuntimeShader(
+                runtimeShaderBuilder = unsharpShaderBuilder,
+                shaderName = "content",
+                input = null
+            ).asComposeRenderEffect()
+            clip = true
+        }
     }
 
 }

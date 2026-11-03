@@ -15,50 +15,83 @@
  */
 package org.pushingpixels.aurora.filters.composite
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
 import org.intellij.lang.annotations.Language
+import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
+import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
 
 /**
- * A filter which adds a glow effect to bright areas of the image.
- * @param radius glow radius in pixels
- * @param intensity glow intensity (0-1)
+ * Maximum radius for the GlowFilter shader loop.
+ * SkSL doesn't support dynamic loop bounds, so this is hardcoded.
  */
-class GlowFilter(
-    val radius: Float = 5f,
-    val intensity: Float = 0.5f
-) : Filter {
+private const val GLOW_MAX_R = 25
+
+/**
+ * A filter which adds Gaussian blur to an image, producing a glowing effect.
+ * Replicates the JH-Labs GlowFilter.
+ */
+object GlowFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
             uniform float radius;
-            uniform float intensity;
+            uniform float amount;
             half4 main(vec2 fragcoord) {
-                half4 center = content.eval(fragcoord);
-                half4 sum = half4(0);
+                half4 original = content.eval(fragcoord);
                 int r = int(ceil(radius));
                 if (r < 1) r = 1;
+                half4 sum = half4(0);
                 int count = 0;
-                for (int dy = -r; dy <= r; dy++) {
-                    for (int dx = -r; dx <= r; dx++) {
-                        half4 c = content.eval(fragcoord + vec2(float(dx), float(dy)));
-                        sum += c;
+                for (int dy = -$GLOW_MAX_R; dy <= $GLOW_MAX_R; dy++) {
+                    for (int dx = -$GLOW_MAX_R; dx <= $GLOW_MAX_R; dx++) {
+                        if (abs(float(dx)) > radius || abs(float(dy)) > radius) continue;
+                        sum += content.eval(fragcoord + vec2(float(dx), float(dy)));
                         count++;
                     }
                 }
-                half4 blur = sum / float(count);
-                // Glow: add blurred bright areas
-                half3 glow = blur.rgb * intensity * step(0.5, blur.r);
-                half3 rgb = center.rgb + glow;
-                rgb = clamp(rgb, 0.0, 1.0);
-                return half4(rgb, center.a);
+                half4 blurred = sum / float(count);
+                // Glow: original + a * blurred, where a = 4 * amount
+                float a = 4.0 * amount;
+                half3 rgb = clamp(original.rgb + a * blurred.rgb, 0.0, 1.0);
+                return half4(rgb, original.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    /**
+     * Returns a Compose Modifier that applies the glow filter effect.
+     *
+     * @param radius blur radius in pixels (default 2.0f)
+     * @param amount glow amount 0-1 (default 0.5f)
+     */
+    @Composable
+    fun effectModifier(
+        radius: Float = 2f,
+        amount: Float = 0.5f
+    ): Modifier {
+        val glowShaderBuilder = RuntimeShaderBuilder(this.effect)
+        glowShaderBuilder.uniform("radius", radius)
+        glowShaderBuilder.uniform("amount", amount)
+
+        return Modifier.graphicsLayer {
+            renderEffect = ImageFilter.makeRuntimeShader(
+                runtimeShaderBuilder = glowShaderBuilder,
+                shaderName = "content",
+                input = null
+            ).asComposeRenderEffect()
+            clip = true
+        }
     }
 
 }
