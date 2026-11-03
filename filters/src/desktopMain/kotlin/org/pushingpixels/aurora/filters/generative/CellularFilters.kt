@@ -340,12 +340,16 @@ class CrystallizeFilter : Filter {
             }
 
             // Evaluate cellular noise at (nx, ny) with given scale (matching original evaluate method)
-            float evaluate(float nx, float ny, float evalScale,
-                          inout float r0d, inout float r0x, inout float r0y,
-                          inout float r1d, inout float r1x, inout float r1y,
-                          inout float r2d, inout float r2x, inout float r2y) {
+            // Returns mat3 packing all 9 values:
+            //   col 0: combinedValue, r0d, r1d
+            //   col 1: r0x, r0y, r1x
+            //   col 2: r1y, r2x, r2y
+            mat3 evaluate(float nx, float ny, float evalScale,
+                         float r0x, float r0y,
+                         float r1x, float r1y,
+                         float r2x, float r2y) {
                 // Reset results
-                r0d = 1e10; r1d = 1e10; r2d = 1e10;
+                float r0d = 1e10; float r1d = 1e10; float r2d = 1e10;
 
                 vec2 p = vec2(nx, ny);
                 vec2 grid = floor(p);
@@ -374,8 +378,8 @@ class CrystallizeFilter : Filter {
                                      r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
                 }
                 if (d > 1.0 - fx) {
-                    d = checkCube(fx - 1.0, fy, int(grid.x) + 1, int(grid.y),
-                                 r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
+                    checkCube(fx - 1.0, fy, int(grid.x) + 1, int(grid.y),
+                             r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
                     if (d > fy)
                         d = checkCube(fx - 1.0, fy + 1.0, int(grid.x) + 1, int(grid.y) - 1,
                                      r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
@@ -401,7 +405,9 @@ class CrystallizeFilter : Filter {
                     t += gradientCoefficient * a;
                 }
 
-                return t;
+                return mat3(t, r0x, r1y,
+                           r0d, r0y, r2x,
+                           r1d, r1x, r2y);
             }
 
             half4 main(vec2 fragcoord) {
@@ -417,14 +423,20 @@ class CrystallizeFilter : Filter {
                 nx += 1000.0;
                 ny += 1000.0; // Reduce artifacts around 0,0 (matching original)
 
-                float r0d, r0x, r0y;
-                float r1d, r1x, r1y;
-                float r2d, r2x, r2y;
-
-                // Evaluate cellular noise once (matching original CrystallizeFilter.getPixel)
-                // The original does NOT use turbulence in CrystallizeFilter
-                evaluate(nx, ny, 1.0,
-                         r0d, r0x, r0y, r1d, r1x, r1y, r2d, r2x, r2y);
+                // Evaluate cellular noise - results packed in mat3
+                mat3 result = evaluate(nx, ny, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+                // Extract values from matrix columns:
+                // col 0: combinedValue, r0d, r1d
+                // col 1: r0x, r0y, r1x
+                // col 2: r1y, r2x, r2y
+                float r0d = result[1][0];
+                float r1d = result[2][0];
+                float r0x = result[0][1];
+                float r0y = result[1][1];
+                float r1x = result[2][1];
+                float r1y = result[0][2];
+                float r2x = result[1][2];
+                float r2y = result[2][2];
 
                 // Sample source image at nearest cell point location
                 // Original Java: srcx = clamp((int)((results[0].x - 1000) * scale), 0, width-1)
@@ -433,28 +445,26 @@ class CrystallizeFilter : Filter {
                 vec2 srcCoord = clamp(vec2(srcX, srcY), vec2(0.0), contentSize - 1.0);
                 half4 cellColor = content.eval(srcCoord);
                 
-                return cellColor;
-
-//                // Edge detection (matching original CrystallizeFilter.getPixel)
-//                // Original: f = (f2 - f1) / edgeThickness; f = ImageMath.smoothStep(0, edgeThickness, f)
-//                float edgeF = (r1d - r0d) / edgeThickness;
-//                float edge = smoothstep(0.0, edgeThickness, edgeF);
-//
-//                if (fadeEdges == 1) {
-//                    // Blend between nearest and second-nearest cell colors
-//                    // Original: v2 = mixColors(0.5f, v2, v); v = mixColors(f, v2, v)
-//                    float srcX2 = (r1x - 1000.0) * scale;
-//                    float srcY2 = (r1y - 1000.0) * scale;
-//                    vec2 srcCoord2 = clamp(vec2(srcX2, srcY2), vec2(0.0), contentSize - 1.0);
-//                    half4 cellColor2 = content.eval(srcCoord2);
-//                    half3 blended = mix(cellColor2.rgb, cellColor.rgb, 0.5);
-//                    half3 rgb = mix(blended, cellColor.rgb, edge);
-//                    return half4(rgb, cellColor.a);
-//                } else {
-//                    // Original: v = mixColors(f, edgeColor, v)
-//                    half3 rgb = mix(edgeColor, cellColor.rgb, edge);
-//                    return half4(rgb, cellColor.a);
-//                }
+                // Edge detection (matching original CrystallizeFilter.getPixel)
+                // Original: f = (f2 - f1) / edgeThickness; f = ImageMath.smoothStep(0, edgeThickness, f)
+                float edgeF = (r1d - r0d) / edgeThickness;
+                float edge = smoothstep(0.0, edgeThickness, edgeF);
+                
+                if (fadeEdges == 1) {
+                    // Blend between nearest and second-nearest cell colors
+                    // Original: v2 = mixColors(0.5f, v2, v); v = mixColors(f, v2, v)
+                    float srcX2 = (r1x - 1000.0) * scale;
+                    float srcY2 = (r1y - 1000.0) * scale;
+                    vec2 srcCoord2 = clamp(vec2(srcX2, srcY2), vec2(0.0), contentSize - 1.0);
+                    half4 cellColor2 = content.eval(srcCoord2);
+                    half3 blended = mix(cellColor2.rgb, cellColor.rgb, 0.5);
+                    half3 rgb = mix(blended, cellColor.rgb, edge);
+                    return half4(rgb, cellColor.a);
+                } else {
+                    // Original: v = mixColors(f, edgeColor, v)
+                    half3 rgb = mix(edgeColor, cellColor.rgb, edge);
+                    return half4(rgb, cellColor.a);
+                }
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
