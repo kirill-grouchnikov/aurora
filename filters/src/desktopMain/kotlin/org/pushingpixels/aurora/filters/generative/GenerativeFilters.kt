@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.filters.generative
 
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.Data
+import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
@@ -1917,37 +1919,81 @@ class SkyFilter : Filter {
 }
 
 /**
- * A filter which creates a stamp/embossed effect.
+ * A filter which creates a rubber-stamp type of effect by performing a thresholded Gaussian blur.
  * Replicates the JH-Labs StampFilter.
  *
- * @param threshold the stamp threshold (default 0.0f)
- * @param softness the edge softness (default 0.0f)
- * @param radius the stamp radius (default 5)
- * @param white the white color as 0xRRGGBB (default white)
- * @param black the black color as 0xRRGGBB (default black)
+ * The algorithm first blurs the source image with a Gaussian kernel whose radius is controlled
+ * by the [radius] parameter, then thresholds each pixel's brightness (R+G+B sum) to produce
+ * a high-contrast stamp effect. The [threshold] controls the cutoff point and [softness]
+ * controls the transition width via smoothstep.
+ *
+ * @param threshold the brightness threshold in the range 0..1 (default 0.5f)
+ * @param softness the edge softness in the range 0..1 (default 0f)
+ * @param radius the Gaussian blur radius in pixels (default 5)
+ * @param white the color for pixels above the upper threshold (default white)
+ * @param black the color for pixels below the lower threshold (default black)
  */
 class StampFilter : Filter {
+    // Blur effect used to create the blurred child shader
+    private val blurEffect: RuntimeEffect by lazy {
+        @Language("GLSL")
+        val shaderDesc = """
+            uniform shader content;
+            uniform float sigmaX;
+            uniform float sigmaY;
+            uniform half2 imageSize;
+            half4 main(vec2 fragcoord) {
+                half sigma = (sigmaX + sigmaY) / 2.0;
+                half sigma2 = sigma * sigma;
+                half pi2 = 6.28318530718;
+                half gaussSelf = 1.0 / (pi2 * sigma2);
+                int r = int(sigma * 3.0 + 0.5);
+                half blurR = 0.0, blurG = 0.0, blurB = 0.0;
+                half totalWeight = 0.0;
+                half2 px = 1.0 / imageSize;
+                for (int y = -r; y <= r; y++) {
+                    for (int x = -r; x <= r; x++) {
+                        half2 offset = half2(x, y);
+                        half dist2 = offset.x * offset.x + offset.y * offset.y;
+                        half weight = exp(-dist2 / (2.0 * sigma2)) * gaussSelf;
+                        half3 sample = content.eval(fragcoord + offset * px).rgb;
+                        blurR += sample.r * weight;
+                        blurG += sample.g * weight;
+                        blurB += sample.b * weight;
+                        totalWeight += weight;
+                    }
+                }
+                blurR /= totalWeight;
+                blurG /= totalWeight;
+                blurB /= totalWeight;
+                return half4(blurR, blurG, blurB, 1.0);
+            }
+        """
+        RuntimeEffect.makeForShader(shaderDesc)
+    }
+
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
+            uniform shader blurred;
             uniform float threshold;
             uniform float softness;
-            uniform float radius;
             uniform half3 white;
             uniform half3 black;
             half4 main(vec2 fragcoord) {
-                half center = length(content.eval(fragcoord).rgb);
-                half top = length(content.eval(fragcoord + vec2(0.0, -radius)).rgb);
-                half left = length(content.eval(fragcoord + vec2(-radius, 0.0)).rgb);
-                half shadow = (center - top + center - left) + threshold;
-                // Apply softness
-                if (softness > 0.0) {
-                    shadow = smoothstep(0.5 - softness, 0.5 + softness, shadow);
-                } else {
-                    shadow = shadow > 0.5 ? 1.0 : 0.0;
-                }
-                half3 rgb = mix(black, white, shadow);
+                vec4 blurredContent = blurred.eval(fragcoord);
+                float blurR = blurredContent.r;
+                float blurG = blurredContent.g;
+                float blurB = blurredContent.b;
+                
+                // Threshold the blurred brightness, matching JH-Labs logic
+                half l = 0.2126 * blurR + 0.7152 * blurG + 0.0722 * blurB;
+                half lowerThreshold = (threshold - softness * 0.5);
+                half upperThreshold = (threshold + softness * 0.5);
+                float f = smoothstep(lowerThreshold, upperThreshold, l);
+                
+                half3 rgb = mix(black, white, f);
                 half4 orig = content.eval(fragcoord);
                 return half4(rgb, orig.a);
             }
@@ -1957,16 +2003,28 @@ class StampFilter : Filter {
 
     fun makeShader(
         inputShader: org.jetbrains.skia.Shader? = null,
-        threshold: Float = 0f,
+        threshold: Float = 0.5f,
         softness: Float = 0f,
         radius: Float = 5f,
         white: Color = Color.White,
-        black: Color = Color.Black
+        black: Color = Color.Black,
+        contentSize: FloatArray = floatArrayOf(560f, 385f)
     ): org.jetbrains.skia.Shader {
-        val dataBuffer = ByteBuffer.allocate(36).order(ByteOrder.LITTLE_ENDIAN)
+        // Create the blurred child shader using the blur effect
+        val blurUniforms = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN)
+        blurUniforms.putFloat(radius)
+        blurUniforms.putFloat(radius)
+        blurUniforms.putFloat(contentSize[0])
+        blurUniforms.putFloat(contentSize[1])
+        val blurredShader = blurEffect.makeShader(
+            uniforms = Data.makeFromBytes(blurUniforms.array()),
+            children = arrayOf(inputShader),
+            localMatrix = null
+        )
+        
+        val dataBuffer = ByteBuffer.allocate(32).order(ByteOrder.LITTLE_ENDIAN)
         dataBuffer.putFloat(threshold)
         dataBuffer.putFloat(softness)
-        dataBuffer.putFloat(radius)
         dataBuffer.putFloat(white.red)
         dataBuffer.putFloat(white.green)
         dataBuffer.putFloat(white.blue)
@@ -1975,25 +2033,38 @@ class StampFilter : Filter {
         dataBuffer.putFloat(black.blue)
         return effect.makeShader(
             uniforms = Data.makeFromBytes(dataBuffer.array()),
-            children = arrayOf(inputShader),
+            children = arrayOf(inputShader, blurredShader),
             localMatrix = null
         )
     }
 
+    @Composable
     fun effectModifier(
-        threshold: Float = 0f,
+        threshold: Float = 0.5f,
         softness: Float = 0f,
         radius: Float = 5f,
         white: Color = Color.White,
         black: Color = Color.Black
     ): Modifier {
-        return Modifier.drawWithCache {
-            val shader = makeShader(inputShader = null, threshold = threshold, softness = softness, radius = radius, white = white, black = black)
-            val shaderBrush = ShaderBrush(shader.asComposeShader())
-            onDrawBehind {
-                drawRect(brush = shaderBrush)
+        return Modifier
+            .graphicsLayer {
+                val stampShaderBuilder = RuntimeShaderBuilder(this@StampFilter.effect)
+                stampShaderBuilder.uniform("threshold", threshold)
+                stampShaderBuilder.uniform("softness", softness)
+                stampShaderBuilder.uniform("radius", radius)
+                stampShaderBuilder.uniform("white", white.red, white.green, white.blue)
+                stampShaderBuilder.uniform("black", black.red, black.green, black.blue)
+
+                val blurImageFilter = ImageFilter.makeBlur(
+                    sigmaX = radius, sigmaY = radius, mode = FilterTileMode.DECAL)
+
+                renderEffect = ImageFilter.makeRuntimeShader(
+                    runtimeShaderBuilder = stampShaderBuilder,
+                    shaderNames = arrayOf("content", "blurred"),
+                    inputs = arrayOf(null, blurImageFilter)
+                ).asComposeRenderEffect()
+                clip = true
             }
-        }
     }
 }
 

@@ -39,6 +39,7 @@ import org.pushingpixels.aurora.filters.generative.CrystallizeFilter
 import org.pushingpixels.aurora.filters.generative.GridType
 import org.pushingpixels.aurora.filters.generative.PlasmaFilter
 import org.pushingpixels.aurora.filters.generative.PointillizeFilter
+import org.pushingpixels.aurora.filters.generative.StampFilter
 import org.pushingpixels.aurora.filters.generative.SkyFilter
 import org.pushingpixels.aurora.filters.point.BlockFilter
 import org.pushingpixels.aurora.filters.point.SolarizeFilter
@@ -66,6 +67,7 @@ fun main() = application {
         val skyFilter = remember { SkyFilter() }
         val blockFilter = remember { BlockFilter() }
         val solarizeFilter = SolarizeFilter
+        val stampFilter = remember { StampFilter() }
 
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
@@ -155,6 +157,14 @@ fun main() = application {
                 FilterBox(
                     effectModifier = blockFilter.effectModifier(blockSize = 10),
                     renderEffectTitle = "Block"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = stampFilter.effectModifier(
+                        radius = 3f, softness = 0.35f),
+                    renderEffectTitle = "Stamp"
                 )
             }
         }
