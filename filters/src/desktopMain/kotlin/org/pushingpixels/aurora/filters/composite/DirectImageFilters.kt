@@ -117,6 +117,32 @@ class ColorHalftoneFilter() : Filter {
         ).asComposeRenderEffect()
     }
 
+    /**
+     * Constructs an [ImageFilter] for the color halftone effect with the given parameters.
+     *
+     * @param size the content size (width, height) — accepted for API compatibility but not used
+     *             by this filter
+     */
+    fun imageFilter(
+        size: FloatPair,
+        dotRadius: Float = 2.0f,
+        cyanAngle: Float = 108.0f * PI.toFloat() / 180.0f,
+        magentaAngle: Float = 162.0f * PI.toFloat() / 180.0f,
+        yellowAngle: Float = 90.0f * PI.toFloat() / 180.0f
+    ): ImageFilter {
+        val colorHalftoneShaderBuilder = RuntimeShaderBuilder(this.effect)
+        colorHalftoneShaderBuilder.uniform("dotRadius", dotRadius)
+        colorHalftoneShaderBuilder.uniform("cyanAngle", cyanAngle)
+        colorHalftoneShaderBuilder.uniform("magentaAngle", magentaAngle)
+        colorHalftoneShaderBuilder.uniform("yellowAngle", yellowAngle)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = colorHalftoneShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     fun effectModifier(
         dotRadius: Float = 2.0f,
         cyanAngle: Float = 108.0f * PI.toFloat() / 180.0f,

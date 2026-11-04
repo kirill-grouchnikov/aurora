@@ -814,6 +814,36 @@ object MotionBlurFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    /**
+     * Constructs an [ImageFilter] for the motion blur effect with the given parameters.
+     *
+     * @param size the content size (width, height) used to compute the center point
+     */
+    fun imageFilter(
+        size: org.pushingpixels.aurora.filters.composite.FloatPair,
+        angle: Float = 0f,
+        distanceAmount: Float = 1f,
+        rotation: Float = 0f,
+        zoom: Float = 0f,
+        centreX: Float = 0.5f,
+        centreY: Float = 0.5f
+    ): ImageFilter {
+        val cx = centreX * size.first
+        val cy = centreY * size.second
+
+        val motionBlurShaderBuilder = RuntimeShaderBuilder(this@MotionBlurFilter.effect)
+        motionBlurShaderBuilder.uniform("angle", angle)
+        motionBlurShaderBuilder.uniform("distanceAmount", distanceAmount)
+        motionBlurShaderBuilder.uniform("rotation", rotation)
+        motionBlurShaderBuilder.uniform("zoom", zoom)
+        motionBlurShaderBuilder.uniform("center", cx, cy)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = motionBlurShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     @Composable
     fun effectModifier(
         angle: Float = 0f,
