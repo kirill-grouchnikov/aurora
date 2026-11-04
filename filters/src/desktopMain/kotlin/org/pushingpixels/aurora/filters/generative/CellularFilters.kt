@@ -30,6 +30,7 @@ import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
+import org.pushingpixels.aurora.filters.composite.FloatPair
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
 import org.pushingpixels.aurora.filters.utility.makePassthroughShader
 
@@ -488,6 +489,58 @@ class CrystallizeFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        scale: Float = 16f,
+        stretch: Float = 1f,
+        angle: Float = 0f,
+        randomness: Float = 0f,
+        gridType: GridType = GridType.Hexagonal,
+        distancePower: Float = 2f,
+        gradientCoefficient: Float = 0f,
+        angleCoefficient: Float = 0f,
+        f1: Float = 1f,
+        f2: Float = 0f,
+        f3: Float = 0f,
+        f4: Float = 0f,
+        turbulence: Float = 1f,
+        amount: Float = 1f,
+        edgeThickness: Float = 0.4f,
+        fadeEdges: Boolean = false,
+        edgeColor: Color = Color.Black
+    ): ImageFilter {
+        val crystallizeShaderBuilder = RuntimeShaderBuilder(this@CrystallizeFilter.effect)
+
+        crystallizeShaderBuilder.uniform("scale", scale)
+        crystallizeShaderBuilder.uniform("stretch", stretch)
+        crystallizeShaderBuilder.uniform("angle", angle)
+        crystallizeShaderBuilder.uniform("randomness", randomness)
+        crystallizeShaderBuilder.uniform("gridType", gridType.ordinal)
+        crystallizeShaderBuilder.uniform("distancePower", distancePower)
+        crystallizeShaderBuilder.uniform("gradientCoefficient", gradientCoefficient)
+        crystallizeShaderBuilder.uniform("angleCoefficient", angleCoefficient)
+        crystallizeShaderBuilder.uniform("f1", f1)
+        crystallizeShaderBuilder.uniform("f2", f2)
+        crystallizeShaderBuilder.uniform("f3", f3)
+        crystallizeShaderBuilder.uniform("f4", f4)
+        crystallizeShaderBuilder.uniform("turbulence", turbulence)
+        crystallizeShaderBuilder.uniform("amount", amount)
+        crystallizeShaderBuilder.uniform("edgeThickness", edgeThickness)
+        crystallizeShaderBuilder.uniform("fadeEdges", if (fadeEdges) 1 else 0)
+        crystallizeShaderBuilder.uniform(
+            "edgeColor", edgeColor.red, edgeColor.green, edgeColor.blue
+        )
+        crystallizeShaderBuilder.uniform(
+            "contentSize", size.first, size.second
+        )
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = crystallizeShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     @Composable
     fun effectModifier(
         scale: Float = 16f,
@@ -650,6 +703,60 @@ class PointillizeFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        scale: Float = 16f,
+        stretch: Float = 1f,
+        angle: Float = 0f,
+        randomness: Float = 0f,
+        gridType: GridType = GridType.Hexagonal,
+        distancePower: Float = 2f,
+        gradientCoefficient: Float = 0f,
+        angleCoefficient: Float = 0f,
+        f1: Float = 1f,
+        f2: Float = 0f,
+        f3: Float = 0f,
+        f4: Float = 0f,
+        turbulence: Float = 1f,
+        amount: Float = 1f,
+        edgeThickness: Float = 0.4f,
+        fadeEdges: Boolean = false,
+        edgeColor: Color = Color.Black,
+        fuzziness: Float = 0.1f
+    ): ImageFilter {
+        val pointillizeShaderBuilder = RuntimeShaderBuilder(this@PointillizeFilter.effect)
+
+        pointillizeShaderBuilder.uniform("scale", scale)
+        pointillizeShaderBuilder.uniform("stretch", stretch)
+        pointillizeShaderBuilder.uniform("angle", angle)
+        pointillizeShaderBuilder.uniform("randomness", randomness)
+        pointillizeShaderBuilder.uniform("gridType", gridType.ordinal)
+        pointillizeShaderBuilder.uniform("distancePower", distancePower)
+        pointillizeShaderBuilder.uniform("gradientCoefficient", gradientCoefficient)
+        pointillizeShaderBuilder.uniform("angleCoefficient", angleCoefficient)
+        pointillizeShaderBuilder.uniform("f1", f1)
+        pointillizeShaderBuilder.uniform("f2", f2)
+        pointillizeShaderBuilder.uniform("f3", f3)
+        pointillizeShaderBuilder.uniform("f4", f4)
+        pointillizeShaderBuilder.uniform("turbulence", turbulence)
+        pointillizeShaderBuilder.uniform("amount", amount)
+        pointillizeShaderBuilder.uniform("edgeThickness", edgeThickness)
+        pointillizeShaderBuilder.uniform("fadeEdges", if (fadeEdges) 1 else 0)
+        pointillizeShaderBuilder.uniform(
+            "edgeColor", edgeColor.red, edgeColor.green, edgeColor.blue
+        )
+        pointillizeShaderBuilder.uniform("fuzziness", fuzziness)
+        pointillizeShaderBuilder.uniform(
+            "contentSize", size.first, size.second
+        )
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = pointillizeShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     @Composable

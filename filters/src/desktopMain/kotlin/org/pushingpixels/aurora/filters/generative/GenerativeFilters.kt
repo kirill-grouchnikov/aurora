@@ -34,6 +34,7 @@ import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
+import org.pushingpixels.aurora.filters.composite.FloatPair
 import org.pushingpixels.aurora.filters.utility.makeHorizontalGradientFilter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
@@ -1163,6 +1164,32 @@ class PlasmaFilter() : Filter {
         ).asComposeRenderEffect()
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        turbulence: Float = 1.0f,
+        scaling: Float = 0.0f,
+        seed: Int = 567,
+        colors: List<Color>? = null
+    ): ImageFilter {
+        val plasmaShaderBuilder = RuntimeShaderBuilder(this.effect)
+        plasmaShaderBuilder.uniform("turbulence", turbulence)
+        plasmaShaderBuilder.uniform("scaling", scaling)
+        plasmaShaderBuilder.uniform("seed", seed)
+        plasmaShaderBuilder.uniform("useColormap", if (colors != null) 1 else 0)
+
+        val gradientFilter: ImageFilter? = colors?.let {
+            makeMultiStopHorizontalGradientFilter(
+                stops = it,
+                width = 256)
+        }
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = plasmaShaderBuilder,
+            shaderNames = arrayOf("content", "colormap"),
+            inputs = arrayOf(null, gradientFilter)
+        )
+    }
+
     fun effectModifier(
         turbulence: Float = 1.0f,
         scaling: Float = 0.0f,
@@ -1698,6 +1725,31 @@ class StampFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        threshold: Float = 0.5f,
+        softness: Float = 0f,
+        radius: Float = 5f,
+        white: Color = Color.White,
+        black: Color = Color.Black
+    ): ImageFilter {
+        val stampShaderBuilder = RuntimeShaderBuilder(this@StampFilter.effect)
+        stampShaderBuilder.uniform("threshold", threshold)
+        stampShaderBuilder.uniform("softness", softness)
+        stampShaderBuilder.uniform("radius", radius)
+        stampShaderBuilder.uniform("white", white.red, white.green, white.blue)
+        stampShaderBuilder.uniform("black", black.red, black.green, black.blue)
+
+        val blurImageFilter = ImageFilter.makeBlur(
+            sigmaX = radius, sigmaY = radius, mode = FilterTileMode.DECAL)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = stampShaderBuilder,
+            shaderNames = arrayOf("content", "blurred"),
+            inputs = arrayOf(null, blurImageFilter)
+        )
     }
 
     @Composable

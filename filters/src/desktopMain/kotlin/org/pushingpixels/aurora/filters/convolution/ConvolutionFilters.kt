@@ -29,6 +29,7 @@ import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
+import org.pushingpixels.aurora.filters.composite.FloatPair
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -380,6 +381,25 @@ object EmbossFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        azimuth: Float = (135.0 * Math.PI / 180.0).toFloat(),
+        elevation: Float = (30.0 * Math.PI / 180.0).toFloat(),
+        bumpHeight: Float = 1f,
+        emboss: Boolean = false
+    ): ImageFilter {
+        val embossShaderBuilder = RuntimeShaderBuilder(this.effect)
+        embossShaderBuilder.uniform("azimuth", azimuth)
+        embossShaderBuilder.uniform("elevation", elevation)
+        embossShaderBuilder.uniform("bumpHeight", bumpHeight)
+        embossShaderBuilder.uniform("emboss", if (emboss) 1 else 0)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = embossShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     fun effectModifier(
         azimuth: Float = (135.0 * Math.PI / 180.0).toFloat(),
         elevation: Float = (30.0 * Math.PI / 180.0).toFloat(),
@@ -501,6 +521,23 @@ object HighPassFilter : Filter {
      *
      * @param radius kernel radius for the blur (default 10.0f)
      */
+    fun imageFilter(
+        size: FloatPair,
+        radius: Float = 10f
+    ): ImageFilter {
+        val highPassShaderBuilder = RuntimeShaderBuilder(this.effect)
+        highPassShaderBuilder.uniform("radius", radius)
+
+        val blurImageFilter = ImageFilter.makeBlur(
+            sigmaX = radius, sigmaY = radius, mode = FilterTileMode.DECAL)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = highPassShaderBuilder,
+            shaderNames = arrayOf("content", "blurred"),
+            inputs = arrayOf(null, blurImageFilter)
+        )
+    }
+
     @Composable
     fun effectModifier(
         radius: Float = 10f
@@ -633,6 +670,28 @@ object LensBlurFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        radius: Float = 10f,
+        bloom: Float = 2f,
+        bloomThreshold: Float = 255f,
+        angle: Float = 0f,
+        sides: Int = 5
+    ): ImageFilter {
+        val lensBlurShaderBuilder = RuntimeShaderBuilder(this.effect)
+        lensBlurShaderBuilder.uniform("radius", radius)
+        lensBlurShaderBuilder.uniform("bloom", bloom)
+        lensBlurShaderBuilder.uniform("bloomThreshold", bloomThreshold)
+        lensBlurShaderBuilder.uniform("angle", angle)
+        lensBlurShaderBuilder.uniform("sides", sides)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = lensBlurShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     @Composable
@@ -1026,6 +1085,26 @@ object UnsharpFilter : Filter {
      * @param amount sharpening strength 0-1 (default 0.5f)
      * @param threshold threshold for applying sharpening (default 1.0f)
      */
+    fun imageFilter(
+        size: FloatPair,
+        radius: Float = 2f,
+        amount: Float = 0.5f,
+        threshold: Float = 1f
+    ): ImageFilter {
+        val unsharpShaderBuilder = RuntimeShaderBuilder(this.effect)
+        unsharpShaderBuilder.uniform("amount", amount)
+        unsharpShaderBuilder.uniform("threshold", threshold)
+
+        val blurImageFilter = ImageFilter.makeBlur(
+            sigmaX = radius, sigmaY = radius, mode = FilterTileMode.DECAL)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = unsharpShaderBuilder,
+            shaderNames = arrayOf("content", "blurred"),
+            inputs = arrayOf(null, blurImageFilter)
+        )
+    }
+
     @Composable
     fun effectModifier(
         radius: Float = 2f,

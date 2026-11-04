@@ -54,6 +54,30 @@ object GlowFilter : Filter {
     }
 
     /**
+     * Constructs an [ImageFilter] for the glow effect with the given parameters.
+     *
+     * @param size the content size (width, height) — accepted for API compatibility but not used
+     *             by this filter
+     */
+    fun imageFilter(
+        size: FloatPair,
+        radius: Float = 2f,
+        amount: Float = 0.5f
+    ): ImageFilter {
+        val glowShaderBuilder = RuntimeShaderBuilder(this.effect)
+        glowShaderBuilder.uniform("amount", amount)
+
+        val blurImageFilter = ImageFilter.makeBlur(
+            sigmaX = radius, sigmaY = radius, mode = FilterTileMode.DECAL)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = glowShaderBuilder,
+            shaderNames = arrayOf("content", "blurred"),
+            inputs = arrayOf(null, blurImageFilter)
+        )
+    }
+
+    /**
      * Returns a Compose Modifier that applies the glow filter effect.
      *
      * @param radius blur radius in pixels (default 2.0f)

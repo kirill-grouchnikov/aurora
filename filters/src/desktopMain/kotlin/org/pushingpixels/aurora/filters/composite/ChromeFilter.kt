@@ -369,6 +369,117 @@ class ChromeFilter : Filter {
 //        )
 //    }
 
+    /**
+     * Constructs an [ImageFilter] for the chrome effect with the given parameters.
+     *
+     * @param size the content size (width, height) used for light positions and viewpoint
+     */
+    fun imageFilter(
+        size: FloatPair,
+        amount: Float = 0.5f,
+        exposure: Float = 1f,
+        chromeMaterial: Material = Material(),
+        lights: List<Light> = listOf(Light(type = LightType.DISTANT)),
+        bumpHeight: Float = 1.0f,
+        bumpSoftness: Float = 0f,
+        bumpShape: BumpShape = BumpShape.NONE,
+        viewDistance: Float = 10000.0f,
+        useImageColors: Boolean = false
+    ): ImageFilter {
+        val chromeShaderBuilder = RuntimeShaderBuilder(this.effect)
+
+        val maxLights = 4
+
+        chromeShaderBuilder.uniform(
+            "contentSize",
+            size.first,
+            size.second
+        )
+
+        val lightPositions = FloatArray(maxLights * 3) { 0.0f }
+        var lIndex = 0
+        for (light in lights) {
+            val lightPosition = light.position(size.first, size.second)
+            lightPositions[lIndex++] = lightPosition[0]
+            lightPositions[lIndex++] = lightPosition[1]
+            lightPositions[lIndex++] = lightPosition[2]
+        }
+        chromeShaderBuilder.uniform("lightPositions", lightPositions)
+
+        chromeShaderBuilder.uniform("amount", amount)
+        chromeShaderBuilder.uniform("exposure", exposure)
+        chromeShaderBuilder.uniform(
+            "materialDiffuseRGB",
+            chromeMaterial.diffuseRGB[0], chromeMaterial.diffuseRGB[1], chromeMaterial.diffuseRGB[2]
+        )
+        chromeShaderBuilder.uniform(
+            "materialSpecularRGB",
+            chromeMaterial.specularRGB[0], chromeMaterial.specularRGB[1], chromeMaterial.specularRGB[2]
+        )
+
+        chromeShaderBuilder.uniform("ambientIntensity", chromeMaterial.ambientIntensity)
+        chromeShaderBuilder.uniform("diffuseReflectivity", chromeMaterial.diffuseReflectivity)
+        chromeShaderBuilder.uniform("specularReflectivity", chromeMaterial.specularReflectivity)
+        chromeShaderBuilder.uniform("highlight", chromeMaterial.highlight)
+        chromeShaderBuilder.uniform("reflectivity", chromeMaterial.reflectivity)
+        chromeShaderBuilder.uniform("opacity", chromeMaterial.opacity)
+
+        chromeShaderBuilder.uniform("lightCount", lights.size)
+
+        val lightTypes = FloatArray(maxLights) { 0.0f }
+        val lightColorRGB = FloatArray(maxLights * 3) { 0.0f }
+        val lightDirections = FloatArray(maxLights * 3) { 0.0f }
+        val lightCosConeAngles = FloatArray(maxLights) { 0.0f }
+        val lightFocus = FloatArray(maxLights) { 0.0f }
+
+        lIndex = 0
+        for (light in lights) {
+            lightTypes[lIndex++] = light.type.ordinal.toFloat()
+        }
+
+        lIndex = 0
+        for (light in lights) {
+            lightColorRGB[lIndex++] = light.colorRGB[0]
+            lightColorRGB[lIndex++] = light.colorRGB[1]
+            lightColorRGB[lIndex++] = light.colorRGB[2]
+        }
+
+        lIndex = 0
+        for (light in lights) {
+            lightDirections[lIndex++] = light.direction[0]
+            lightDirections[lIndex++] = light.direction[1]
+            lightDirections[lIndex++] = light.direction[2]
+        }
+
+        lIndex = 0
+        for (light in lights) {
+            lightCosConeAngles[lIndex++] = light.cosConeAngle
+        }
+
+        lIndex = 0
+        for (light in lights) {
+            lightFocus[lIndex++] = light.focus
+        }
+
+        chromeShaderBuilder.uniform("lightTypes", lightTypes)
+        chromeShaderBuilder.uniform("lightColorRGB", lightColorRGB)
+        chromeShaderBuilder.uniform("lightDirections", lightDirections)
+        chromeShaderBuilder.uniform("lightCosConeAngles", lightCosConeAngles)
+        chromeShaderBuilder.uniform("lightFocus", lightFocus)
+
+        chromeShaderBuilder.uniform("bumpHeight", bumpHeight)
+        chromeShaderBuilder.uniform("bumpSoftness", bumpSoftness)
+        chromeShaderBuilder.uniform("bumpShape", bumpShape.ordinal)
+        chromeShaderBuilder.uniform("viewDistance", viewDistance)
+        chromeShaderBuilder.uniform("useImageColors", if (useImageColors) 1 else 0)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = chromeShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     fun effectModifier(
         amount: Float = 0.5f,
         exposure: Float = 1f,

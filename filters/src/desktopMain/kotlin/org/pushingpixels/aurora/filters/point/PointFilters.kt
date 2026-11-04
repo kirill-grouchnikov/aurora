@@ -27,6 +27,7 @@ import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
+import org.pushingpixels.aurora.filters.composite.FloatPair
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -53,6 +54,19 @@ class BlockFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        blockSize: Int = 2
+    ): ImageFilter {
+        val blockShaderBuilder = RuntimeShaderBuilder(this.effect)
+        blockShaderBuilder.uniform("blockSize", blockSize.toFloat())
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = blockShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(blockSize: Int = 2): Modifier {
@@ -120,6 +134,25 @@ class ChromaKeyFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        hTolerance: Float = 0f,
+        sTolerance: Float = 0f,
+        bTolerance: Float = 0f,
+        color: Int = 0x00ff00
+    ): ImageFilter {
+        val chromaKeyShaderBuilder = RuntimeShaderBuilder(this.effect)
+        chromaKeyShaderBuilder.uniform("hTolerance", hTolerance)
+        chromaKeyShaderBuilder.uniform("sTolerance", sTolerance)
+        chromaKeyShaderBuilder.uniform("bTolerance", bTolerance)
+        chromaKeyShaderBuilder.uniform("color", ((color shr 16) and 0xff) / 255f, ((color shr 8) and 0xff) / 255f, (color and 0xff) / 255f)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = chromaKeyShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     fun effectModifier(hTolerance: Float = 0f, sTolerance: Float = 0f, bTolerance: Float = 0f, color: Int = 0x00ff00): Modifier {
         val chromaKeyShaderBuilder = RuntimeShaderBuilder(this.effect)
         chromaKeyShaderBuilder.uniform("hTolerance", hTolerance)
@@ -170,6 +203,29 @@ class CurvesFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        rControlX: Float = 0.5f,
+        rControlY: Float = 0.5f,
+        gControlX: Float = 0.5f,
+        gControlY: Float = 0.5f,
+        bControlX: Float = 0.5f,
+        bControlY: Float = 0.5f
+    ): ImageFilter {
+        val curvesShaderBuilder = RuntimeShaderBuilder(this.effect)
+        curvesShaderBuilder.uniform("rControlX", rControlX)
+        curvesShaderBuilder.uniform("rControlY", rControlY)
+        curvesShaderBuilder.uniform("gControlX", gControlX)
+        curvesShaderBuilder.uniform("gControlY", gControlY)
+        curvesShaderBuilder.uniform("bControlX", bControlX)
+        curvesShaderBuilder.uniform("bControlY", bControlY)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = curvesShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(rControlX: Float = 0.5f, rControlY: Float = 0.5f, gControlX: Float = 0.5f, gControlY: Float = 0.5f, bControlX: Float = 0.5f, bControlY: Float = 0.5f): Modifier {
@@ -244,6 +300,19 @@ class DissolveFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        amount: Float = 0.5f
+    ): ImageFilter {
+        val dissolveShaderBuilder = RuntimeShaderBuilder(this.effect)
+        dissolveShaderBuilder.uniform("amount", amount)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = dissolveShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(amount: Float = 0.5f): Modifier {
@@ -340,6 +409,19 @@ class ExposureFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        exposure: Float = 1f
+    ): ImageFilter {
+        val exposureShaderBuilder = RuntimeShaderBuilder(this.effect)
+        exposureShaderBuilder.uniform("exposure", exposure)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = exposureShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     fun effectModifier(exposure: Float = 1f): Modifier {
         val exposureShaderBuilder = RuntimeShaderBuilder(this.effect)
         exposureShaderBuilder.uniform("exposure", exposure)
@@ -374,6 +456,21 @@ class FadeFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        fadeAmount: Float = 0.5f,
+        fadeColor: FloatArray = floatArrayOf(1f, 1f, 1f)
+    ): ImageFilter {
+        val fadeShaderBuilder = RuntimeShaderBuilder(this.effect)
+        fadeShaderBuilder.uniform("fadeAmount", fadeAmount)
+        fadeShaderBuilder.uniform("fadeColor", fadeColor[0], fadeColor[1], fadeColor[2])
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = fadeShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(fadeAmount: Float = 0.5f, fadeColor: FloatArray = floatArrayOf(1f, 1f, 1f)): Modifier {
@@ -413,6 +510,21 @@ class FillFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        color: FloatArray = floatArrayOf(0f, 0f, 0f),
+        opacity: Float = 1f
+    ): ImageFilter {
+        val fillShaderBuilder = RuntimeShaderBuilder(this.effect)
+        fillShaderBuilder.uniform("color", color[0], color[1], color[2])
+        fillShaderBuilder.uniform("opacity", opacity)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = fillShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(color: FloatArray = floatArrayOf(0f, 0f, 0f), opacity: Float = 1f): Modifier {
@@ -506,6 +618,43 @@ class FlareFilter() : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        centerX: Float = 0.5f,
+        centerY: Float = 0.5f,
+        radius: Float = 50f,
+        baseAmount: Float = 1f,
+        ringAmount: Float = 0.2f,
+        rayAmount: Float = 0.1f,
+        color: Color = Color.White,
+        ringWidth: Float = 1.6f,
+        linear: Float = 0.03f,
+        gauss: Float = 0.006f,
+        mixFactor: Float = 0.5f,
+        falloff: Float = 6f
+    ): ImageFilter {
+        val icenterX = centerX * size.first
+        val icenterY = centerY * size.second
+
+        val flareShaderBuilder = RuntimeShaderBuilder(this@FlareFilter.effect)
+        flareShaderBuilder.uniform("icenter", icenterX, icenterY)
+        flareShaderBuilder.uniform("radius", radius)
+        flareShaderBuilder.uniform("baseAmount", baseAmount)
+        flareShaderBuilder.uniform("ringAmount", ringAmount)
+        flareShaderBuilder.uniform("rayAmount", rayAmount)
+        flareShaderBuilder.uniform("flareColor", color.red, color.green, color.blue)
+        flareShaderBuilder.uniform("ringWidth", ringWidth)
+        flareShaderBuilder.uniform("linearCoeff", linear)
+        flareShaderBuilder.uniform("gaussCoeff", gauss)
+        flareShaderBuilder.uniform("mixFactor", mixFactor)
+        flareShaderBuilder.uniform("falloff", falloff)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = flareShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     @Composable
     fun effectModifier(
         centerX: Float = 0.5f,
@@ -593,6 +742,20 @@ class FlipFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        flipType: Int = 0
+    ): ImageFilter {
+        val flipShaderBuilder = RuntimeShaderBuilder(this@FlipFilter.effect)
+        flipShaderBuilder.uniform("flipType", flipType)
+        flipShaderBuilder.uniform("imageSize", size.first, size.second)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = flipShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     @Composable
     fun effectModifier(flipType: Int = 0): Modifier {
         var contentSize by remember { mutableStateOf<Pair<Float, Float>?>(null) }
@@ -651,6 +814,25 @@ class FourColorFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f),
+        midShadowColor: FloatArray = floatArrayOf(0.33f, 0.33f, 0.33f),
+        midHighlightColor: FloatArray = floatArrayOf(0.66f, 0.66f, 0.66f),
+        highlightColor: FloatArray = floatArrayOf(1f, 1f, 1f)
+    ): ImageFilter {
+        val fourColorShaderBuilder = RuntimeShaderBuilder(this.effect)
+        fourColorShaderBuilder.uniform("shadowColor", shadowColor[0], shadowColor[1], shadowColor[2])
+        fourColorShaderBuilder.uniform("midShadowColor", midShadowColor[0], midShadowColor[1], midShadowColor[2])
+        fourColorShaderBuilder.uniform("midHighlightColor", midHighlightColor[0], midHighlightColor[1], midHighlightColor[2])
+        fourColorShaderBuilder.uniform("highlightColor", highlightColor[0], highlightColor[1], highlightColor[2])
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = fourColorShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     fun effectModifier(shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f), midShadowColor: FloatArray = floatArrayOf(0.33f, 0.33f, 0.33f), midHighlightColor: FloatArray = floatArrayOf(0.66f, 0.66f, 0.66f), highlightColor: FloatArray = floatArrayOf(1f, 1f, 1f)): Modifier {
         val fourColorShaderBuilder = RuntimeShaderBuilder(this.effect)
         fourColorShaderBuilder.uniform("shadowColor", shadowColor[0], shadowColor[1], shadowColor[2])
@@ -705,6 +887,21 @@ class GainFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        gain: Float = 0.5f,
+        bias: Float = 0.5f
+    ): ImageFilter {
+        val gainShaderBuilder = RuntimeShaderBuilder(this.effect)
+        gainShaderBuilder.uniform("gain", gain)
+        gainShaderBuilder.uniform("bias", bias)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = gainShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(gain: Float = 0.5f, bias: Float = 0.5f): Modifier {
@@ -765,6 +962,23 @@ class HSBAdjustFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        hFactor: Float = 0f,
+        sFactor: Float = 0f,
+        bFactor: Float = 0f
+    ): ImageFilter {
+        val hsbShaderBuilder = RuntimeShaderBuilder(this.effect)
+        hsbShaderBuilder.uniform("hFactor", hFactor)
+        hsbShaderBuilder.uniform("sFactor", sFactor)
+        hsbShaderBuilder.uniform("bFactor", bFactor)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = hsbShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(hFactor: Float = 0f, sFactor: Float = 0f, bFactor: Float = 0f): Modifier {
@@ -838,6 +1052,23 @@ class HalftoneFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        softness: Float = 0.1f,
+        invert: Boolean = false,
+        monochrome: Boolean = false
+    ): ImageFilter {
+        val halftoneShaderBuilder = RuntimeShaderBuilder(this.effect)
+        halftoneShaderBuilder.uniform("softness", softness)
+        halftoneShaderBuilder.uniform("invert", if (invert) 1 else 0)
+        halftoneShaderBuilder.uniform("monochrome", if (monochrome) 1 else 0)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = halftoneShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     fun effectModifier(softness: Float = 0.1f, invert: Boolean = false, monochrome: Boolean = false): Modifier {
         val halftoneShaderBuilder = RuntimeShaderBuilder(this.effect)
         halftoneShaderBuilder.uniform("softness", softness)
@@ -904,6 +1135,25 @@ class LevelsFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        lowLevel: Float = 0f,
+        highLevel: Float = 1f,
+        lowOutputLevel: Float = 0f,
+        highOutputLevel: Float = 1f
+    ): ImageFilter {
+        val levelsShaderBuilder = RuntimeShaderBuilder(this.effect)
+        levelsShaderBuilder.uniform("lowLevel", lowLevel)
+        levelsShaderBuilder.uniform("highLevel", highLevel)
+        levelsShaderBuilder.uniform("lowOutputLevel", lowOutputLevel)
+        levelsShaderBuilder.uniform("highOutputLevel", highOutputLevel)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = levelsShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(lowLevel: Float = 0f, highLevel: Float = 1f, lowOutputLevel: Float = 0f, highOutputLevel: Float = 1f): Modifier {
@@ -977,6 +1227,23 @@ class MapColorsFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        sourceColors: FloatArray = floatArrayOf(0f, 0f, 0f, 1f, 1f, 1f),
+        destColors: FloatArray = floatArrayOf(1f, 1f, 1f, 0f, 0f, 0f)
+    ): ImageFilter {
+        val mapColorsShaderBuilder = RuntimeShaderBuilder(this.effect)
+        mapColorsShaderBuilder.uniform("sourceColor0", sourceColors[0], sourceColors[1], sourceColors[2])
+        mapColorsShaderBuilder.uniform("sourceColor1", sourceColors[3], sourceColors[4], sourceColors[5])
+        mapColorsShaderBuilder.uniform("destColor0", destColors[0], destColors[1], destColors[2])
+        mapColorsShaderBuilder.uniform("destColor1", destColors[3], destColors[4], destColors[5])
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = mapColorsShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     fun effectModifier(sourceColors: FloatArray = floatArrayOf(0f, 0f, 0f, 1f, 1f, 1f), destColors: FloatArray = floatArrayOf(1f, 1f, 1f, 0f, 0f, 0f)): Modifier {
         val mapColorsShaderBuilder = RuntimeShaderBuilder(this.effect)
         mapColorsShaderBuilder.uniform("sourceColor0", sourceColors[0], sourceColors[1], sourceColors[2])
@@ -1024,6 +1291,21 @@ class MaskFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        threshold: Float = 0.5f,
+        invert: Boolean = false
+    ): ImageFilter {
+        val maskShaderBuilder = RuntimeShaderBuilder(this.effect)
+        maskShaderBuilder.uniform("threshold", threshold)
+        maskShaderBuilder.uniform("invert", if (invert) 1 else 0)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = maskShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     fun effectModifier(threshold: Float = 0.5f, invert: Boolean = false): Modifier {
         val maskShaderBuilder = RuntimeShaderBuilder(this.effect)
         maskShaderBuilder.uniform("threshold", threshold)
@@ -1056,6 +1338,19 @@ class OpacityFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        opacity: Float = 1f
+    ): ImageFilter {
+        val opacityShaderBuilder = RuntimeShaderBuilder(this.effect)
+        opacityShaderBuilder.uniform("opacity", opacity)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = opacityShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(opacity: Float = 1f): Modifier {
@@ -1092,6 +1387,19 @@ class PosterizeFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        numLevels: Int = 6
+    ): ImageFilter {
+        val posterizeShaderBuilder = RuntimeShaderBuilder(this.effect)
+        posterizeShaderBuilder.uniform("numLevels", numLevels)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = posterizeShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(numLevels: Int = 6): Modifier {
@@ -1151,6 +1459,19 @@ class QuantizeFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        numColors: Int = 16
+    ): ImageFilter {
+        val quantizeShaderBuilder = RuntimeShaderBuilder(this.effect)
+        quantizeShaderBuilder.uniform("numColors", numColors)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = quantizeShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     fun effectModifier(numColors: Int = 16): Modifier {
         val quantizeShaderBuilder = RuntimeShaderBuilder(this.effect)
         quantizeShaderBuilder.uniform("numColors", numColors)
@@ -1189,6 +1510,23 @@ class RGBAdjustFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        rFactor: Float = 0f,
+        gFactor: Float = 0f,
+        bFactor: Float = 0f
+    ): ImageFilter {
+        val rgbShaderBuilder = RuntimeShaderBuilder(this.effect)
+        rgbShaderBuilder.uniform("rFactor", rFactor)
+        rgbShaderBuilder.uniform("gFactor", gFactor)
+        rgbShaderBuilder.uniform("bFactor", bFactor)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = rgbShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(rFactor: Float = 0f, gFactor: Float = 0f, bFactor: Float = 0f): Modifier {
@@ -1236,6 +1574,15 @@ object SolarizeFilter : Filter {
             shaderName = "content",
             input = null
         ).asComposeRenderEffect()
+    }
+
+    fun imageFilter(size: FloatPair): ImageFilter {
+        val solarizeShaderBuilder = RuntimeShaderBuilder(this.effect)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = solarizeShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(): Modifier {
@@ -1330,6 +1677,30 @@ class SparkleFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        rays: Int = 50,
+        radius: Int = 25,
+        amount: Int = 50,
+        color: Color = Color.White,
+        randomness: Int = 25,
+        seed: Long = 371L
+    ): ImageFilter {
+        val sparkleShaderBuilder = RuntimeShaderBuilder(this@SparkleFilter.effect)
+        sparkleShaderBuilder.uniform("contentSize", size.first, size.second)
+        sparkleShaderBuilder.uniform("rays", rays)
+        sparkleShaderBuilder.uniform("radius", radius)
+        sparkleShaderBuilder.uniform("amount", amount.toFloat())
+        sparkleShaderBuilder.uniform("color", color.red, color.green, color.blue)
+        sparkleShaderBuilder.uniform("randomness", randomness)
+        sparkleShaderBuilder.uniform("seed", seed.toFloat())
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = sparkleShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     @Composable
     fun effectModifier(
         rays: Int = 50,
@@ -1394,6 +1765,23 @@ class SwizzleFilter : Filter {
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        rChannel: Int = 0,
+        gChannel: Int = 1,
+        bChannel: Int = 2
+    ): ImageFilter {
+        val swizzleShaderBuilder = RuntimeShaderBuilder(this.effect)
+        swizzleShaderBuilder.uniform("rChannel", rChannel)
+        swizzleShaderBuilder.uniform("gChannel", gChannel)
+        swizzleShaderBuilder.uniform("bChannel", bChannel)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = swizzleShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
     fun effectModifier(rChannel: Int = 0, gChannel: Int = 1, bChannel: Int = 2): Modifier {
         val swizzleShaderBuilder = RuntimeShaderBuilder(this.effect)
         swizzleShaderBuilder.uniform("rChannel", rChannel)
@@ -1434,6 +1822,21 @@ class TransferFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        targetColor: FloatArray = floatArrayOf(1f, 0.8f, 0.6f),
+        amount: Float = 0.5f
+    ): ImageFilter {
+        val transferShaderBuilder = RuntimeShaderBuilder(this.effect)
+        transferShaderBuilder.uniform("targetColor", targetColor[0], targetColor[1], targetColor[2])
+        transferShaderBuilder.uniform("amount", amount)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = transferShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(targetColor: FloatArray = floatArrayOf(1f, 0.8f, 0.6f), amount: Float = 0.5f): Modifier {
@@ -1480,6 +1883,25 @@ class ThresholdFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        lowerThreshold: Int = 127,
+        upperThreshold: Int = 127,
+        white: Int = 0xffffff,
+        black: Int = 0x000000
+    ): ImageFilter {
+        val thresholdShaderBuilder = RuntimeShaderBuilder(this.effect)
+        thresholdShaderBuilder.uniform("lowerThreshold", lowerThreshold / 255f)
+        thresholdShaderBuilder.uniform("upperThreshold", upperThreshold / 255f)
+        thresholdShaderBuilder.uniform("white", ((white shr 16) and 0xff) / 255f, ((white shr 8) and 0xff) / 255f, (white and 0xff) / 255f)
+        thresholdShaderBuilder.uniform("black", ((black shr 16) and 0xff) / 255f, ((black shr 8) and 0xff) / 255f, (black and 0xff) / 255f)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = thresholdShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(lowerThreshold: Int = 127, upperThreshold: Int = 127, white: Int = 0xffffff, black: Int = 0x000000): Modifier {
@@ -1530,6 +1952,23 @@ class TritoneFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f),
+        midColor: FloatArray = floatArrayOf(0.533f, 0.533f, 0.533f),
+        highColor: FloatArray = floatArrayOf(1f, 1f, 1f)
+    ): ImageFilter {
+        val tritoneShaderBuilder = RuntimeShaderBuilder(this.effect)
+        tritoneShaderBuilder.uniform("shadowColor", shadowColor[0], shadowColor[1], shadowColor[2])
+        tritoneShaderBuilder.uniform("midColor", midColor[0], midColor[1], midColor[2])
+        tritoneShaderBuilder.uniform("highColor", highColor[0], highColor[1], highColor[2])
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = tritoneShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
     }
 
     fun effectModifier(shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f), midColor: FloatArray = floatArrayOf(0.533f, 0.533f, 0.533f), highColor: FloatArray = floatArrayOf(1f, 1f, 1f)): Modifier {
