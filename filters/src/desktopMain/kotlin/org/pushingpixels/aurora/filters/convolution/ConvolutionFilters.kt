@@ -890,7 +890,7 @@ object MotionBlurFilter : Filter {
         val cx = centreX * size.first
         val cy = centreY * size.second
 
-        val motionBlurShaderBuilder = RuntimeShaderBuilder(this@MotionBlurFilter.effect)
+        val motionBlurShaderBuilder = RuntimeShaderBuilder(this.effect)
         motionBlurShaderBuilder.uniform("angle", angle)
         motionBlurShaderBuilder.uniform("distanceAmount", distanceAmount)
         motionBlurShaderBuilder.uniform("rotation", rotation)

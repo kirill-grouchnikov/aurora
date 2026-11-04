@@ -139,13 +139,13 @@ class ChromaKeyFilter : Filter {
         hTolerance: Float = 0f,
         sTolerance: Float = 0f,
         bTolerance: Float = 0f,
-        color: Int = 0x00ff00
+        color: Color = Color(0xFF00FF00)
     ): ImageFilter {
         val chromaKeyShaderBuilder = RuntimeShaderBuilder(this.effect)
         chromaKeyShaderBuilder.uniform("hTolerance", hTolerance)
         chromaKeyShaderBuilder.uniform("sTolerance", sTolerance)
         chromaKeyShaderBuilder.uniform("bTolerance", bTolerance)
-        chromaKeyShaderBuilder.uniform("color", ((color shr 16) and 0xff) / 255f, ((color shr 8) and 0xff) / 255f, (color and 0xff) / 255f)
+        chromaKeyShaderBuilder.uniform("color", color.red, color.green, color.blue)
         return ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = chromaKeyShaderBuilder,
             shaderName = "content",
@@ -153,12 +153,12 @@ class ChromaKeyFilter : Filter {
         )
     }
 
-    fun effectModifier(hTolerance: Float = 0f, sTolerance: Float = 0f, bTolerance: Float = 0f, color: Int = 0x00ff00): Modifier {
+    fun effectModifier(hTolerance: Float = 0f, sTolerance: Float = 0f, bTolerance: Float = 0f, color: Color = Color(0xFF00FF00)): Modifier {
         val chromaKeyShaderBuilder = RuntimeShaderBuilder(this.effect)
         chromaKeyShaderBuilder.uniform("hTolerance", hTolerance)
         chromaKeyShaderBuilder.uniform("sTolerance", sTolerance)
         chromaKeyShaderBuilder.uniform("bTolerance", bTolerance)
-        chromaKeyShaderBuilder.uniform("color", ((color shr 16) and 0xff) / 255f, ((color shr 8) and 0xff) / 255f, (color and 0xff) / 255f)
+        chromaKeyShaderBuilder.uniform("color", color.red, color.green, color.blue)
 
         val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = chromaKeyShaderBuilder,

@@ -159,7 +159,7 @@ class BrushedMetalFilter: Filter {
     fun effectModifier(
         radius: Int = 10,
         amount: Float = 0.1f,
-        color: Color = Color(0xFF888888),
+        color: Color = Color.Gray,
         shine: Float = 0.1f,
         monochrome: Boolean = true
     ): Modifier {

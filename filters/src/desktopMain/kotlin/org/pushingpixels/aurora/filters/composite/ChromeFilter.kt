@@ -38,8 +38,8 @@ import java.nio.ByteOrder
  * Material properties for lighting calculations in [ChromeFilter].
  * Replicates the JH-Labs LightFilter.Material.
  *
- * @param diffuseColor diffuse color as ARGB int (default 0xff888888)
- * @param specularColor specular color as ARGB int (default 0xffffffff)
+ * @param diffuseColor diffuse color (default gray)
+ * @param specularColor specular color (default white)
  * @param ambientIntensity ambient light intensity (0-1, default 0.5)
  * @param diffuseReflectivity diffuse reflectivity (0-1, default 1.0)
  * @param specularReflectivity specular reflectivity (0-1, default 1.0)
@@ -47,9 +47,9 @@ import java.nio.ByteOrder
  * @param reflectivity environment reflectivity (0-1, default 0.0)
  * @param opacity material opacity (0-1, default 1.0)
  */
-data class Material(
-    val diffuseColor: Int = 0xff888888.toInt(),
-    val specularColor: Int = 0xffffffff.toInt(),
+data class  Material(
+    val diffuseColor: Color = Color.Gray,
+    val specularColor: Color = Color.White,
     val ambientIntensity: Float = 0.5f,
     val diffuseReflectivity: Float = 1.0f,
     val specularReflectivity: Float = 1.0f,
@@ -57,21 +57,13 @@ data class Material(
     val reflectivity: Float = 0.0f,
     val opacity: Float = 1.0f
 ) {
-    /** Extract the RGB components (0-1) from the ARGB int. */
+    /** Extract the RGB components (0-1) from the Color. */
     val diffuseRGB: FloatArray
-        get() = floatArrayOf(
-            ((diffuseColor shr 16) and 0xff) / 255f,
-            ((diffuseColor shr 8) and 0xff) / 255f,
-            (diffuseColor and 0xff) / 255f
-        )
+        get() = floatArrayOf(diffuseColor.red, diffuseColor.green, diffuseColor.blue)
 
-    /** Extract the RGB components (0-1) from the specular ARGB int. */
+    /** Extract the RGB components (0-1) from the Color. */
     val specularRGB: FloatArray
-        get() = floatArrayOf(
-            ((specularColor shr 16) and 0xff) / 255f,
-            ((specularColor shr 8) and 0xff) / 255f,
-            (specularColor and 0xff) / 255f
-        )
+        get() = floatArrayOf(specularColor.red, specularColor.green, specularColor.blue)
 }
 
 /**
@@ -105,7 +97,7 @@ enum class BumpShape {
  * Replicates the JH-Labs LightFilter.Light.
  *
  * @param type light type (ambient, distant, point, spot)
- * @param color light color as ARGB int (default white)
+ * @param color light color (default white)
  * @param intensity light intensity (default 1.0)
  * @param azimuth azimuth angle in radians (default ~270°)
  * @param elevation elevation angle in radians (default ~30°)
@@ -117,7 +109,7 @@ enum class BumpShape {
  */
 data class Light(
     val type: LightType = LightType.DISTANT,
-    val color: Int = 0xffffffff.toInt(),
+    val color: Color = Color.White,
     val intensity: Float = 1.0f,
     val azimuth: Float = 270f * 3.14159265f / 180f,
     val elevation: Float = 0.5235987755982988f,
@@ -127,14 +119,9 @@ data class Light(
     val coneAngle: Float = 3.14159265f / 6f,
     val distance: Float = 100.0f
 ) {
-    /** Extract the RGB components (0-1) from the ARGB int, scaled by intensity. */
+    /** Extract the RGB components (0-1) from the Color, scaled by intensity. */
     val colorRGB: FloatArray
-        get() {
-            val r = ((color shr 16) and 0xff) / 255f
-            val g = ((color shr 8) and 0xff) / 255f
-            val b = (color and 0xff) / 255f
-            return floatArrayOf(r * intensity, g * intensity, b * intensity)
-        }
+        get() = floatArrayOf(color.red * intensity, color.green * intensity, color.blue * intensity)
 
     /** Precomputed cosine of the cone angle for spotlight. */
     val cosConeAngle: Float
