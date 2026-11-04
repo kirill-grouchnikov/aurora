@@ -29,6 +29,7 @@ import androidx.compose.ui.window.*
 import org.pushingpixels.aurora.filters.composite.ColorHalftoneFilter
 import org.pushingpixels.aurora.filters.composite.effectChainModifier
 import org.pushingpixels.aurora.filters.convolution.MotionBlurFilter
+import kotlin.math.PI
 
 /**
  * Entry point for the Composed Filters Demo.
@@ -40,7 +41,7 @@ fun main() = application {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(1000.dp, 800.dp)
+        size = DpSize(1200.dp, 800.dp)
     )
 
     Window(
@@ -52,7 +53,7 @@ fun main() = application {
 
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Fixed(3),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(32.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 24.dp),
@@ -64,7 +65,7 @@ fun main() = application {
             item {
                 FilterBox(
                     effectModifier = MotionBlurFilter.effectModifier(
-                        angle = 0.785f,
+                        angle = PI.toFloat() / 4.0f,
                         distanceAmount = 40f,
                         zoom = 0.2f
                     ),
@@ -88,13 +89,32 @@ fun main() = application {
                         inner = { size ->
                             MotionBlurFilter.imageFilter(
                                 size = size,
-                                angle = 0.785f,
+                                angle = PI.toFloat() / 4.0f,
                                 distanceAmount = 40f,
                                 zoom = 0.2f
                             )
                         }
                     ),
-                    renderEffectTitle = "Composed (halftone + motion blur)"
+                    renderEffectTitle = "Composed (halftone over motion blur)"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = Modifier.effectChainModifier(
+                        outer = { size ->
+                            MotionBlurFilter.imageFilter(
+                                size = size,
+                                angle = PI.toFloat() / 4.0f,
+                                distanceAmount = 40f,
+                                zoom = 0.2f
+                            )
+                        },
+                        inner = { size ->
+                            colorHalftoneFilter.imageFilter(size, dotRadius = 3.0f)
+                        }
+                    ),
+                    renderEffectTitle = "Composed (motion blur over halftone)"
                 )
             }
         }
