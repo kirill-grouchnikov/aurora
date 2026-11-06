@@ -28,6 +28,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.IntOffset
@@ -322,6 +323,56 @@ public fun Cascade(
                     )
                 )
             }
+        }
+    }
+}
+
+// ─── Chevrons ──────────────────────────────────────────────────────────────────
+
+@Composable
+public fun Chevrons(
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1000,
+    cap: StrokeCap = StrokeCap.Round,
+) {
+    val t = rememberInfiniteTransition()
+
+    // Three chevrons with staggered fade animation
+    val alphas = List(3) { index ->
+        t.animateFloat(
+            initialValue = 1f,
+            targetValue = 0.2f,
+            animationSpec = infiniteRepeatable(
+                tween(durationMillis = duration, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart,
+                initialStartOffset = StartOffset(
+                    offsetMillis = index * duration / 3,
+                    offsetType = StartOffsetType.Delay
+                )
+            )
+        )
+    }
+
+    Canvas(modifier) {
+        val dim = size.width
+        val scale = dim / 24f
+        val strokeWidth = 2.5f * scale
+
+        // Chevron x positions: [3.5, 9, 14.5]
+        val chevrons = listOf(3.5f to 6.5f, 9f to 6.5f, 14.5f to 6.5f)
+
+        chevrons.forEachIndexed { index, (x, y) ->
+            val path = Path().apply {
+                moveTo(x * scale, y * scale)
+                lineTo((x + 5.5f) * scale, (y + 5.5f) * scale)
+                lineTo(x * scale, (y + 11f) * scale)
+            }
+            drawPath(
+                path = path,
+                color = color.copy(alpha = alphas[index].value.coerceIn(0f, 1f)),
+                style = Stroke(strokeWidth, cap = cap)
+            )
         }
     }
 }
@@ -816,6 +867,74 @@ public fun Eclipse(
     }
 }
 
+// ─── Fill ──────────────────────────────────────────────────────────────────────
+
+@Composable
+public fun Fill(
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1600,
+) {
+    val t = rememberInfiniteTransition()
+
+    // The fill animation: dasharray grows from 0 to LENGTH, then dashoffset sweeps
+    val progress by t.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = duration
+                // 0%: dasharray 0, LENGTH (nothing visible)
+                0f at 0 using CubicBezierEasing(0.65f, 0f, 0.35f, 1f)
+                // 50%: dasharray LENGTH, LENGTH (full circle drawn)
+                0.5f at duration / 2 using CubicBezierEasing(0.65f, 0f, 0.35f, 1f)
+                // 100%: dasharray LENGTH, LENGTH with offset (swept around)
+                1f at duration using CubicBezierEasing(0.65f, 0f, 0.35f, 1f)
+            },
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    Canvas(modifier) {
+        val dim = size.width
+        val center = dim / 2f
+        val outerRadius = 10.25f / 24f * dim
+        val innerRadius = 7.0f / 24f * dim
+        val outerStrokeWidth = 2.5f / 24f * dim
+
+        // Background circle
+        drawCircle(
+            color = color.copy(alpha = 0.2f),
+            radius = outerRadius,
+            center = Offset(center, center),
+            style = Stroke(outerStrokeWidth)
+        )
+
+        // Rotate -90 degrees so the fill starts from the top
+        val startAngle: Float
+        val sweepAngle: Float
+        if (progress <= 0.5f) {
+            // Phase 1 - growing
+            startAngle = 0f
+            sweepAngle = 360f * progress * 2.0f
+        } else {
+            // Phase 2 - shrinking
+            startAngle = (progress - 0.5f) * 360f * 2.0f
+            sweepAngle = 360f - startAngle
+        }
+        withTransform({ this.rotate(-90f, Offset(center, center)) }) {
+            drawArc(
+                color = color,
+                startAngle = startAngle,
+                sweepAngle = sweepAngle,
+                useCenter = true,
+                topLeft = Offset(center - innerRadius, center - innerRadius),
+                size = Size(2 * innerRadius, 2 * innerRadius),
+            )
+        }
+    }
+}
+
 // ─── Flip ──────────────────────────────────────────────────────────────────────
 
 @Composable
@@ -1121,6 +1240,105 @@ public fun Loading(
     }
 }
 
+// ─── Loop ──────────────────────────────────────────────────────────────────────
+
+@Composable
+public fun Loop(
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1600,
+    easing: Easing = LinearEasing,
+    cap: StrokeCap = StrokeCap.Round,
+) {
+    val t = rememberInfiniteTransition()
+    val offset by t.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            tween(durationMillis = duration, easing = easing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    Canvas(modifier) {
+        val dim = size.width
+        val scale = dim / 24f
+        val strokeWidth = 2.5f * scale
+
+        // Figure-8 / infinity path matching the original SVG
+        // SVG: M12 12c-2-2.7-3.6-4-5.5-4a4 4 0 0 0 0 8c1.9 0 3.5-1.3 5.5-4s3.6-4 5.5-4a4 4 0 0 1 0 8c-1.9 0-3.5-1.3-5.5-4z
+        val path = Path().apply {
+            moveTo(12f * scale, 12f * scale)
+            // Left lobe approach: cubic bezier from center to top of left circle
+            cubicTo(
+                10f * scale, 9.3f * scale,
+                8.4f * scale, 8f * scale,
+                6.5f * scale, 8f * scale
+            )
+            // Left arc: 180° arc from top to bottom of left circle (center 6.5, 12, radius 4)
+            // SVG: a4 4 0 0 0 0 8 — sweep-flag 0 means counter-clockwise (left side)
+            // Start at top (-90°), sweep counter-clockwise (-180°) to bottom via left side
+            arcTo(
+                Rect(Offset(2.5f * scale, 8f * scale), Size(8f * scale, 8f * scale)),
+                -90f, -180f, false
+            )
+            // Return to center: cubic bezier from bottom of left circle to center
+            cubicTo(
+                8.4f * scale, 16f * scale,
+                10f * scale, 14.7f * scale,
+                12f * scale, 12f * scale
+            )
+            // Right lobe approach: cubic bezier from center to top of right circle
+            cubicTo(
+                14f * scale, 9.3f * scale,
+                15.6f * scale, 8f * scale,
+                17.5f * scale, 8f * scale
+            )
+            // Right arc: 180° arc from top to bottom of right circle (center 17.5, 12, radius 4)
+            // SVG: a4 4 0 0 1 0 8 — sweep-flag 1 means clockwise (right side)
+            // Start at top (-90°), sweep clockwise (+180°) to bottom via right side
+            arcTo(
+                Rect(Offset(13.5f * scale, 8f * scale), Size(8f * scale, 8f * scale)),
+                -90f, 180f, false
+            )
+            // Return to center: cubic bezier from bottom of right circle to center
+            cubicTo(
+                15.6f * scale, 16f * scale,
+                14f * scale, 14.7f * scale,
+                12f * scale, 12f * scale
+            )
+        }
+
+        // Actual measured path length of the figure-8 in SVG coords (viewBox 24x24):
+        // 2 arcs of 180° (r=4) + 4 cubic beziers ≈ 53.364
+        // The SVG uses pathLength="100" with dash="30", so the dash is 30% of the path.
+        val pathMeasure = 53.364f * scale
+        val dash = 0.3f * pathMeasure
+        val dashGap = 0.7f * pathMeasure
+
+        // Background path
+        drawPath(
+            path = path,
+            color = color.copy(alpha = 0.2f),
+            style = Stroke(strokeWidth, cap = cap)
+        )
+
+        // Animated dashed path
+        drawPath(
+            path = path,
+            color = color,
+            style = Stroke(
+                strokeWidth,
+                cap = cap,
+                pathEffect = PathEffect.dashPathEffect(
+                    floatArrayOf(dash, dashGap),
+                    phase = -offset * pathMeasure
+                )
+            )
+        )
+    }
+}
+
 // ─── Morph ─────────────────────────────────────────────────────────────────────
 
 @Composable
@@ -1228,6 +1446,70 @@ public fun Orbit(
                 sweepAngle = 360.0f,
                 useCenter = false,
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Round))
+        }
+    }
+}
+
+// ─── Phases ────────────────────────────────────────────────────────────────────
+
+@Composable
+public fun Phases(
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 3000,
+) {
+    val t = rememberInfiniteTransition()
+
+    // The shade slides from right to left, creating a moon-phase effect
+    val shadeX by t.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = duration
+                // Starts at right (clear = 2 * (RADIUS + BLEED))
+                0f at 0 using EaseOut
+                // Middle: shade centered
+                0.5f at duration / 2 using EaseIn
+                // End: shade at left
+                1f at duration using EaseOut
+            },
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    Canvas(modifier) {
+        val dim = size.width
+        val center = dim / 2f
+        val radius = 10f / 24f * dim
+        val bleed = 0.25f / 24f * dim
+        val clear = 2f * (radius + bleed)
+
+        // Background circle
+        drawCircle(
+            color = color.copy(alpha = 0.2f),
+            radius = radius,
+            center = Offset(center, center)
+        )
+
+        // The shade moves from right to left
+        val shadeCenterX = center + clear - shadeX * (clear * 2f)
+
+        // Clip to the main circle (matching the SVG mask behavior) and draw the
+        // illuminated portion by subtracting the shade circle using even-odd fill type
+        clipPath(Path().apply { addOval(Rect(Offset(center - radius, center - radius), Size(2 * radius, 2 * radius))) }) {
+            val crescentPath = Path().apply {
+                fillType = PathFillType.EvenOdd
+                addOval(Rect(Offset(center - radius, center - radius), Size(2 * radius, 2 * radius)))
+                addOval(Rect(
+                    Offset(shadeCenterX - radius - bleed, center - radius - bleed),
+                    Size(2 * (radius + bleed), 2 * (radius + bleed))
+                ))
+            }
+            drawPath(
+                path = crescentPath,
+                color = color,
+            )
         }
     }
 }
@@ -1393,6 +1675,66 @@ public fun Ripple(
     }
 }
 
+// ─── Scan ──────────────────────────────────────────────────────────────────────
+
+@Composable
+public fun Scan(
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1800,
+    cap: StrokeCap = StrokeCap.Round,
+) {
+    val t = rememberInfiniteTransition()
+
+    val scanY by t.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = duration
+                0f at 0 using CubicBezierEasing(0.45f, 0f, 0.55f, 1f)
+                1f at duration / 2 using CubicBezierEasing(0.45f, 0f, 0.55f, 1f)
+                0f at duration using CubicBezierEasing(0.45f, 0f, 0.55f, 1f)
+            },
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    Canvas(modifier) {
+        val dim = size.width
+        val scale = dim / 24f
+
+        // Rounded rectangle: x=3, y=3, width=18, height=18, rx=4
+        val rectX = 3f * scale
+        val rectY = 3f * scale
+        val rectSize = 18f * scale
+        val cornerRadius = 4f * scale
+        val rectStrokeWidth = 2f * scale
+
+        // Background rounded rect
+        drawRoundRect(
+            color = color.copy(alpha = 0.2f),
+            topLeft = Offset(rectX, rectY),
+            size = Size(rectSize, rectSize),
+            cornerRadius = CornerRadius(cornerRadius, cornerRadius),
+            style = Stroke(rectStrokeWidth)
+        )
+
+        // Scan line: x1=7.5, x2=16.5, y moves from 6.5 to 6.5+11
+        val travel = 11f * scale
+        val lineY = (6.5f * scale) + scanY * travel
+        val lineStrokeWidth = 2.5f * scale
+
+        drawLine(
+            color = color,
+            start = Offset(7.5f * scale, lineY),
+            end = Offset(16.5f * scale, lineY),
+            strokeWidth = lineStrokeWidth,
+            cap = cap
+        )
+    }
+}
+
 // ─── Slide ─────────────────────────────────────────────────────────────────────
 
 @Composable
@@ -1473,7 +1815,6 @@ public fun Slide(
             )
         )
     }
-
 
     Canvas(modifier) {
         val dim = size.width
@@ -1568,6 +1909,115 @@ public fun Snake(
                         intervals = floatArrayOf(inter, circumference - inter),
                     )
                 )
+            )
+        }
+    }
+}
+
+// ─── Split ─────────────────────────────────────────────────────────────────────
+
+@Composable
+public fun Split(
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1400,
+) {
+    val t = rememberInfiniteTransition()
+
+    val split by t.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = duration
+                // 0%, 100%: no split (translate 0, scale 1)
+                0f at 0 using CubicBezierEasing(0.65f, 0f, 0.35f, 1f)
+                // 40%, 60%: split apart (translate -5px, scale 0.65)
+                1f at duration * 40 / 100 using CubicBezierEasing(0.65f, 0f, 0.35f, 1f)
+                1f at duration * 60 / 100 using CubicBezierEasing(0.65f, 0f, 0.35f, 1f)
+                // Back to no split
+                0f at duration using CubicBezierEasing(0.65f, 0f, 0.35f, 1f)
+            },
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    Canvas(modifier) {
+        val dim = size.width
+        val center = dim / 2f
+        val dotRadius = 4f / 24f * dim
+        val apart = 5f / 24f * dim
+
+        val translateX = if (split > 0.5f) apart * split else 0f
+        val scale = if (split > 0.5f) 1.0f - 0.35f * (split - 0.5f) / 0.5f else 1.0f
+
+        // Dot 0: moves left when split
+        drawCircle(
+            color = color,
+            radius = dotRadius * scale,
+            center = Offset(center - translateX, center)
+        )
+
+        // Dot 1: moves right when split
+        drawCircle(
+            color = color,
+            radius = dotRadius * scale,
+            center = Offset(center + translateX, center)
+        )
+    }
+}
+
+// ─── Steps ─────────────────────────────────────────────────────────────────────
+
+@Composable
+public fun Steps(
+    modifier: Modifier,
+    color: Color,
+    duration: Int = 1600,
+) {
+    val t = rememberInfiniteTransition()
+
+    val slots = 8 // SEGMENTS.length * 2
+
+    val alphas = List(4) { index ->
+        t.animateFloat(
+            initialValue = 1f,
+            targetValue = 0.15f,
+            animationSpec = infiniteRepeatable(
+                animation = keyframes {
+                    durationMillis = duration
+                    // 0%-55%: opacity 1
+                    1f at 0 using LinearEasing
+                    1f at duration * 55 / 100 using LinearEasing
+                    // 60%-100%: opacity 0.15
+                    0.15f at duration * 60 / 100 using LinearEasing
+                    0.15f at duration using LinearEasing
+                },
+                repeatMode = RepeatMode.Restart,
+                initialStartOffset = StartOffset(
+                    offsetMillis = index * duration / slots,
+                    offsetType = StartOffsetType.Delay
+                )
+            )
+        )
+    }
+
+    Canvas(modifier) {
+        val dim = size.width
+        val scale = dim / 24f
+
+        // SEGMENTS: [1, 7, 13, 19] — x positions
+        val segments = listOf(1f, 7f, 13f, 19f)
+        val rectWidth = 4f * scale
+        val rectHeight = 6f * scale
+        val cornerRadius = 1.25f * scale
+
+        segments.forEachIndexed { index, x ->
+            drawRoundRect(
+                color = color.copy(alpha = alphas[index].value.coerceIn(0f, 1f)),
+                topLeft = Offset(x * scale, 9f * scale),
+                size = Size(rectWidth, rectHeight),
+                cornerRadius = CornerRadius(cornerRadius, cornerRadius)
             )
         }
     }
@@ -1705,7 +2155,6 @@ public fun Wave(
         )
     }
 
-
     Canvas(modifier) {
         val dim = size.width
         val barWidth = dim * 0.12f
@@ -1723,3 +2172,4 @@ public fun Wave(
         }
     }
 }
+

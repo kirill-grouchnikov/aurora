@@ -33,7 +33,7 @@ fun main() = application {
     val state = rememberWindowState(
         placement = WindowPlacement.Floating,
         position = WindowPosition.Aligned(Alignment.Center),
-        size = DpSize(640.dp, 560.dp)
+        size = DpSize(800.dp, 560.dp)
     )
 
     Window(
@@ -54,6 +54,7 @@ fun main() = application {
             item { SpinnerItem("Blocks") { Blocks(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("BouncingDots") { BouncingDots(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Cascade") { Cascade(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Chevrons") { Chevrons(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("CircularDots") { CircularDots(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Classic") { Classic(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("ClassicV2") { ClassicV2(modifier = Modifier.size(24.dp), color = color) } }
@@ -62,19 +63,25 @@ fun main() = application {
             item { SpinnerItem("Compass") { Compass(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Dual") { Dual(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Eclipse") { Eclipse(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Fill") { Fill(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Flip") { Flip(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Gather") { Gather(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Leap") { Leap(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("LinearDots") { LinearDots(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Loading") { Loading(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Loop") { Loop(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Morph") { Morph(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Orbit") { Orbit(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Phases") { Phases(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Pulse") { Pulse(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Radar") { Radar(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Ring") { Ring(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Ripple") { Ripple(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Scan") { Scan(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Slide") { Slide(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Snake") { Snake(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Split") { Split(modifier = Modifier.size(24.dp), color = color) } }
+            item { SpinnerItem("Steps") { Steps(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Swirl") { Swirl(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Trace") { Trace(modifier = Modifier.size(24.dp), color = color) } }
             item { SpinnerItem("Wave") { Wave(modifier = Modifier.size(24.dp), color = color) } }
