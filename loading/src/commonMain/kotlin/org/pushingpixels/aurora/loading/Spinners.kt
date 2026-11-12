@@ -61,17 +61,14 @@ public fun Arc(
 
     Canvas(modifier) {
         val radius = size.width / 2f
-        val strokeWidth = 2.5.dp.toPx()
+        val strokeWidthPx = 2.5.dp.toPx()
         val circumference = 2f * PI.toFloat() * radius
         val dash = 18.0f * circumference / (18.0f + 44.8f)
+        val stroke = Stroke(strokeWidthPx, cap = cap, pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash, circumference - dash)))
         withTransform({ rotate(angle) }) {
             drawArc(
                 color = color, startAngle = 0f, sweepAngle = 360f, useCenter = false,
-                style = Stroke(
-                    strokeWidth,
-                    cap = cap,
-                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash, circumference - dash))
-                ),
+                style = stroke,
             )
         }
     }
@@ -125,9 +122,9 @@ public fun Atom(
     }
 
     Canvas(modifier) {
-        val strokeWidth = 1.5.dp.toPx()
-        val innerStrokeWidth = 0.8.dp.toPx()
-        drawCircle(color, radius = size.width / 2f, style = Stroke(strokeWidth))
+        val strokeWidthPx = 1.5.dp.toPx()
+        val innerStrokeWidthPx = 0.8.dp.toPx()
+        drawCircle(color, radius = size.width / 2f, style = Stroke(strokeWidthPx))
 
         for ((index, orbit) in orbits.withIndex()) {
             val orbitValue = orbit.value
@@ -139,7 +136,7 @@ public fun Atom(
                         color = color,
                         topLeft = Offset(x = 0.5f * size.width * orbitValue, y = 0.0f),
                         size = Size(width = size.width * (1.0f - orbitValue), height = size.height),
-                        style = Stroke(innerStrokeWidth * (1.0f - orbitValue * orbitValue))
+                        style = Stroke(innerStrokeWidthPx * (1.0f - orbitValue * orbitValue))
                     )
                 }
             }
@@ -235,7 +232,6 @@ public fun BouncingDots(
 ) {
     val t = rememberInfiniteTransition()
 
-    // Dots
     val dots = List(3) { index ->
         t.animateFloat(
             initialValue = 0f,
@@ -301,6 +297,7 @@ public fun Cascade(
     Canvas(modifier) {
         val dim = size.width
         val center = dim / 2.0f
+        val strokeWidthPx = 1.6.dp.toPx()
         listOf(0.875f, 0.58f, 0.3f).forEachIndexed { index, cascadeScale ->
             val scaledRadius = 0.5f * dim * cascadeScale
             val circumference = 2.0f * PI.toFloat() * scaledRadius
@@ -308,6 +305,7 @@ public fun Cascade(
             withTransform({
                 rotate(cascades[index].value)
             }) {
+                val stroke = Stroke(strokeWidthPx, cap = cap, pathEffect = PathEffect.dashPathEffect(floatArrayOf(0.25f * circumference, 0.75f * circumference)))
                 drawArc(
                     color = color,
                     startAngle = 0f,
@@ -315,12 +313,7 @@ public fun Cascade(
                     useCenter = false,
                     topLeft = Offset(x = center - scaledRadius, y = center - scaledRadius),
                     size = Size(width = 2.0f * scaledRadius, height = 2.0f * scaledRadius),
-                    style = Stroke(
-                        1.6.dp.toPx(),
-                        cap = cap,
-                        pathEffect = PathEffect.dashPathEffect(
-                            floatArrayOf(0.25f * circumference, 0.75f * circumference))
-                    )
+                    style = stroke
                 )
             }
         }
@@ -401,7 +394,8 @@ public fun CircularDots(
             val distanceFromHighlight = ((highlight + index / 8f) % 1f)
             val alpha = 1f - distanceFromHighlight * 0.8f
             drawCircle(
-                color.copy(alpha = alpha.coerceIn(0f, 1f)),
+                color = color,
+                alpha = alpha.coerceIn(0f, 1f),
                 radius = dotR,
                 center = Offset(
                     ((8f + 6.5f * sin(angle)) * scale).toFloat(),
@@ -433,12 +427,10 @@ public fun Classic(
         val barThickness = 0.1f * dim
         val offsetFromCenter = 0.28f * dim
 
-        for (index in 0..11) {
-            val distanceFromHighlight = ((highlight + index / 12f) % 1f)
-            val alpha = 1f - distanceFromHighlight * 0.8f
-            withTransform({
-                translate(dim / 2f, dim / 2f)
-            }) {
+        withTransform({ translate(dim / 2f, dim / 2f) }) {
+            for (index in 0..11) {
+                val distanceFromHighlight = ((highlight + index / 12f) % 1f)
+                val alpha = 1f - distanceFromHighlight * 0.8f
                 val angle = index * PI.toFloat() / 6.0f
 
                 val startPoint =
@@ -449,7 +441,8 @@ public fun Classic(
                 )
 
                 drawLine(
-                    color = color.copy(alpha = alpha.coerceIn(0f, 1f)),
+                    color = color,
+                    alpha = alpha.coerceIn(0f, 1f),
                     start = startPoint,
                     end = endPoint,
                     strokeWidth = barThickness,
@@ -481,12 +474,10 @@ public fun ClassicV2(
         val barThickness = 0.1f * dim
         val offsetFromCenter = 0.28f * dim
 
-        for (index in 0..7) {
-            val distanceFromHighlight = ((highlight + index / 8f) % 1f)
-            val alpha = 1f - distanceFromHighlight * 0.8f
-            withTransform({
-                translate(dim / 2f, dim / 2f)
-            }) {
+        withTransform({ translate(dim / 2f, dim / 2f) }) {
+            for (index in 0..7) {
+                val distanceFromHighlight = ((highlight + index / 8f) % 1f)
+                val alpha = 1f - distanceFromHighlight * 0.8f
                 val angle = index * PI.toFloat() / 4.0f
 
                 val startPoint =
@@ -497,7 +488,8 @@ public fun ClassicV2(
                 )
 
                 drawLine(
-                    color = color.copy(alpha = alpha.coerceIn(0f, 1f)),
+                    color = color,
+                    alpha = alpha.coerceIn(0f, 1f),
                     start = startPoint,
                     end = endPoint,
                     strokeWidth = barThickness,
@@ -510,16 +502,16 @@ public fun ClassicV2(
 
 // ─── Clock ─────────────────────────────────────────────────────────────────────
 
-internal fun Float.toRadians() = this * PI.toFloat() / 180f
+private fun Float.toRadians() = this * PI.toFloat() / 180f
 
-internal val PointZero = Offset(0f, 0f)
-internal fun radialToCartesian(
+private val PointZero = Offset(0f, 0f)
+private fun radialToCartesian(
     radius: Float,
     angleRadians: Float,
     center: Offset = PointZero
 ) = directionVectorPointF(angleRadians) * radius + center
 
-internal fun directionVectorPointF(angleRadians: Float) =
+private fun directionVectorPointF(angleRadians: Float) =
     Offset(cos(angleRadians), sin(angleRadians))
 
 @Composable
@@ -571,7 +563,7 @@ public fun Clock(
         )
     }
 
-    val path = polygon.toPath()
+    val path = remember { polygon.toPath() }
     Canvas(modifier) {
         val dim = size.width
         drawCircle(color.copy(alpha = 0.1f), radius = dim / 2f)
@@ -603,11 +595,11 @@ public fun Comet(
 
     Canvas(modifier) {
         val radius = size.width / 2
-        val strokeWidth = 2.5.dp.toPx()
+        val strokeWidthPx = 2.5.dp.toPx()
 
         // Account for the rounded stroke cap in start and sweep angles of the arc
-        val circumference = 2.0f * PI.toFloat() * (radius - strokeWidth / 2)
-        val strokeAngle = strokeWidth / circumference * 180.0f
+        val circumference = 2.0f * PI.toFloat() * (radius - strokeWidthPx / 2)
+        val strokeAngle = strokeWidthPx / circumference * 180.0f
 
         withTransform({
             rotate(angle)
@@ -622,7 +614,7 @@ public fun Comet(
                 startAngle = 0.0f + strokeAngle,
                 sweepAngle = 360.0f - strokeAngle * 2.0f,
                 useCenter = false,
-                style = Stroke(width = strokeWidth, cap = StrokeCap.Round))
+                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round))
         }
     }
 }
@@ -648,10 +640,8 @@ public fun Compass(
         val barThickness = 0.1f * dim
         val offsetFromCenter = 0.28f * dim
 
-        for (index in 0..3) {
-            withTransform({
-                translate(dim / 2f, dim / 2f)
-            }) {
+        withTransform({ translate(dim / 2f, dim / 2f) }) {
+            for (index in 0..3) {
                 val barAngle = index * PI.toFloat() / 2.0f - angle * PI.toFloat() / 180.0f
 
                 val startPoint =
@@ -692,7 +682,7 @@ public fun Dual(
 
     Canvas(modifier) {
         val dim = size.width
-        val strokeWidth = 2.5f.dp.toPx()
+        val strokeWidthPx = 2.5f.dp.toPx()
 
         withTransform({
             rotate(angle)
@@ -701,6 +691,7 @@ public fun Dual(
             val radiusOuter = 0.42f * dim
             val circumferenceOuter = 2f * PI.toFloat() * radiusOuter
             val dashOuter = 18.0f * circumferenceOuter / (18.0f + 44.8f)
+            val strokeOuter = Stroke(strokeWidthPx, cap = cap, pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashOuter, circumferenceOuter - dashOuter)))
             drawArc(
                 color = color,
                 startAngle = 0f,
@@ -708,11 +699,7 @@ public fun Dual(
                 useCenter = false,
                 topLeft = Offset(x = dim / 2.0f - radiusOuter, y = dim / 2.0f - radiusOuter),
                 size = Size(width = 2.0f * radiusOuter, height = 2.0f * radiusOuter),
-                style = Stroke(
-                    width = strokeWidth,
-                    cap = cap,
-                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashOuter, circumferenceOuter - dashOuter))
-                )
+                style = strokeOuter
             )
         }
         withTransform({
@@ -722,6 +709,7 @@ public fun Dual(
             val radiusInner = 0.23f * dim
             val circumferenceInner = 2f * PI.toFloat() * radiusInner
             val dashInner = 18.0f * circumferenceInner / (18.0f + 44.8f)
+            val strokeInner = Stroke(strokeWidthPx, cap = cap, pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashInner, circumferenceInner - dashInner)))
             drawArc(
                 color = color,
                 startAngle = 0f,
@@ -729,11 +717,7 @@ public fun Dual(
                 useCenter = false,
                 topLeft = Offset(x = dim / 2.0f - radiusInner, y = dim / 2.0f - radiusInner),
                 size = Size(width = 2.0f * radiusInner, height = 2.0f * radiusInner),
-                style = Stroke(
-                    width = strokeWidth,
-                    cap = cap,
-                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashInner, circumferenceInner - dashInner))
-                )
+                style = strokeInner
             )
         }
     }
@@ -779,7 +763,7 @@ public fun Eclipse(
         )
     }
 
-    val alpha = List(2) { index ->
+    val alphaAnims = List(2) { index ->
         t.animateFloat(
             initialValue = 1.0f,
             targetValue = 1.0f,
@@ -815,7 +799,7 @@ public fun Eclipse(
         )
     }
 
-    val scale = List(2) { index ->
+    val scaleAnims = List(2) { index ->
         t.animateFloat(
             initialValue = 1.0f,
             targetValue = 1.0f,
@@ -856,10 +840,11 @@ public fun Eclipse(
         val dotSize = dim * 0.4f
         for (index in 0..1) {
             val offset = slide[index].value
-            val alpha = alpha[index].value
-            val scale = scale[index].value
+            val alpha = alphaAnims[index].value
+            val scale = scaleAnims[index].value
             drawCircle(
-                color.copy(alpha = alpha.coerceIn(0f, 1f)),
+                color = color,
+                alpha = alpha.coerceIn(0f, 1f),
                 radius = dotSize * scale / 2f,
                 center = Offset(dim / 2.0f + offset * dim * 0.6f, dim / 2.0f)
             )
@@ -904,7 +889,8 @@ public fun Fill(
 
         // Background circle
         drawCircle(
-            color = color.copy(alpha = 0.2f),
+            color = color,
+            alpha = 0.2f,
             radius = outerRadius,
             center = Offset(center, center),
             style = Stroke(outerStrokeWidth)
@@ -1188,7 +1174,8 @@ public fun LinearDots(
         for (index in 0..2) {
             val alpha = fade[index].value
             drawCircle(
-                color.copy(alpha = alpha.coerceIn(0f, 1f)),
+                color = color,
+                alpha = alpha.coerceIn(0f, 1f),
                 radius = dotDiameter / 2f,
                 center = Offset(index * (dotDiameter + gap), dim / 2f)
             )
@@ -1219,23 +1206,27 @@ public fun Loading(
         val cellSize = dim / 15.0f
         segments.forEachIndexed { index, (x, y) ->
             val distanceFromHighlight = ((highlight + index / 8f) % 1f)
-            val alpha = 1f - distanceFromHighlight * 0.8f
+            val alpha = (1f - distanceFromHighlight * 0.8f).coerceIn(0f, 1f)
             drawRect(
-                color = color.copy(alpha = alpha.coerceIn(0f, 1f)),
+                color = color,
+                alpha = alpha,
                 topLeft = Offset(x * cellSize, y * cellSize),
-                Size(cellSize, cellSize))
+                size = Size(cellSize, cellSize))
             drawRect(
-                color = color.copy(alpha = alpha.coerceIn(0f, 1f)),
+                color = color,
+                alpha = alpha,
                 topLeft = Offset((x + 2) * cellSize, y * cellSize),
-                Size(cellSize, cellSize))
+                size = Size(cellSize, cellSize))
             drawRect(
-                color = color.copy(alpha = alpha.coerceIn(0f, 1f)),
+                color = color,
+                alpha = alpha,
                 topLeft = Offset(x * cellSize, (y + 2) * cellSize),
-                Size(cellSize, cellSize))
+                size = Size(cellSize, cellSize))
             drawRect(
-                color = color.copy(alpha = alpha.coerceIn(0f, 1f)),
+                color = color,
+                alpha = alpha,
                 topLeft = Offset((x + 2) * cellSize, (y + 2) * cellSize),
-                Size(cellSize, cellSize))
+                size = Size(cellSize, cellSize))
         }
     }
 }
@@ -1319,7 +1310,8 @@ public fun Loop(
         // Background path
         drawPath(
             path = path,
-            color = color.copy(alpha = 0.2f),
+            color = color,
+            alpha = 0.2f,
             style = Stroke(strokeWidth, cap = cap)
         )
 
@@ -1428,7 +1420,7 @@ public fun Orbit(
 
     Canvas(modifier) {
         val dim = size.width
-        val strokeWidth = 2.0.dp.toPx()
+        val strokeWidthPx = 2.0.dp.toPx()
         val dotR = dim / 8.0f
 
         drawCircle(color, radius = dotR, center = Offset(dim / 2f, dim / 2f))
@@ -1445,7 +1437,7 @@ public fun Orbit(
                 startAngle = 0.0f,
                 sweepAngle = 360.0f,
                 useCenter = false,
-                style = Stroke(width = strokeWidth, cap = StrokeCap.Round))
+                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round))
         }
     }
 }
@@ -1478,6 +1470,12 @@ public fun Phases(
         )
     )
 
+    val clipCirclePath = remember {
+        Path()
+    }
+    val crescentPath = remember {
+        Path().apply { fillType = PathFillType.EvenOdd }
+    }
     Canvas(modifier) {
         val dim = size.width
         val center = dim / 2f
@@ -1487,7 +1485,8 @@ public fun Phases(
 
         // Background circle
         drawCircle(
-            color = color.copy(alpha = 0.2f),
+            color = color,
+            alpha = 0.2f,
             radius = radius,
             center = Offset(center, center)
         )
@@ -1497,8 +1496,13 @@ public fun Phases(
 
         // Clip to the main circle (matching the SVG mask behavior) and draw the
         // illuminated portion by subtracting the shade circle using even-odd fill type
-        clipPath(Path().apply { addOval(Rect(Offset(center - radius, center - radius), Size(2 * radius, 2 * radius))) }) {
-            val crescentPath = Path().apply {
+        clipCirclePath.apply {
+            rewind()
+            addOval(Rect(Offset(center - radius, center - radius), Size(2 * radius, 2 * radius)))
+        }
+        clipPath(clipCirclePath) {
+            crescentPath.apply {
+                rewind()
                 fillType = PathFillType.EvenOdd
                 addOval(Rect(Offset(center - radius, center - radius), Size(2 * radius, 2 * radius)))
                 addOval(Rect(
@@ -1535,7 +1539,8 @@ public fun Pulse(
         val dim = size.width
         val dotR = dim / 8.0f
         drawCircle(
-            color = color.copy(alpha = alpha.coerceIn(0f, 1f)),
+            color = color,
+            alpha = alpha.coerceIn(0f, 1f),
             radius = dim / 2f * sc,
             style = Fill)
         drawCircle(color, radius = dotR)
@@ -1558,16 +1563,19 @@ public fun Radar(
         animationSpec = infiniteRepeatable(tween(durationMillis = duration, easing = easing))
     )
 
+    val beamPath = remember { Path() }
     Canvas(modifier) {
         val dim = size.width
         val beamStart = dim / 5.0f
+        val beamStrokeWidthPx = 2.5.dp.toPx()
 
-        drawCircle(color.copy(alpha = 0.2f), radius = dim / 2.0f)
-        drawCircle(color.copy(alpha = 0.2f), radius = dim / 3.0f, style = Stroke(2.5.dp.toPx()))
+        drawCircle(color, alpha = 0.2f, radius = dim / 2.0f)
+        drawCircle(color, alpha = 0.2f, radius = dim / 3.0f, style = Stroke(beamStrokeWidthPx))
         withTransform({
            rotate(beamAngle)
         }) {
-            val path = Path().apply {
+            beamPath.apply {
+                rewind()
                 moveTo(x = dim / 2.0f + beamStart, y = dim / 2.0f)
                 lineTo(x = dim, y = dim / 2.0f)
                 // outer arc
@@ -1602,7 +1610,7 @@ public fun Radar(
                 center = center,
                 radius = dim / 2.0f
             )
-            drawPath(path, beamBrush)
+            drawPath(beamPath, beamBrush)
         }
         drawCircle(color, radius = dim / 8.0f)
     }
@@ -1627,19 +1635,16 @@ public fun Ring(
 
     Canvas(modifier) {
         val radius = size.width / 2f
-        val strokeWidth = 2.5.dp.toPx()
+        val strokeWidthPx = 2.5.dp.toPx()
         val circumference = 2f * PI.toFloat() * radius
         val dash = 18.0f * circumference / (18.0f + 44.8f)
 
-        drawCircle(color.copy(alpha = 0.2f), radius = radius, style = Stroke(strokeWidth))
+        drawCircle(color, alpha = 0.2f, radius = radius, style = Stroke(strokeWidthPx))
+        val stroke = Stroke(strokeWidthPx, cap = cap, pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash, circumference - dash)))
         withTransform({ rotate(angle) }) {
             drawArc(
                 color = color, startAngle = 0f, sweepAngle = 360f, useCenter = false,
-                style = Stroke(
-                    strokeWidth,
-                    cap = cap,
-                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash, circumference - dash))
-                ),
+                style = stroke,
             )
         }
     }
@@ -1668,9 +1673,9 @@ public fun Ripple(
         for (i in 0..2) {
             val sp = ((position + i.toFloat() / 3f) % 1f)
             val sc = if (direction == RippleDirection.Out) sp else 1f - sp
-            val strokeWidth = (1.0.dp + sc.dp).toPx()
+            val strokeWidthPx = (1.0.dp + sc.dp).toPx()
             val alpha = if (direction == RippleDirection.Out) 1f - sp else sp
-            drawCircle(color.copy(alpha = alpha.coerceIn(0f, 1f)), radius = dim / 2f * sc, style = Stroke(strokeWidth))
+            drawCircle(color, alpha = alpha.coerceIn(0f, 1f), radius = dim / 2f * sc, style = Stroke(strokeWidthPx))
         }
     }
 }
@@ -1713,7 +1718,8 @@ public fun Scan(
 
         // Background rounded rect
         drawRoundRect(
-            color = color.copy(alpha = 0.2f),
+            color = color,
+            alpha = 0.2f,
             topLeft = Offset(rectX, rectY),
             size = Size(rectSize, rectSize),
             cornerRadius = CornerRadius(cornerRadius, cornerRadius),
@@ -1856,7 +1862,7 @@ public fun Snake(
                 0.0f at 0 using LinearEasing
 
                 // Goes to 540.0f at 50%
-                540.0f at duration * 2 using LinearEasing
+                540.0f at duration / 2 using LinearEasing
 
                 // Goes to 720.0f at the end
                 720.0f at duration using LinearEasing
@@ -1889,7 +1895,7 @@ public fun Snake(
 
     Canvas(modifier) {
         val radius = size.width / 2f
-        val strokeWidth = 2.5.dp.toPx()
+        val strokeWidthPx = 2.5.dp.toPx()
         val circumference = 2f * PI.toFloat() * radius
 
         val inter = (span.value / 360.0f) * circumference
@@ -1903,7 +1909,7 @@ public fun Snake(
                 sweepAngle = 360.0f,
                 useCenter = false,
                 style = Stroke(
-                    width = strokeWidth,
+                    width = strokeWidthPx,
                     cap = cap,
                     pathEffect = PathEffect.dashPathEffect(
                         intervals = floatArrayOf(inter, circumference - inter),
@@ -2014,7 +2020,8 @@ public fun Steps(
 
         segments.forEachIndexed { index, x ->
             drawRoundRect(
-                color = color.copy(alpha = alphas[index].value.coerceIn(0f, 1f)),
+                color = color,
+                alpha = alphas[index].value.coerceIn(0f, 1f),
                 topLeft = Offset(x * scale, 9f * scale),
                 size = Size(rectWidth, rectHeight),
                 cornerRadius = CornerRadius(cornerRadius, cornerRadius)
@@ -2057,7 +2064,8 @@ public fun Swirl(
             val distanceFromHighlight = ((highlight + adjustedGridPosition.toFloat() / cellCount.toFloat()) % 1f)
             val alpha = 1f - distanceFromHighlight * 0.8f
             drawRoundRect(
-                color = color.copy(alpha = alpha.coerceIn(0f, 1f)),
+                color = color,
+                alpha = alpha.coerceIn(0f, 1f),
                 topLeft = Offset(x, y),
                 size = Size(cellSize, cellSize),
                 cornerRadius = CornerRadius(cornerRadius, cornerRadius)
@@ -2085,26 +2093,27 @@ public fun Trace(
 
     Canvas(modifier) {
         val dim = size.width
+        val strokeWidthPx = 2.5.dp.toPx()
 
-        val strokeWidth = 2.5.dp.toPx()
-        val side = dim - strokeWidth
+        val side = dim - strokeWidthPx
         val cornerRadius = 0.2f * dim
 
         val perimeter = 4f * (side - 2 * cornerRadius) + 2f * PI.toFloat() * cornerRadius
         val dash = 0.8f * dim
 
         drawRoundRect(
-            color = color.copy(alpha = 0.2f),
+            color = color,
+            alpha = 0.2f,
             size = Size(side, side),
             cornerRadius = CornerRadius(cornerRadius, cornerRadius),
-            style = Stroke(strokeWidth)
+            style = Stroke(strokeWidthPx)
         )
         drawRoundRect(
             color = color,
             size = Size(side, side),
             cornerRadius = CornerRadius(cornerRadius, cornerRadius),
             style = Stroke(
-                width = strokeWidth,
+                width = strokeWidthPx,
                 cap = cap,
                 pathEffect = PathEffect.dashPathEffect(
                     intervals = floatArrayOf(dash, perimeter - dash),
