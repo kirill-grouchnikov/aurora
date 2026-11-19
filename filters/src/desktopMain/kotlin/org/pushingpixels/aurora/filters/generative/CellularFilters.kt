@@ -204,7 +204,7 @@ class CellularFilter : Filter {
             builder.uniform("useColormap", if (colors.isNotEmpty()) 1 else 0)
             builder.child("colormap",
                 if (colors.isNotEmpty())
-                    makeMultiStopHorizontalGradientShader(colors, 512) else makePassthroughShader()
+                    makeMultiStopHorizontalGradientShader(colors) else makePassthroughShader()
             )
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())

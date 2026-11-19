@@ -658,7 +658,7 @@ class FBMFilter : Filter {
             builder.uniform("operation", operation)
             builder.uniform("ridged", if (ridged) 1 else 0)
             builder.uniform("useColormap", if (colors != null) 1 else 0)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
@@ -758,7 +758,7 @@ class GradientFilter : Filter {
             builder.uniform("interpolation", interpolation)
             builder.uniform("paintMode", paintMode)
             builder.uniform("imageSize", size.width, size.height)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
@@ -912,7 +912,7 @@ class MarbleTexFilter : Filter {
             builder.uniform("angle", angle)
             builder.uniform("turbulence", turbulence)
             builder.uniform("turbulenceFactor", turbulenceFactor)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
@@ -1314,7 +1314,7 @@ class QuiltFilter : Filter {
             builder.uniform("d", d)
             builder.uniform("k", k)
             builder.uniform("imageSize", size.width, size.height)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
@@ -1851,7 +1851,7 @@ class TextureFilter : Filter {
             builder.uniform("amount", amount)
             builder.uniform("turbulence", turbulence)
             builder.uniform("useColormap", if (colors != null) 1 else 0)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
@@ -2064,7 +2064,7 @@ class WoodFilter : Filter {
             builder.uniform("turbulence", turbulence)
             builder.uniform("fibres", fibres)
             builder.uniform("gain", gain)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {

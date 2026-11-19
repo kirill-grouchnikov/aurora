@@ -108,8 +108,9 @@ fun makeMultiStopHorizontalGradientFilter(stops: List<Color>, width: Int): Image
  * @return an [org.jetbrains.skia.Shader] that renders the multi-stop horizontal gradient
  * @throws IllegalArgumentException if [stops] contains fewer than two colors
  */
-fun makeMultiStopHorizontalGradientShader(stops: List<Color>, width: Int = 512): org.jetbrains.skia.Shader {
+fun makeMultiStopHorizontalGradientShader(stops: List<Color>): Shader {
     require(stops.size >= 2) { "At least two color stops are required" }
+    val width = 256
     val argb = IntArray(width)
 
     for (x in 0 until width) {
