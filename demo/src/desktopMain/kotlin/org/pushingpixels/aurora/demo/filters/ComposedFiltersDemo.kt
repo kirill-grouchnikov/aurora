@@ -20,15 +20,23 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import org.pushingpixels.aurora.demo.resources.Res
 import org.pushingpixels.aurora.filters.composite.ColorHalftoneFilter
 import org.pushingpixels.aurora.filters.composite.effectChainModifier
 import org.pushingpixels.aurora.filters.convolution.MotionBlurFilter
+import org.pushingpixels.aurora.filters.lut.LutFilter
+import org.pushingpixels.aurora.filters.lut.cubeTextToHaldImageBitmap
 import kotlin.math.PI
 
 /**
@@ -115,6 +123,36 @@ fun main() = application {
                         }
                     ),
                     renderEffectTitle = "Composed (motion blur over halftone)"
+                )
+            }
+
+            item {
+                var haldBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+
+                LaunchedEffect(Unit) {
+                    try {
+                        val cubeBytes = Res.readBytes("files/raw/tinyglade-Bluecine_75.cube")
+                        val cubeText = cubeBytes.decodeToString()
+                        haldBitmap = cubeTextToHaldImageBitmap(cubeText)
+                    } catch (_: Exception) {
+                        // skip if loading fails
+                    }
+                }
+
+                FilterBox(
+                    effectModifier = if (haldBitmap != null) {
+                        Modifier.effectChainModifier(
+                            outer = { size ->
+                                colorHalftoneFilter.imageFilter(size, dotRadius = 3.0f)
+                            },
+                            inner = { size ->
+                                LutFilter.imageFilter(size, haldBitmap!!)
+                            }
+                        )
+                    } else {
+                        Modifier
+                    },
+                    renderEffectTitle = "Composed (halftone + Bluecine LUT)"
                 )
             }
         }

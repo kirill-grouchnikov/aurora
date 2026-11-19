@@ -54,6 +54,27 @@ object LutFilter : Filter {
         )
     }
 
+    /**
+     * Constructs an [ImageFilter] for the LUT (Look-Up Table) effect with the given parameters.
+     *
+     * @param size the content size (width, height) — accepted for API compatibility but not used
+     *             by this filter
+     * @param haldLutImageBitmap the Hald CLUT image bitmap to apply
+     */
+    fun imageFilter(
+        size: FloatPair,
+        haldLutImageBitmap: ImageBitmap
+    ): ImageFilter {
+        val lutShaderBuilder = RuntimeShaderBuilder(this.effect)
+        lutShaderBuilder.child("lut", haldLutImageBitmap.toSkiaShader())
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = lutShaderBuilder,
+            shaderNames = arrayOf("content"),
+            inputs = arrayOf(null)
+        )
+    }
+
     @Composable
     fun effectModifier(
         haldLutImageBitmap: ImageBitmap
