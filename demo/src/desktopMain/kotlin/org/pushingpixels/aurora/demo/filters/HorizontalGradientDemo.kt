@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import org.pushingpixels.aurora.filters.utility.makeHorizontalGradientFilter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 
 fun main() = application {

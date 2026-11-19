@@ -24,34 +24,10 @@ import org.jetbrains.skia.ColorAlphaType
 import org.jetbrains.skia.ColorType
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.ImageInfo
+import org.pushingpixels.aurora.filters.utility.createImageBitmapFromArgb
 import kotlin.math.floor
 import kotlin.math.min
 import kotlin.math.roundToInt
-
-fun createImageBitmapFromArgb(
-    argb: IntArray,
-    width: Int,
-    height: Int
-): ImageBitmap {
-    // Convert IntArray (ARGB) to ByteArray (BGRA for Skia N32/BGRA_8888)
-    val bytes = ByteArray(argb.size * 4)
-    for (i in argb.indices) {
-        val c = argb[i]
-        val base = i * 4
-        bytes[base] = (c and 0xFF).toByte()         // B
-        bytes[base + 1] = ((c shr 8) and 0xFF).toByte()  // G
-        bytes[base + 2] = ((c shr 16) and 0xFF).toByte() // R
-        bytes[base + 3] = ((c shr 24) and 0xFF).toByte() // A
-    }
-
-    val info = ImageInfo(
-        width = width,
-        height = height,
-        colorType = ColorType.BGRA_8888,
-        alphaType = ColorAlphaType.UNPREMUL
-    )
-    return Image.makeRaster(info, bytes, width * 4).toComposeImageBitmap()
-}
 
 /**
  * Parses an Adobe .cube 3D LUT string and bakes it into a 512x512 Hald CLUT ImageBitmap.

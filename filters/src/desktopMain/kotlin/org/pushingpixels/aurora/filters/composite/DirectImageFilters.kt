@@ -26,7 +26,6 @@ import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
-import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
 import kotlin.math.PI
 
 // This is a modified version of the original source code by Jerry Huxtable

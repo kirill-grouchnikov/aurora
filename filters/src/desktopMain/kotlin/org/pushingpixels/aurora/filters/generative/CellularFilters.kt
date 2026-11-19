@@ -19,7 +19,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.asComposeShader
@@ -205,7 +204,7 @@ class CellularFilter : Filter {
             builder.uniform("useColormap", if (colors.isNotEmpty()) 1 else 0)
             builder.child("colormap",
                 if (colors.isNotEmpty())
-                    makeMultiStopHorizontalGradientShader(colors, 256f) else makePassthroughShader()
+                    makeMultiStopHorizontalGradientShader(colors, 512) else makePassthroughShader()
             )
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())

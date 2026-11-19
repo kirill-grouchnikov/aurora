@@ -17,17 +17,13 @@ package org.pushingpixels.aurora.filters.generative
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.asComposeShader
-import androidx.compose.ui.graphics.asSkiaColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.onSizeChanged
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.ImageFilter
@@ -35,10 +31,8 @@ import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import org.pushingpixels.aurora.filters.composite.FloatPair
-import org.pushingpixels.aurora.filters.utility.makeHorizontalGradientFilter
-import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
-import kotlin.math.PI
+import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -664,7 +658,7 @@ class FBMFilter : Filter {
             builder.uniform("operation", operation)
             builder.uniform("ridged", if (ridged) 1 else 0)
             builder.uniform("useColormap", if (colors != null) 1 else 0)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
@@ -764,7 +758,7 @@ class GradientFilter : Filter {
             builder.uniform("interpolation", interpolation)
             builder.uniform("paintMode", paintMode)
             builder.uniform("imageSize", size.width, size.height)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
@@ -918,7 +912,7 @@ class MarbleTexFilter : Filter {
             builder.uniform("angle", angle)
             builder.uniform("turbulence", turbulence)
             builder.uniform("turbulenceFactor", turbulenceFactor)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
@@ -1320,7 +1314,7 @@ class QuiltFilter : Filter {
             builder.uniform("d", d)
             builder.uniform("k", k)
             builder.uniform("imageSize", size.width, size.height)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
@@ -1857,7 +1851,7 @@ class TextureFilter : Filter {
             builder.uniform("amount", amount)
             builder.uniform("turbulence", turbulence)
             builder.uniform("useColormap", if (colors != null) 1 else 0)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
@@ -2070,7 +2064,7 @@ class WoodFilter : Filter {
             builder.uniform("turbulence", turbulence)
             builder.uniform("fibres", fibres)
             builder.uniform("gain", gain)
-            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 256f))
+            builder.child("colormap", makeMultiStopHorizontalGradientShader(colors, 512))
             val shader = builder.makeShader()
             val shaderBrush = ShaderBrush(shader.asComposeShader())
             onDrawBehind {
