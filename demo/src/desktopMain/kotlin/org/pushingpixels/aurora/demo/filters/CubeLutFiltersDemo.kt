@@ -18,6 +18,8 @@ package org.pushingpixels.aurora.demo.filters
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import org.pushingpixels.aurora.component.AuroraVerticalScrollbar
+import org.pushingpixels.aurora.component.ScrollBarSizingConstants
 import org.pushingpixels.aurora.demo.resources.Res
 import org.pushingpixels.aurora.filters.lut.LutFilter
 import org.pushingpixels.aurora.filters.lut.cubeTextToHaldImageBitmap
@@ -60,9 +64,13 @@ fun main() = auroraApplication {
         windowTitlePaneConfiguration = AuroraWindowTitlePaneConfigurations.AuroraPlain(),
         onCloseRequest = ::exitApplication
     ) {
+        val lazyGridState = rememberLazyGridState()
+
         Box(modifier = Modifier.fillMaxSize().auroraBackground()) {
             LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .padding(end = ScrollBarSizingConstants.DefaultScrollBarThickness),
+                state = lazyGridState,
                 columns = GridCells.Fixed(3),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(32.dp),
@@ -80,6 +88,11 @@ fun main() = auroraApplication {
                     )
                 }
             }
+
+            AuroraVerticalScrollbar(
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                adapter = rememberScrollbarAdapter(scrollState = lazyGridState)
+            )
         }
     }
 }
