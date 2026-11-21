@@ -15,15 +15,10 @@
  */
 package org.pushingpixels.aurora.filters.generative
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RenderEffect
-import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.asComposeRenderEffect
-import androidx.compose.ui.graphics.asComposeShader
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.*
 import org.intellij.lang.annotations.Language
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.ImageFilter
@@ -31,8 +26,8 @@ import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import org.pushingpixels.aurora.filters.composite.FloatPair
-import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
+import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.

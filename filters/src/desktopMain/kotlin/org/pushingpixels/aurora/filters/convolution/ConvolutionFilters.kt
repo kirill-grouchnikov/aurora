@@ -112,7 +112,8 @@ class BoxBlurFilter(
             uniform int iterations;
             half4 main(vec2 fragcoord) {
                 half4 result = content.eval(fragcoord);
-                for (int iter = 0; iter < iterations; iter++) {
+                for (int iter = 0; iter < 3; iter++) {
+                    if (iter >= iterations) break;
                     // Horizontal pass
                     half4 hSum = half4(0);
                     int hR = int(ceil(hRadius));
@@ -207,33 +208,116 @@ class DiffuseFilter(val amount: Float = 0.5f) : Filter {
 }
 
 /**
-
- * A diffusion filter that simulates heat diffusion for smoothing.
- * @param iterations number of diffusion iterations
+ * A filter which uses error diffusion dithering to halftone an image.
+ *
+ * Approximates the JH-Labs DiffusionFilter (Floyd-Steinberg error diffusion) using a
+ * shader-based ordered dither approach, as true error diffusion is inherently sequential
+ * and cannot be parallelized in a GPU shader.
+ *
+ * @param levels number of dither levels (default 6)
+ * @param colorDither whether to dither color channels independently (default true)
+ * @param serpentine whether to use serpentine scan pattern (default true) — affects dither phase
  */
-class DiffusionFilter(val iterations: Int = 3) : Filter {
+object DiffusionFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
-            uniform int iterations;
+            uniform int levels;
+            uniform int colorDither;
+            uniform int serpentine;
+
+            float hash(vec2 p) {
+                return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+            }
+
             half4 main(vec2 fragcoord) {
-                half4 result = content.eval(fragcoord);
-                for (int iter = 0; iter < iterations; iter++) {
-                    // Simple 4-neighbor diffusion step
-                    half4 sum = result * 4.0;
-                    sum += content.eval(fragcoord + vec2(-1.0, 0.0));
-                    sum += content.eval(fragcoord + vec2(1.0, 0.0));
-                    sum += content.eval(fragcoord + vec2(0.0, -1.0));
-                    sum += content.eval(fragcoord + vec2(0.0, 1.0));
-                    result = sum / 8.0;
+                half4 c = content.eval(fragcoord);
+                half3 orig = c.rgb;
+
+                // If not color dither, convert to luminance first
+                half3 val;
+                if (colorDither == 0) {
+                    half lum = dot(orig, half3(0.299, 0.587, 0.114));
+                    val = half3(lum);
+                } else {
+                    val = orig;
                 }
-                return result;
+
+                // Quantize to levels and apply dither
+                // The dither noise is scaled to spread between quantization levels
+                float ditherScale = 1.0 / float(levels);
+                float phase = (serpentine != 0 && int(mod(fragcoord.y, 2.0)) == 1) ? 0.5 : 0.0;
+                float noise = hash(fragcoord + vec2(phase, 0.0)) - 0.5;
+                float dither = noise * ditherScale;
+
+                half3 result;
+                for (int i = 0; i < 3; i++) {
+                    // Quantize: round to nearest level
+                    float v = val[i] + dither;
+                    float quantized = floor(v * float(levels - 1) + 0.5) / float(levels - 1);
+                    quantized = clamp(quantized, 0.0, 1.0);
+                    result[i] = quantized;
+                }
+
+                return half4(result, c.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun renderEffect(
+        levels: Int = 6,
+        colorDither: Boolean = true,
+        serpentine: Boolean = true
+    ): RenderEffect {
+        val diffusionShaderBuilder = RuntimeShaderBuilder(this.effect)
+        diffusionShaderBuilder.uniform("levels", levels)
+        diffusionShaderBuilder.uniform("colorDither", if (colorDither) 1 else 0)
+        diffusionShaderBuilder.uniform("serpentine", if (serpentine) 1 else 0)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = diffusionShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        levels: Int = 6,
+        colorDither: Boolean = true,
+        serpentine: Boolean = true
+    ): ImageFilter {
+        val diffusionShaderBuilder = RuntimeShaderBuilder(this.effect)
+        diffusionShaderBuilder.uniform("levels", levels)
+        diffusionShaderBuilder.uniform("colorDither", if (colorDither) 1 else 0)
+        diffusionShaderBuilder.uniform("serpentine", if (serpentine) 1 else 0)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = diffusionShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
+    fun effectModifier(
+        levels: Int = 6,
+        colorDither: Boolean = true,
+        serpentine: Boolean = true
+    ): Modifier {
+        val diffusionShaderBuilder = RuntimeShaderBuilder(this.effect)
+        diffusionShaderBuilder.uniform("levels", levels)
+        diffusionShaderBuilder.uniform("colorDither", if (colorDither) 1 else 0)
+        diffusionShaderBuilder.uniform("serpentine", if (serpentine) 1 else 0)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = diffusionShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**

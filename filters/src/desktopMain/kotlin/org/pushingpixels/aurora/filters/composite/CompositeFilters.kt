@@ -17,7 +17,6 @@ package org.pushingpixels.aurora.filters.composite
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import org.intellij.lang.annotations.Language

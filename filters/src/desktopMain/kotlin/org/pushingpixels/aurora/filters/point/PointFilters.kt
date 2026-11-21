@@ -171,16 +171,34 @@ class ChromaKeyFilter : Filter {
 }
 
 /**
- * A filter to apply a curves adjustment using a simple quadratic curve.
+ * A filter to apply a curves adjustment using Catmull-Rom spline interpolation.
+ *
+ * The original JH-Labs CurvesFilter builds Catmull-Rom splines through the control points
+ * for each channel. For each channel, there are two splines: one for the X coordinates and
+ * one for the Y coordinates. The default curve has knots at (0,0) and (1,1), with an
+ * additional control point (controlX, controlY) added by the user.
+ *
+ * After padding, the 5-knot arrays are:
+ *   nx = {0, 0, controlX, 1, 1}
+ *   ny = {0, 0, controlY, 1, 1}
+ *
+ * The filter samples both splines at uniformly spaced parameters, building a parametric curve.
+ * Since we cannot build a LUT in a shader, we evaluate the spline directly: for a given input
+ * value, we find the parameter that produces that X value, then evaluate the Y spline at that
+ * parameter. However, since the X spline is monotonic for typical curves, we can use the
+ * input value directly as the parameter when controlX is at the default 0.5.
+ *
+ * For simplicity and correctness, we evaluate the Y spline at the input value directly,
+ * which matches the original when the X spline is approximately linear (the common case).
+ *
  * @param rControlX x control point for red channel
  * @param rControlY y control point for red channel
  * @param gControlX x control point for green channel
  * @param gControlY y control point for green channel
  * @param bControlX x control point for blue channel
  * @param bControlY y control point for blue channel
-
  */
-class CurvesFilter : Filter {
+object CurvesFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -188,21 +206,94 @@ class CurvesFilter : Filter {
             uniform float rControlX, rControlY;
             uniform float gControlX, gControlY;
             uniform float bControlX, bControlY;
-            
-            float quadraticBezier(float t, float p0, float p1, float p2) {
-                float mt = 1.0 - t;
-                return p0 * mt * mt + p1 * 2.0 * t * mt + p2 * t * t;
+
+            // Catmull-Rom spline evaluation.
+            // 5 knots after padding: {0, 0, control, 1, 1}
+            // numSpans = 5 - 3 = 2
+            float catmullRom(float t, float control) {
+                float numSpans = 2.0;
+                float scaledT = t * numSpans;
+                int span = int(scaledT);
+                if (span > 1) span = 1;
+                float u = scaledT - float(span);
+
+                // Knots: {0, 0, control, 1, 1}
+                // For span 0: k0=0, k1=0, k2=control, k3=1
+                // For span 1: k0=0, k1=control, k2=1, k3=1
+                float k0, k1, k2, k3;
+                if (span == 0) {
+                    k0 = 0.0;
+                    k1 = 0.0;
+                    k2 = control;
+                    k3 = 1.0;
+                } else {
+                    k0 = 0.0;
+                    k1 = control;
+                    k2 = 1.0;
+                    k3 = 1.0;
+                }
+
+                // Catmull-Rom basis matrix coefficients
+                float c3 = -0.5 * k0 + 1.5 * k1 - 1.5 * k2 + 0.5 * k3;
+                float c2 =  1.0 * k0 - 2.5 * k1 + 2.0 * k2 - 0.5 * k3;
+                float c1 = -0.5 * k0 + 0.0 * k1 + 0.5 * k2 + 0.0 * k3;
+                float c0 =  0.0 * k0 + 1.0 * k1 + 0.0 * k2 + 0.0 * k3;
+
+                return ((c3 * u + c2) * u + c1) * u + c0;
             }
-            
+
+            // Evaluate the curve for one channel: given input value v, find the output.
+            // The original builds table[x] = y by sampling both X and Y splines parametrically.
+            // We approximate by binary-searching for the parameter that gives the input X,
+            // then evaluating the Y spline at that parameter.
+            float evaluateCurve(float v, float controlX, float controlY) {
+                // Binary search for parameter t such that catmullRom(t, controlX) == v
+                float lo = 0.0, hi = 1.0;
+                for (int i = 0; i < 8; i++) {
+                    float mid = (lo + hi) * 0.5;
+                    float xVal = catmullRom(mid, controlX);
+                    if (xVal < v) {
+                        lo = mid;
+                    } else {
+                        hi = mid;
+                    }
+                }
+                float t = (lo + hi) * 0.5;
+                return catmullRom(t, controlY);
+            }
+
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
-                half r = quadraticBezier(c.r, 0.0, rControlY, 1.0);
-                half g = quadraticBezier(c.g, 0.0, gControlY, 1.0);
-                half b = quadraticBezier(c.b, 0.0, bControlY, 1.0);
+                half r = evaluateCurve(c.r, rControlX, rControlY);
+                half g = evaluateCurve(c.g, gControlX, gControlY);
+                half b = evaluateCurve(c.b, bControlX, bControlY);
                 return half4(r, g, b, c.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun renderEffect(
+        rControlX: Float = 0.5f,
+        rControlY: Float = 0.5f,
+        gControlX: Float = 0.5f,
+        gControlY: Float = 0.5f,
+        bControlX: Float = 0.5f,
+        bControlY: Float = 0.5f
+    ): RenderEffect {
+        val curvesShaderBuilder = RuntimeShaderBuilder(this.effect)
+        curvesShaderBuilder.uniform("rControlX", rControlX)
+        curvesShaderBuilder.uniform("rControlY", rControlY)
+        curvesShaderBuilder.uniform("gControlX", gControlX)
+        curvesShaderBuilder.uniform("gControlY", gControlY)
+        curvesShaderBuilder.uniform("bControlX", bControlX)
+        curvesShaderBuilder.uniform("bControlY", bControlY)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = curvesShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
     }
 
     fun imageFilter(
@@ -228,7 +319,14 @@ class CurvesFilter : Filter {
         )
     }
 
-    fun effectModifier(rControlX: Float = 0.5f, rControlY: Float = 0.5f, gControlX: Float = 0.5f, gControlY: Float = 0.5f, bControlX: Float = 0.5f, bControlY: Float = 0.5f): Modifier {
+    fun effectModifier(
+        rControlX: Float = 0.5f,
+        rControlY: Float = 0.5f,
+        gControlX: Float = 0.5f,
+        gControlY: Float = 0.5f,
+        bControlX: Float = 0.5f,
+        bControlY: Float = 0.5f
+    ): Modifier {
         val curvesShaderBuilder = RuntimeShaderBuilder(this.effect)
         curvesShaderBuilder.uniform("rControlX", rControlX)
         curvesShaderBuilder.uniform("rControlY", rControlY)
@@ -330,35 +428,154 @@ class DissolveFilter : Filter {
 }
 
 /**
- * A filter which applies ordered dithering using a Bayer matrix.
-
+ * A filter which performs ordered dithering on an image.
+ *
+ * Replicates the JH-Labs DitherFilter API:
+ * @param matrix the 4x4 dither matrix (row-major), default is the ordered 4x4 dither pattern
+ * @param levels the number of dither levels (default 6)
+ * @param colorDither whether to dither color channels independently (default true);
+ *   when false, converts to luminance before dithering
  */
 object DitherFilter : Filter {
+    /**
+     * 4x4 ordered dither matrix (matching JH-Labs ditherOrdered4x4Matrix).
+     */
+    val Ordered4X4 = floatArrayOf(
+        0f, 8f, 2f, 10f,
+        12f, 4f, 14f, 6f,
+        3f, 11f, 1f, 9f,
+        15f, 7f, 13f, 5f
+    )
+
+    /**
+     * 4x4 magic square dither matrix (matching JH-Labs ditherMagic4x4Matrix).
+     */
+    val Magic4X4 = floatArrayOf(
+        0f, 14f, 3f, 13f,
+        11f, 5f, 8f, 6f,
+        12f, 2f, 15f, 1f,
+        7f, 9f, 4f, 10f
+    )
+
+    /**
+     * 4x4 lines dither matrix (matching JH-Labs ditherLines4x4Matrix).
+     */
+    val Lines4X4 = floatArrayOf(
+        0f, 1f, 2f, 3f,
+        4f, 5f, 6f, 7f,
+        8f, 9f, 10f, 11f,
+        12f, 13f, 14f, 15f
+    )
+
+    /**
+     * Default 4x4 dither matrix (alias for [Magic4X4]).
+     */
+    val DefaultMatrix = Magic4X4
+
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
+            uniform float matrix[16];
+            uniform int levels;
+            uniform int colorDither;
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
-                // 4x4 Bayer threshold matrix
-                int x = int(fragcoord.x) % 4;
-                int y = int(fragcoord.y) % 4;
-                half bayer[16] = half4(
-                    0.0/16.0, 8.0/16.0, 2.0/16.0, 10.0/16.0,
-                    12.0/16.0, 4.0/16.0, 14.0/16.0, 6.0/16.0,
-                    3.0/16.0, 11.0/16.0, 1.0/16.0, 9.0/16.0,
-                    15.0/16.0, 7.0/16.0, 13.0/16.0, 5.0/16.0
-                );
-                half threshold = bayer[y * 4 + x];
-                half3 rgb;
-                for (int i = 0; i < 3; i++) {
-                    half luma = c.rgb[i];
-                    rgb[i] = luma + 0.5/16.0 - 8.0/16.0 > threshold ? 1.0 : 0.0;
+                int col = int(mod(fragcoord.x, 4.0));
+                int row = int(mod(fragcoord.y, 4.0));
+                // Unroll dynamic indexing: use constant indices into the matrix uniform
+                int v;
+                if (row == 0) {
+                    if (col == 0) v = int(matrix[0]);
+                    else if (col == 1) v = int(matrix[1]);
+                    else if (col == 2) v = int(matrix[2]);
+                    else v = int(matrix[3]);
+                } else if (row == 1) {
+                    if (col == 0) v = int(matrix[4]);
+                    else if (col == 1) v = int(matrix[5]);
+                    else if (col == 2) v = int(matrix[6]);
+                    else v = int(matrix[7]);
+                } else if (row == 2) {
+                    if (col == 0) v = int(matrix[8]);
+                    else if (col == 1) v = int(matrix[9]);
+                    else if (col == 2) v = int(matrix[10]);
+                    else v = int(matrix[11]);
+                } else {
+                    if (col == 0) v = int(matrix[12]);
+                    else if (col == 1) v = int(matrix[13]);
+                    else if (col == 2) v = int(matrix[14]);
+                    else v = int(matrix[15]);
                 }
-                return half4(rgb, c.a);
+                half3 val;
+                if (colorDither == 0) {
+                    half lum = dot(c.rgb, half3(0.299, 0.587, 0.114));
+                    val = half3(lum);
+                } else {
+                    val = c.rgb;
+                }
+                half3 result;
+                for (int i = 0; i < 3; i++) {
+                    float divVal = floor((float(levels) - 1.0) * val[i]);
+                    float modVal = floor(val[i] * 17.0);
+                    result[i] = (modVal > float(v) ? divVal + 1.0 : divVal) / (float(levels) - 1.0);
+                }
+                return half4(result, c.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun renderEffect(
+        matrix: FloatArray = DefaultMatrix,
+        levels: Int = 6,
+        colorDither: Boolean = true
+    ): RenderEffect {
+        val ditherShaderBuilder = RuntimeShaderBuilder(this.effect)
+        ditherShaderBuilder.uniform("matrix", matrix)
+        ditherShaderBuilder.uniform("levels", levels)
+        ditherShaderBuilder.uniform("colorDither", if (colorDither) 1 else 0)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = ditherShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        matrix: FloatArray = DefaultMatrix,
+        levels: Int = 6,
+        colorDither: Boolean = true
+    ): ImageFilter {
+        val ditherShaderBuilder = RuntimeShaderBuilder(this.effect)
+        ditherShaderBuilder.uniform("matrix", matrix)
+        ditherShaderBuilder.uniform("levels", levels)
+        ditherShaderBuilder.uniform("colorDither", if (colorDither) 1 else 0)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = ditherShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
+    fun effectModifier(
+        matrix: FloatArray = DefaultMatrix,
+        levels: Int = 6,
+        colorDither: Boolean = true
+    ): Modifier {
+        val ditherShaderBuilder = RuntimeShaderBuilder(this.effect)
+        ditherShaderBuilder.uniform("matrix", matrix)
+        ditherShaderBuilder.uniform("levels", levels)
+        ditherShaderBuilder.uniform("colorDither", if (colorDither) 1 else 0)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = ditherShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }
 
@@ -391,7 +608,7 @@ object EqualizeFilter : Filter {
  * @param exposure the exposure level (default 1.0, range 0..5+)
 
  */
-class ExposureFilter : Filter {
+object ExposureFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -407,6 +624,17 @@ class ExposureFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun renderEffect(exposure: Float = 1f): RenderEffect {
+        val exposureShaderBuilder = RuntimeShaderBuilder(this.effect)
+        exposureShaderBuilder.uniform("exposure", exposure)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = exposureShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
     }
 
     fun imageFilter(
@@ -857,7 +1085,7 @@ class FourColorFilter : Filter {
  * @param bias the bias (0-1, default 0.5)
 
  */
-class GainFilter : Filter {
+object GainFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -887,6 +1115,21 @@ class GainFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun renderEffect(
+        gain: Float = 0.5f,
+        bias: Float = 0.5f
+    ): RenderEffect {
+        val gainShaderBuilder = RuntimeShaderBuilder(this.effect)
+        gainShaderBuilder.uniform("gain", gain)
+        gainShaderBuilder.uniform("bias", bias)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = gainShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
     }
 
     fun imageFilter(
@@ -927,7 +1170,7 @@ class GainFilter : Filter {
  * @param bFactor brightness shift (default 0, additive, clamped 0-1)
 
  */
-class HSBAdjustFilter : Filter {
+object HSBAdjustFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -936,32 +1179,94 @@ class HSBAdjustFilter : Filter {
             uniform float sFactor;
             uniform float bFactor;
             
-            half3 rgb2hsl(half3 c) {
-                half4 K = half4(0.0, -1.0/3.0, 2.0/3.0, -1.0);
-                half4 p = c.b < c.g ? half4(c.bg, K.wz) : half4(c.gb, K.xy);
-                half4 q = p.x < p.yz ? half4(p.xyw, abs(p.yz - p.x)) : half4(p.yzx, abs(p.xz - p.y));
-                half h = abs(q.x + q.y / 6.0 + q.z);
-                half s = q.y / (max(q.x, 1e-6));
-                half l = q.x;
-                return half3(h, s, l);
+            // RGB to HSB conversion matching Java Color.RGBtoHSB
+            half3 rgb2hsb(half3 c) {
+                half cmax = max(c.r, max(c.g, c.b));
+                half cmin = min(c.r, min(c.g, c.b));
+                half brightness = cmax;
+                half saturation;
+                if (cmax > 0.0) {
+                    saturation = (cmax - cmin) / cmax;
+                } else {
+                    saturation = 0.0;
+                }
+                half hue;
+                if (saturation == 0.0) {
+                    hue = 0.0;
+                } else {
+                    half redc = (cmax - c.r) / (cmax - cmin);
+                    half greenc = (cmax - c.g) / (cmax - cmin);
+                    half bluec = (cmax - c.b) / (cmax - cmin);
+                    if (c.r == cmax) {
+                        hue = bluec - greenc;
+                    } else if (c.g == cmax) {
+                        hue = 2.0 + redc - bluec;
+                    } else {
+                        hue = 4.0 + greenc - redc;
+                    }
+                    hue = hue / 6.0;
+                    if (hue < 0.0) {
+                        hue = hue + 1.0;
+                    }
+                }
+                return half3(hue, saturation, brightness);
             }
-            
-            half3 hsl2rgb(half3 c) {
-                half3 rgb = clamp(abs(fract(c.xxx + half3(1.0, 2.0, 0.0) / 3.0) * 6.0 - 3.0) - 1.0, 0.0, 1.0);
-                return c.z + c.y * (rgb - 0.5) * (1.0 - abs(2.0 * c.z - 1.0));
+
+            // HSB to RGB conversion matching Java Color.HSBtoRGB
+            half3 hsb2rgb(half3 c) {
+                half h = c.x, s = c.y, v = c.z;
+                if (s == 0.0) {
+                    return half3(v, v, v);
+                }
+                float h6 = fract(h) * 6.0;
+                int i = int(h6);
+                float f = h6 - float(i);
+                float p = v * (1.0 - s);
+                float q = v * (1.0 - s * f);
+                float t = v * (1.0 - s * (1.0 - f));
+                if (i == 0) {
+                    return half3(v, t, p);
+                } else if (i == 1) {
+                    return half3(q, v, p);
+                } else if (i == 2) {
+                    return half3(p, v, t);
+                } else if (i == 3) {
+                    return half3(p, q, v);
+                } else if (i == 4) {
+                    return half3(t, p, v);
+                } else {
+                    return half3(v, p, q);
+                }
             }
-            
+
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
-                half3 hsl = rgb2hsl(c.rgb);
-                hsl.x = fract(hsl.x + hFactor);
-                hsl.y = clamp(hsl.y + sFactor, 0.0, 1.0);
-                hsl.z = clamp(hsl.z + bFactor, 0.0, 1.0);
-                half3 rgb = hsl2rgb(hsl);
+                half3 hsb = rgb2hsb(c.rgb);
+                hsb.x = fract(hsb.x + hFactor);
+                hsb.y = clamp(hsb.y + sFactor, 0.0, 1.0);
+                hsb.z = clamp(hsb.z + bFactor, 0.0, 1.0);
+                half3 rgb = hsb2rgb(hsb);
                 return half4(rgb, c.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun renderEffect(
+        hFactor: Float = 0f,
+        sFactor: Float = 0f,
+        bFactor: Float = 0f
+    ): RenderEffect {
+        val hsbShaderBuilder = RuntimeShaderBuilder(this.effect)
+        hsbShaderBuilder.uniform("hFactor", hFactor)
+        hsbShaderBuilder.uniform("sFactor", sFactor)
+        hsbShaderBuilder.uniform("bFactor", bFactor)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = hsbShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
     }
 
     fun imageFilter(

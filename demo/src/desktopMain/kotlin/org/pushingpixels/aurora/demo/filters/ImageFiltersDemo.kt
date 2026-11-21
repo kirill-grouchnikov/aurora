@@ -44,8 +44,8 @@ import org.pushingpixels.aurora.filters.generative.GridType
 import org.pushingpixels.aurora.filters.generative.PlasmaFilter
 import org.pushingpixels.aurora.filters.generative.PointillizeFilter
 import org.pushingpixels.aurora.filters.generative.StampFilter
-import org.pushingpixels.aurora.filters.point.BlockFilter
-import org.pushingpixels.aurora.filters.point.SolarizeFilter
+import org.pushingpixels.aurora.filters.point.*
+import org.pushingpixels.aurora.filters.convolution.DiffusionFilter
 
 private object ResourceLoader
 
@@ -215,6 +215,105 @@ fun main() = application {
                 FilterBox(
                     effectModifier = UnsharpFilter.effectModifier(radius = 2f, amount = 0.5f),
                     renderEffectTitle = "Unsharp mask"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = ChannelMixFilter.effectModifier(
+                        blueGreen = 0.0f,
+                        redBlue = 1.0f,
+                        greenRed = 0.0f,
+                        intoR = 1f,
+                        intoG = 0f,
+                        intoB = 1f
+                    ),
+                    renderEffectTitle = "Channel mix"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = ContrastFilter.effectModifier(
+                        brightness = 1.1f,
+                        contrast = 1.5f
+                    ),
+                    renderEffectTitle = "Contrast"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = CurvesFilter.effectModifier(
+                        rControlX = 0.5f, rControlY = 0.7f,
+                        gControlX = 0.5f, gControlY = 0.5f,
+                        bControlX = 0.2f, bControlY = 0.7f
+                    ),
+                    renderEffectTitle = "Curves"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = DiffusionFilter.effectModifier(levels = 6),
+                    renderEffectTitle = "Diffusion"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = DitherFilter.effectModifier(),
+                    renderEffectTitle = "Dither"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = ExposureFilter.effectModifier(exposure = 1.5f),
+                    renderEffectTitle = "Exposure"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = GainFilter.effectModifier(gain = 0.7f, bias = 0.6f),
+                    renderEffectTitle = "Gain"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = GammaFilter.effectModifier(
+                        rGamma = 1.5f,
+                        gGamma = 1.0f,
+                        bGamma = 0.7f
+                    ),
+                    renderEffectTitle = "Gamma"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = GrayFilter.effectModifier(),
+                    renderEffectTitle = "Gray"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = GrayscaleFilter.effectModifier(),
+                    renderEffectTitle = "Grayscale"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = HSBAdjustFilter.effectModifier(
+                        hFactor = 0.1f,
+                        sFactor = 0.2f,
+                        bFactor = 0.1f
+                    ),
+                    renderEffectTitle = "HSB Adjust"
                 )
             }
         }

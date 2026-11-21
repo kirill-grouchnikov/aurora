@@ -15,22 +15,24 @@
  */
 package org.pushingpixels.aurora.filters.point
 
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
 import org.intellij.lang.annotations.Language
+import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
+import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
+import org.pushingpixels.aurora.filters.composite.FloatPair
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
 
 /**
  * A filter to change the brightness and contrast of an image.
- * @param brightness brightness multiplier (0.0 = black, 1.0 = unchanged)
- * @param contrast contrast multiplier (0.0 = flat gray, 1.0 = unchanged)
  */
-class ContrastFilter(
-    val brightness: Float = 1f,
-    val contrast: Float = 1f
-) : Filter {
+object ContrastFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -48,4 +50,50 @@ class ContrastFilter(
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun renderEffect(
+        brightness: Float = 1f,
+        contrast: Float = 1f
+    ): RenderEffect {
+        val contrastShaderBuilder = RuntimeShaderBuilder(this.effect)
+        contrastShaderBuilder.uniform("brightness", brightness)
+        contrastShaderBuilder.uniform("contrast", contrast)
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = contrastShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+    }
+
+    fun imageFilter(
+        size: FloatPair,
+        brightness: Float = 1f,
+        contrast: Float = 1f
+    ): ImageFilter {
+        val contrastShaderBuilder = RuntimeShaderBuilder(this.effect)
+        contrastShaderBuilder.uniform("brightness", brightness)
+        contrastShaderBuilder.uniform("contrast", contrast)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = contrastShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
+    fun effectModifier(
+        brightness: Float = 1f,
+        contrast: Float = 1f
+    ): Modifier {
+        val contrastShaderBuilder = RuntimeShaderBuilder(this.effect)
+        contrastShaderBuilder.uniform("brightness", brightness)
+        contrastShaderBuilder.uniform("contrast", contrast)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = contrastShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
