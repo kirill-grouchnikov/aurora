@@ -57,8 +57,6 @@ fun main() = application {
         state = state,
         title = "Composed Filters Demo"
     ) {
-        val colorHalftoneFilter = remember { ColorHalftoneFilter() }
-
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
             columns = GridCells.Fixed(3),
@@ -83,7 +81,7 @@ fun main() = application {
 
             item {
                 FilterBox(
-                    effectModifier = colorHalftoneFilter.effectModifier(dotRadius = 3.0f),
+                    effectModifier = ColorHalftoneFilter.effectModifier(dotRadius = 3.0f),
                     renderEffectTitle = "Color halftone"
                 )
             }
@@ -92,7 +90,7 @@ fun main() = application {
                 FilterBox(
                     effectModifier = Modifier.effectChainModifier(
                         outer = { size ->
-                            colorHalftoneFilter.imageFilter(size, dotRadius = 3.0f)
+                            ColorHalftoneFilter.imageFilter(size, dotRadius = 3.0f)
                         },
                         inner = { size ->
                             MotionBlurFilter.imageFilter(
@@ -119,7 +117,7 @@ fun main() = application {
                             )
                         },
                         inner = { size ->
-                            colorHalftoneFilter.imageFilter(size, dotRadius = 3.0f)
+                            ColorHalftoneFilter.imageFilter(size, dotRadius = 3.0f)
                         }
                     ),
                     renderEffectTitle = "Composed (motion blur over halftone)"
@@ -143,7 +141,7 @@ fun main() = application {
                     effectModifier = if (haldBitmap != null) {
                         Modifier.effectChainModifier(
                             outer = { size ->
-                                colorHalftoneFilter.imageFilter(size, dotRadius = 3.0f)
+                                ColorHalftoneFilter.imageFilter(size, dotRadius = 3.0f)
                             },
                             inner = { size ->
                                 LutFilter.imageFilter(size, haldBitmap!!)

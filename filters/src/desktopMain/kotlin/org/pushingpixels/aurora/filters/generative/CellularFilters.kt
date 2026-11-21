@@ -413,7 +413,7 @@ private val EVALUATE_FUNC = """
  * @param fadeEdges true to fade edges by blending adjacent cells (default false)
  * @param edgeColor the edge color (default black)
  */
-class CrystallizeFilter : Filter {
+object CrystallizeFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -629,7 +629,7 @@ class CrystallizeFilter : Filter {
  * @param edgeColor the edge color (default black)
  * @param fuzziness the fuzziness amount 0-1 (default 0.1f)
  */
-class PointillizeFilter : Filter {
+object PointillizeFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """

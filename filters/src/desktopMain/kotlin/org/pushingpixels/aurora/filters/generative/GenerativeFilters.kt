@@ -65,7 +65,7 @@ private val NOISE_FUNC = """
  * @param shine the shine amount (default 0.1f)
  * @param monochrome true for monochrome texture (default true)
  */
-class BrushedMetalFilter: Filter {
+object BrushedMetalFilter: Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -188,7 +188,7 @@ class BrushedMetalFilter: Filter {
  * @param samples the number of samples (default 2)
  * @param bgColor the background color (default light blue)
  */
-class CausticsFilter : Filter {
+object CausticsFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -834,7 +834,7 @@ class MarbleFilter : Filter {
  * @param turbulence the turbulence amount (default 1.0f)
  * @param turbulenceFactor the turbulence factor (default 0.5f)
  */
-class MarbleTexFilter : Filter {
+object MarbleTexFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1059,7 +1059,7 @@ class OilFilter : Filter {
  * A filter which generates a plasma texture overlay.
  * Replicates the JH-Labs PlasmaFilter.
  */
-class PlasmaFilter() : Filter {
+object PlasmaFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1446,7 +1446,7 @@ class ScratchFilter : Filter {
  * @param cameraElevation the camera elevation angle (default 0.0f)
  * @param fov the field of view (default 1.0f)
  */
-class SkyFilter : Filter {
+object SkyFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1691,7 +1691,7 @@ class SkyFilter : Filter {
  * @param white the color for pixels above the upper threshold (default white)
  * @param black the color for pixels below the lower threshold (default black)
  */
-class StampFilter : Filter {
+object StampFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1986,7 +1986,7 @@ class WeaveFilter : Filter {
  * @param color1 the first colormap color as RGBA float4 (default light tan)
  * @param color2 the second colormap color as RGBA float4 (default dark brown)
  */
-class WoodFilter : Filter {
+object WoodFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """

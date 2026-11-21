@@ -29,7 +29,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,13 +56,6 @@ fun main() = androidx.compose.ui.window.application {
         state = state,
         title = "Aurora Generative Filters Demo"
     ) {
-        val woodFilter = remember { WoodFilter() }
-        val brushedMetalFilter = remember { BrushedMetalFilter() }
-        val marbleTexFilter = remember { MarbleTexFilter() }
-        val sparkleFilter = remember { SparkleFilter() }
-        val flareFilter = remember { FlareFilter() }
-        val causticsFilter = remember { CausticsFilter() }
-
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
             columns = GridCells.Fixed(4),
@@ -73,7 +65,7 @@ fun main() = androidx.compose.ui.window.application {
         ) {
             item {
                 TexturedBox(
-                    effectModifier = woodFilter.effectModifier(
+                    effectModifier = WoodFilter.effectModifier(
                         scale = 100.0f,
                         rings = 0.4f, fibres = 0.3f, gain = 0.7f
                     ),
@@ -83,7 +75,7 @@ fun main() = androidx.compose.ui.window.application {
 
             item {
                 TexturedBox(
-                    effectModifier = woodFilter.effectModifier(
+                    effectModifier = WoodFilter.effectModifier(
                         scale = 80.0f, stretch = 15.0f, gain = 1.9f,
                         angle = 1.5f * Math.PI.toFloat(),
                         colors = listOf(Color(0xFFCD4A4A), Color(0xFF682523), Color(0xFF482029))
@@ -94,7 +86,7 @@ fun main() = androidx.compose.ui.window.application {
 
             item {
                 TexturedBox(
-                    effectModifier = brushedMetalFilter.effectModifier(
+                    effectModifier = BrushedMetalFilter.effectModifier(
                         radius = 8, amount = 1.0f, color = Color(0xFF800000)
                     ),
                     renderEffectTitle = "Brushed Metal"
@@ -103,7 +95,7 @@ fun main() = androidx.compose.ui.window.application {
 
             item {
                 TexturedBox(
-                    effectModifier = marbleTexFilter.effectModifier(
+                    effectModifier = MarbleTexFilter.effectModifier(
                         colors = listOf(Color(0xFFB76E79), Color(0xFFFFC0CB))
                     ),
                     renderEffectTitle = "Marble"
@@ -112,14 +104,14 @@ fun main() = androidx.compose.ui.window.application {
 
             item {
                 TexturedBox(
-                    effectModifier = sparkleFilter.effectModifier(color = Color(0xFF208070)),
+                    effectModifier = SparkleFilter.effectModifier(color = Color(0xFF208070)),
                     renderEffectTitle = "Sparkle"
                 )
             }
 
             item {
                 TexturedBox(
-                    effectModifier = flareFilter.effectModifier(
+                    effectModifier = FlareFilter.effectModifier(
                         color = Color(0xFFE0FFFF), radius = 100.0f, ringAmount = 0.2f, rayAmount = 0.15f),
                     renderEffectTitle = "Flare"
                 )
@@ -127,7 +119,7 @@ fun main() = androidx.compose.ui.window.application {
 
             item {
                 TexturedBox(
-                    effectModifier = causticsFilter.effectModifier(),
+                    effectModifier = CausticsFilter.effectModifier(),
                     renderEffectTitle = "Caustics"
                 )
             }

@@ -39,7 +39,7 @@ import org.pushingpixels.aurora.filters.composite.FloatPair
  * @param blockSize the number of pixels along each block edge (default 2)
 
  */
-class BlockFilter : Filter {
+object BlockFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -559,7 +559,7 @@ class FillFilter : Filter {
  * @param mixFactor mix between Gaussian and linear falloff (0=linear, 1=Gaussian)
  * @param falloff falloff rate for the ring edge transition
  */
-class FlareFilter() : Filter {
+object FlareFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1610,7 +1610,7 @@ object SolarizeFilter : Filter {
  * @param seed random seed for ray length generation (default 371)
 
  */
-class SparkleFilter : Filter {
+object SparkleFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """

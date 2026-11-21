@@ -35,7 +35,7 @@ import kotlin.math.PI
  * A filter which produces a color halftone effect with CMYK-style screen angles.
  * Replicates the JH-Labs ColorHalftoneFilter.
  */
-class ColorHalftoneFilter() : Filter {
+object ColorHalftoneFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """

@@ -18,7 +18,8 @@ package org.pushingpixels.aurora.demo.filters
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -40,7 +41,6 @@ fun main() = androidx.compose.ui.window.application {
         state = state,
         title = "Aurora Caustics Filter Demo"
     ) {
-        val causticsFilter = remember { CausticsFilter() }
         // Track elapsed time in seconds
         val time by produceState(0f) {
             val startTime = withInfiniteAnimationFrameMillis { it }
@@ -52,6 +52,6 @@ fun main() = androidx.compose.ui.window.application {
         }
 
         //println("" + time + ":" + System.currentTimeMillis())
-        Box(modifier = Modifier.fillMaxSize().then(causticsFilter.effectModifier(time = 2.0f * time)))
+        Box(modifier = Modifier.fillMaxSize().then(CausticsFilter.effectModifier(time = 2.0f * time)))
     }
 }

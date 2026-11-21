@@ -18,7 +18,8 @@ package org.pushingpixels.aurora.demo.filters
 import androidx.compose.animation.core.withInfiniteAnimationFrameMillis
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -42,8 +43,6 @@ fun main() = application {
         state = state,
         title = "Aurora Wood Filter Demo"
     ) {
-        val woodFilter = remember { WoodFilter() }
-
         // Track elapsed time in seconds
         val time by produceState(0f) {
             val startTime = withInfiniteAnimationFrameMillis { it }
@@ -54,6 +53,6 @@ fun main() = application {
             }
         }
 
-        Box(modifier = Modifier.fillMaxSize().then(woodFilter.effectModifier(angle = 6.0f * time * Math.PI.toFloat() / 180.0f)))
+        Box(modifier = Modifier.fillMaxSize().then(WoodFilter.effectModifier(angle = 6.0f * time * Math.PI.toFloat() / 180.0f)))
     }
 }

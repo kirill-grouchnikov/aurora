@@ -170,7 +170,7 @@ data class Light(
  * @param viewDistance viewer distance from surface for specular calculations (default 10000.0)
  * @param useImageColors if true, use image colors as diffuse; if false, use material diffuseColor
  */
-class ChromeFilter : Filter {
+object ChromeFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """

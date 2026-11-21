@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -64,12 +63,6 @@ fun main() = application {
         state = state,
         title = "Aurora Filters Demo"
     ) {
-        val chromeFilter = remember { ChromeFilter() }
-        val causticsFilter = remember { CausticsFilter() }
-        val plasmaFilter = remember { PlasmaFilter() }
-        val skyFilter = remember { SkyFilter() }
-        val solarizeFilter = SolarizeFilter
-
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
             columns = GridCells.Fixed(2),
@@ -86,7 +79,7 @@ fun main() = application {
             val chromeWidth = 400f
             val chromeHeight = 400f
 
-            val chromeShaderBuilder = RuntimeShaderBuilder(chromeFilter.effect)
+            val chromeShaderBuilder = RuntimeShaderBuilder(ChromeFilter.effect)
             chromeShaderBuilder.uniform("amount", 0.5f)
             chromeShaderBuilder.uniform("exposure", 1.0f)
             val chromeMaterial = Material()
@@ -144,7 +137,7 @@ fun main() = application {
              )
              }
 
-            val plasmaShaderBuilder = RuntimeShaderBuilder(plasmaFilter.effect)
+            val plasmaShaderBuilder = RuntimeShaderBuilder(PlasmaFilter.effect)
             plasmaShaderBuilder.uniform("scaling", 2.0f)
             plasmaShaderBuilder.uniform("turbulence", 0.3f)
             plasmaShaderBuilder.uniform("seed", 2089)
@@ -162,7 +155,7 @@ fun main() = application {
                 ).asComposeRenderEffect(), clip = true))
             }
 
-            val solarizeShaderBuilder = RuntimeShaderBuilder(solarizeFilter.effect)
+            val solarizeShaderBuilder = RuntimeShaderBuilder(SolarizeFilter.effect)
             item { CheckeredBox(modifier = Modifier.size(200.dp)
                 .graphicsLayer(renderEffect = ImageFilter.makeRuntimeShader(
                     runtimeShaderBuilder = solarizeShaderBuilder,
@@ -173,7 +166,7 @@ fun main() = application {
 
             //            item { Box(modifier = Modifier.size(200.dp).checkeredBackground()
 ////                .graphicsLayer(renderEffect = ImageFilter.makeRuntimeShader(
-////                    runtimeShaderBuilder = RuntimeShaderBuilder(skyFilter.effect),
+////                    runtimeShaderBuilder = RuntimeShaderBuilder(SkyFilter.effect),
 ////                    shaderName = "shaderInput",
 ////                    input = null
 ////                ).asComposeRenderEffect())
@@ -181,7 +174,7 @@ fun main() = application {
 //            }
 //            item { Box(modifier = Modifier.size(200.dp).checkeredBackground()
 ////                .graphicsLayer(renderEffect = ImageFilter.makeRuntimeShader(
-////                    runtimeShaderBuilder = RuntimeShaderBuilder(plasmaFilter.effect),
+////                    runtimeShaderBuilder = RuntimeShaderBuilder(PlasmaFilter.effect),
 ////                    shaderName = "shaderInput",
 ////                    input = null
 ////                ).asComposeRenderEffect())
@@ -189,7 +182,7 @@ fun main() = application {
 //            }
 //            item { Box(modifier = Modifier.size(200.dp).checkeredBackground()
 ////                .graphicsLayer(renderEffect = ImageFilter.makeRuntimeShader(
-////                    runtimeShaderBuilder = RuntimeShaderBuilder(causticsFilter.effect),
+////                    runtimeShaderBuilder = RuntimeShaderBuilder(CausticsFilter.effect),
 ////                    shaderName = "shaderInput",
 ////                    input = null
 ////                ).asComposeRenderEffect())

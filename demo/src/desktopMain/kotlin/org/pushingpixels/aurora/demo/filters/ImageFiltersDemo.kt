@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,13 +39,11 @@ import org.pushingpixels.aurora.filters.convolution.HighPassFilter
 import org.pushingpixels.aurora.filters.convolution.UnsharpFilter
 import org.pushingpixels.aurora.filters.convolution.LensBlurFilter
 import org.pushingpixels.aurora.filters.convolution.MotionBlurFilter
-import org.pushingpixels.aurora.filters.generative.CausticsFilter
 import org.pushingpixels.aurora.filters.generative.CrystallizeFilter
 import org.pushingpixels.aurora.filters.generative.GridType
 import org.pushingpixels.aurora.filters.generative.PlasmaFilter
 import org.pushingpixels.aurora.filters.generative.PointillizeFilter
 import org.pushingpixels.aurora.filters.generative.StampFilter
-import org.pushingpixels.aurora.filters.generative.SkyFilter
 import org.pushingpixels.aurora.filters.point.BlockFilter
 import org.pushingpixels.aurora.filters.point.SolarizeFilter
 
@@ -64,17 +61,7 @@ fun main() = application {
         state = state,
         title = "Aurora Filters Demo"
     ) {
-        val chromeFilter = remember { ChromeFilter() }
-        val causticsFilter = remember { CausticsFilter() }
-        val crystallizeFilter = remember { CrystallizeFilter() }
-        val pointillizeFilter = remember { PointillizeFilter() }
-        val plasmaFilter = remember { PlasmaFilter() }
-        val colorHalftoneFilter = remember { ColorHalftoneFilter() }
-        val skyFilter = remember { SkyFilter() }
-        val blockFilter = remember { BlockFilter() }
-        val solarizeFilter = SolarizeFilter
-        // EmbossFilter is an object, no need to remember
-        val stampFilter = remember { StampFilter() }
+        // All filters are now objects — no need to remember or instantiate
 
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
@@ -89,7 +76,7 @@ fun main() = application {
 
             item {
                 FilterBox(
-                    effectModifier = chromeFilter.effectModifier(
+                    effectModifier = ChromeFilter.effectModifier(
                         amount = 0.75f,
                         exposure = 0.8f,
                         bumpShape = BumpShape.NONE
@@ -100,19 +87,19 @@ fun main() = application {
 
             item {
                 FilterBox(
-                    effectModifier = colorHalftoneFilter.effectModifier(dotRadius = 3.0f),
+                    effectModifier = ColorHalftoneFilter.effectModifier(dotRadius = 3.0f),
                     renderEffectTitle = "Color halftone")
             }
 
             item {
                 FilterBox(
-                    effectModifier = solarizeFilter.effectModifier(),
+                    effectModifier = SolarizeFilter.effectModifier(),
                     renderEffectTitle = "Solarize")
             }
 
             item {
                 FilterBox(
-                    effectModifier = plasmaFilter.effectModifier(
+                    effectModifier = PlasmaFilter.effectModifier(
                         turbulence = 0.3f,
                         scaling = 10.0f,
                         seed = 2089),
@@ -121,7 +108,7 @@ fun main() = application {
 
             item {
                 FilterBox(
-                    effectModifier = plasmaFilter.effectModifier(
+                    effectModifier = PlasmaFilter.effectModifier(
                         turbulence = 0.3f,
                         scaling = 2.0f,
                         seed = 2089,
@@ -134,7 +121,7 @@ fun main() = application {
 
             item {
                 FilterBox(
-                    effectModifier = crystallizeFilter.effectModifier(
+                    effectModifier = CrystallizeFilter.effectModifier(
                         scale = 20.0f, edgeThickness = 0.4f, fadeEdges = false
                     ),
                     renderEffectTitle = "Crystallize hexagons"
@@ -143,7 +130,7 @@ fun main() = application {
 
             item {
                 FilterBox(
-                    effectModifier = crystallizeFilter.effectModifier(
+                    effectModifier = CrystallizeFilter.effectModifier(
                         scale = 30.0f, edgeThickness = 0.4f, fadeEdges = false,
                         gridType = GridType.Octagonal),
                     renderEffectTitle = "Crystallize octagons"
@@ -152,7 +139,7 @@ fun main() = application {
 
             item {
                 FilterBox(
-                    effectModifier = pointillizeFilter.effectModifier(
+                    effectModifier = PointillizeFilter.effectModifier(
                         scale = 10.0f, edgeThickness = 0.4f, fadeEdges = false,
                         fuzziness = 0.1f
                     ),
@@ -162,14 +149,14 @@ fun main() = application {
 
             item {
                 FilterBox(
-                    effectModifier = blockFilter.effectModifier(blockSize = 10),
+                    effectModifier = BlockFilter.effectModifier(blockSize = 10),
                     renderEffectTitle = "Block"
                 )
             }
 
             item {
                 FilterBox(
-                    effectModifier = stampFilter.effectModifier(
+                    effectModifier = StampFilter.effectModifier(
                         radius = 3f, softness = 0.35f),
                     renderEffectTitle = "Stamp"
                 )

@@ -90,7 +90,7 @@ fun main() = auroraApplication {
             }
 
             AuroraVerticalScrollbar(
-                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(top = 6.dp, bottom = 6.dp, end = 4.dp),
                 adapter = rememberScrollbarAdapter(scrollState = lazyGridState)
             )
         }
