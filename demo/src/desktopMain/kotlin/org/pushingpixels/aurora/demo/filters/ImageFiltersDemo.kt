@@ -17,6 +17,7 @@ package org.pushingpixels.aurora.demo.filters
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -26,8 +27,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
 import org.jetbrains.skia.Image
 import org.pushingpixels.aurora.filters.composite.BumpShape
@@ -74,147 +78,13 @@ fun main() = application {
                 OriginalBox()
             }
 
-            item {
-                FilterBox(
-                    effectModifier = ChromeFilter.effectModifier(
-                        amount = 0.75f,
-                        exposure = 0.8f,
-                        bumpShape = BumpShape.NONE
-                    ),
-                    renderEffectTitle = "Chrome"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = ColorHalftoneFilter.effectModifier(dotRadius = 3.0f),
-                    renderEffectTitle = "Color halftone")
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = SolarizeFilter.effectModifier(),
-                    renderEffectTitle = "Solarize")
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = PlasmaFilter.effectModifier(
-                        turbulence = 0.3f,
-                        scaling = 10.0f,
-                        seed = 2089),
-                    renderEffectTitle = "Plasma without colormap")
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = PlasmaFilter.effectModifier(
-                        turbulence = 0.3f,
-                        scaling = 2.0f,
-                        seed = 2089,
-                        colors = listOf(Color(0xFF0000FF),
-                            Color(0xFF00FF00),
-                            Color(0xFFFF0000),
-                            Color(0xFFFFFF00))),
-                    renderEffectTitle = "Plasma with colormap")
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = CrystallizeFilter.effectModifier(
-                        scale = 20.0f, edgeThickness = 0.4f, fadeEdges = false
-                    ),
-                    renderEffectTitle = "Crystallize hexagons"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = CrystallizeFilter.effectModifier(
-                        scale = 30.0f, edgeThickness = 0.4f, fadeEdges = false,
-                        gridType = GridType.Octagonal),
-                    renderEffectTitle = "Crystallize octagons"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = PointillizeFilter.effectModifier(
-                        scale = 10.0f, edgeThickness = 0.4f, fadeEdges = false,
-                        fuzziness = 0.1f
-                    ),
-                    renderEffectTitle = "Pointillize"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = BlockFilter.effectModifier(blockSize = 10),
-                    renderEffectTitle = "Block"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = StampFilter.effectModifier(
-                        radius = 3f, softness = 0.35f),
-                    renderEffectTitle = "Stamp"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = EmbossFilter.effectModifier(),
-                    renderEffectTitle = "Emboss"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = LensBlurFilter.effectModifier(),
-                    renderEffectTitle = "Lens blur"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = MotionBlurFilter.effectModifier(
-                        angle = 0.785f,
-                        distanceAmount = 40f
-                    ),
-                    renderEffectTitle = "Motion blur"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = MotionBlurFilter.effectModifier(
-                        angle = 0.785f,
-                        distanceAmount = 10f,
-                        zoom = 0.2f
-                    ),
-                    renderEffectTitle = "Motion blur with zoom"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = HighPassFilter.effectModifier(radius = 2f),
-                    renderEffectTitle = "High pass"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = GlowFilter.effectModifier(radius = 5f, amount = 0.2f),
-                    renderEffectTitle = "Glow"
-                )
-            }
-
-            item {
-                FilterBox(
-                    effectModifier = UnsharpFilter.effectModifier(radius = 2f, amount = 0.5f),
-                    renderEffectTitle = "Unsharp mask"
+            item(
+                span = { GridItemSpan(maxLineSpan) },
+                contentType = "header"
+            ) {
+                BasicText(
+                    text = "Color Adjustment Filters",
+                    style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 )
             }
 
@@ -314,6 +184,190 @@ fun main() = application {
                         bFactor = 0.1f
                     ),
                     renderEffectTitle = "HSB Adjust"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = SolarizeFilter.effectModifier(),
+                    renderEffectTitle = "Solarize")
+            }
+
+            item(
+                span = { GridItemSpan(maxLineSpan) },
+                contentType = "header"
+            ) {
+                BasicText(
+                    text = "Effects Filters",
+                    style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = BlockFilter.effectModifier(blockSize = 10),
+                    renderEffectTitle = "Block"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = ChromeFilter.effectModifier(
+                        amount = 0.75f,
+                        exposure = 0.8f,
+                        bumpShape = BumpShape.NONE
+                    ),
+                    renderEffectTitle = "Chrome"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = ColorHalftoneFilter.effectModifier(dotRadius = 3.0f),
+                    renderEffectTitle = "Color halftone")
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = CrystallizeFilter.effectModifier(
+                        scale = 20.0f, edgeThickness = 0.4f, fadeEdges = false
+                    ),
+                    renderEffectTitle = "Crystallize hexagons"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = CrystallizeFilter.effectModifier(
+                        scale = 30.0f, edgeThickness = 0.4f, fadeEdges = false,
+                        gridType = GridType.Octagonal),
+                    renderEffectTitle = "Crystallize octagons"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = EmbossFilter.effectModifier(),
+                    renderEffectTitle = "Emboss"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = PointillizeFilter.effectModifier(
+                        scale = 10.0f, edgeThickness = 0.4f, fadeEdges = false,
+                        fuzziness = 0.1f
+                    ),
+                    renderEffectTitle = "Pointillize"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = StampFilter.effectModifier(
+                        radius = 3f, softness = 0.35f),
+                    renderEffectTitle = "Stamp"
+                )
+            }
+
+            item(
+                span = { GridItemSpan(maxLineSpan) },
+                contentType = "header"
+            ) {
+                BasicText(
+                    text = "Distortion and Warping Filters",
+                    style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                )
+            }
+
+            item(
+                span = { GridItemSpan(maxLineSpan) },
+                contentType = "header"
+            ) {
+                BasicText(
+                    text = "Texturing Filters",
+                    style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = PlasmaFilter.effectModifier(
+                        turbulence = 0.3f,
+                        scaling = 10.0f,
+                        seed = 2089),
+                    renderEffectTitle = "Plasma without colormap")
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = PlasmaFilter.effectModifier(
+                        turbulence = 0.3f,
+                        scaling = 2.0f,
+                        seed = 2089,
+                        colors = listOf(Color(0xFF0000FF),
+                            Color(0xFF00FF00),
+                            Color(0xFFFF0000),
+                            Color(0xFFFFFF00))),
+                    renderEffectTitle = "Plasma with colormap")
+            }
+
+            item(
+                span = { GridItemSpan(maxLineSpan) },
+                contentType = "header"
+            ) {
+                BasicText(
+                    text = "Blurring and Sharpening Filters",
+                    style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = GlowFilter.effectModifier(radius = 5f, amount = 0.2f),
+                    renderEffectTitle = "Glow"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = HighPassFilter.effectModifier(radius = 2f),
+                    renderEffectTitle = "High pass"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = LensBlurFilter.effectModifier(),
+                    renderEffectTitle = "Lens blur"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = MotionBlurFilter.effectModifier(
+                        angle = 0.785f,
+                        distanceAmount = 40f
+                    ),
+                    renderEffectTitle = "Motion blur"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = MotionBlurFilter.effectModifier(
+                        angle = 0.785f,
+                        distanceAmount = 10f,
+                        zoom = 0.2f
+                    ),
+                    renderEffectTitle = "Motion blur with zoom"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = UnsharpFilter.effectModifier(radius = 2f, amount = 0.5f),
+                    renderEffectTitle = "Unsharp mask"
                 )
             }
         }
