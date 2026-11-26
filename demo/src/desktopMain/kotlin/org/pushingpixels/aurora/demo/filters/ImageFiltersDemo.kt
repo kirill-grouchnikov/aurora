@@ -15,6 +15,7 @@
  */
 package org.pushingpixels.aurora.demo.filters
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -50,6 +51,10 @@ import org.pushingpixels.aurora.filters.generative.PointillizeFilter
 import org.pushingpixels.aurora.filters.generative.StampFilter
 import org.pushingpixels.aurora.filters.point.*
 import org.pushingpixels.aurora.filters.convolution.DiffusionFilter
+import org.pushingpixels.aurora.filters.generative.BrushedMetalFilter
+import org.pushingpixels.aurora.filters.generative.CausticsFilter
+import org.pushingpixels.aurora.filters.generative.MarbleTexFilter
+import org.pushingpixels.aurora.filters.generative.WoodFilter
 
 private object ResourceLoader
 
@@ -291,6 +296,45 @@ fun main() = application {
             }
 
             item {
+                TexturedBox(
+                    effectModifier = BrushedMetalFilter.effectModifier(
+                        radius = 8, amount = 1.0f, color = Color(0xFF800000)
+                    ),
+                    renderEffectTitle = "Brushed Metal"
+                )
+            }
+
+            item {
+                TexturedBox(
+                    effectModifier = CausticsFilter.effectModifier(),
+                    renderEffectTitle = "Caustics"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = ChromeFilter.effectModifier(),
+                    renderEffectTitle = "Chrome")
+            }
+
+            item {
+                TexturedBox(
+                    effectModifier = FlareFilter.effectModifier(
+                        color = Color(0xFFE0FFFF), radius = 100.0f, ringAmount = 0.2f, rayAmount = 0.15f),
+                    renderEffectTitle = "Flare"
+                )
+            }
+
+            item {
+                TexturedBox(
+                    effectModifier = MarbleTexFilter.effectModifier(
+                        colors = listOf(Color(0xFFB76E79), Color(0xFFFFC0CB))
+                    ),
+                    renderEffectTitle = "Marble"
+                )
+            }
+
+            item {
                 FilterBox(
                     effectModifier = PlasmaFilter.effectModifier(
                         turbulence = 0.3f,
@@ -310,6 +354,34 @@ fun main() = application {
                             Color(0xFFFF0000),
                             Color(0xFFFFFF00))),
                     renderEffectTitle = "Plasma with colormap")
+            }
+
+            item {
+                TexturedBox(
+                    effectModifier = SparkleFilter.effectModifier(color = Color(0xFF208070)),
+                    renderEffectTitle = "Sparkle"
+                )
+            }
+
+            item {
+                TexturedBox(
+                    effectModifier = WoodFilter.effectModifier(
+                        scale = 100.0f,
+                        rings = 0.4f, fibres = 0.3f, gain = 0.7f
+                    ),
+                    renderEffectTitle = "Wood"
+                )
+            }
+
+            item {
+                TexturedBox(
+                    effectModifier = WoodFilter.effectModifier(
+                        scale = 80.0f, stretch = 15.0f, gain = 1.9f,
+                        angle = 1.5f * Math.PI.toFloat(),
+                        colors = listOf(Color(0xFFCD4A4A), Color(0xFF682523), Color(0xFF482029))
+                    ),
+                    renderEffectTitle = "Wood with colormap"
+                )
             }
 
             item(
@@ -405,6 +477,14 @@ fun ImageBox(modifier: Modifier) {
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Fit
         )
+    }
+}
+
+@Composable
+fun TexturedBox(modifier: Modifier = Modifier, effectModifier: Modifier, renderEffectTitle: String) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(modifier = Modifier.fillMaxWidth().height(200.dp).background(Color.DarkGray).then(effectModifier))
+        BasicText(text = renderEffectTitle, modifier = Modifier.padding(all = 8.dp))
     }
 }
 
