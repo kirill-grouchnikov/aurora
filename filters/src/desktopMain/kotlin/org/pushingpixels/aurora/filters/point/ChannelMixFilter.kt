@@ -138,27 +138,47 @@ object ChannelMixFilter : Filter {
 }
 
 /**
- * A filter that rescales the RGB values to a new range.
- * @param minOutput minimum output value (0-1)
- * @param maxOutput maximum output value (0-1)
+ * A filter which multiplies the RGB values by a scaling factor.
+ * @param scale the scale factor
  */
-class RescaleFilter(
-    val minOutput: Float = 0f,
-    val maxOutput: Float = 1f
-) : Filter {
+object RescaleFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
-            uniform float minOutput;
-            uniform float maxOutput;
+            uniform float scale;
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
-                half3 rgb = mix(minOutput, maxOutput, c.rgb);
-                return half4(rgb, c.a);
+                float3 rgb = clamp(float3(c.rgb) * scale, 0.0, float(c.a));
+                return half4(half3(rgb), c.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(
+        size: FloatPair,
+        scale: Float = 1f
+    ): ImageFilter {
+        val rescaleShaderBuilder = RuntimeShaderBuilder(this.effect)
+        rescaleShaderBuilder.uniform("scale", scale)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = rescaleShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
+    fun effectModifier(scale: Float = 1f): Modifier {
+        val rescaleShaderBuilder = RuntimeShaderBuilder(this.effect)
+        rescaleShaderBuilder.uniform("scale", scale)
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = rescaleShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }

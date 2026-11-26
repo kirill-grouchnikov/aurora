@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -70,8 +71,6 @@ fun main() = application {
         state = state,
         title = "Aurora Filters Demo"
     ) {
-        // All filters are now objects — no need to remember or instantiate
-
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
             columns = GridCells.Fixed(4),
@@ -192,10 +191,99 @@ fun main() = application {
                 )
             }
 
+//            item {
+//                FilterBox(
+//                    effectModifier = InvertAlphaFilter.effectModifier(),
+//                    renderEffectTitle = "Invert alpha"
+//                )
+//            }
+
+            item {
+                FilterBox(
+                    effectModifier = InvertFilter.effectModifier(),
+                    renderEffectTitle = "Invert"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = LevelsFilter.effectModifier(
+                        lowLevel = 0.1f,
+                        highLevel = 0.9f,
+                        lowOutputLevel = 0.5f,
+                        highOutputLevel = 0.8f
+                    ),
+                    renderEffectTitle = "Levels"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = LookupFilter.effectModifier(
+                        colors = listOf(
+                            Color(0xFFFF0000),
+                            Color(0xFF0000FF))),
+                    renderEffectTitle = "Lookup"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = MaskFilter.effectModifier(mask = 0xFF00FFFF.toInt()),
+                    renderEffectTitle = "Mask"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = PosterizeFilter.effectModifier(numLevels = 4),
+                    renderEffectTitle = "Posterize"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = RescaleFilter.effectModifier(scale = 2.0f),
+                    renderEffectTitle = "Rescale"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = RGBAdjustFilter.effectModifier(
+                        rFactor = 0.7f,
+                        gFactor = 0f,
+                        bFactor = -0.7f
+                    ),
+                    renderEffectTitle = "RGB adjust"
+                )
+            }
+
             item {
                 FilterBox(
                     effectModifier = SolarizeFilter.effectModifier(),
                     renderEffectTitle = "Solarize")
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = ThresholdFilter.effectModifier(
+                        lowerThreshold = 70,
+                        upperThreshold = 190
+                    ),
+                    renderEffectTitle = "Threshold"
+                )
+            }
+
+            item {
+                FilterBox(
+                    effectModifier = TritoneFilter.effectModifier(
+                        shadowColor = Color(0xFF000020),
+                        midColor = Color(0xFF204080),
+                        highColor = Color(0xFF80A0FF)
+                    ),
+                    renderEffectTitle = "Tritone"
+                )
             }
 
             item(

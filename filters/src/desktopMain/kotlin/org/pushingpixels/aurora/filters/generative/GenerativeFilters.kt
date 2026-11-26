@@ -26,7 +26,6 @@ import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import org.pushingpixels.aurora.filters.composite.FloatPair
-import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientFilter
 import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
 
 // This is a modified version of the original source code by Jerry Huxtable
@@ -1091,42 +1090,12 @@ object PlasmaFilter : Filter {
                 } else {
                     half4 colormapEval = colormap.eval(vec2(v * 256, 0));
                     plasma = half3(colormapEval.r, colormapEval.g, colormapEval.b);
-                    // TODO: figure out proper handling for alpha premultiplication
-                    if (colormapEval.a != 0.0) {
-                        plasma = plasma / colormapEval.a;
-                    }
                 }
                 return half4(plasma, c.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
-
-//    fun makeShader(inputShader: org.jetbrains.skia.Shader?): org.jetbrains.skia.Shader {
-//        val dataBuffer = ByteBuffer.allocate(68).order(ByteOrder.LITTLE_ENDIAN)
-//        dataBuffer.putFloat(scaling)
-//        dataBuffer.putFloat(turbulence)
-//        dataBuffer.putInt(seed)
-//        dataBuffer.putInt(if (useColormap) 1 else 0)
-//        dataBuffer.putInt(if (useImageColors) 1 else 0)
-//        dataBuffer.putFloat(((color1 shr 16) and 0xff) / 255f)
-//        dataBuffer.putFloat(((color1 shr 8) and 0xff) / 255f)
-//        dataBuffer.putFloat((color1 and 0xff) / 255f)
-//        dataBuffer.putFloat(((color2 shr 16) and 0xff) / 255f)
-//        dataBuffer.putFloat(((color2 shr 8) and 0xff) / 255f)
-//        dataBuffer.putFloat((color2 and 0xff) / 255f)
-//        dataBuffer.putFloat(((color3 shr 16) and 0xff) / 255f)
-//        dataBuffer.putFloat(((color3 shr 8) and 0xff) / 255f)
-//        dataBuffer.putFloat((color3 and 0xff) / 255f)
-//        dataBuffer.putFloat(((color4 shr 16) and 0xff) / 255f)
-//        dataBuffer.putFloat(((color4 shr 8) and 0xff) / 255f)
-//        dataBuffer.putFloat((color4 and 0xff) / 255f)
-//        return effect.makeShader(
-//            uniforms = Data.makeFromBytes(dataBuffer.array()),
-//            children = arrayOf(inputShader),
-//            localMatrix = null
-//        )
-//    }
 
     fun renderEffect(
         turbulence: Float = 1.0f,
@@ -1138,18 +1107,19 @@ object PlasmaFilter : Filter {
         plasmaShaderBuilder.uniform("turbulence", turbulence)
         plasmaShaderBuilder.uniform("scaling", scaling)
         plasmaShaderBuilder.uniform("seed", seed)
-        plasmaShaderBuilder.uniform("useColormap", if (colors != null) 1 else 0)
 
-        val gradientFilter: ImageFilter? = colors?.let {
-            makeMultiStopHorizontalGradientFilter(
-                stops = it,
-                width = 256)
+        if (colors != null) {
+            plasmaShaderBuilder.child("colormap",
+                makeMultiStopHorizontalGradientShader(stops = colors))
+            plasmaShaderBuilder.uniform("useColormap", 1)
+        } else {
+            plasmaShaderBuilder.uniform("useColormap", 0)
         }
 
         return ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = plasmaShaderBuilder,
-            shaderNames = arrayOf("content", "colormap"),
-            inputs = arrayOf(null, gradientFilter)
+            shaderNames = arrayOf("content"),
+            inputs = arrayOf(null)
         ).asComposeRenderEffect()
     }
 
@@ -1164,18 +1134,19 @@ object PlasmaFilter : Filter {
         plasmaShaderBuilder.uniform("turbulence", turbulence)
         plasmaShaderBuilder.uniform("scaling", scaling)
         plasmaShaderBuilder.uniform("seed", seed)
-        plasmaShaderBuilder.uniform("useColormap", if (colors != null) 1 else 0)
 
-        val gradientFilter: ImageFilter? = colors?.let {
-            makeMultiStopHorizontalGradientFilter(
-                stops = it,
-                width = 256)
+        if (colors != null) {
+            plasmaShaderBuilder.child("colormap",
+                makeMultiStopHorizontalGradientShader(stops = colors))
+            plasmaShaderBuilder.uniform("useColormap", 1)
+        } else {
+            plasmaShaderBuilder.uniform("useColormap", 0)
         }
 
-        return ImageFilter.makeRuntimeShader(
+       return ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = plasmaShaderBuilder,
-            shaderNames = arrayOf("content", "colormap"),
-            inputs = arrayOf(null, gradientFilter)
+            shaderNames = arrayOf("content"),
+            inputs = arrayOf(null)
         )
     }
 
@@ -1189,18 +1160,19 @@ object PlasmaFilter : Filter {
         plasmaShaderBuilder.uniform("turbulence", turbulence)
         plasmaShaderBuilder.uniform("scaling", scaling)
         plasmaShaderBuilder.uniform("seed", seed)
-        plasmaShaderBuilder.uniform("useColormap", if (colors != null) 1 else 0)
 
-        val gradientFilter: ImageFilter? = colors?.let {
-            makeMultiStopHorizontalGradientFilter(
-                stops = it,
-                width = 256)
+        if (colors != null) {
+            plasmaShaderBuilder.child("colormap",
+                makeMultiStopHorizontalGradientShader(stops = colors))
+            plasmaShaderBuilder.uniform("useColormap", 1)
+        } else {
+            plasmaShaderBuilder.uniform("useColormap", 0)
         }
 
         val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = plasmaShaderBuilder,
-            shaderNames = arrayOf("content", "colormap"),
-            inputs = arrayOf(null, gradientFilter)
+            shaderNames = arrayOf("content"),
+            inputs = arrayOf(null)
         ).asComposeRenderEffect()
 
         return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)

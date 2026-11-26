@@ -15,9 +15,16 @@
  */
 package org.pushingpixels.aurora.filters.point
 
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
 import org.intellij.lang.annotations.Language
+import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.RuntimeEffect
+import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
+import org.pushingpixels.aurora.filters.composite.FloatPair
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -37,5 +44,25 @@ object InvertFilter : Filter {
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
+    }
+
+    fun imageFilter(size: FloatPair): ImageFilter {
+        val invertShaderBuilder = RuntimeShaderBuilder(this.effect)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = invertShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
+    fun effectModifier(): Modifier {
+        val invertShaderBuilder = RuntimeShaderBuilder(this.effect)
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = invertShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
     }
 }

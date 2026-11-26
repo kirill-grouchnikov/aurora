@@ -28,6 +28,8 @@ import org.jetbrains.skia.RuntimeEffect
 import org.jetbrains.skia.RuntimeShaderBuilder
 import org.pushingpixels.aurora.filters.Filter
 import org.pushingpixels.aurora.filters.composite.FloatPair
+import org.pushingpixels.aurora.filters.utility.makeMultiStopHorizontalGradientShader
+import kotlin.math.roundToInt
 
 // This is a modified version of the original source code by Jerry Huxtable
 // available under the MIT license. See the full license under resources/Filters.license.
@@ -1405,6 +1407,26 @@ object InvertAlphaFilter : Filter {
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
+
+    fun imageFilter(size: FloatPair): ImageFilter {
+        val invertAlphaShaderBuilder = RuntimeShaderBuilder(this.effect)
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = invertAlphaShaderBuilder,
+            shaderName = "content",
+            input = null
+        )
+    }
+
+    fun effectModifier(): Modifier {
+        val invertAlphaShaderBuilder = RuntimeShaderBuilder(this.effect)
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = invertAlphaShaderBuilder,
+            shaderName = "content",
+            input = null
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**
@@ -1416,7 +1438,7 @@ object InvertAlphaFilter : Filter {
  * @param highOutputLevel output high level (0-1, default 1)
 
  */
-class LevelsFilter : Filter {
+object LevelsFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1433,7 +1455,7 @@ class LevelsFilter : Filter {
                 half3 rgb;
                 for (int i = 0; i < 3; i++) {
                     float v = c.rgb[i] * 255.0;
-                    v = lowOutputLevel + (highOutputLevel - lowOutputLevel) * (v - low) / (high - low);
+                    v = 255.0 * (lowOutputLevel + (highOutputLevel - lowOutputLevel) * (v - low) / (high - low));
                     rgb[i] = clamp(v / 255.0, 0.0, 1.0);
                 }
                 return half4(rgb, c.a);
@@ -1482,27 +1504,54 @@ class LevelsFilter : Filter {
  * A filter which uses the brightness of each pixel to lookup a color from a colormap.
  * Replicates the JH-Labs LookupFilter.
  *
- * @param colors the colormap colors (default grayscale gradient)
+ * @param colormap image whose first row provides the colormap
  */
-class LookupFilter : Filter {
+object LookupFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
-            uniform shader colormap;
             uniform shader content;
+            uniform shader colormap;
+
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
-                // Compute brightness as average of RGB
-                float brightness = (c.r + c.g + c.b) / 3.0;
-                brightness = clamp(brightness, 0.0, 1.0);
+                half3 straightRgb = c.a > 0.0 ? c.rgb / c.a : half3(0.0);
+                half luma = dot(straightRgb, half3(0.299, 0.587, 0.114));
                 // Lookup color from colormap
-                half4 colormapEval = colormap.eval(vec2(brightness * 256.0, 0.0));
+                half4 colormapEval = colormap.eval(vec2(luma * 256.0, 0.0));
                 return half4(colormapEval.rgb, c.a);
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
     }
 
+    fun imageFilter(size: FloatPair, colors: List<Color>): ImageFilter {
+        val lookupShaderBuilder = RuntimeShaderBuilder(this.effect)
+        lookupShaderBuilder.child("colormap",
+            makeMultiStopHorizontalGradientShader(
+                stops = colors))
+
+        return ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = lookupShaderBuilder,
+            shaderNames = arrayOf("content"),
+            inputs = arrayOf(null)
+        )
+    }
+
+    fun effectModifier(colors: List<Color>): Modifier {
+        val lookupShaderBuilder = RuntimeShaderBuilder(this.effect)
+        lookupShaderBuilder.child("colormap",
+            makeMultiStopHorizontalGradientShader(
+                stops = colors))
+
+        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
+            runtimeShaderBuilder = lookupShaderBuilder,
+            shaderNames = arrayOf("content"),
+            inputs = arrayOf(null)
+        ).asComposeRenderEffect()
+
+        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
+    }
 }
 
 /**
@@ -1567,30 +1616,48 @@ class MapColorsFilter : Filter {
 }
 
 /**
- * A filter which applies a mask based on brightness threshold.
- * Replicates the JH-Labs MaskFilter (extends PointFilter).
+ * A filter which applies a bit mask to each ARGB pixel.
+ * Replicates the JH-Labs MaskFilter.
  *
- * @param threshold brightness threshold (0-1)
- * @param invert if true, invert the mask
-
+ * @param mask ARGB bit mask (default clears the red channel)
  */
-class MaskFilter : Filter {
+object MaskFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
             uniform shader content;
-            uniform float threshold;
-            uniform int invert;
+            uniform float alphaMask;
+            uniform float redMask;
+            uniform float greenMask;
+            uniform float blueMask;
+
+            float byteAnd(float value, float maskByte) {
+                float result = 0.0;
+                float bitValue = 1.0;
+                for (int i = 0; i < 8; i++) {
+                    float valueBit = mod(floor(value / bitValue), 2.0);
+                    float maskBit = mod(floor(maskByte / bitValue), 2.0);
+                    result += valueBit * maskBit * bitValue;
+                    bitValue *= 2.0;
+                }
+                return result;
+            }
+
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
-                half luma = dot(c.rgb, half3(0.299, 0.587, 0.114));
-                half mask;
-                if (invert != 0) {
-                    mask = step(luma, threshold);
-                } else {
-                    mask = step(threshold, luma);
-                }
-                return half4(c.rgb * mask, c.a * mask);
+                float alpha = float(c.a);
+                float3 rgb = alpha > 0.0 ? float3(c.rgb) / alpha : float3(0.0);
+                float outAlphaByte = byteAnd(floor(alpha * 255.0 + 0.5), alphaMask);
+                float outRedByte = byteAnd(floor(rgb.r * 255.0 + 0.5), redMask);
+                float outGreenByte = byteAnd(floor(rgb.g * 255.0 + 0.5), greenMask);
+                float outBlueByte = byteAnd(floor(rgb.b * 255.0 + 0.5), blueMask);
+                float outAlpha = outAlphaByte / 255.0;
+                float3 outRgb = float3(
+                    outRedByte,
+                    outGreenByte,
+                    outBlueByte
+                ) / 255.0;
+                return half4(half3(outRgb * outAlpha), half(outAlpha));
             }
         """
         RuntimeEffect.makeForShader(shaderDesc)
@@ -1598,12 +1665,13 @@ class MaskFilter : Filter {
 
     fun imageFilter(
         size: FloatPair,
-        threshold: Float = 0.5f,
-        invert: Boolean = false
+        mask: Int = 0xff00ffff.toInt()
     ): ImageFilter {
         val maskShaderBuilder = RuntimeShaderBuilder(this.effect)
-        maskShaderBuilder.uniform("threshold", threshold)
-        maskShaderBuilder.uniform("invert", if (invert) 1 else 0)
+        maskShaderBuilder.uniform("alphaMask", (mask ushr 24 and 0xff).toFloat())
+        maskShaderBuilder.uniform("redMask", (mask ushr 16 and 0xff).toFloat())
+        maskShaderBuilder.uniform("greenMask", (mask ushr 8 and 0xff).toFloat())
+        maskShaderBuilder.uniform("blueMask", (mask and 0xff).toFloat())
         return ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = maskShaderBuilder,
             shaderName = "content",
@@ -1611,10 +1679,12 @@ class MaskFilter : Filter {
         )
     }
 
-    fun effectModifier(threshold: Float = 0.5f, invert: Boolean = false): Modifier {
+    fun effectModifier(mask: Int = 0xff00ffff.toInt()): Modifier {
         val maskShaderBuilder = RuntimeShaderBuilder(this.effect)
-        maskShaderBuilder.uniform("threshold", threshold)
-        maskShaderBuilder.uniform("invert", if (invert) 1 else 0)
+        maskShaderBuilder.uniform("alphaMask", (mask ushr 24 and 0xff).toFloat())
+        maskShaderBuilder.uniform("redMask", (mask ushr 16 and 0xff).toFloat())
+        maskShaderBuilder.uniform("greenMask", (mask ushr 8 and 0xff).toFloat())
+        maskShaderBuilder.uniform("blueMask", (mask and 0xff).toFloat())
 
         val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = maskShaderBuilder,
@@ -1677,7 +1747,7 @@ class OpacityFilter : Filter {
  * @param numLevels number of discrete levels per channel (default 6)
 
  */
-class PosterizeFilter : Filter {
+object PosterizeFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -1686,7 +1756,10 @@ class PosterizeFilter : Filter {
             half4 main(vec2 fragcoord) {
                 half4 c = content.eval(fragcoord);
                 if (numLevels > 1) {
-                    c.rgb = floor(c.rgb * numLevels) / (numLevels - 1.0);
+                    float levels = float(numLevels);
+                    float3 rgb = float3(c.rgb);
+                    rgb = floor(rgb * levels) / (levels - 1.0);
+                    c.rgb = half3(rgb);
                 }
                 return half4(c.rgb, c.a);
             }
@@ -1740,58 +1813,6 @@ object PremultiplyFilter : Filter {
 }
 
 /**
- * A filter which quantizes an image to a limited number of colors using median-cut approximation.
- * @param numColors target number of colors
-
- */
-class QuantizeFilter : Filter {
-    override val effect: RuntimeEffect by lazy {
-        @Language("GLSL")
-        val shaderDesc = """
-            uniform shader content;
-            uniform int numColors;
-            half4 main(vec2 fragcoord) {
-                half4 c = content.eval(fragcoord);
-                // Approximate quantization by rounding to nearest color cube
-                if (numColors > 0) {
-                    float levels = pow(float(numColors), 1.0/3.0);
-                    levels = max(levels, 1.0);
-                    c.rgb = floor(c.rgb * levels) / (levels - 1.0 + 0.0001);
-                }
-                return half4(c.rgb, c.a);
-            }
-        """
-        RuntimeEffect.makeForShader(shaderDesc)
-    }
-
-    fun imageFilter(
-        size: FloatPair,
-        numColors: Int = 16
-    ): ImageFilter {
-        val quantizeShaderBuilder = RuntimeShaderBuilder(this.effect)
-        quantizeShaderBuilder.uniform("numColors", numColors)
-        return ImageFilter.makeRuntimeShader(
-            runtimeShaderBuilder = quantizeShaderBuilder,
-            shaderName = "content",
-            input = null
-        )
-    }
-
-    fun effectModifier(numColors: Int = 16): Modifier {
-        val quantizeShaderBuilder = RuntimeShaderBuilder(this.effect)
-        quantizeShaderBuilder.uniform("numColors", numColors)
-
-        val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
-            runtimeShaderBuilder = quantizeShaderBuilder,
-            shaderName = "content",
-            input = null
-        ).asComposeRenderEffect()
-
-        return Modifier.graphicsLayer(renderEffect = renderEffect, clip = true)
-    }
-}
-
-/**
  * A filter to adjust the R, G, B channels independently.
  * Replicates the JH-Labs RGBAdjustFilter with additive factors.
  * @param rFactor red channel adjustment (default 0, stored as 1+factor)
@@ -1799,7 +1820,7 @@ class QuantizeFilter : Filter {
  * @param bFactor blue channel adjustment (default 0, stored as 1+factor)
 
  */
-class RGBAdjustFilter : Filter {
+object RGBAdjustFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -2166,11 +2187,11 @@ class TransferFilter : Filter {
  * with smooth interpolation in between.
  * @param lowerThreshold lower threshold (0-255)
  * @param upperThreshold upper threshold (0-255)
- * @param white color for pixels above upper threshold (0xRRGGBB int)
- * @param black color for pixels below lower threshold (0xRRGGBB int)
+ * @param white color for pixels above upper threshold
+ * @param black color for pixels below lower threshold
 
  */
-class ThresholdFilter : Filter {
+object ThresholdFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -2194,14 +2215,14 @@ class ThresholdFilter : Filter {
         size: FloatPair,
         lowerThreshold: Int = 127,
         upperThreshold: Int = 127,
-        white: Int = 0xffffff,
-        black: Int = 0x000000
+        white: Color = Color.White,
+        black: Color = Color.Black
     ): ImageFilter {
         val thresholdShaderBuilder = RuntimeShaderBuilder(this.effect)
         thresholdShaderBuilder.uniform("lowerThreshold", lowerThreshold / 255f)
         thresholdShaderBuilder.uniform("upperThreshold", upperThreshold / 255f)
-        thresholdShaderBuilder.uniform("white", ((white shr 16) and 0xff) / 255f, ((white shr 8) and 0xff) / 255f, (white and 0xff) / 255f)
-        thresholdShaderBuilder.uniform("black", ((black shr 16) and 0xff) / 255f, ((black shr 8) and 0xff) / 255f, (black and 0xff) / 255f)
+        thresholdShaderBuilder.uniform("white", white.red, white.green, white.blue)
+        thresholdShaderBuilder.uniform("black", black.red, black.green, black.blue)
         return ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = thresholdShaderBuilder,
             shaderName = "content",
@@ -2209,12 +2230,17 @@ class ThresholdFilter : Filter {
         )
     }
 
-    fun effectModifier(lowerThreshold: Int = 127, upperThreshold: Int = 127, white: Int = 0xffffff, black: Int = 0x000000): Modifier {
+    fun effectModifier(
+        lowerThreshold: Int = 127,
+        upperThreshold: Int = 127,
+        white: Color = Color.White,
+        black: Color = Color.Black
+    ): Modifier {
         val thresholdShaderBuilder = RuntimeShaderBuilder(this.effect)
         thresholdShaderBuilder.uniform("lowerThreshold", lowerThreshold / 255f)
         thresholdShaderBuilder.uniform("upperThreshold", upperThreshold / 255f)
-        thresholdShaderBuilder.uniform("white", ((white shr 16) and 0xff) / 255f, ((white shr 8) and 0xff) / 255f, (white and 0xff) / 255f)
-        thresholdShaderBuilder.uniform("black", ((black shr 16) and 0xff) / 255f, ((black shr 8) and 0xff) / 255f, (black and 0xff) / 255f)
+        thresholdShaderBuilder.uniform("white", white.red, white.green, white.blue)
+        thresholdShaderBuilder.uniform("black", black.red, black.green, black.blue)
 
         val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = thresholdShaderBuilder,
@@ -2229,12 +2255,12 @@ class ThresholdFilter : Filter {
 /**
  * A filter which performs a tritone conversion — maps shadows, midtones, and highlights
  * to three specified colors.
- * @param shadowColor RGB color for shadows (0-1 range per channel)
- * @param midColor RGB color for midtones (0-1 range per channel)
- * @param highColor RGB color for highlights (0-1 range per channel)
+ * @param shadowColor color for shadows
+ * @param midColor color for midtones
+ * @param highColor color for highlights
 
  */
-class TritoneFilter : Filter {
+object TritoneFilter : Filter {
     override val effect: RuntimeEffect by lazy {
         @Language("GLSL")
         val shaderDesc = """
@@ -2261,14 +2287,14 @@ class TritoneFilter : Filter {
 
     fun imageFilter(
         size: FloatPair,
-        shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f),
-        midColor: FloatArray = floatArrayOf(0.533f, 0.533f, 0.533f),
-        highColor: FloatArray = floatArrayOf(1f, 1f, 1f)
+        shadowColor: Color = Color.Black,
+        midColor: Color = Color.Gray,
+        highColor: Color = Color.White
     ): ImageFilter {
         val tritoneShaderBuilder = RuntimeShaderBuilder(this.effect)
-        tritoneShaderBuilder.uniform("shadowColor", shadowColor[0], shadowColor[1], shadowColor[2])
-        tritoneShaderBuilder.uniform("midColor", midColor[0], midColor[1], midColor[2])
-        tritoneShaderBuilder.uniform("highColor", highColor[0], highColor[1], highColor[2])
+        tritoneShaderBuilder.uniform("shadowColor", shadowColor.red, shadowColor.green, shadowColor.blue)
+        tritoneShaderBuilder.uniform("midColor", midColor.red, midColor.green, midColor.blue)
+        tritoneShaderBuilder.uniform("highColor", highColor.red, highColor.green, highColor.blue)
         return ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = tritoneShaderBuilder,
             shaderName = "content",
@@ -2276,11 +2302,15 @@ class TritoneFilter : Filter {
         )
     }
 
-    fun effectModifier(shadowColor: FloatArray = floatArrayOf(0f, 0f, 0f), midColor: FloatArray = floatArrayOf(0.533f, 0.533f, 0.533f), highColor: FloatArray = floatArrayOf(1f, 1f, 1f)): Modifier {
+    fun effectModifier(
+        shadowColor: Color = Color.Black,
+        midColor: Color = Color.Gray,
+        highColor: Color = Color.White
+    ): Modifier {
         val tritoneShaderBuilder = RuntimeShaderBuilder(this.effect)
-        tritoneShaderBuilder.uniform("shadowColor", shadowColor[0], shadowColor[1], shadowColor[2])
-        tritoneShaderBuilder.uniform("midColor", midColor[0], midColor[1], midColor[2])
-        tritoneShaderBuilder.uniform("highColor", highColor[0], highColor[1], highColor[2])
+        tritoneShaderBuilder.uniform("shadowColor", shadowColor.red, shadowColor.green, shadowColor.blue)
+        tritoneShaderBuilder.uniform("midColor", midColor.red, midColor.green, midColor.blue)
+        tritoneShaderBuilder.uniform("highColor", highColor.red, highColor.green, highColor.blue)
 
         val renderEffect: RenderEffect = ImageFilter.makeRuntimeShader(
             runtimeShaderBuilder = tritoneShaderBuilder,
